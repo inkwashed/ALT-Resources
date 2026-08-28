@@ -1,0 +1,20 @@
+ALT CLASS SCHEDULER — TERMS OF USE
+
+Copyright © 2026. All rights reserved.
+
+Permission is granted to individual users, teachers, schools, and other educational users to access and use an unmodified copy of ALT Class Scheduler free of charge for personal, classroom, and non-commercial educational purposes.
+
+You may share links to the official hosted version of ALT Class Scheduler.
+
+Without prior written permission from the copyright holder, you may not:
+
+1. Sell, license, rent, monetize, or otherwise use the software commercially.
+2. Incorporate the software or its source code into another product, application, website, service, or commercial offering.
+3. Redistribute, republish, mirror, or host copies of the software or its source code for distribution to others.
+4. Distribute modified, adapted, translated, rebranded, or derivative versions of the software.
+5. Remove, obscure, or alter copyright, attribution, or terms-of-use notices.
+6. Represent the software, its source code, or a derivative work as your own original creation.
+
+Permission to modify, redistribute, integrate, or otherwise use the software outside the permissions above may be granted separately in writing by the copyright holder.
+
+THE SOFTWARE IS PROVIDED “AS IS,” WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. USE OF THE SOFTWARE IS AT THE USER’S OWN RISK.
