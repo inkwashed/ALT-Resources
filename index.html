@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALT Class Scheduler</title>
+    <style>
+        :root {
+            --blue: #1a73e8;
+            --blue-soft: #e8f0fe;
+            --blue-border: #aecbfa;
+            --text: #333;
+            --muted: #5f6368;
+            --line: #dadce0;
+            --bg: #f4f6f9;
+            --panel: #f8f9fa;
+            --danger: #d93025;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 520px;
+            width: 100%;
+        }
+
+        h2 {
+            margin: 0 0 20px;
+            color: var(--blue);
+            font-size: 20px;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 14px;
+            margin: 18px 0 10px;
+            color: var(--muted);
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        select,
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            font-size: 15px;
+            background: #fff;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 62px;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .schedule-nav {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .schedule-nav-btn {
+            flex: 1;
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-border);
+            color: #1967d2;
+            padding: 9px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .schedule-nav-btn:hover:not(:disabled) { background: #d2e3fc; }
+        .schedule-nav-btn:disabled { opacity: 0.45; cursor: default; }
+
+        .day-fast-select {
+            display: flex;
+            gap: 6px;
+            margin-top: 7px;
+            flex-wrap: wrap;
+        }
+
+        .day-btn {
+            flex: 1;
+            min-width: 105px;
+            background: #f1f3f4;
+            border: 1px solid var(--line);
+            padding: 7px 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .day-btn:hover { background: #e8eaed; }
+
+        .helper-text,
+        .backup-note {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #80868b;
+            line-height: 1.45;
+        }
+
+        .grid-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--muted);
+            margin: 15px 0 10px;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+        }
+
+        .slot-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .slot-btn {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .slot-btn:hover {
+            background: var(--blue-soft);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .slot-name {
+            font-weight: bold;
+            font-size: 13px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .slot-time {
+            font-size: 11px;
+            color: #70757a;
+        }
+
+        .lunch-wrap {
+            margin-top: 10px;
+        }
+
+        .lunch-btn {
+            width: 100%;
+            text-align: center;
+            background: #fff8e1;
+            border: 1px solid #f5d67b;
+        }
+
+        .lunch-btn:hover {
+            background: #fff3c4;
+            border-color: #e0b83f;
+            color: #8a5d00;
+        }
+
+        .keyboard-hint {
+            text-align: center;
+            margin-top: 9px;
+            font-size: 11px;
+            color: #9aa0a6;
+        }
+
+        .settings-title {
+            margin-top: 22px;
+            border-top: 1px solid #eee;
+            padding-top: 14px;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .settings-body {
+            margin-top: 10px;
+        }
+
+        details.settings-panel {
+            margin-bottom: 9px;
+            background: var(--panel);
+            border: 1px solid #e3e6ea;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        details.settings-panel > summary {
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+            user-select: none;
+            padding: 11px 12px;
+            background: #fff;
+        }
+
+        details.settings-panel[open] > summary {
+            border-bottom: 1px solid #e3e6ea;
+        }
+
+        .settings-section {
+            padding: 12px;
+        }
+
+        .row {
+            display: flex;
+            gap: 7px;
+            align-items: end;
+        }
+
+        .row > * { flex: 1; }
+
+        .settings-buttons {
+            display: flex;
+            gap: 7px;
+            margin-top: 7px;
+            flex-wrap: wrap;
+        }
+
+        .settings-btn {
+            flex: 1;
+            min-width: 110px;
+            border: 1px solid var(--line);
+            background: white;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .settings-btn:hover { background: #f1f3f4; }
+        .danger-btn { color: var(--danger); }
+
+        .saved-dates-header {
+            display: grid;
+            grid-template-columns: 38px 1fr 38px;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .saved-dates-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .schedule-month-label {
+            font-size: 12px;
+            color: var(--text);
+            margin-top: 2px;
+        }
+
+        .month-nav-btn {
+            width: 38px;
+            height: 34px;
+            border: 1px solid var(--line);
+            background: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--blue);
+        }
+
+        .month-nav-btn:hover { background: #f1f3f4; }
+
+        .schedule-date-list,
+        .class-list {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .schedule-date-row,
+        .class-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 5px;
+            padding: 7px 8px;
+            font-size: 13px;
+        }
+
+        .remove-btn {
+            border: none;
+            background: transparent;
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            width: auto;
+            flex: 0 0 auto;
+        }
+
+        .empty-state {
+            color: #80868b;
+            font-size: 12px;
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        .period-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .period-table th,
+        .period-table td {
+            padding: 5px 3px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .period-table th {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .period-table input[type="time"] {
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .period-table input[type="number"] {
+            padding: 6px;
+            font-size: 12px;
+            min-width: 62px;
+        }
+
+        .switch-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+
+        .switch-row label {
+            margin: 0;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .school-name-editor {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 7px;
+        }
+
+        .status-note {
+            margin-top: 6px;
+            font-size: 11px;
+            color: #5f6368;
+        }
+
+        .storage-warning {
+            margin: 10px 0 14px;
+            padding: 10px 12px;
+            background: #fff8e1;
+            border: 1px solid #f5d67b;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #6f5200;
+        }
+
+        .storage-warning strong {
+            color: #8a5d00;
+        }
+
+        .version-tag {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 11px;
+            color: #9aa0a6;
+            letter-spacing: 0.2px;
+        }
+
+        .irregular-main {
+            display: none;
+            background: #fff4e5;
+            border: 1px solid #f2c46d;
+            border-radius: 6px;
+            padding: 9px 10px;
+            margin-bottom: 15px;
+        }
+
+        .irregular-main.visible {
+            display: block;
+        }
+
+        .irregular-main .switch-row {
+            margin: 0;
+        }
+
+        .irregular-note {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #7a5a16;
+        }
+
+        @media (max-width: 430px) {
+            .container { padding: 18px; }
+            .period-table { font-size: 11px; }
+            .period-table input[type="time"],
+            .period-table input[type="number"] { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>ALT Class Scheduler</h2>
+
+    <div class="form-group">
+        <label for="schoolSelect">Select School</label>
+        <select id="schoolSelect"></select>
+    </div>
+
+    <div class="form-group">
+        <label for="eventDate">Target Date</label>
+        <input type="date" id="eventDate">
+
+        <div class="schedule-nav">
+            <button type="button" id="previousSchoolDayBtn" class="schedule-nav-btn">← Previous</button>
+            <button type="button" id="nextSchoolDayBtn" class="schedule-nav-btn">Next →</button>
+        </div>
+
+        <div id="dayJumpersContainer" class="day-fast-select"></div>
+
+        <div class="helper-text">
+            Navigation uses the saved schedule for the selected school.
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="classSelect">Select Class</label>
+        <select id="classSelect"></select>
+    </div>
+
+    <div id="irregularMainWrap" class="irregular-main">
+        <div class="switch-row">
+            <input type="checkbox" id="useIrregularSchedule">
+            <label for="useIrregularSchedule">Use irregular period schedule</label>
+        </div>
+        <div class="irregular-note">
+            Use this for opening weeks, special schedules, shortened days, or other alternate bell times.
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="eventNotes">Lesson / Note (optional)</label>
+        <textarea id="eventNotes" placeholder="e.g. Unit 4 Lesson 2, worksheet, activity..."></textarea>
+    </div>
+
+    <div class="grid-title">Click a period to open Google Calendar:</div>
+    <div id="slotGridContainer" class="slot-grid"></div>
+
+    <div id="lunchContainer" class="lunch-wrap"></div>
+
+    <div class="keyboard-hint">
+        Keyboard shortcut: press 1–6 to select a period
+    </div>
+
+    <div class="settings-title">⚙ Settings</div>
+
+    <div class="storage-warning">
+        <strong>CAUTION:</strong>
+        Your schools, schedules, and settings are saved only in this browser/profile.
+        They are not synced through your Google account. Export a backup periodically
+        if you want to preserve your data or move it to another device or browser.
+    </div>
+
+    <div class="settings-body">
+
+        <!-- SCHEDULE -->
+        <details class="settings-panel" open>
+            <summary>📅 Schedule</summary>
+
+            <div class="settings-section">
+                <div class="form-group">
+                    <label for="settingsScheduleSchoolSelect">Edit Schedule For</label>
+                    <select id="settingsScheduleSchoolSelect"></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="newScheduleDate">Add Date</label>
+                    <input type="date" id="newScheduleDate">
+
+                    <div class="settings-buttons">
+                        <button type="button" id="addScheduleDateBtn" class="settings-btn">+ Add Date</button>
+                    </div>
+                </div>
+
+                <div class="saved-dates-header">
+                    <button type="button" id="previousScheduleMonthBtn" class="month-nav-btn" title="Previous month">←</button>
+                    <div>
+                        <div class="saved-dates-title">Saved Dates</div>
+                        <div id="scheduleMonthLabel" class="schedule-month-label"></div>
+                    </div>
+                    <button type="button" id="nextScheduleMonthBtn" class="month-nav-btn" title="Next month">→</button>
+                </div>
+
+                <div id="scheduleDateList" class="schedule-date-list"></div>
+                <div id="scheduleDateCount" class="backup-note"></div>
+            </div>
+        </details>
+
+        <!-- SCHOOLS -->
+        <details class="settings-panel">
+            <summary>🏫 Schools & Bell Times</summary>
+
+            <div class="settings-section">
+                <div class="form-group">
+                    <label for="settingsSchoolSelect">Edit School</label>
+                    <select id="settingsSchoolSelect"></select>
+                </div>
+
+                <div class="settings-buttons">
+                    <button type="button" id="addSchoolBtn" class="settings-btn">＋ Add School</button>
+                    <button type="button" id="deleteSchoolBtn" class="settings-btn danger-btn">− Delete School</button>
+                </div>
+
+                <div id="schoolEditor"></div>
+            </div>
+        </details>
+
+        <!-- BACKUP -->
+        <details class="settings-panel">
+            <summary>💾 Backup</summary>
+
+            <div class="settings-section">
+                <div class="settings-buttons">
+                    <button type="button" id="exportBackupBtn" class="settings-btn">Export Backup</button>
+                    <button type="button" id="importBackupBtn" class="settings-btn">Import Backup</button>
+                </div>
+
+                <input
+                    type="file"
+                    id="importBackupFile"
+                    accept=".json,application/json"
+                    style="display:none;">
+
+                <div class="settings-buttons">
+                    <button type="button" id="restoreDefaultsBtn" class="settings-btn danger-btn">Restore Factory Defaults</button>
+                </div>
+
+                <div class="backup-note">
+                    Version 3 backups include schools, locations, classes, regular and irregular bell times, lunch settings, schedule dates, and preferences.
+                    Version 1 and Version 2 backups can also be imported.
+                </div>
+            </div>
+        </details>
+
+    </div>
+
+    <div class="version-tag">ALT Class Scheduler · Version 3</div>
+
+    <!--
+        IMPORTANT:
+        Keep this as a native GET form.
+        This is the known-working managed-Chrome workaround.
+    -->
+    <form
+        id="gcalForm"
+        action="https://calendar.google.com/calendar/u/0/r/eventedit"
+        method="GET"
+        target="_blank">
+
+        <input type="hidden" name="action" value="TEMPLATE">
+        <input type="hidden" name="text" id="formText">
+        <input type="hidden" name="dates" id="formDates">
+        <input type="hidden" name="details" id="formDetails">
+        <input type="hidden" name="location" id="formLocation">
+        <input type="hidden" name="stz" value="Asia/Tokyo">
+        <input type="hidden" name="etz" value="Asia/Tokyo">
+    </form>
+</div>
+
+<script>
+    const APP_VERSION = 3;
+    const STORAGE_KEY_V3 = "classAutomatorData_v3";
+    const OLD_STATE_KEY_V2 = "classAutomatorData_v2";
+    const OLD_SCHEDULE_KEY_V1 = "classAutomatorSchedule_v1";
+
+    function makeId(prefix = "school") {
+        return prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+    }
+
+    const DEFAULT_STATE = {
+        version: APP_VERSION,
+
+        schools: [
+            {
+                id: "school1",
+                name: "AA Elementary School",
+                location: "",
+                classes: ["４−１", "４−２", "４−３", "６−１", "６−２", "６−３"],
+                periods: [
+                    { number: 1, start: "08:15", duration: 45 },
+                    { number: 2, start: "09:10", duration: 45 },
+                    { number: 3, start: "10:25", duration: 45 },
+                    { number: 4, start: "11:20", duration: 45 },
+                    { number: 5, start: "13:30", duration: 45 },
+                    { number: 6, start: "14:25", duration: 45 }
+                ],
+                irregular: {
+                    enabled: false,
+                    periods: [
+                        { number: 1, start: "08:15", duration: 45 },
+                        { number: 2, start: "09:10", duration: 45 },
+                        { number: 3, start: "10:25", duration: 45 },
+                        { number: 4, start: "11:20", duration: 45 },
+                        { number: 5, start: "13:30", duration: 45 },
+                        { number: 6, start: "14:25", duration: 45 }
+                    ]
+                },
+                lunch: {
+                    enabled: true,
+                    mode: "class",
+                    start: "12:10",
+                    duration: 45,
+                    generalTitle: "給食"
+                }
+            },
+            {
+                id: "school2",
+                name: "BB Elementary School",
+                location: "",
+                classes: ["３−１", "３−２", "４−１", "４−２", "５−１", "５−２", "６−１", "６−２"],
+                periods: [
+                    { number: 1, start: "08:20", duration: 45 },
+                    { number: 2, start: "09:15", duration: 45 },
+                    { number: 3, start: "10:30", duration: 45 },
+                    { number: 4, start: "11:25", duration: 45 },
+                    { number: 5, start: "13:30", duration: 45 },
+                    { number: 6, start: "14:20", duration: 45 }
+                ],
+                irregular: {
+                    enabled: false,
+                    periods: [
+                        { number: 1, start: "08:20", duration: 45 },
+                        { number: 2, start: "09:15", duration: 45 },
+                        { number: 3, start: "10:30", duration: 45 },
+                        { number: 4, start: "11:25", duration: 45 },
+                        { number: 5, start: "13:30", duration: 45 },
+                        { number: 6, start: "14:20", duration: 45 }
+                    ]
+                },
+                lunch: {
+                    enabled: true,
+                    mode: "class",
+                    start: "12:10",
+                    duration: 45,
+                    generalTitle: "給食"
+                }
+            },
+            {
+                id: "school3",
+                name: "CC Junior High School",
+                location: "",
+                classes: ["1-1", "1-2", "2-1", "2-2", "3-1", "3-2"],
+                periods: [
+                    { number: 1, start: "08:30", duration: 50 },
+                    { number: 2, start: "09:30", duration: 50 },
+                    { number: 3, start: "10:40", duration: 50 },
+                    { number: 4, start: "11:40", duration: 50 },
+                    { number: 5, start: "13:30", duration: 50 },
+                    { number: 6, start: "14:30", duration: 50 }
+                ],
+                irregular: {
+                    enabled: false,
+                    periods: [
+                        { number: 1, start: "08:30", duration: 50 },
+                        { number: 2, start: "09:30", duration: 50 },
+                        { number: 3, start: "10:40", duration: 50 },
+                        { number: 4, start: "11:40", duration: 50 },
+                        { number: 5, start: "13:30", duration: 50 },
+                        { number: 6, start: "14:30", duration: 50 }
+                    ]
+                },
+                lunch: {
+                    enabled: false,
+                    mode: "general",
+                    start: "12:30",
+                    duration: 45,
+                    generalTitle: "Lunch"
+                }
+            }
+        ],
+
+        schedule: {
+            school1: [
+                "2026-08-25",
+                "2026-09-01",
+                "2026-09-04",
+                "2026-09-11",
+                "2026-09-15",
+                "2026-09-18",
+                "2026-09-29"
+            ],
+            school2: [
+                "2026-08-26",
+                "2026-08-28",
+                "2026-09-03",
+                "2026-09-09",
+                "2026-09-10",
+                "2026-09-14",
+                "2026-09-17",
+                "2026-09-24",
+                "2026-09-28"
+            ],
+            school3: [
+                "2026-08-24",
+                "2026-08-28"
+            ]
+        },
+
+        preferences: {
+            selectedSchoolId: "school1",
+            selectedClassBySchool: {}
+        }
+    };
+
+    function deepClone(value) {
+        return JSON.parse(JSON.stringify(value));
+    }
+
+    function storageGet(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function storageSet(key, value) {
+        try {
+            localStorage.setItem(key, value);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function storageRemove(key) {
+        try {
+            localStorage.removeItem(key);
+        } catch (error) {
+            // Ignore managed-browser restrictions.
+        }
+    }
+
+    function formatLocalDate(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + d;
+    }
+
+    function parseLocalDate(dateString) {
+        const [y, m, d] = dateString.split("-").map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    function isValidDateString(value) {
+        if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+        return formatLocalDate(parseLocalDate(value)) === value;
+    }
+
+    function formatFriendlyDate(dateString) {
+        const date = parseLocalDate(dateString);
+        const jp = ["日", "月", "火", "水", "木", "金", "土"];
+        const en = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const i = date.getDay();
+
+        return (
+            (date.getMonth() + 1) +
+            "/" +
+            date.getDate() +
+            " (" +
+            jp[i] +
+            " " +
+            en[i] +
+            ")"
+        );
+    }
+
+    function monthKeyFromDateString(dateString) {
+        return dateString.slice(0, 7);
+    }
+
+    function shiftMonthKey(monthKey, amount) {
+        const [year, month] = monthKey.split("-").map(Number);
+        const date = new Date(year, month - 1 + amount, 1);
+        return (
+            date.getFullYear() +
+            "-" +
+            String(date.getMonth() + 1).padStart(2, "0")
+        );
+    }
+
+    function formatMonthLabel(monthKey) {
+        const [year, month] = monthKey.split("-").map(Number);
+        const names = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        return names[month - 1] + " " + year;
+    }
+
+    function addMinutesToTime(timeString, minutes) {
+        const [hours, mins] = timeString.split(":").map(Number);
+        let total = hours * 60 + mins + Number(minutes || 0);
+        total = ((total % 1440) + 1440) % 1440;
+        const h = String(Math.floor(total / 60)).padStart(2, "0");
+        const m = String(total % 60).padStart(2, "0");
+        return h + ":" + m;
+    }
+
+    function compactTime(timeString) {
+        return timeString.replace(":", "") + "00";
+    }
+
+    function normalizeState(raw) {
+        const base = deepClone(DEFAULT_STATE);
+
+        if (!raw || typeof raw !== "object") return base;
+
+        if (Array.isArray(raw.schools) && raw.schools.length > 0) {
+            base.schools = raw.schools.map((school, index) => {
+                const fallback = DEFAULT_STATE.schools[index] || DEFAULT_STATE.schools[0];
+
+                const periods = Array.from({ length: 6 }, (_, i) => {
+                    const p = Array.isArray(school.periods) ? school.periods[i] : null;
+                    const fp = fallback.periods[i] || { number: i + 1, start: "08:00", duration: 45 };
+
+                    return {
+                        number: i + 1,
+                        start: (p && /^\d{2}:\d{2}$/.test(p.start)) ? p.start : fp.start,
+                        duration: (p && Number(p.duration) > 0) ? Number(p.duration) : fp.duration
+                    };
+                });
+
+                const irregularPeriods = Array.from({ length: 6 }, (_, i) => {
+                    const p =
+                        school.irregular &&
+                        Array.isArray(school.irregular.periods)
+                            ? school.irregular.periods[i]
+                            : null;
+
+                    const regular = periods[i];
+
+                    return {
+                        number: i + 1,
+                        start: (p && /^\d{2}:\d{2}$/.test(p.start))
+                            ? p.start
+                            : regular.start,
+                        duration: (p && Number(p.duration) > 0)
+                            ? Number(p.duration)
+                            : regular.duration
+                    };
+                });
+
+                return {
+                    id: String(school.id || makeId("school")),
+                    name: String(school.name || "School " + (index + 1)),
+                    location: school.location ? String(school.location) : "",
+                    classes: Array.isArray(school.classes)
+                        ? school.classes.map(String).filter(Boolean)
+                        : [],
+                    periods,
+                    irregular: {
+                        enabled: !!(school.irregular && school.irregular.enabled),
+                        periods: irregularPeriods
+                    },
+                    lunch: {
+                        enabled: !!(school.lunch && school.lunch.enabled),
+                        mode: school.lunch && school.lunch.mode === "class" ? "class" : "general",
+                        start: school.lunch && /^\d{2}:\d{2}$/.test(school.lunch.start)
+                            ? school.lunch.start
+                            : "12:00",
+                        duration: school.lunch && Number(school.lunch.duration) > 0
+                            ? Number(school.lunch.duration)
+                            : 45,
+                        generalTitle: school.lunch && school.lunch.generalTitle
+                            ? String(school.lunch.generalTitle)
+                            : "給食"
+                    }
+                };
+            });
+        }
+
+        base.schedule = {};
+        base.schools.forEach(school => {
+            const sourceDates =
+                raw.schedule && Array.isArray(raw.schedule[school.id])
+                    ? raw.schedule[school.id]
+                    : [];
+
+            base.schedule[school.id] = [
+                ...new Set(sourceDates.filter(isValidDateString))
+            ].sort();
+        });
+
+        if (raw.preferences && typeof raw.preferences === "object") {
+            base.preferences.selectedSchoolId =
+                raw.preferences.selectedSchoolId &&
+                base.schools.some(s => s.id === raw.preferences.selectedSchoolId)
+                    ? raw.preferences.selectedSchoolId
+                    : base.schools[0].id;
+
+            base.preferences.selectedClassBySchool =
+                raw.preferences.selectedClassBySchool &&
+                typeof raw.preferences.selectedClassBySchool === "object"
+                    ? raw.preferences.selectedClassBySchool
+                    : {};
+        }
+
+        return base;
+    }
+
+    function migrateOldLocalSchedule(state) {
+        const oldRaw = storageGet(OLD_SCHEDULE_KEY_V1);
+        if (!oldRaw) return state;
+
+        try {
+            const oldSchedule = JSON.parse(oldRaw);
+            const nameMap = {
+                "AA Elementary School": "school1",
+                "BB Elementary School": "school2",
+                "CC Junior High School": "school3"
+            };
+
+            Object.entries(nameMap).forEach(([oldKey, newId]) => {
+                if (Array.isArray(oldSchedule[oldKey])) {
+                    state.schedule[newId] = [
+                        ...new Set(oldSchedule[oldKey].filter(isValidDateString))
+                    ].sort();
+                }
+            });
+
+            storageRemove(OLD_SCHEDULE_KEY_V1);
+        } catch (error) {
+            // Ignore malformed legacy storage.
+        }
+
+        return state;
+    }
+
+    function loadState() {
+        const savedV3 = storageGet(STORAGE_KEY_V3);
+
+        if (savedV3) {
+            try {
+                return normalizeState(JSON.parse(savedV3));
+            } catch (error) {
+                // Fall through.
+            }
+        }
+
+        const savedV2 = storageGet(OLD_STATE_KEY_V2);
+
+        if (savedV2) {
+            try {
+                const upgraded = normalizeState(JSON.parse(savedV2));
+                storageSet(STORAGE_KEY_V3, JSON.stringify(upgraded));
+                return upgraded;
+            } catch (error) {
+                // Fall through.
+            }
+        }
+
+        const migrated = migrateOldLocalSchedule(deepClone(DEFAULT_STATE));
+        storageSet(STORAGE_KEY_V3, JSON.stringify(migrated));
+        return migrated;
+    }
+
+    let appState = loadState();
+
+    function saveState() {
+        storageSet(STORAGE_KEY_V3, JSON.stringify(appState));
+    }
+
+    function getSchoolById(id) {
+        return appState.schools.find(s => s.id === id) || null;
+    }
+
+    function currentSchool() {
+        return getSchoolById(document.getElementById("schoolSelect").value);
+    }
+
+    const schoolSelect = document.getElementById("schoolSelect");
+    const classSelect = document.getElementById("classSelect");
+    const eventDate = document.getElementById("eventDate");
+    const irregularMainWrap = document.getElementById("irregularMainWrap");
+    const useIrregularSchedule = document.getElementById("useIrregularSchedule");
+    const settingsScheduleSchoolSelect = document.getElementById("settingsScheduleSchoolSelect");
+    const settingsSchoolSelect = document.getElementById("settingsSchoolSelect");
+
+    let scheduleEditorMonth = monthKeyFromDateString(formatLocalDate(new Date()));
+
+    eventDate.value = formatLocalDate(new Date());
+    document.getElementById("newScheduleDate").value = formatLocalDate(new Date());
+
+    function populateSchoolSelect(selectElement, selectedId) {
+        selectElement.replaceChildren();
+
+        appState.schools.forEach(school => {
+            const option = document.createElement("option");
+            option.value = school.id;
+            option.textContent = school.name;
+            selectElement.appendChild(option);
+        });
+
+        if (selectedId && appState.schools.some(s => s.id === selectedId)) {
+            selectElement.value = selectedId;
+        }
+    }
+
+    function refreshAllSchoolSelects() {
+        const mainSelected =
+            appState.schools.some(s => s.id === appState.preferences.selectedSchoolId)
+                ? appState.preferences.selectedSchoolId
+                : appState.schools[0].id;
+
+        const scheduleSelected =
+            appState.schools.some(s => s.id === settingsScheduleSchoolSelect.value)
+                ? settingsScheduleSchoolSelect.value
+                : mainSelected;
+
+        const editorSelected =
+            appState.schools.some(s => s.id === settingsSchoolSelect.value)
+                ? settingsSchoolSelect.value
+                : mainSelected;
+
+        populateSchoolSelect(schoolSelect, mainSelected);
+        populateSchoolSelect(settingsScheduleSchoolSelect, scheduleSelected);
+        populateSchoolSelect(settingsSchoolSelect, editorSelected);
+    }
+
+    function handleMainSchoolChange() {
+        const school = currentSchool();
+        if (!school) return;
+
+        appState.preferences.selectedSchoolId = school.id;
+        saveState();
+
+        classSelect.replaceChildren();
+
+        school.classes.forEach(className => {
+            const option = document.createElement("option");
+            option.value = className;
+            option.textContent = className;
+            classSelect.appendChild(option);
+        });
+
+        const remembered = appState.preferences.selectedClassBySchool[school.id];
+
+        if (remembered && school.classes.includes(remembered)) {
+            classSelect.value = remembered;
+        } else if (school.classes.length > 0) {
+            classSelect.value = school.classes[0];
+            appState.preferences.selectedClassBySchool[school.id] = school.classes[0];
+            saveState();
+        }
+
+        useIrregularSchedule.checked = false;
+        updateIrregularToggle();
+        buildPeriodButtons();
+        buildLunchButton();
+        updateScheduleNavigation();
+    }
+
+    function rememberCurrentClass() {
+        const school = currentSchool();
+        if (!school || !classSelect.value) return;
+        appState.preferences.selectedClassBySchool[school.id] = classSelect.value;
+        saveState();
+    }
+
+    function updateIrregularToggle() {
+        const school = currentSchool();
+        const available = !!(school && school.irregular && school.irregular.enabled);
+
+        irregularMainWrap.classList.toggle("visible", available);
+
+        if (!available) {
+            useIrregularSchedule.checked = false;
+        }
+    }
+
+    function getActivePeriods() {
+        const school = currentSchool();
+        if (!school) return [];
+
+        if (
+            school.irregular &&
+            school.irregular.enabled &&
+            useIrregularSchedule.checked
+        ) {
+            return school.irregular.periods;
+        }
+
+        return school.periods;
+    }
+
+    function buildPeriodButtons() {
+        const school = currentSchool();
+        const container = document.getElementById("slotGridContainer");
+        container.replaceChildren();
+
+        if (!school) return;
+
+        getActivePeriods().forEach(period => {
+            const end = addMinutesToTime(period.start, period.duration);
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "slot-btn";
+
+            const name = document.createElement("span");
+            name.className = "slot-name";
+            name.textContent = "Period " + period.number;
+
+            const time = document.createElement("span");
+            time.className = "slot-time";
+            time.textContent = period.start + " - " + end;
+
+            button.appendChild(name);
+            button.appendChild(time);
+
+            button.addEventListener("click", () => {
+                submitPeriodToGoogleCalendar(period);
+            });
+
+            container.appendChild(button);
+        });
+    }
+
+    function buildLunchButton() {
+        const school = currentSchool();
+        const container = document.getElementById("lunchContainer");
+        container.replaceChildren();
+
+        if (!school || !school.lunch.enabled) return;
+
+        const end = addMinutesToTime(school.lunch.start, school.lunch.duration);
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "slot-btn lunch-btn";
+
+        const name = document.createElement("span");
+        name.className = "slot-name";
+        name.textContent = "給食 / Lunch";
+
+        const time = document.createElement("span");
+        time.className = "slot-time";
+        time.textContent = school.lunch.start + " - " + end;
+
+        button.appendChild(name);
+        button.appendChild(time);
+        button.addEventListener("click", submitLunchToGoogleCalendar);
+
+        container.appendChild(button);
+    }
+
+    function sortedScheduleDates(schoolId) {
+        return [...(appState.schedule[schoolId] || [])].sort();
+    }
+
+    function getPreviousAndNextDates() {
+        const school = currentSchool();
+        if (!school || !eventDate.value) return { previous: null, next: null };
+
+        const selected = eventDate.value;
+        const dates = sortedScheduleDates(school.id);
+
+        let previous = null;
+        let next = null;
+
+        for (const date of dates) {
+            if (date < selected) previous = date;
+            if (date > selected && next === null) next = date;
+        }
+
+        return { previous, next };
+    }
+
+    function updateScheduleNavigation() {
+        const school = currentSchool();
+        const previousButton = document.getElementById("previousSchoolDayBtn");
+        const nextButton = document.getElementById("nextSchoolDayBtn");
+        const quickContainer = document.getElementById("dayJumpersContainer");
+
+        quickContainer.replaceChildren();
+
+        if (!school || !eventDate.value) {
+            previousButton.disabled = true;
+            nextButton.disabled = true;
+            return;
+        }
+
+        const nearby = getPreviousAndNextDates();
+
+        if (nearby.previous) {
+            previousButton.disabled = false;
+            previousButton.textContent = "← " + formatFriendlyDate(nearby.previous);
+        } else {
+            previousButton.disabled = true;
+            previousButton.textContent = "← Previous";
+        }
+
+        if (nearby.next) {
+            nextButton.disabled = false;
+            nextButton.textContent = formatFriendlyDate(nearby.next) + " →";
+        } else {
+            nextButton.disabled = true;
+            nextButton.textContent = "Next →";
+        }
+
+        const upcoming = sortedScheduleDates(school.id)
+            .filter(date => date > eventDate.value)
+            .slice(0, 3);
+
+        upcoming.forEach(dateString => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "day-btn";
+            button.textContent = formatFriendlyDate(dateString);
+
+            button.addEventListener("click", () => {
+                eventDate.value = dateString;
+                updateScheduleNavigation();
+            });
+
+            quickContainer.appendChild(button);
+        });
+    }
+
+    function jumpToPreviousScheduledDay() {
+        const { previous } = getPreviousAndNextDates();
+        if (!previous) return;
+        eventDate.value = previous;
+        updateScheduleNavigation();
+    }
+
+    function jumpToNextScheduledDay() {
+        const { next } = getPreviousAndNextDates();
+        if (!next) return;
+        eventDate.value = next;
+        updateScheduleNavigation();
+    }
+
+    function renderScheduleSettings() {
+        const schoolId = settingsScheduleSchoolSelect.value;
+        const list = document.getElementById("scheduleDateList");
+        const monthLabel = document.getElementById("scheduleMonthLabel");
+        const countLabel = document.getElementById("scheduleDateCount");
+        list.replaceChildren();
+
+        const allDates = sortedScheduleDates(schoolId);
+        const dates = allDates.filter(date => monthKeyFromDateString(date) === scheduleEditorMonth);
+
+        monthLabel.textContent = formatMonthLabel(scheduleEditorMonth);
+        countLabel.textContent =
+            dates.length +
+            (dates.length === 1 ? " date this month • " : " dates this month • ") +
+            allDates.length +
+            (allDates.length === 1 ? " total saved date" : " total saved dates");
+
+        if (dates.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+            empty.textContent = "No saved dates in this month.";
+            list.appendChild(empty);
+            return;
+        }
+
+        dates.forEach(dateString => {
+            const row = document.createElement("div");
+            row.className = "schedule-date-row";
+
+            const label = document.createElement("span");
+            label.textContent = formatFriendlyDate(dateString);
+
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "remove-btn";
+            remove.textContent = "×";
+            remove.title = "Remove date";
+
+            remove.addEventListener("click", () => {
+                appState.schedule[schoolId] =
+                    (appState.schedule[schoolId] || []).filter(d => d !== dateString);
+
+                saveState();
+                renderScheduleSettings();
+                updateScheduleNavigation();
+            });
+
+            row.appendChild(label);
+            row.appendChild(remove);
+            list.appendChild(row);
+        });
+    }
+
+    function addScheduleDate() {
+        const schoolId = settingsScheduleSchoolSelect.value;
+        const input = document.getElementById("newScheduleDate");
+        const date = input.value;
+
+        if (!date) {
+            alert("Please choose a date.");
+            return;
+        }
+
+        if (!appState.schedule[schoolId]) appState.schedule[schoolId] = [];
+
+        if (!appState.schedule[schoolId].includes(date)) {
+            appState.schedule[schoolId].push(date);
+            appState.schedule[schoolId].sort();
+            saveState();
+        }
+
+        // Keep the last-added date selected and show its month.
+        scheduleEditorMonth = monthKeyFromDateString(date);
+
+        renderScheduleSettings();
+        updateScheduleNavigation();
+    }
+
+    function changeScheduleEditorMonth(amount) {
+        scheduleEditorMonth = shiftMonthKey(scheduleEditorMonth, amount);
+        renderScheduleSettings();
+    }
+
+    function renderSchoolEditor() {
+        const schoolId = settingsSchoolSelect.value;
+        const school = getSchoolById(schoolId);
+        const editor = document.getElementById("schoolEditor");
+        editor.replaceChildren();
+
+        if (!school) return;
+
+        const nameGroup = document.createElement("div");
+        nameGroup.className = "form-group school-name-editor";
+
+        const nameLabel = document.createElement("label");
+        nameLabel.textContent = "School Name";
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = school.name;
+
+        nameInput.addEventListener("change", () => {
+            const trimmed = nameInput.value.trim();
+            if (!trimmed) {
+                nameInput.value = school.name;
+                return;
+            }
+
+            school.name = trimmed;
+            saveState();
+            refreshAllSchoolSelects();
+            settingsSchoolSelect.value = school.id;
+            settingsScheduleSchoolSelect.value =
+                appState.schools.some(s => s.id === settingsScheduleSchoolSelect.value)
+                    ? settingsScheduleSchoolSelect.value
+                    : school.id;
+        });
+
+        nameGroup.appendChild(nameLabel);
+        nameGroup.appendChild(nameInput);
+        editor.appendChild(nameGroup);
+
+        const locationGroup = document.createElement("div");
+        locationGroup.className = "form-group";
+
+        const locationLabel = document.createElement("label");
+        locationLabel.textContent = "School Location (optional)";
+
+        const locationInput = document.createElement("input");
+        locationInput.type = "text";
+        locationInput.value = school.location || "";
+        locationInput.placeholder = "Address, school name, or map-searchable location";
+
+        locationInput.addEventListener("change", () => {
+            school.location = locationInput.value.trim();
+            saveState();
+        });
+
+        locationGroup.appendChild(locationLabel);
+        locationGroup.appendChild(locationInput);
+        editor.appendChild(locationGroup);
+
+        const classesHeading = document.createElement("h3");
+        classesHeading.textContent = "Classes";
+        editor.appendChild(classesHeading);
+
+        const classList = document.createElement("div");
+        classList.className = "class-list";
+
+        if (school.classes.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+            empty.textContent = "No classes added yet.";
+            classList.appendChild(empty);
+        } else {
+            school.classes.forEach(className => {
+                const row = document.createElement("div");
+                row.className = "class-row";
+
+                const label = document.createElement("span");
+                label.textContent = className;
+
+                const remove = document.createElement("button");
+                remove.type = "button";
+                remove.className = "remove-btn";
+                remove.textContent = "×";
+                remove.title = "Remove class";
+
+                remove.addEventListener("click", () => {
+                    school.classes = school.classes.filter(c => c !== className);
+
+                    if (appState.preferences.selectedClassBySchool[school.id] === className) {
+                        delete appState.preferences.selectedClassBySchool[school.id];
+                    }
+
+                    saveState();
+                    renderSchoolEditor();
+
+                    if (schoolSelect.value === school.id) {
+                        handleMainSchoolChange();
+                    }
+                });
+
+                row.appendChild(label);
+                row.appendChild(remove);
+                classList.appendChild(row);
+            });
+        }
+
+        editor.appendChild(classList);
+
+        const addClassRow = document.createElement("div");
+        addClassRow.className = "row";
+        addClassRow.style.marginTop = "7px";
+
+        const newClassInput = document.createElement("input");
+        newClassInput.type = "text";
+        newClassInput.placeholder = "e.g. ４−１";
+
+        const addClassButton = document.createElement("button");
+        addClassButton.type = "button";
+        addClassButton.className = "settings-btn";
+        addClassButton.textContent = "+ Add Class";
+
+        addClassButton.addEventListener("click", () => {
+            const value = newClassInput.value.trim();
+            if (!value) return;
+
+            if (!school.classes.includes(value)) {
+                school.classes.push(value);
+                saveState();
+            }
+
+            newClassInput.value = "";
+            renderSchoolEditor();
+
+            if (schoolSelect.value === school.id) {
+                handleMainSchoolChange();
+            }
+        });
+
+        addClassRow.appendChild(newClassInput);
+        addClassRow.appendChild(addClassButton);
+        editor.appendChild(addClassRow);
+
+        const periodHeading = document.createElement("h3");
+        periodHeading.textContent = "Periods";
+        editor.appendChild(periodHeading);
+
+        const table = document.createElement("table");
+        table.className = "period-table";
+
+        const header = document.createElement("tr");
+        ["Period", "Start", "Duration"].forEach(text => {
+            const th = document.createElement("th");
+            th.textContent = text;
+            header.appendChild(th);
+        });
+        table.appendChild(header);
+
+        school.periods.forEach(period => {
+            const row = document.createElement("tr");
+
+            const numberCell = document.createElement("td");
+            numberCell.textContent = period.number;
+
+            const startCell = document.createElement("td");
+            const startInput = document.createElement("input");
+            startInput.type = "time";
+            startInput.value = period.start;
+
+            startInput.addEventListener("change", () => {
+                if (startInput.value) {
+                    period.start = startInput.value;
+                    saveState();
+
+                    if (schoolSelect.value === school.id) {
+                        buildPeriodButtons();
+                    }
+                }
+            });
+
+            startCell.appendChild(startInput);
+
+            const durationCell = document.createElement("td");
+            const durationInput = document.createElement("input");
+            durationInput.type = "number";
+            durationInput.min = "1";
+            durationInput.max = "180";
+            durationInput.step = "1";
+            durationInput.value = period.duration;
+
+            durationInput.addEventListener("change", () => {
+                const value = Number(durationInput.value);
+                if (value > 0) {
+                    period.duration = value;
+                    saveState();
+
+                    if (schoolSelect.value === school.id) {
+                        buildPeriodButtons();
+                    }
+                } else {
+                    durationInput.value = period.duration;
+                }
+            });
+
+            durationCell.appendChild(durationInput);
+
+            row.appendChild(numberCell);
+            row.appendChild(startCell);
+            row.appendChild(durationCell);
+            table.appendChild(row);
+        });
+
+        editor.appendChild(table);
+
+        const irregularHeading = document.createElement("h3");
+        irregularHeading.textContent = "Irregular Schedule";
+        editor.appendChild(irregularHeading);
+
+        const irregularEnabledRow = document.createElement("div");
+        irregularEnabledRow.className = "switch-row";
+
+        const irregularEnabledCheckbox = document.createElement("input");
+        irregularEnabledCheckbox.type = "checkbox";
+        irregularEnabledCheckbox.checked = !!school.irregular.enabled;
+        irregularEnabledCheckbox.id = "irregularEnabledEditor";
+
+        const irregularEnabledLabel = document.createElement("label");
+        irregularEnabledLabel.htmlFor = "irregularEnabledEditor";
+        irregularEnabledLabel.textContent = "Enable alternate period times";
+
+        irregularEnabledCheckbox.addEventListener("change", () => {
+            school.irregular.enabled = irregularEnabledCheckbox.checked;
+
+            if (
+                school.irregular.enabled &&
+                (!Array.isArray(school.irregular.periods) || school.irregular.periods.length !== 6)
+            ) {
+                school.irregular.periods = deepClone(school.periods);
+            }
+
+            saveState();
+            renderSchoolEditor();
+
+            if (schoolSelect.value === school.id) {
+                useIrregularSchedule.checked = false;
+                updateIrregularToggle();
+                buildPeriodButtons();
+            }
+        });
+
+        irregularEnabledRow.appendChild(irregularEnabledCheckbox);
+        irregularEnabledRow.appendChild(irregularEnabledLabel);
+        editor.appendChild(irregularEnabledRow);
+
+        if (school.irregular.enabled) {
+            const irregularNote = document.createElement("div");
+            irregularNote.className = "helper-text";
+            irregularNote.textContent =
+                "These six times appear when “Use irregular period schedule” is checked on the main scheduler.";
+            editor.appendChild(irregularNote);
+
+            const irregularTable = document.createElement("table");
+            irregularTable.className = "period-table";
+
+            const irregularHeader = document.createElement("tr");
+            ["Period", "Start", "Duration"].forEach(text => {
+                const th = document.createElement("th");
+                th.textContent = text;
+                irregularHeader.appendChild(th);
+            });
+            irregularTable.appendChild(irregularHeader);
+
+            school.irregular.periods.forEach(period => {
+                const row = document.createElement("tr");
+
+                const numberCell = document.createElement("td");
+                numberCell.textContent = period.number;
+
+                const startCell = document.createElement("td");
+                const startInput = document.createElement("input");
+                startInput.type = "time";
+                startInput.value = period.start;
+
+                startInput.addEventListener("change", () => {
+                    if (startInput.value) {
+                        period.start = startInput.value;
+                        saveState();
+
+                        if (
+                            schoolSelect.value === school.id &&
+                            useIrregularSchedule.checked
+                        ) {
+                            buildPeriodButtons();
+                        }
+                    }
+                });
+
+                startCell.appendChild(startInput);
+
+                const durationCell = document.createElement("td");
+                const durationInput = document.createElement("input");
+                durationInput.type = "number";
+                durationInput.min = "1";
+                durationInput.max = "180";
+                durationInput.step = "1";
+                durationInput.value = period.duration;
+
+                durationInput.addEventListener("change", () => {
+                    const value = Number(durationInput.value);
+
+                    if (value > 0) {
+                        period.duration = value;
+                        saveState();
+
+                        if (
+                            schoolSelect.value === school.id &&
+                            useIrregularSchedule.checked
+                        ) {
+                            buildPeriodButtons();
+                        }
+                    } else {
+                        durationInput.value = period.duration;
+                    }
+                });
+
+                durationCell.appendChild(durationInput);
+
+                row.appendChild(numberCell);
+                row.appendChild(startCell);
+                row.appendChild(durationCell);
+                irregularTable.appendChild(row);
+            });
+
+            editor.appendChild(irregularTable);
+        }
+
+        const lunchHeading = document.createElement("h3");
+        lunchHeading.textContent = "Lunch / 給食";
+        editor.appendChild(lunchHeading);
+
+        const enabledRow = document.createElement("div");
+        enabledRow.className = "switch-row";
+
+        const enabledCheckbox = document.createElement("input");
+        enabledCheckbox.type = "checkbox";
+        enabledCheckbox.checked = school.lunch.enabled;
+        enabledCheckbox.id = "lunchEnabledEditor";
+
+        const enabledLabel = document.createElement("label");
+        enabledLabel.htmlFor = "lunchEnabledEditor";
+        enabledLabel.textContent = "Enable lunch button";
+
+        enabledCheckbox.addEventListener("change", () => {
+            school.lunch.enabled = enabledCheckbox.checked;
+            saveState();
+            renderSchoolEditor();
+
+            if (schoolSelect.value === school.id) {
+                buildLunchButton();
+            }
+        });
+
+        enabledRow.appendChild(enabledCheckbox);
+        enabledRow.appendChild(enabledLabel);
+        editor.appendChild(enabledRow);
+
+        if (school.lunch.enabled) {
+            const modeGroup = document.createElement("div");
+            modeGroup.className = "form-group";
+
+            const modeLabel = document.createElement("label");
+            modeLabel.textContent = "Lunch Mode";
+
+            const modeSelect = document.createElement("select");
+
+            const classOption = document.createElement("option");
+            classOption.value = "class";
+            classOption.textContent = "Use selected class";
+
+            const generalOption = document.createElement("option");
+            generalOption.value = "general";
+            generalOption.textContent = "General lunch";
+
+            modeSelect.appendChild(classOption);
+            modeSelect.appendChild(generalOption);
+            modeSelect.value = school.lunch.mode;
+
+            modeSelect.addEventListener("change", () => {
+                school.lunch.mode = modeSelect.value;
+                saveState();
+                renderSchoolEditor();
+            });
+
+            modeGroup.appendChild(modeLabel);
+            modeGroup.appendChild(modeSelect);
+            editor.appendChild(modeGroup);
+
+            const lunchRow = document.createElement("div");
+            lunchRow.className = "row";
+
+            const startGroup = document.createElement("div");
+            const startLabel = document.createElement("label");
+            startLabel.textContent = "Start";
+            const startInput = document.createElement("input");
+            startInput.type = "time";
+            startInput.value = school.lunch.start;
+
+            startInput.addEventListener("change", () => {
+                if (startInput.value) {
+                    school.lunch.start = startInput.value;
+                    saveState();
+
+                    if (schoolSelect.value === school.id) {
+                        buildLunchButton();
+                    }
+                }
+            });
+
+            startGroup.appendChild(startLabel);
+            startGroup.appendChild(startInput);
+
+            const durationGroup = document.createElement("div");
+            const durationLabel = document.createElement("label");
+            durationLabel.textContent = "Duration";
+            const durationInput = document.createElement("input");
+            durationInput.type = "number";
+            durationInput.min = "1";
+            durationInput.max = "180";
+            durationInput.value = school.lunch.duration;
+
+            durationInput.addEventListener("change", () => {
+                const value = Number(durationInput.value);
+                if (value > 0) {
+                    school.lunch.duration = value;
+                    saveState();
+
+                    if (schoolSelect.value === school.id) {
+                        buildLunchButton();
+                    }
+                } else {
+                    durationInput.value = school.lunch.duration;
+                }
+            });
+
+            durationGroup.appendChild(durationLabel);
+            durationGroup.appendChild(durationInput);
+
+            lunchRow.appendChild(startGroup);
+            lunchRow.appendChild(durationGroup);
+            editor.appendChild(lunchRow);
+
+            if (school.lunch.mode === "general") {
+                const titleGroup = document.createElement("div");
+                titleGroup.className = "form-group";
+                titleGroup.style.marginTop = "8px";
+
+                const titleLabel = document.createElement("label");
+                titleLabel.textContent = "General Lunch Title";
+
+                const titleInput = document.createElement("input");
+                titleInput.type = "text";
+                titleInput.value = school.lunch.generalTitle;
+
+                titleInput.addEventListener("change", () => {
+                    school.lunch.generalTitle = titleInput.value.trim() || "Lunch";
+                    saveState();
+                });
+
+                titleGroup.appendChild(titleLabel);
+                titleGroup.appendChild(titleInput);
+                editor.appendChild(titleGroup);
+            }
+        }
+
+        const note = document.createElement("div");
+        note.className = "status-note";
+        note.textContent = "Changes save automatically to this browser.";
+        editor.appendChild(note);
+    }
+
+    function addSchool() {
+        const name = prompt("Enter the new school name:");
+        if (!name || !name.trim()) return;
+
+        const id = makeId("school");
+
+        const school = {
+            id,
+            name: name.trim(),
+            location: "",
+            classes: [],
+            periods: Array.from({ length: 6 }, (_, i) => ({
+                number: i + 1,
+                start: ["08:30", "09:30", "10:30", "11:30", "13:30", "14:30"][i],
+                duration: 45
+            })),
+            irregular: {
+                enabled: false,
+                periods: Array.from({ length: 6 }, (_, i) => ({
+                    number: i + 1,
+                    start: ["08:30", "09:30", "10:30", "11:30", "13:30", "14:30"][i],
+                    duration: 45
+                }))
+            },
+            lunch: {
+                enabled: false,
+                mode: "general",
+                start: "12:15",
+                duration: 45,
+                generalTitle: "Lunch"
+            }
+        };
+
+        appState.schools.push(school);
+        appState.schedule[id] = [];
+        appState.preferences.selectedSchoolId = id;
+        saveState();
+
+        refreshAllSchoolSelects();
+        schoolSelect.value = id;
+        settingsSchoolSelect.value = id;
+        settingsScheduleSchoolSelect.value = id;
+
+        handleMainSchoolChange();
+        renderSchoolEditor();
+        renderScheduleSettings();
+    }
+
+    function deleteSelectedSchool() {
+        if (appState.schools.length <= 1) {
+            alert("At least one school must remain.");
+            return;
+        }
+
+        const schoolId = settingsSchoolSelect.value;
+        const school = getSchoolById(schoolId);
+        if (!school) return;
+
+        const confirmed = confirm(
+            'Delete "' + school.name + '" and all of its saved schedule dates?'
+        );
+
+        if (!confirmed) return;
+
+        appState.schools = appState.schools.filter(s => s.id !== schoolId);
+        delete appState.schedule[schoolId];
+        delete appState.preferences.selectedClassBySchool[schoolId];
+
+        if (appState.preferences.selectedSchoolId === schoolId) {
+            appState.preferences.selectedSchoolId = appState.schools[0].id;
+        }
+
+        saveState();
+        refreshAllSchoolSelects();
+        handleMainSchoolChange();
+        renderSchoolEditor();
+        renderScheduleSettings();
+    }
+
+    function submitPeriodToGoogleCalendar(period) {
+        const selectedClass = classSelect.value;
+
+        if (!selectedClass) {
+            alert("Please select a class first.");
+            return;
+        }
+
+        const title = selectedClass + " (P" + period.number + ")";
+        const endTime = addMinutesToTime(period.start, period.duration);
+
+        submitToGoogleCalendar(
+            title,
+            period.start,
+            endTime
+        );
+    }
+
+    function submitLunchToGoogleCalendar() {
+        const school = currentSchool();
+        if (!school || !school.lunch.enabled) return;
+
+        let title;
+
+        if (school.lunch.mode === "class") {
+            if (!classSelect.value) {
+                alert("Please select a class first.");
+                return;
+            }
+
+            title = classSelect.value + " 給食";
+        } else {
+            title = school.lunch.generalTitle || "Lunch";
+        }
+
+        const endTime = addMinutesToTime(
+            school.lunch.start,
+            school.lunch.duration
+        );
+
+        submitToGoogleCalendar(
+            title,
+            school.lunch.start,
+            endTime
+        );
+    }
+
+    function submitToGoogleCalendar(title, startTime, endTime) {
+        const selectedDate = eventDate.value;
+        const notes = document.getElementById("eventNotes").value.trim();
+
+        if (!selectedDate) {
+            alert("Please select a date first.");
+            return;
+        }
+
+        rememberCurrentClass();
+
+        const compactDate = selectedDate.replace(/-/g, "");
+
+        const dateRange =
+            compactDate +
+            "T" +
+            compactTime(startTime) +
+            "/" +
+            compactDate +
+            "T" +
+            compactTime(endTime);
+
+        document.getElementById("formText").value = title;
+        document.getElementById("formDates").value = dateRange;
+        document.getElementById("formDetails").value = notes;
+        document.getElementById("formLocation").value =
+            currentSchool() && currentSchool().location
+                ? currentSchool().location
+                : "";
+
+        // IMPORTANT: native form submission is intentional.
+        document.getElementById("gcalForm").submit();
+    }
+
+    function buildBackupObject() {
+        return {
+            version: APP_VERSION,
+            exported: formatLocalDate(new Date()),
+            schools: deepClone(appState.schools),
+            schedule: deepClone(appState.schedule),
+            preferences: deepClone(appState.preferences)
+        };
+    }
+
+    function exportBackup() {
+        const backup = buildBackupObject();
+        const json = JSON.stringify(backup, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "alt-class-scheduler-backup-" + backup.exported + "-v3.json";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+    }
+
+    function convertVersion1Backup(backup) {
+        if (
+            !backup ||
+            backup.version !== 1 ||
+            !backup.schedule ||
+            typeof backup.schedule !== "object"
+        ) {
+            throw new Error("Not a valid Version 1 backup.");
+        }
+
+        const state = deepClone(DEFAULT_STATE);
+        const map = {
+            "AA Elementary School": "school1",
+            "BB Elementary School": "school2",
+            "CC Junior High School": "school3"
+        };
+
+        Object.entries(map).forEach(([oldKey, newId]) => {
+            if (Array.isArray(backup.schedule[oldKey])) {
+                state.schedule[newId] = [
+                    ...new Set(
+                        backup.schedule[oldKey].filter(isValidDateString)
+                    )
+                ].sort();
+            }
+        });
+
+        return state;
+    }
+
+    function importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function(loadEvent) {
+            try {
+                const backup = JSON.parse(loadEvent.target.result);
+                let importedState;
+
+                if (backup.version === 3 || backup.version === 2) {
+                    importedState = normalizeState({
+                        schools: backup.schools,
+                        schedule: backup.schedule,
+                        preferences: backup.preferences
+                    });
+                } else if (backup.version === 1) {
+                    importedState = convertVersion1Backup(backup);
+                } else {
+                    throw new Error("Unsupported backup version.");
+                }
+
+                const confirmed = confirm(
+                    "Import this backup? This will replace your current schools, bell times, lunch settings, schedule dates, and saved preferences."
+                );
+
+                if (!confirmed) {
+                    event.target.value = "";
+                    return;
+                }
+
+                appState = importedState;
+                saveState();
+
+                refreshAllSchoolSelects();
+                handleMainSchoolChange();
+                renderScheduleSettings();
+                renderSchoolEditor();
+
+                alert(
+                    backup.version === 1
+                        ? "Version 1 backup imported and upgraded to Version 3."
+                        : backup.version === 2
+                            ? "Version 2 backup imported and upgraded to Version 3."
+                            : "Backup imported successfully."
+                );
+            } catch (error) {
+                console.error(error);
+                alert("That file does not appear to be a valid Class Slot Automator backup.");
+            }
+
+            event.target.value = "";
+        };
+
+        reader.readAsText(file);
+    }
+
+    function restoreFactoryDefaults() {
+        const confirmed = confirm(
+            "Restore factory defaults? This will replace all schools, bell times, lunch settings, schedule dates, and saved preferences."
+        );
+
+        if (!confirmed) return;
+
+        appState = deepClone(DEFAULT_STATE);
+        saveState();
+
+        refreshAllSchoolSelects();
+        handleMainSchoolChange();
+        renderScheduleSettings();
+        renderSchoolEditor();
+    }
+
+    schoolSelect.addEventListener("change", handleMainSchoolChange);
+    classSelect.addEventListener("change", rememberCurrentClass);
+    eventDate.addEventListener("change", updateScheduleNavigation);
+
+    useIrregularSchedule.addEventListener("change", () => {
+        buildPeriodButtons();
+    });
+
+    document
+        .getElementById("previousSchoolDayBtn")
+        .addEventListener("click", jumpToPreviousScheduledDay);
+
+    document
+        .getElementById("nextSchoolDayBtn")
+        .addEventListener("click", jumpToNextScheduledDay);
+
+    settingsScheduleSchoolSelect.addEventListener("change", () => {
+        const inputDate = document.getElementById("newScheduleDate").value;
+        if (inputDate) scheduleEditorMonth = monthKeyFromDateString(inputDate);
+        renderScheduleSettings();
+    });
+
+    settingsSchoolSelect.addEventListener("change", renderSchoolEditor);
+
+    document
+        .getElementById("previousScheduleMonthBtn")
+        .addEventListener("click", () => changeScheduleEditorMonth(-1));
+
+    document
+        .getElementById("nextScheduleMonthBtn")
+        .addEventListener("click", () => changeScheduleEditorMonth(1));
+
+    document
+        .getElementById("addScheduleDateBtn")
+        .addEventListener("click", addScheduleDate);
+
+    document
+        .getElementById("addSchoolBtn")
+        .addEventListener("click", addSchool);
+
+    document
+        .getElementById("deleteSchoolBtn")
+        .addEventListener("click", deleteSelectedSchool);
+
+    document
+        .getElementById("exportBackupBtn")
+        .addEventListener("click", exportBackup);
+
+    document
+        .getElementById("importBackupBtn")
+        .addEventListener("click", () => {
+            document.getElementById("importBackupFile").click();
+        });
+
+    document
+        .getElementById("importBackupFile")
+        .addEventListener("change", importBackup);
+
+    document
+        .getElementById("restoreDefaultsBtn")
+        .addEventListener("click", restoreFactoryDefaults);
+
+    document.addEventListener("keydown", event => {
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+        const activeTag = document.activeElement.tagName;
+
+        if (
+            activeTag === "INPUT" ||
+            activeTag === "SELECT" ||
+            activeTag === "TEXTAREA" ||
+            activeTag === "BUTTON"
+        ) {
+            return;
+        }
+
+        if (!["1", "2", "3", "4", "5", "6"].includes(event.key)) return;
+
+        const school = currentSchool();
+        if (!school) return;
+
+        const period = getActivePeriods().find(p => String(p.number) === event.key);
+        if (!period) return;
+
+        event.preventDefault();
+        submitPeriodToGoogleCalendar(period);
+    });
+
+    refreshAllSchoolSelects();
+
+    schoolSelect.value =
+        appState.schools.some(s => s.id === appState.preferences.selectedSchoolId)
+            ? appState.preferences.selectedSchoolId
+            : appState.schools[0].id;
+
+    settingsScheduleSchoolSelect.value = schoolSelect.value;
+    settingsSchoolSelect.value = schoolSelect.value;
+
+    handleMainSchoolChange();
+    renderScheduleSettings();
+    renderSchoolEditor();
+</script>
+
+</body>
+</html>
