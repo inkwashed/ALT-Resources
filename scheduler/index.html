@@ -1,7 +1,23 @@
 <!DOCTYPE html>
+<!--
+ALT Class Scheduler
+Copyright © 2026. All rights reserved.
 
-<!-- ALT Class Scheduler Copyright © 2026. All rights reserved. PERMITTED USE: This software may be used free of charge for personal, classroom, and other non-commercial educational purposes in its original, unmodified form. NOT PERMITTED WITHOUT PRIOR WRITTEN PERMISSION: - Commercial use, resale, or monetization - Incorporation into another commercial product, website, app, or service - Redistribution or republication of the source code or application - Distribution of modified, adapted, rebranded, or derivative versions - Removal or alteration of copyright or attribution notices Sharing a link to the official hosted version is permitted and encouraged. No ownership rights are transferred by access to or use of this software. -->
+PERMITTED USE:
+This software may be used free of charge for personal, classroom,
+and other non-commercial educational purposes in its original,
+unmodified form. Sharing a link to the official hosted version is permitted.
 
+NOT PERMITTED WITHOUT PRIOR WRITTEN PERMISSION:
+- Commercial use, resale, licensing, or monetization
+- Incorporation into another commercial product, website, app, or service
+- Redistribution, republication, or mirroring of the source code or application
+- Distribution of modified, adapted, rebranded, or derivative versions
+- Removal or alteration of copyright or usage notices
+
+No ownership rights are transferred by access to or use of this software.
+The software is provided "as is" without warranty of any kind.
+-->
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -9,58 +25,183 @@
     <title>ALT Class Scheduler</title>
     <style>
         :root {
-            --blue: #1a73e8;
-            --blue-soft: #e8f0fe;
-            --blue-border: #aecbfa;
-            --text: #333;
-            --muted: #5f6368;
-            --line: #dadce0;
-            --bg: #f4f6f9;
-            --panel: #f8f9fa;
+            /* Ocean Blue theme (default) */
+            --accent: #1e40af;
+            --accent-secondary: #60a5fa;
+            --accent-soft: #dbeafe;
+            --accent-border: #93c5fd;
+            --focus-ring: rgba(30, 64, 175, .12);
+            --text: #2f3337;
+            --muted: #697078;
+            --line: #dfe3e8;
+            --bg: #f5f8ff;
+            --surface: #ffffff;
+            --panel: #f8faff;
             --danger: #d93025;
+            --warning-bg: #fff8e1;
+            --warning-border: #f5d67b;
+            --warning-text: #6f5200;
+            --tooltip-text: #ffffff;
+        }
+
+        body[data-theme="color-pop"] {
+            --accent: #8b5cf6;
+            --accent-secondary: #fbbf24;
+            --accent-soft: #e9d5ff;
+            --accent-border: #c4b5fd;
+            --focus-ring: rgba(139, 92, 246, .12);
+            --bg: #faf8ff;
+            --panel: #fcfaff;
+        }
+
+        body[data-theme="pretty-in-pink"] {
+            --accent: #db2777;
+            --accent-secondary: #DD79A5;
+            --accent-soft: #fce7f3;
+            --accent-border: #f9a8d4;
+            --focus-ring: rgba(219, 39, 119, .12);
+            --bg: #fff8fb;
+            --panel: #fffafd;
+        }
+
+        body[data-theme="true-dark"] {
+            --accent: #8ab4f8;
+            --accent-secondary: #c4a7ff;
+            --accent-soft: #18263c;
+            --accent-border: #35557e;
+            --focus-ring: rgba(138, 180, 248, .18);
+            --text: #eef2f7;
+            --muted: #a9b1bc;
+            --line: #30363d;
+            --bg: #000000;
+            --surface: #0d0f12;
+            --panel: #15191e;
+            --danger: #ff7676;
+            --warning-bg: #332b12;
+            --warning-border: #8a7125;
+            --warning-text: #ffe08a;
+            --tooltip-text: #07101d;
         }
 
         * { box-sizing: border-box; }
+
+        html, body { margin: 0; min-height: 100%; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding: 30px 15px;
+            padding: 16px;
+        }
+
+        body.modal-open { overflow: hidden; }
+
+        button, input, select, textarea { font: inherit; }
+
+        .app-shell {
+            width: min(760px, 100%);
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 14px;
+            box-shadow: 0 8px 26px rgba(0,0,0,0.09);
+            overflow: hidden;
+        }
+
+        .app-header {
+            min-height: 56px;
             display: flex;
-            justify-content: center;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 14px 10px 18px;
+            border-bottom: 1px solid var(--line);
+            background: var(--surface);
+        }
+
+        .title-wrap {
+            min-width: 0;
+            display: flex;
+            align-items: baseline;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .app-title {
             margin: 0;
+            font-size: 19px;
+            line-height: 1.2;
+            color: var(--accent);
+            font-weight: 700;
         }
 
-        .container {
-            background: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            max-width: 520px;
-            width: 100%;
-        }
-
-        h2 {
-            margin: 0 0 20px;
-            color: var(--blue);
-            font-size: 20px;
-            text-align: center;
-        }
-
-        h3 {
-            font-size: 14px;
-            margin: 18px 0 10px;
+        .version-badge {
+            font-size: 10px;
             color: var(--muted);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 2px 7px;
+            white-space: nowrap;
         }
 
-        .form-group { margin-bottom: 15px; }
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            background: transparent;
+            border-radius: 50%;
+            color: var(--accent);
+            cursor: pointer;
+            transition: color .2s ease;
+        }
 
-        label {
+        .icon-button:hover {
+            color: var(--accent-secondary);
+            background: transparent;
+        }
+
+        .icon-button:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            background: transparent;
+        }
+
+        .icon-button svg {
+            width: 21px;
+            height: 21px;
+            fill: currentColor;
+            transform-origin: center;
+            transition: transform .28s ease;
+        }
+
+        .icon-button:hover svg,
+        .icon-button:focus-visible svg {
+            transform: rotate(45deg);
+        }
+
+        .app-main { padding: 14px 16px 16px; }
+
+        .top-fields {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+        }
+
+        .field,
+        .form-group { margin: 0 0 12px; }
+
+        label,
+        .field-label {
             display: block;
             font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 13px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            line-height: 15px;
             color: var(--muted);
         }
 
@@ -71,191 +212,514 @@
         input[type="text"],
         textarea {
             width: 100%;
-            padding: 10px;
             border: 1px solid var(--line);
-            border-radius: 6px;
-            font-size: 15px;
-            background: #fff;
-            font-family: inherit;
+            border-radius: 7px;
+            background: var(--surface);
+            color: var(--text);
+            padding: 9px 10px;
+            font-size: 14px;
+            transition: border-color .16s ease, background-color .16s ease, box-shadow .16s ease;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 62px;
+        select {
+            border-color: var(--accent-border);
+            background: color-mix(in srgb, var(--accent-soft) 26%, var(--surface));
+        }
+
+        select:hover {
+            border-color: var(--accent);
         }
 
         select:focus,
         input:focus,
         textarea:focus {
             outline: none;
-            border-color: var(--blue);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--focus-ring);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+            max-height: 160px;
+        }
+
+        .date-card {
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 10px;
+            background: var(--panel);
+            margin-bottom: 12px;
         }
 
         .schedule-nav {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+            margin-top: 7px;
         }
 
         .schedule-nav-btn {
-            flex: 1;
-            background: var(--blue-soft);
-            border: 1px solid var(--blue-border);
-            color: #1967d2;
-            padding: 9px 5px;
-            border-radius: 5px;
+            min-width: 0;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            padding: 8px 6px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 650;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .schedule-nav-btn:hover:not(:disabled) { background: #d2e3fc; }
-        .schedule-nav-btn:disabled { opacity: 0.45; cursor: default; }
+        .schedule-nav-btn:hover:not(:disabled) { filter: brightness(.98); }
+        .schedule-nav-btn:disabled { opacity: .42; cursor: default; }
 
         .day-fast-select {
             display: flex;
             gap: 6px;
             margin-top: 7px;
-            flex-wrap: wrap;
+            overflow-x: auto;
+            padding-bottom: 1px;
+            scrollbar-width: thin;
         }
 
         .day-btn {
-            flex: 1;
-            min-width: 105px;
-            background: #f1f3f4;
+            flex: 1 0 auto;
+            min-width: 112px;
             border: 1px solid var(--line);
-            padding: 7px 5px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
+            background: var(--surface);
             color: var(--text);
+            border-radius: 6px;
+            padding: 7px 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
         }
 
-        .day-btn:hover { background: #e8eaed; }
+        .day-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
 
         .helper-text,
+        .status-note,
         .backup-note {
             margin-top: 5px;
-            font-size: 11px;
-            color: #80868b;
-            line-height: 1.45;
+            color: var(--muted);
+            font-size: 10.5px;
+            line-height: 1.4;
         }
 
-        .grid-title {
-            font-weight: 600;
-            font-size: 13px;
+        .class-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: end;
+            margin-bottom: 10px;
+        }
+
+        .class-row .field { margin: 0; }
+
+        .irregular-main {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            min-height: 38px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 7px 9px;
+            background: var(--panel);
+        }
+
+        .irregular-main.visible { display: flex; }
+
+        .irregular-main.active {
+            background: var(--warning-bg);
+            border-color: var(--warning-border);
+            box-shadow: 0 0 0 1px rgba(245, 214, 123, .18);
+        }
+
+        .irregular-main.active .switch-control {
+            color: var(--warning-text);
+        }
+
+        .label-with-info,
+        .inline-info-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .inline-info-row {
+            width: 100%;
+            min-height: 23px;
+        }
+
+        .label-with-info {
+            justify-content: flex-start;
+            min-height: 15px;
+            margin-bottom: 5px;
+        }
+
+        .label-with-info > label {
+            margin-bottom: 0;
+        }
+
+        .info-tip {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
+        }
+
+        .info-button {
+            width: 13px;
+            height: 13px;
+            padding: 0;
+            border: 1px solid var(--accent-border);
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--accent-soft) 35%, var(--surface));
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8.5px;
+            line-height: 11px;
+            font-weight: 750;
+            font-family: Georgia, "Times New Roman", serif;
+            cursor: help;
+        }
+
+        .info-button:hover,
+        .info-button:focus-visible {
+            color: var(--accent-secondary);
+            border-color: var(--accent-secondary);
+            background: var(--accent-soft);
+            outline: none;
+        }
+
+        .irregular-main.active .info-button {
+            color: var(--warning-text);
+            border-color: var(--warning-border);
+            background: color-mix(in srgb, var(--warning-bg) 70%, var(--surface));
+        }
+
+        .irregular-main.active .info-tooltip {
+            background: var(--warning-text);
+            color: var(--warning-bg);
+            border-color: var(--warning-border);
+        }
+
+        .irregular-main.active .info-tooltip::before {
+            border-bottom-color: var(--warning-text);
+        }
+
+        .info-tooltip {
+            position: absolute;
+            z-index: 30;
+            right: 0;
+            top: calc(100% + 7px);
+            width: min(270px, calc(100vw - 52px));
+            padding: 7px 9px;
+            border: 1px solid var(--accent-border);
+            border-radius: 7px;
+            background: var(--accent);
+            color: var(--tooltip-text);
+            box-shadow: 0 6px 18px rgba(0,0,0,.18);
+            font-size: 10.5px;
+            font-weight: 500;
+            line-height: 1.4;
+            white-space: normal;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-2px);
+            transition: opacity .14s ease, transform .14s ease, visibility .14s ease;
+        }
+
+        .info-tooltip::before {
+            content: "";
+            position: absolute;
+            right: 4px;
+            bottom: 100%;
+            border: 5px solid transparent;
+            border-bottom-color: var(--accent);
+        }
+
+        .info-tip:hover .info-tooltip,
+        .info-tip:focus-within .info-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .switch-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            line-height: 1.2;
+            cursor: pointer;
+            user-select: none;
             color: var(--muted);
-            margin: 15px 0 10px;
-            border-top: 1px solid #eee;
-            padding-top: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .switch-control input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .switch-track {
+            width: 42px;
+            height: 23px;
+            border-radius: 999px;
+            background: #c7ccd1;
+            position: relative;
+            transition: background .2s ease;
+            flex: 0 0 42px;
+        }
+
+        .switch-track::after {
+            content: "";
+            position: absolute;
+            width: 19px;
+            height: 19px;
+            left: 2px;
+            top: 2px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,.25);
+            transition: transform .2s ease;
+        }
+
+        .switch-control input:checked + .switch-track { background: #e6a536; }
+        .switch-control input:checked + .switch-track::after { transform: translateX(19px); }
+
+        .switch-control input:focus-visible + .switch-track {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .note-toggle {
+            border: 0;
+            background: transparent;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 650;
+            padding: 3px 0;
+            margin: 0 0 8px;
+            cursor: pointer;
+        }
+
+        .note-toggle:hover { text-decoration: underline; }
+        .note-panel { display: none; margin-bottom: 10px; }
+        .note-panel.open { display: block; }
+
+        .grid-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 650;
+            color: var(--muted);
+            border-top: 1px solid var(--line);
+            padding-top: 11px;
+            margin: 4px 0 8px;
         }
 
         .slot-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
         }
 
         .slot-btn {
+            min-width: 0;
             background: var(--panel);
             border: 1px solid var(--line);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 10px;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background .16s ease, border-color .16s ease, transform .16s ease;
             color: var(--text);
         }
 
         .slot-btn:hover {
-            background: var(--blue-soft);
-            border-color: var(--blue);
-            color: var(--blue);
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            transform: translateY(-1px);
         }
 
         .slot-name {
-            font-weight: bold;
-            font-size: 13px;
+            font-weight: 700;
+            font-size: 12px;
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
+            color: var(--accent);
         }
 
         .slot-time {
-            font-size: 11px;
-            color: #70757a;
+            display: block;
+            color: var(--muted);
+            font-size: 10.5px;
+            white-space: nowrap;
         }
 
-        .lunch-wrap {
-            margin-top: 10px;
-        }
+        .lunch-wrap { margin-top: 8px; }
 
         .lunch-btn {
             width: 100%;
             text-align: center;
             background: #fff8e1;
-            border: 1px solid #f5d67b;
+            border-color: #f1d37d;
         }
 
         .lunch-btn:hover {
             background: #fff3c4;
             border-color: #e0b83f;
-            color: #8a5d00;
         }
 
         .keyboard-hint {
             text-align: center;
-            margin-top: 9px;
-            font-size: 11px;
-            color: #9aa0a6;
-        }
-
-        .settings-title {
-            margin-top: 22px;
-            border-top: 1px solid #eee;
-            padding-top: 14px;
+            margin-top: 8px;
             color: var(--muted);
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 10px;
         }
 
-        .settings-body {
-            margin-top: 10px;
-        }
-
-        details.settings-panel {
-            margin-bottom: 9px;
-            background: var(--panel);
-            border: 1px solid #e3e6ea;
-            border-radius: 7px;
-            overflow: hidden;
-        }
-
-        details.settings-panel > summary {
-            cursor: pointer;
+        .app-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 8px 14px 10px;
             color: var(--muted);
-            font-size: 13px;
+            font-size: 9.5px;
+            line-height: 1.35;
+            text-align: center;
+            border-top: 1px solid var(--line);
+        }
+
+        .footer-version {
+            font-size: 10px;
             font-weight: 650;
-            user-select: none;
-            padding: 11px 12px;
-            background: #fff;
+            color: var(--muted);
         }
 
-        details.settings-panel[open] > summary {
-            border-bottom: 1px solid #e3e6ea;
+        .footer-copyright {
+            max-width: 660px;
         }
+
+        /* Settings modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(26, 31, 36, .48);
+        }
+
+        .modal-backdrop.open { display: flex; }
+
+        .modal-card {
+            width: min(680px, 100%);
+            max-height: min(780px, calc(100dvh - 36px));
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border-radius: 13px;
+            overflow: hidden;
+            box-shadow: 0 18px 55px rgba(0,0,0,.25);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px 10px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .modal-title { font-size: 16px; font-weight: 750; }
+
+        .close-button {
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .close-button:hover { background: var(--panel); color: var(--text); }
+
+        .storage-warning {
+            margin: 10px 14px 0;
+            padding: 9px 10px;
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 7px;
+            color: var(--warning-text);
+            font-size: 10.5px;
+            line-height: 1.4;
+        }
+
+        .settings-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            padding: 10px 14px 0;
+        }
+
+        .settings-tab {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--muted);
+            border-radius: 7px 7px 0 0;
+            padding: 8px 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+        .settings-tab.active {
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+        }
+
+        .settings-scroll {
+            overflow-y: auto;
+            padding: 12px 14px 16px;
+        }
+
+        .settings-panel { display: none; }
+        .settings-panel.active { display: block; }
 
         .settings-section {
+            border: 1px solid var(--line);
+            border-radius: 9px;
             padding: 12px;
+            background: var(--panel);
         }
 
-        .row {
-            display: flex;
-            gap: 7px;
-            align-items: end;
+        .settings-section h3 {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: var(--muted);
         }
-
-        .row > * { flex: 1; }
 
         .settings-buttons {
             display: flex;
@@ -266,133 +730,205 @@
 
         .settings-btn {
             flex: 1;
-            min-width: 110px;
+            min-width: 105px;
             border: 1px solid var(--line);
-            background: white;
+            background: var(--surface);
+            color: var(--text);
             padding: 8px;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
         }
 
-        .settings-btn:hover { background: #f1f3f4; }
+        .settings-btn:hover { background: var(--accent-soft); border-color: var(--accent-border); }
         .danger-btn { color: var(--danger); }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .theme-option {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 7px;
+            padding: 9px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+        }
+
+        .theme-option:hover {
+            border-color: var(--theme-primary);
+            transform: translateY(-1px);
+        }
+
+        .theme-option.selected {
+            border-color: var(--theme-primary);
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-primary) 16%, transparent);
+        }
+
+        .theme-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .theme-option:focus-within {
+            outline: 2px solid var(--theme-primary);
+            outline-offset: 2px;
+        }
+
+        .theme-preview {
+            height: 28px;
+            display: flex;
+            overflow: hidden;
+            border-radius: 6px;
+            border: 1px solid rgba(0,0,0,.06);
+            background: var(--theme-light);
+        }
+
+        .theme-preview span:nth-child(1) { flex: 1.35; background: var(--theme-primary); }
+        .theme-preview span:nth-child(2) { flex: .8; background: var(--theme-secondary); }
+        .theme-preview span:nth-child(3) { flex: 1; background: var(--theme-light); }
+
+        .theme-name {
+            font-size: 11px;
+            line-height: 1.25;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .theme-option[data-theme-option="ocean-blue"] {
+            --theme-primary: #1e40af;
+            --theme-secondary: #60a5fa;
+            --theme-light: #dbeafe;
+        }
+
+        .theme-option[data-theme-option="color-pop"] {
+            --theme-primary: #8b5cf6;
+            --theme-secondary: #fbbf24;
+            --theme-light: #e9d5ff;
+        }
+
+        .theme-option[data-theme-option="pretty-in-pink"] {
+            --theme-primary: #db2777;
+            --theme-secondary: #DD79A5;
+            --theme-light: #fce7f3;
+        }
+
+        .theme-option[data-theme-option="true-dark"] {
+            --theme-primary: #8ab4f8;
+            --theme-secondary: #c4a7ff;
+            --theme-light: #0d0f12;
+            background: #15191e;
+            color: #eef2f7;
+            border-color: #30363d;
+        }
+
+        .theme-option[data-theme-option="true-dark"] .theme-name {
+            color: #eef2f7;
+        }
+
+        .theme-option[data-theme-option="true-dark"] .theme-preview {
+            border-color: #30363d;
+        }
+
+        .appearance-note {
+            margin-top: 9px;
+            color: var(--muted);
+            font-size: 10.5px;
+            line-height: 1.4;
+        }
 
         .saved-dates-header {
             display: grid;
-            grid-template-columns: 38px 1fr 38px;
+            grid-template-columns: 36px 1fr 36px;
             align-items: center;
             gap: 8px;
-            margin-top: 4px;
+            margin: 11px 0 7px;
             text-align: center;
         }
 
-        .saved-dates-title {
-            font-size: 13px;
-            font-weight: 600;
+        .saved-dates-title { font-size: 12px; font-weight: 700; color: var(--muted); }
+        .schedule-month-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+        .month-nav-btn {
+            width: 36px;
+            height: 32px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: 6px;
+            cursor: pointer;
             color: var(--muted);
         }
 
-        .schedule-month-label {
-            font-size: 12px;
-            color: var(--text);
-            margin-top: 2px;
-        }
-
-        .month-nav-btn {
-            width: 38px;
-            height: 34px;
-            border: 1px solid var(--line);
-            background: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            color: var(--blue);
-        }
-
-        .month-nav-btn:hover { background: #f1f3f4; }
+        .month-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
 
         .schedule-date-list,
         .class-list {
-            margin-top: 10px;
             display: flex;
             flex-direction: column;
             gap: 5px;
         }
 
         .schedule-date-row,
-        .class-row {
+        .class-row-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: white;
+            gap: 10px;
             border: 1px solid var(--line);
-            border-radius: 5px;
+            background: var(--surface);
+            border-radius: 6px;
             padding: 7px 8px;
-            font-size: 13px;
+            font-size: 11px;
+        }
+
+        /* Existing JS creates .class-row for class-list entries. Keep it compact inside settings. */
+        .settings-scroll .class-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 0;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: 6px;
+            padding: 7px 8px;
+            font-size: 11px;
         }
 
         .remove-btn {
-            border: none;
+            border: 0;
             background: transparent;
             color: var(--danger);
             cursor: pointer;
-            font-weight: bold;
-            font-size: 15px;
-            width: auto;
+            font-size: 16px;
+            font-weight: 700;
             flex: 0 0 auto;
         }
 
         .empty-state {
-            color: #80868b;
-            font-size: 12px;
-            font-style: italic;
-            margin-top: 8px;
-        }
-
-        .period-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
-            font-size: 12px;
-        }
-
-        .period-table th,
-        .period-table td {
-            padding: 5px 3px;
-            text-align: left;
-            vertical-align: middle;
-        }
-
-        .period-table th {
             color: var(--muted);
-            font-weight: 600;
+            font-size: 11px;
+            font-style: italic;
+            margin-top: 7px;
         }
 
-        .period-table input[type="time"] {
-            padding: 6px;
-            font-size: 12px;
-        }
-
-        .period-table input[type="number"] {
-            padding: 6px;
-            font-size: 12px;
-            min-width: 62px;
-        }
-
-        .switch-row {
+        .row {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 8px 0;
-            font-size: 13px;
+            gap: 7px;
+            align-items: end;
         }
 
-        .switch-row label {
-            margin: 0;
-            color: var(--text);
-            font-weight: 500;
-        }
+        .row > * { flex: 1; }
 
         .school-name-editor {
             display: grid;
@@ -400,246 +936,461 @@
             gap: 7px;
         }
 
-        .status-note {
-            margin-top: 6px;
+        .period-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 7px;
             font-size: 11px;
-            color: #5f6368;
         }
 
-        .storage-warning {
-            margin: 10px 0 14px;
-            padding: 10px 12px;
-            background: #fff8e1;
-            border: 1px solid #f5d67b;
-            border-radius: 6px;
-            font-size: 12px;
-            line-height: 1.45;
-            color: #6f5200;
+        .period-table th,
+        .period-table td {
+            padding: 4px 3px;
+            text-align: left;
+            vertical-align: middle;
         }
 
-        .storage-warning strong {
-            color: #8a5d00;
-        }
+        .period-table th { color: var(--muted); font-weight: 650; }
+        .period-table input[type="time"],
+        .period-table input[type="number"] { padding: 6px; font-size: 11px; }
 
-        .version-tag {
-            text-align: center;
-            margin-top: 18px;
+        .switch-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
             font-size: 11px;
-            color: #9aa0a6;
-            letter-spacing: 0.2px;
-        }
-	.copyright-tag {
-            text-align: center;
-            margin-top: 18px;
-            font-size: 10px;
-            color: #9aa0a6;
-            letter-spacing: 0.2px;
         }
 
-        .irregular-main {
-            display: none;
-            background: #fff4e5;
-            border: 1px solid #f2c46d;
-            border-radius: 6px;
-            padding: 9px 10px;
-            margin-bottom: 15px;
+        .switch-row label { margin: 0; color: var(--text); font-weight: 500; }
+
+        @media (max-width: 620px) {
+            body { padding: 6px; background: var(--surface); }
+            .app-shell { border-radius: 9px; box-shadow: none; border-color: var(--line); }
+            .app-main { padding: 11px; }
+            .top-fields { grid-template-columns: 1fr; gap: 0; }
+            .class-row { grid-template-columns: 1fr; gap: 7px; }
+            .irregular-main.visible { display: block; }
+            .irregular-main .inline-info-row { justify-content: space-between; }
+            .info-tooltip { width: min(250px, calc(100vw - 36px)); }
+            .slot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .modal-backdrop { padding: 6px; align-items: stretch; }
+            .modal-card { max-height: calc(100dvh - 12px); border-radius: 9px; }
+            .settings-tabs {
+                grid-template-columns: repeat(2, 1fr);
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            .theme-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .settings-scroll { padding: 10px 8px 12px; }
+            .storage-warning { margin-left: 8px; margin-right: 8px; }
         }
 
-        .irregular-main.visible {
-            display: block;
+        @media (max-width: 380px) {
+            .app-header { padding-left: 12px; }
+            .app-title { font-size: 17px; }
+            .version-badge { display: none; }
+            .slot-btn { padding: 8px; }
+            .slot-time { font-size: 10px; }
+            .settings-tab { font-size: 10px; }
+            .theme-options { grid-template-columns: 1fr; }
+        }
+    
+        /* True Dark refinements */
+        body[data-theme="true-dark"] {
+            color-scheme: dark;
         }
 
-        .irregular-main .switch-row {
-            margin: 0;
+        body[data-theme="true-dark"] .app-shell {
+            border-color: var(--line);
+            box-shadow: 0 10px 30px rgba(0,0,0,.55);
         }
 
-        .irregular-note {
-            margin-top: 5px;
-            font-size: 11px;
-            color: #7a5a16;
+        body[data-theme="true-dark"] .modal-backdrop {
+            background: rgba(0,0,0,.72);
         }
 
-        @media (max-width: 430px) {
-            .container { padding: 18px; }
-            .period-table { font-size: 11px; }
-            .period-table input[type="time"],
-            .period-table input[type="number"] { font-size: 11px; }
+        body[data-theme="true-dark"] .modal-card {
+            box-shadow: 0 18px 60px rgba(0,0,0,.72);
         }
-    </style>
+
+        body[data-theme="true-dark"] select,
+        body[data-theme="true-dark"] input[type="date"],
+        body[data-theme="true-dark"] input[type="time"],
+        body[data-theme="true-dark"] input[type="number"],
+        body[data-theme="true-dark"] input[type="text"],
+        body[data-theme="true-dark"] textarea {
+            background-color: var(--surface);
+            color: var(--text);
+        }
+
+        body[data-theme="true-dark"] select {
+            background: color-mix(in srgb, var(--accent-soft) 42%, var(--surface));
+        }
+
+        body[data-theme="true-dark"] .day-btn,
+        body[data-theme="true-dark"] .settings-btn,
+        body[data-theme="true-dark"] .settings-tab {
+            background: var(--surface);
+            color: var(--text);
+            border-color: var(--line);
+        }
+
+        body[data-theme="true-dark"] .day-btn:hover,
+        body[data-theme="true-dark"] .settings-btn:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+        }
+
+        body[data-theme="true-dark"] .settings-tab.active {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+            color: var(--accent);
+        }
+
+        body[data-theme="true-dark"] .switch-track {
+            background: #414852;
+        }
+
+        body[data-theme="true-dark"] .switch-track::after {
+            background: #f3f5f7;
+        }
+
+        body[data-theme="true-dark"] .lunch-btn {
+            background: #332b12;
+            border-color: #8a7125;
+            color: #ffe08a;
+        }
+
+        body[data-theme="true-dark"] .lunch-btn:hover {
+            background: #403617;
+            border-color: #b08d2f;
+        }
+
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h2>ALT Class Scheduler</h2>
-
-    <div class="form-group">
-        <label for="schoolSelect">Select School</label>
-        <select id="schoolSelect"></select>
-    </div>
-
-    <div class="form-group">
-        <label for="eventDate">Target Date</label>
-        <input type="date" id="eventDate">
-
-        <div class="schedule-nav">
-            <button type="button" id="previousSchoolDayBtn" class="schedule-nav-btn">← Previous</button>
-            <button type="button" id="nextSchoolDayBtn" class="schedule-nav-btn">Next →</button>
+<div class="app-shell">
+    <header class="app-header">
+        <div class="title-wrap">
+            <h1 class="app-title">ALT Class Scheduler</h1>
+            <span class="version-badge">v3.4</span>
         </div>
 
-        <div id="dayJumpersContainer" class="day-fast-select"></div>
+        <button type="button" id="settingsOpenBtn" class="icon-button" title="Settings" aria-label="Open settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+            </svg>
+        </button>
+    </header>
 
-        <div class="helper-text">
-            Navigation uses the saved schedule for the selected school.
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="classSelect">Select Class</label>
-        <select id="classSelect"></select>
-    </div>
-
-    <div id="irregularMainWrap" class="irregular-main">
-        <div class="switch-row">
-            <input type="checkbox" id="useIrregularSchedule">
-            <label for="useIrregularSchedule">Use irregular period schedule</label>
-        </div>
-        <div class="irregular-note">
-            Use this for opening weeks, special schedules, shortened days, or other alternate bell times.
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="eventNotes">Lesson / Note (optional)</label>
-        <textarea id="eventNotes" placeholder="e.g. Unit 4 Lesson 2, worksheet, activity..."></textarea>
-    </div>
-
-    <div class="grid-title">Click a period to open Google Calendar:</div>
-    <div id="slotGridContainer" class="slot-grid"></div>
-
-    <div id="lunchContainer" class="lunch-wrap"></div>
-
-    <div class="keyboard-hint">
-        Keyboard shortcut: press 1–6 to select a period
-    </div>
-
-    <div class="settings-title">⚙ Settings</div>
-
-    <div class="storage-warning">
-        <strong>CAUTION:</strong>
-        Your schools, schedules, and settings are saved only in this browser/profile.
-        They are not synced through your Google account. Export a backup periodically
-        if you want to preserve your data or move it to another device or browser.
-    </div>
-
-    <div class="settings-body">
-
-        <!-- SCHEDULE -->
-        <details class="settings-panel" open>
-            <summary>📅 Schedule</summary>
-
-            <div class="settings-section">
-                <div class="form-group">
-                    <label for="settingsScheduleSchoolSelect">Edit Schedule For</label>
-                    <select id="settingsScheduleSchoolSelect"></select>
-                </div>
-
-                <div class="form-group">
-                    <label for="newScheduleDate">Add Date</label>
-                    <input type="date" id="newScheduleDate">
-
-                    <div class="settings-buttons">
-                        <button type="button" id="addScheduleDateBtn" class="settings-btn">+ Add Date</button>
-                    </div>
-                </div>
-
-                <div class="saved-dates-header">
-                    <button type="button" id="previousScheduleMonthBtn" class="month-nav-btn" title="Previous month">←</button>
-                    <div>
-                        <div class="saved-dates-title">Saved Dates</div>
-                        <div id="scheduleMonthLabel" class="schedule-month-label"></div>
-                    </div>
-                    <button type="button" id="nextScheduleMonthBtn" class="month-nav-btn" title="Next month">→</button>
-                </div>
-
-                <div id="scheduleDateList" class="schedule-date-list"></div>
-                <div id="scheduleDateCount" class="backup-note"></div>
+    <main class="app-main">
+        <div class="top-fields">
+            <div class="field">
+                <label for="schoolSelect">School</label>
+                <select id="schoolSelect"></select>
             </div>
-        </details>
 
-        <!-- SCHOOLS -->
-        <details class="settings-panel">
-            <summary>🏫 Schools & Bell Times</summary>
-
-            <div class="settings-section">
-                <div class="form-group">
-                    <label for="settingsSchoolSelect">Edit School</label>
-                    <select id="settingsSchoolSelect"></select>
+            <div class="field">
+                <div class="label-with-info">
+                    <label for="eventDate">Target Date</label>
+                    <span class="info-tip">
+                        <button type="button" class="info-button" aria-label="About schedule navigation" aria-describedby="scheduleNavigationTip">i</button>
+                        <span class="info-tooltip" id="scheduleNavigationTip" role="tooltip">
+                            Navigation uses the saved schedule for the selected school.
+                        </span>
+                    </span>
                 </div>
-
-                <div class="settings-buttons">
-                    <button type="button" id="addSchoolBtn" class="settings-btn">＋ Add School</button>
-                    <button type="button" id="deleteSchoolBtn" class="settings-btn danger-btn">− Delete School</button>
-                </div>
-
-                <div id="schoolEditor"></div>
+                <input type="date" id="eventDate">
             </div>
-        </details>
+        </div>
 
-        <!-- BACKUP -->
-        <details class="settings-panel">
-            <summary>💾 Backup</summary>
+        <div class="date-card">
+            <div class="schedule-nav">
+                <button type="button" id="previousSchoolDayBtn" class="schedule-nav-btn">← Previous</button>
+                <button type="button" id="nextSchoolDayBtn" class="schedule-nav-btn">Next →</button>
+            </div>
 
-            <div class="settings-section">
-                <div class="settings-buttons">
-                    <button type="button" id="exportBackupBtn" class="settings-btn">Export Backup</button>
-                    <button type="button" id="importBackupBtn" class="settings-btn">Import Backup</button>
-                </div>
+            <div id="dayJumpersContainer" class="day-fast-select"></div>
+        </div>
 
-                <input
-                    type="file"
-                    id="importBackupFile"
-                    accept=".json,application/json"
-                    style="display:none;">
+        <div class="class-row">
+            <div class="field">
+                <label for="classSelect">Class</label>
+                <select id="classSelect"></select>
+            </div>
 
-                <div class="settings-buttons">
-                    <button type="button" id="restoreDefaultsBtn" class="settings-btn danger-btn">Restore Factory Defaults</button>
-                </div>
-
-                <div class="backup-note">
-                    Version 3 backups include schools, locations, classes, regular and irregular bell times, lunch settings, schedule dates, and preferences.
-                    Version 1 and Version 2 backups can also be imported.
+            <div id="irregularMainWrap" class="irregular-main">
+                <div class="inline-info-row">
+                    <label class="switch-control" for="useIrregularSchedule">
+                        <input type="checkbox" id="useIrregularSchedule">
+                        <span class="switch-track" aria-hidden="true"></span>
+                        <span>Irregular schedule</span>
+                    </label>
+                    <span class="info-tip">
+                        <button type="button" class="info-button" aria-label="About irregular schedules" aria-describedby="irregularScheduleTip">i</button>
+                        <span class="info-tooltip" id="irregularScheduleTip" role="tooltip">
+                            Use this for opening weeks, special schedules, shortened days, or other alternate bell times.
+                        </span>
+                    </span>
                 </div>
             </div>
-        </details>
+        </div>
 
-    </div>
+        <button type="button" id="noteToggleBtn" class="note-toggle" aria-expanded="false">＋ Add lesson note</button>
+        <div id="notePanel" class="note-panel">
+            <label for="eventNotes">Lesson / Note (optional)</label>
+            <textarea id="eventNotes" placeholder="e.g. Unit 4 Lesson 2, worksheet, activity..."></textarea>
+        </div>
 
-    <div class="version-tag">ALT Class Scheduler · Version 3</div>
-	<div class="copyright-tag">© 2026 ALT Class Scheduler. All rights reserved.
-Free for personal, classroom, and non-commercial educational use. Redistribution, resale, commercial use, incorporation into another product or service, and distribution of modified versions are not permitted without prior written permission.</div>
+        <div class="grid-title">
+            <span>Choose a period</span>
+            <span>1–6 keyboard shortcuts</span>
+        </div>
 
-    <!--
-        IMPORTANT:
-        Keep this as a native GET form.
-        This is the known-working managed-Chrome workaround.
-    -->
-    <form
-        id="gcalForm"
-        action="https://calendar.google.com/calendar/u/0/r/eventedit"
-        method="GET"
-        target="_blank">
+        <div id="slotGridContainer" class="slot-grid"></div>
+        <div id="lunchContainer" class="lunch-wrap"></div>
+    </main>
 
-        <input type="hidden" name="action" value="TEMPLATE">
-        <input type="hidden" name="text" id="formText">
-        <input type="hidden" name="dates" id="formDates">
-        <input type="hidden" name="details" id="formDetails">
-        <input type="hidden" name="location" id="formLocation">
-        <input type="hidden" name="stz" value="Asia/Tokyo">
-        <input type="hidden" name="etz" value="Asia/Tokyo">
-    </form>
+    <footer class="app-footer">
+        <div class="footer-version">ALT Class Scheduler · v3.4</div>
+        <div class="footer-copyright">
+            © 2026 · All rights reserved. Free for personal, classroom, and non-commercial educational use.
+            Redistribution, resale, commercial use, and distribution of modified versions require prior permission.
+        </div>
+    </footer>
 </div>
 
+<!-- SETTINGS MODAL -->
+<div id="settingsModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+        <div class="modal-header">
+            <div id="settingsModalTitle" class="modal-title">Settings</div>
+            <button type="button" id="settingsCloseBtn" class="close-button" aria-label="Close settings">×</button>
+        </div>
+
+        <div class="storage-warning">
+            <strong>CAUTION:</strong>
+            Your schools, schedules, and settings are saved only in this browser/profile.
+            They are not synced through your Google account. Export a backup periodically
+            if you want to preserve your data or move it to another device or browser.
+        </div>
+
+        <div class="settings-tabs" role="tablist" aria-label="Settings sections">
+            <button type="button" class="settings-tab active" data-settings-tab="schedule" role="tab">Schedule</button>
+            <button type="button" class="settings-tab" data-settings-tab="schools" role="tab">Schools</button>
+            <button type="button" class="settings-tab" data-settings-tab="appearance" role="tab">Appearance</button>
+            <button type="button" class="settings-tab" data-settings-tab="backup" role="tab">Backup</button>
+        </div>
+
+        <div class="settings-scroll">
+            <section id="settingsPanel-schedule" class="settings-panel active">
+                <div class="settings-section">
+                    <h3>Schedule Dates</h3>
+
+                    <div class="form-group">
+                        <label for="settingsScheduleSchoolSelect">Edit Schedule For</label>
+                        <select id="settingsScheduleSchoolSelect"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newScheduleDate">Add Date</label>
+                        <input type="date" id="newScheduleDate">
+                        <div class="settings-buttons">
+                            <button type="button" id="addScheduleDateBtn" class="settings-btn">+ Add Date</button>
+                        </div>
+                    </div>
+
+                    <div class="saved-dates-header">
+                        <button type="button" id="previousScheduleMonthBtn" class="month-nav-btn" title="Previous month">←</button>
+                        <div>
+                            <div class="saved-dates-title">Saved Dates</div>
+                            <div id="scheduleMonthLabel" class="schedule-month-label"></div>
+                        </div>
+                        <button type="button" id="nextScheduleMonthBtn" class="month-nav-btn" title="Next month">→</button>
+                    </div>
+
+                    <div id="scheduleDateList" class="schedule-date-list"></div>
+                    <div id="scheduleDateCount" class="backup-note"></div>
+                </div>
+            </section>
+
+            <section id="settingsPanel-schools" class="settings-panel">
+                <div class="settings-section">
+                    <h3>Schools & Bell Times</h3>
+
+                    <div class="form-group">
+                        <label for="settingsSchoolSelect">Edit School</label>
+                        <select id="settingsSchoolSelect"></select>
+                    </div>
+
+                    <div class="settings-buttons">
+                        <button type="button" id="addSchoolBtn" class="settings-btn">＋ Add School</button>
+                        <button type="button" id="deleteSchoolBtn" class="settings-btn danger-btn">− Delete School</button>
+                    </div>
+
+                    <div id="schoolEditor"></div>
+                </div>
+            </section>
+
+
+            <section id="settingsPanel-appearance" class="settings-panel">
+                <div class="settings-section">
+                    <h3>Theme</h3>
+
+                    <div class="theme-options" role="radiogroup" aria-label="Color theme">
+                        <label class="theme-option" data-theme-option="ocean-blue">
+                            <input type="radio" name="themeChoice" value="ocean-blue">
+                            <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                            <span class="theme-name">Ocean Blue</span>
+                        </label>
+
+                        <label class="theme-option" data-theme-option="color-pop">
+                            <input type="radio" name="themeChoice" value="color-pop">
+                            <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                            <span class="theme-name">Color Pop</span>
+                        </label>
+
+                        <label class="theme-option" data-theme-option="pretty-in-pink">
+                            <input type="radio" name="themeChoice" value="pretty-in-pink">
+                            <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                            <span class="theme-name">Pretty in Pink</span>
+                        </label>
+
+                        <label class="theme-option" data-theme-option="true-dark">
+                            <input type="radio" name="themeChoice" value="true-dark">
+                            <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                            <span class="theme-name">True Dark</span>
+                        </label>
+                    </div>
+
+                    <div class="appearance-note">
+                        Theme changes apply immediately and are saved with your scheduler preferences and Version 3 backups.
+                    </div>
+                </div>
+            </section>
+
+            <section id="settingsPanel-backup" class="settings-panel">
+                <div class="settings-section">
+                    <h3>Backup & Restore</h3>
+
+                    <div class="settings-buttons">
+                        <button type="button" id="exportBackupBtn" class="settings-btn">Export Backup</button>
+                        <button type="button" id="importBackupBtn" class="settings-btn">Import Backup</button>
+                    </div>
+
+                    <input type="file" id="importBackupFile" accept=".json,application/json" style="display:none;">
+
+                    <div class="settings-buttons">
+                        <button type="button" id="restoreDefaultsBtn" class="settings-btn danger-btn">Restore Factory Defaults</button>
+                    </div>
+
+                    <div class="backup-note">
+                        Version 3 backups include schools, locations, classes, regular and irregular bell times, lunch settings, schedule dates, theme, and preferences.
+                        Version 1 and Version 2 backups can also be imported.
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!--
+    IMPORTANT:
+    Keep this as a native GET form.
+    This is the known-working managed-Chrome workaround.
+-->
+<form
+    id="gcalForm"
+    action="https://calendar.google.com/calendar/u/0/r/eventedit"
+    method="GET"
+    target="_blank">
+
+    <input type="hidden" name="action" value="TEMPLATE">
+    <input type="hidden" name="text" id="formText">
+    <input type="hidden" name="dates" id="formDates">
+    <input type="hidden" name="details" id="formDetails">
+    <input type="hidden" name="location" id="formLocation">
+    <input type="hidden" name="stz" value="Asia/Tokyo">
+    <input type="hidden" name="etz" value="Asia/Tokyo">
+</form>
+
 <script>
+
+    /* =====================================================
+     * COMPACT UI / SETTINGS MODAL
+     * ===================================================== */
+
+    const settingsModal = document.getElementById("settingsModal");
+    const settingsOpenBtn = document.getElementById("settingsOpenBtn");
+    const settingsCloseBtn = document.getElementById("settingsCloseBtn");
+    const noteToggleBtn = document.getElementById("noteToggleBtn");
+    const notePanel = document.getElementById("notePanel");
+
+    function openSettingsModal() {
+        settingsModal.classList.add("open");
+        settingsModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        settingsCloseBtn.focus();
+    }
+
+    function closeSettingsModal() {
+        settingsModal.classList.remove("open");
+        settingsModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        settingsOpenBtn.focus();
+    }
+
+    function showSettingsTab(tabName) {
+        document.querySelectorAll(".settings-tab").forEach(button => {
+            button.classList.toggle("active", button.dataset.settingsTab === tabName);
+        });
+
+        document.querySelectorAll(".settings-panel").forEach(panel => {
+            panel.classList.toggle("active", panel.id === "settingsPanel-" + tabName);
+        });
+    }
+
+    settingsOpenBtn.addEventListener("click", openSettingsModal);
+    settingsCloseBtn.addEventListener("click", closeSettingsModal);
+
+    settingsModal.addEventListener("click", event => {
+        if (event.target === settingsModal) {
+            closeSettingsModal();
+        }
+    });
+
+    document.querySelectorAll(".settings-tab").forEach(button => {
+        button.addEventListener("click", () => showSettingsTab(button.dataset.settingsTab));
+    });
+
+    document.querySelectorAll('input[name="themeChoice"]').forEach(input => {
+        input.addEventListener("change", () => {
+            if (!input.checked) return;
+            appState.preferences.theme = input.value;
+            applyTheme(input.value);
+            saveState();
+        });
+    });
+
+    noteToggleBtn.addEventListener("click", () => {
+        const isOpen = notePanel.classList.toggle("open");
+        noteToggleBtn.setAttribute("aria-expanded", String(isOpen));
+        noteToggleBtn.textContent = isOpen ? "− Hide lesson note" : "＋ Add lesson note";
+
+        if (isOpen) {
+            document.getElementById("eventNotes").focus();
+        }
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && settingsModal.classList.contains("open")) {
+            event.preventDefault();
+            closeSettingsModal();
+        }
+    });
+
     const APP_VERSION = 3;
     const STORAGE_KEY_V3 = "classAutomatorData_v3";
     const OLD_STATE_KEY_V2 = "classAutomatorData_v2";
@@ -780,7 +1531,8 @@ Free for personal, classroom, and non-commercial educational use. Redistribution
 
         preferences: {
             selectedSchoolId: "school1",
-            selectedClassBySchool: {}
+            selectedClassBySchool: {},
+            theme: "ocean-blue"
         }
     };
 
@@ -977,6 +1729,11 @@ Free for personal, classroom, and non-commercial educational use. Redistribution
                 typeof raw.preferences.selectedClassBySchool === "object"
                     ? raw.preferences.selectedClassBySchool
                     : {};
+
+            const allowedThemes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            base.preferences.theme = allowedThemes.includes(raw.preferences.theme)
+                ? raw.preferences.theme
+                : "ocean-blue";
         }
 
         return base;
@@ -1039,6 +1796,26 @@ Free for personal, classroom, and non-commercial educational use. Redistribution
     }
 
     let appState = loadState();
+
+    function applyTheme(themeName) {
+        const allowedThemes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+        const theme = allowedThemes.includes(themeName) ? themeName : "ocean-blue";
+
+        if (theme === "ocean-blue") {
+            document.body.removeAttribute("data-theme");
+        } else {
+            document.body.setAttribute("data-theme", theme);
+        }
+
+        document.querySelectorAll('input[name="themeChoice"]').forEach(input => {
+            const selected = input.value === theme;
+            input.checked = selected;
+            const option = input.closest(".theme-option");
+            if (option) option.classList.toggle("selected", selected);
+        });
+    }
+
+    applyTheme(appState.preferences.theme);
 
     function saveState() {
         storageSet(STORAGE_KEY_V3, JSON.stringify(appState));
@@ -1150,6 +1927,11 @@ Free for personal, classroom, and non-commercial educational use. Redistribution
         if (!available) {
             useIrregularSchedule.checked = false;
         }
+
+        irregularMainWrap.classList.toggle(
+            "active",
+            available && useIrregularSchedule.checked
+        );
     }
 
     function getActivePeriods() {
@@ -2173,6 +2955,7 @@ Free for personal, classroom, and non-commercial educational use. Redistribution
     eventDate.addEventListener("change", updateScheduleNavigation);
 
     useIrregularSchedule.addEventListener("change", () => {
+        updateIrregularToggle();
         buildPeriodButtons();
     });
 
