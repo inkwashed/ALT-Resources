@@ -1,9 +1,1164 @@
 <!DOCTYPE html>
-<html lang="ja">
+<!--
+Teacher Tools
+Copyright © 2026. All rights reserved.
+
+Free for personal, classroom, and non-commercial educational use.
+-->
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALT Resources</title>
-	<p>This page is under construction. Please check back soon!</p>
+    <meta name="description" content="Free practical browser-based tools for ALTs and teachers.">
+    <title>Teacher Tools</title>
+    <script>
+        (() => {
+            const key = "teacherTools.sitePreferences.v1";
+            const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+
+            try {
+                const saved = JSON.parse(localStorage.getItem(key));
+                const theme = saved && themes.includes(saved.theme) ? saved.theme : "ocean-blue";
+                if (theme !== "ocean-blue") document.documentElement.setAttribute("data-theme", theme);
+            } catch (error) {
+                // Ocean Blue remains the safe default when storage is unavailable.
+            }
+        })();
+    </script>
+    <style>
+        :root {
+            color-scheme: light;
+            --accent: #1e40af;
+            --accent-secondary: #60a5fa;
+            --accent-soft: #dbeafe;
+            --accent-border: #93c5fd;
+            --focus-ring: rgba(30, 64, 175, .18);
+            --text: #2f3337;
+            --muted: #697078;
+            --line: #dfe3e8;
+            --bg: #f5f8ff;
+            --surface: #ffffff;
+            --panel: #f8faff;
+            --success: #18794e;
+            --success-soft: #e8f7ef;
+            --warning-bg: #fff8e1;
+            --warning-border: #f5d67b;
+            --warning-text: #6f5200;
+        }
+
+        html[data-theme="color-pop"] {
+            --accent: #8b5cf6;
+            --accent-secondary: #fbbf24;
+            --accent-soft: #e9d5ff;
+            --accent-border: #c4b5fd;
+            --focus-ring: rgba(139, 92, 246, .18);
+            --bg: #faf8ff;
+            --panel: #fcfaff;
+        }
+
+        html[data-theme="pretty-in-pink"] {
+            --accent: #db2777;
+            --accent-secondary: #dd79a5;
+            --accent-soft: #fce7f3;
+            --accent-border: #f9a8d4;
+            --focus-ring: rgba(219, 39, 119, .18);
+            --bg: #fff8fb;
+            --panel: #fffafd;
+        }
+
+        html[data-theme="true-dark"] {
+            color-scheme: dark;
+            --accent: #8ab4f8;
+            --accent-secondary: #c4a7ff;
+            --accent-soft: #18263c;
+            --accent-border: #35557e;
+            --focus-ring: rgba(138, 180, 248, .24);
+            --text: #eef2f7;
+            --muted: #a9b1bc;
+            --line: #30363d;
+            --bg: #000000;
+            --surface: #0d0f12;
+            --panel: #15191e;
+            --success: #75d5a6;
+            --success-soft: #163426;
+            --warning-bg: #332b12;
+            --warning-border: #8a7125;
+            --warning-text: #ffe08a;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        button { font: inherit; }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+        }
+
+        .site-header-inner {
+            position: relative;
+            width: min(1000px, 100%);
+            min-height: 64px;
+            margin: 0 auto;
+            padding: 9px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .site-brand {
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .site-brand-mark {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: grid;
+            place-items: center;
+            color: #ffffff;
+            background: linear-gradient(145deg, var(--accent), var(--accent-secondary));
+            border-radius: 11px;
+            box-shadow: 0 5px 14px var(--focus-ring);
+        }
+
+        html[data-theme="true-dark"] .site-brand-mark {
+            color: #07101d;
+        }
+
+        .site-brand-mark svg {
+            width: 25px;
+            height: 25px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .site-brand-copy {
+            min-width: 0;
+            display: grid;
+            gap: 1px;
+        }
+
+        .site-brand-title {
+            overflow: hidden;
+            color: var(--accent);
+            font-size: 16px;
+            font-weight: 750;
+            line-height: 1.15;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .site-brand-domain {
+            overflow: hidden;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.2;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .site-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .site-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .site-nav-link,
+        .site-menu-toggle,
+        .site-mobile-toggle {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 11px;
+            color: var(--text);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 650;
+            line-height: 1;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .site-nav-link:hover,
+        .site-nav-link[aria-current="page"],
+        .site-menu-toggle:hover,
+        .site-menu-toggle[aria-expanded="true"],
+        .site-mobile-toggle:hover,
+        .site-mobile-toggle[aria-expanded="true"] {
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+        }
+
+        .site-nav-link:focus-visible,
+        .site-menu-toggle:focus-visible,
+        .site-mobile-toggle:focus-visible,
+        .site-settings-button:focus-visible,
+        .site-theme-close:focus-visible,
+        .site-menu-item:focus-visible,
+        .primary-link:focus-visible,
+        .tool-link:focus-visible,
+        .update-link:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .site-settings-button {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--accent);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: color .18s ease;
+        }
+
+        .site-settings-button:hover,
+        .site-settings-button[aria-expanded="true"] {
+            color: var(--accent-secondary);
+        }
+
+        .site-settings-button svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            transform-origin: center;
+            transition: transform .26s ease;
+        }
+
+        .site-settings-button:hover svg,
+        .site-settings-button:focus-visible svg,
+        .site-settings-button[aria-expanded="true"] svg {
+            transform: rotate(45deg);
+        }
+
+        .site-menu-chevron {
+            width: 8px;
+            height: 8px;
+            border-right: 1.5px solid currentColor;
+            border-bottom: 1.5px solid currentColor;
+            transform: translateY(-2px) rotate(45deg);
+            transition: transform .18s ease;
+        }
+
+        .site-menu-toggle[aria-expanded="true"] .site-menu-chevron {
+            transform: translateY(2px) rotate(225deg);
+        }
+
+        .site-mobile-toggle {
+            width: 42px;
+            padding: 0;
+            display: none;
+            font-size: 21px;
+        }
+
+        .site-tools-menu {
+            position: absolute;
+            z-index: 120;
+            top: calc(100% - 5px);
+            right: 16px;
+            width: min(300px, calc(100vw - 32px));
+            padding: 7px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            box-shadow: 0 16px 38px rgba(0,0,0,.18);
+        }
+
+        .site-tools-menu[hidden] { display: none; }
+
+        .site-theme-panel {
+            position: absolute;
+            z-index: 121;
+            top: calc(100% - 5px);
+            right: 16px;
+            width: min(340px, calc(100vw - 32px));
+            padding: 13px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            box-shadow: 0 16px 38px rgba(0,0,0,.18);
+        }
+
+        .site-theme-panel[hidden] { display: none; }
+
+        .site-theme-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 3px;
+        }
+
+        .site-theme-title {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .site-theme-close {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--muted);
+            background: transparent;
+            border: 0;
+            border-radius: 7px;
+            font-size: 21px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .site-theme-close:hover {
+            color: var(--text);
+            background: var(--panel);
+        }
+
+        .site-theme-help {
+            margin: 0 0 11px;
+            color: var(--muted);
+            font-size: 10.5px;
+            line-height: 1.45;
+        }
+
+        .site-theme-options {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .site-theme-option {
+            --theme-primary: #1e40af;
+            --theme-secondary: #60a5fa;
+            --theme-light: #dbeafe;
+            position: relative;
+            display: grid;
+            gap: 6px;
+            padding: 7px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .site-theme-option:hover,
+        .site-theme-option.selected {
+            border-color: var(--theme-primary);
+        }
+
+        .site-theme-option.selected {
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-primary) 18%, transparent);
+        }
+
+        .site-theme-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .site-theme-option:focus-within {
+            outline: 2px solid var(--theme-primary);
+            outline-offset: 2px;
+        }
+
+        .site-theme-preview {
+            height: 25px;
+            display: flex;
+            overflow: hidden;
+            border: 1px solid color-mix(in srgb, var(--theme-primary) 25%, transparent);
+            border-radius: 5px;
+        }
+
+        .site-theme-preview span:nth-child(1) { flex: 1.35; background: var(--theme-primary); }
+        .site-theme-preview span:nth-child(2) { flex: .8; background: var(--theme-secondary); }
+        .site-theme-preview span:nth-child(3) { flex: 1; background: var(--theme-light); }
+
+        .site-theme-name {
+            overflow: hidden;
+            color: var(--text);
+            font-size: 9.5px;
+            font-weight: 700;
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .site-theme-option[data-theme-option="color-pop"] {
+            --theme-primary: #8b5cf6;
+            --theme-secondary: #fbbf24;
+            --theme-light: #e9d5ff;
+        }
+
+        .site-theme-option[data-theme-option="pretty-in-pink"] {
+            --theme-primary: #db2777;
+            --theme-secondary: #dd79a5;
+            --theme-light: #fce7f3;
+        }
+
+        .site-theme-option[data-theme-option="true-dark"] {
+            --theme-primary: #8ab4f8;
+            --theme-secondary: #c4a7ff;
+            --theme-light: #0d0f12;
+        }
+
+        .site-menu-label {
+            padding: 6px 9px 5px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 750;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .site-menu-item {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 9px;
+            color: var(--text);
+            background: transparent;
+            border: 0;
+            border-radius: 8px;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        a.site-menu-item:hover,
+        .site-menu-item[aria-current="page"] {
+            background: var(--accent-soft);
+        }
+
+        .site-menu-item[aria-disabled="true"] {
+            opacity: .72;
+            cursor: default;
+        }
+
+        .site-menu-home { display: none; }
+
+        .site-menu-icon {
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .site-menu-name {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .site-menu-description {
+            display: block;
+            margin-top: 1px;
+            color: var(--muted);
+            font-size: 9.5px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .site-menu-status {
+            color: var(--muted);
+            font-size: 8.5px;
+            font-weight: 700;
+        }
+
+        .home-main {
+            width: min(960px, 100%);
+            margin: 0 auto;
+            padding: 28px 18px 34px;
+        }
+
+        .home-intro {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(230px, .75fr);
+            gap: 18px;
+            align-items: stretch;
+        }
+
+        .welcome-panel,
+        .construction-panel,
+        .tool-entry,
+        .updates-panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.07);
+        }
+
+        .welcome-panel {
+            padding: 26px;
+        }
+
+        .welcome-kicker {
+            margin: 0 0 7px;
+            color: var(--accent);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+        }
+
+        .welcome-title {
+            max-width: 600px;
+            margin: 0;
+            color: var(--text);
+            font-size: clamp(25px, 4vw, 38px);
+            line-height: 1.12;
+            letter-spacing: -.025em;
+        }
+
+        .welcome-copy {
+            max-width: 620px;
+            margin: 12px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .primary-link {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 18px;
+            padding: 10px 15px;
+            color: #ffffff;
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .primary-link:hover { filter: brightness(.96); }
+
+        html[data-theme="true-dark"] .primary-link { color: #07101d; }
+
+        .construction-panel {
+            padding: 20px;
+            color: var(--warning-text);
+            background: var(--warning-bg);
+            border-color: var(--warning-border);
+            box-shadow: none;
+        }
+
+        .construction-icon {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 13px;
+            color: var(--warning-text);
+            background: color-mix(in srgb, var(--warning-border) 32%, transparent);
+            border: 1px solid var(--warning-border);
+            border-radius: 10px;
+            font-size: 19px;
+        }
+
+        .construction-title {
+            margin: 0 0 6px;
+            font-size: 15px;
+        }
+
+        .construction-copy {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .home-section {
+            margin-top: 24px;
+        }
+
+        .section-heading-row {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 9px;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .section-description {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .tool-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .tool-entry {
+            position: relative;
+            display: grid;
+            grid-template-columns: 44px minmax(0, 1fr);
+            gap: 12px;
+            padding: 16px;
+            box-shadow: none;
+        }
+
+        .tool-entry.available {
+            border-color: var(--accent-border);
+        }
+
+        .tool-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-radius: 10px;
+            font-size: 20px;
+        }
+
+        .tool-name-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .tool-name {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .tool-status {
+            flex: 0 0 auto;
+            padding: 3px 7px;
+            color: var(--muted);
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            font-size: 8.5px;
+            font-weight: 750;
+            text-transform: uppercase;
+        }
+
+        .tool-entry.available .tool-status {
+            color: var(--success);
+            background: var(--success-soft);
+            border-color: color-mix(in srgb, var(--success) 25%, transparent);
+        }
+
+        .tool-description {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 11.5px;
+            line-height: 1.45;
+        }
+
+        .tool-link {
+            display: inline-flex;
+            margin-top: 10px;
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .tool-link:hover { text-decoration: underline; }
+
+        .updates-panel {
+            overflow: hidden;
+            box-shadow: none;
+        }
+
+        .update-entry {
+            display: grid;
+            grid-template-columns: 105px minmax(0, 1fr);
+            gap: 18px;
+            padding: 17px 18px;
+        }
+
+        .update-entry + .update-entry { border-top: 1px solid var(--line); }
+
+        .update-date {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 650;
+            line-height: 1.4;
+        }
+
+        .update-version {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 2px 6px;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-radius: 999px;
+            font-size: 8.5px;
+            font-weight: 750;
+        }
+
+        .update-title {
+            margin: 0 0 5px;
+            font-size: 13px;
+        }
+
+        .update-copy {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11.5px;
+            line-height: 1.5;
+        }
+
+        .update-link {
+            display: inline-flex;
+            margin-top: 8px;
+            color: var(--accent);
+            font-size: 10.5px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .update-link:hover { text-decoration: underline; }
+
+        .site-footer {
+            padding: 14px 18px 18px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 9.5px;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 700px) {
+            .home-intro { grid-template-columns: 1fr; }
+            .construction-panel {
+                display: grid;
+                grid-template-columns: 38px minmax(0, 1fr);
+                gap: 12px;
+                align-items: start;
+            }
+            .construction-icon { margin: 0; }
+        }
+
+        @media (max-width: 620px) {
+            .site-header-inner { min-height: 58px; padding: 8px 10px; }
+            .site-brand-mark { width: 38px; height: 38px; flex-basis: 38px; border-radius: 9px; }
+            .site-brand-title { font-size: 14px; }
+            .site-nav { display: none; }
+            .site-mobile-toggle { display: inline-flex; }
+            .site-tools-menu { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
+            .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
+            .site-menu-home { display: grid; }
+            .home-main { padding: 16px 8px 24px; }
+            .welcome-panel { padding: 20px 17px; }
+            .tool-list { grid-template-columns: 1fr; }
+            .update-entry { grid-template-columns: 1fr; gap: 6px; }
+            .update-version { margin: 0 0 0 6px; }
+        }
+
+        @media (max-width: 380px) {
+            .site-brand-domain { display: none; }
+            .welcome-title { font-size: 25px; }
+            .construction-panel { grid-template-columns: 1fr; }
+            .construction-icon { display: none; }
+            .tool-entry { grid-template-columns: 38px minmax(0, 1fr); padding: 13px; }
+            .tool-icon { width: 38px; height: 38px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+            }
+        }
+    </style>
 </head>
+<body>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a class="site-brand" href="/" aria-label="Teacher Tools home" aria-current="page">
+                <span class="site-brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 28 28">
+                        <path d="M5.5 7.5h17v15h-17z" />
+                        <path d="M9 4.5v6M19 4.5v6M5.5 12h17" />
+                        <path d="m10 17 2.2 2.2L18 14.7" />
+                    </svg>
+                </span>
+                <span class="site-brand-copy">
+                    <span class="site-brand-title">Teacher Tools</span>
+                    <span class="site-brand-domain">tools.jacobosinjapan.com</span>
+                </span>
+            </a>
+
+            <div class="site-header-actions">
+                <nav class="site-nav" aria-label="Main navigation">
+                    <a class="site-nav-link" href="/" aria-current="page">Home</a>
+                    <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
+                        Tools <span class="site-menu-chevron" aria-hidden="true"></span>
+                    </button>
+                </nav>
+
+                <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+                    </svg>
+                </button>
+
+                <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">☰</button>
+            </div>
+
+            <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
+                <a class="site-menu-item site-menu-home" href="/" aria-current="page">
+                    <span class="site-menu-icon" aria-hidden="true">⌂</span>
+                    <span>
+                        <span class="site-menu-name">Home</span>
+                        <span class="site-menu-description">Teacher Tools overview and updates</span>
+                    </span>
+                    <span class="site-menu-status">HERE</span>
+                </a>
+
+                <div class="site-menu-label">Available tools</div>
+
+                <a class="site-menu-item" href="/scheduler/">
+                    <span class="site-menu-icon" aria-hidden="true">▣</span>
+                    <span>
+                        <span class="site-menu-name">Class Scheduler</span>
+                        <span class="site-menu-description">Create calendar events from bell times</span>
+                    </span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+
+                <div class="site-menu-item" aria-disabled="true">
+                    <span class="site-menu-icon" aria-hidden="true">◷</span>
+                    <span>
+                        <span class="site-menu-name">Classroom Timer</span>
+                        <span class="site-menu-description">Simple timing for activities and games</span>
+                    </span>
+                    <span class="site-menu-status">PLANNED</span>
+                </div>
+            </nav>
+
+            <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
+                <div class="site-theme-header">
+                    <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
+                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings">×</button>
+                </div>
+                <p class="site-theme-help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
+
+                <div class="site-theme-options" role="radiogroup" aria-label="Site color theme">
+                    <label class="site-theme-option" data-theme-option="ocean-blue">
+                        <input type="radio" name="siteThemeChoice" value="ocean-blue">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name">Ocean Blue</span>
+                    </label>
+
+                    <label class="site-theme-option" data-theme-option="color-pop">
+                        <input type="radio" name="siteThemeChoice" value="color-pop">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name">Color Pop</span>
+                    </label>
+
+                    <label class="site-theme-option" data-theme-option="pretty-in-pink">
+                        <input type="radio" name="siteThemeChoice" value="pretty-in-pink">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name">Pretty in Pink</span>
+                    </label>
+
+                    <label class="site-theme-option" data-theme-option="true-dark">
+                        <input type="radio" name="siteThemeChoice" value="true-dark">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name">True Dark</span>
+                    </label>
+                </div>
+            </section>
+        </div>
+    </header>
+
+    <main class="home-main">
+        <div class="home-intro">
+            <section class="welcome-panel">
+                <p class="welcome-kicker">Welcome to Teacher Tools</p>
+                <h1 class="welcome-title">Practical tools for ALTs and teachers.</h1>
+                <p class="welcome-copy">Simple browser-based utilities designed to make everyday planning and classroom work a little easier.</p>
+                <a class="primary-link" href="/scheduler/">Open Class Scheduler <span aria-hidden="true">→</span></a>
+            </section>
+
+            <aside class="construction-panel" aria-labelledby="constructionTitle">
+                <div class="construction-icon" aria-hidden="true">⌁</div>
+                <div>
+                    <h2 id="constructionTitle" class="construction-title">This page is under construction</h2>
+                    <p class="construction-copy">Please check back soon as the Teacher Tools collection continues to grow.</p>
+                </div>
+            </aside>
+        </div>
+
+        <section class="home-section" aria-labelledby="toolsTitle">
+            <div class="section-heading-row">
+                <div>
+                    <h2 id="toolsTitle" class="section-title">Available tools</h2>
+                    <p class="section-description">Open a tool or see what is currently being planned.</p>
+                </div>
+            </div>
+
+            <div class="tool-list">
+                <article class="tool-entry available">
+                    <div class="tool-icon" aria-hidden="true">▣</div>
+                    <div>
+                        <div class="tool-name-row">
+                            <h3 class="tool-name">ALT Class Scheduler</h3>
+                            <span class="tool-status">Available</span>
+                        </div>
+                        <p class="tool-description">Create templated Google Calendar events using the real class schedules and bell times for multiple schools.</p>
+                        <a class="tool-link" href="/scheduler/">Open scheduler →</a>
+                    </div>
+                </article>
+
+                <article class="tool-entry">
+                    <div class="tool-icon" aria-hidden="true">◷</div>
+                    <div>
+                        <div class="tool-name-row">
+                            <h3 class="tool-name">Classroom Timer</h3>
+                            <span class="tool-status">Planned</span>
+                        </div>
+                        <p class="tool-description">A lightweight timer for classroom activities and games. More details will be added as the idea develops.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="home-section" aria-labelledby="updatesTitle">
+            <div class="section-heading-row">
+                <div>
+                    <h2 id="updatesTitle" class="section-title">Latest updates</h2>
+                    <p class="section-description">Release notes and noteworthy changes, newest first.</p>
+                </div>
+            </div>
+
+            <div class="updates-panel">
+                <article class="update-entry">
+                    <div class="update-date">
+                        <time datetime="2026-08">August 2026</time>
+                        <span class="update-version">v3.4</span>
+                    </div>
+                    <div>
+                        <h3 class="update-title">ALT Class Scheduler visual update</h3>
+                        <p class="update-copy">Added four appearance themes including True Dark, refined the compact Settings experience, and polished controls and responsive behavior.</p>
+                        <a class="update-link" href="/scheduler/">Open Class Scheduler →</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        Teacher Tools · tools.jacobosinjapan.com<br>
+        Free practical tools for ALTs and teachers. · © 2026
+    </footer>
+
+    <script>
+        (() => {
+            "use strict";
+
+            const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
+            const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const siteToolsMenu = document.getElementById("siteToolsMenu");
+            const siteMenuButtons = [
+                document.getElementById("siteToolsMenuButton"),
+                document.getElementById("siteMobileMenuButton")
+            ];
+            const siteSettingsButton = document.getElementById("siteSettingsButton");
+            const siteThemePanel = document.getElementById("siteThemePanel");
+            const siteThemeCloseButton = document.getElementById("siteThemeCloseButton");
+
+            function normalizeTheme(value) {
+                return ALLOWED_THEMES.includes(value) ? value : "ocean-blue";
+            }
+
+            function themeFromStoredValue(value) {
+                if (!value) return null;
+
+                try {
+                    const saved = JSON.parse(value);
+                    return saved && ALLOWED_THEMES.includes(saved.theme)
+                        ? saved.theme
+                        : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function readGlobalTheme() {
+                try {
+                    return themeFromStoredValue(localStorage.getItem(SITE_PREFERENCES_KEY));
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function saveGlobalTheme(theme) {
+                try {
+                    localStorage.setItem(
+                        SITE_PREFERENCES_KEY,
+                        JSON.stringify({ version: 1, theme })
+                    );
+                } catch (error) {
+                    // The page remains usable when browser storage is restricted.
+                }
+            }
+
+            function applyGlobalTheme(requestedTheme, persist = true) {
+                const theme = normalizeTheme(requestedTheme);
+
+                if (theme === "ocean-blue") {
+                    document.documentElement.removeAttribute("data-theme");
+                    document.body.removeAttribute("data-theme");
+                } else {
+                    document.documentElement.setAttribute("data-theme", theme);
+                    document.body.setAttribute("data-theme", theme);
+                }
+
+                document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
+                    const selected = input.value === theme;
+                    input.checked = selected;
+                    const option = input.closest(".site-theme-option");
+                    if (option) option.classList.toggle("selected", selected);
+                });
+
+                if (persist) saveGlobalTheme(theme);
+            }
+
+            function setSiteToolsMenu(open) {
+                if (open) setSiteThemePanel(false);
+                siteToolsMenu.hidden = !open;
+                siteMenuButtons.forEach(button => {
+                    button.setAttribute("aria-expanded", String(open));
+                });
+            }
+
+            function setSiteThemePanel(open) {
+                if (open) setSiteToolsMenu(false);
+                siteThemePanel.hidden = !open;
+                siteSettingsButton.setAttribute("aria-expanded", String(open));
+
+                if (open) {
+                    const selected = siteThemePanel.querySelector('input[name="siteThemeChoice"]:checked');
+                    if (selected) selected.focus();
+                }
+            }
+
+            siteMenuButtons.forEach(button => {
+                button.addEventListener("click", event => {
+                    event.stopPropagation();
+                    setSiteToolsMenu(siteToolsMenu.hidden);
+                });
+            });
+
+            siteToolsMenu.addEventListener("click", event => {
+                event.stopPropagation();
+            });
+
+            siteSettingsButton.addEventListener("click", event => {
+                event.stopPropagation();
+                setSiteThemePanel(siteThemePanel.hidden);
+            });
+
+            siteThemeCloseButton.addEventListener("click", () => {
+                setSiteThemePanel(false);
+                siteSettingsButton.focus();
+            });
+
+            siteThemePanel.addEventListener("click", event => {
+                event.stopPropagation();
+            });
+
+            document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
+                input.addEventListener("change", () => {
+                    if (input.checked) applyGlobalTheme(input.value);
+                });
+            });
+
+            document.addEventListener("click", () => {
+                if (!siteToolsMenu.hidden) setSiteToolsMenu(false);
+                if (!siteThemePanel.hidden) setSiteThemePanel(false);
+            });
+
+            document.addEventListener("keydown", event => {
+                if (event.key !== "Escape") return;
+
+                if (!siteThemePanel.hidden) {
+                    setSiteThemePanel(false);
+                    siteSettingsButton.focus();
+                    return;
+                }
+
+                if (!siteToolsMenu.hidden) {
+                    setSiteToolsMenu(false);
+                    const visibleButton = siteMenuButtons.find(button => button.offsetParent !== null);
+                    if (visibleButton) visibleButton.focus();
+                }
+            });
+
+            window.addEventListener("storage", event => {
+                if (event.key !== SITE_PREFERENCES_KEY) return;
+                applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+            });
+
+            applyGlobalTheme(readGlobalTheme() || "ocean-blue", false);
+        })();
+    </script>
+</body>
 </html>

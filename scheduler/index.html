@@ -23,6 +23,20 @@ The software is provided "as is" without warranty of any kind.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALT Class Scheduler</title>
+    <script>
+        (() => {
+            const key = "teacherTools.sitePreferences.v1";
+            const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+
+            try {
+                const saved = JSON.parse(localStorage.getItem(key));
+                const theme = saved && themes.includes(saved.theme) ? saved.theme : "ocean-blue";
+                if (theme !== "ocean-blue") document.documentElement.setAttribute("data-theme", theme);
+            } catch (error) {
+                // Scheduler migration runs after its existing saved state loads.
+            }
+        })();
+    </script>
     <style>
         :root {
             /* Ocean Blue theme (default) */
@@ -44,7 +58,7 @@ The software is provided "as is" without warranty of any kind.
             --tooltip-text: #ffffff;
         }
 
-        body[data-theme="color-pop"] {
+        html[data-theme="color-pop"] {
             --accent: #8b5cf6;
             --accent-secondary: #fbbf24;
             --accent-soft: #e9d5ff;
@@ -54,7 +68,7 @@ The software is provided "as is" without warranty of any kind.
             --panel: #fcfaff;
         }
 
-        body[data-theme="pretty-in-pink"] {
+        html[data-theme="pretty-in-pink"] {
             --accent: #db2777;
             --accent-secondary: #DD79A5;
             --accent-soft: #fce7f3;
@@ -64,7 +78,7 @@ The software is provided "as is" without warranty of any kind.
             --panel: #fffafd;
         }
 
-        body[data-theme="true-dark"] {
+        html[data-theme="true-dark"] {
             --accent: #8ab4f8;
             --accent-secondary: #c4a7ff;
             --accent-soft: #18263c;
@@ -91,12 +105,347 @@ The software is provided "as is" without warranty of any kind.
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding: 16px;
+            padding: 0;
         }
 
         body.modal-open { overflow: hidden; }
 
         button, input, select, textarea { font: inherit; }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+        }
+
+        .site-header-inner {
+            position: relative;
+            width: min(1000px, 100%);
+            min-height: 64px;
+            margin: 0 auto;
+            padding: 9px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .site-brand {
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .site-brand-mark {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: grid;
+            place-items: center;
+            color: #ffffff;
+            background: linear-gradient(145deg, var(--accent), var(--accent-secondary));
+            border-radius: 11px;
+            box-shadow: 0 5px 14px var(--focus-ring);
+        }
+
+        html[data-theme="true-dark"] .site-brand-mark {
+            color: #07101d;
+        }
+
+        .site-brand-mark svg {
+            width: 25px;
+            height: 25px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .site-brand-copy {
+            min-width: 0;
+            display: grid;
+            gap: 1px;
+        }
+
+        .site-brand-title {
+            overflow: hidden;
+            color: var(--accent);
+            font-size: 16px;
+            font-weight: 750;
+            line-height: 1.15;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .site-brand-domain {
+            overflow: hidden;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.2;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .site-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .site-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .site-nav-link,
+        .site-menu-toggle,
+        .site-mobile-toggle {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 11px;
+            color: var(--text);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 650;
+            line-height: 1;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .site-nav-link:hover,
+        .site-menu-toggle:hover,
+        .site-menu-toggle[aria-expanded="true"],
+        .site-mobile-toggle:hover,
+        .site-mobile-toggle[aria-expanded="true"] {
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+        }
+
+        .site-nav-link:focus-visible,
+        .site-menu-toggle:focus-visible,
+        .site-mobile-toggle:focus-visible,
+        .site-settings-button:focus-visible,
+        .site-theme-close:focus-visible,
+        .site-menu-item:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .site-settings-button {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--accent);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: color .18s ease;
+        }
+
+        .site-settings-button:hover,
+        .site-settings-button[aria-expanded="true"] {
+            color: var(--accent-secondary);
+        }
+
+        .site-settings-button svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            transform-origin: center;
+            transition: transform .26s ease;
+        }
+
+        .site-settings-button:hover svg,
+        .site-settings-button:focus-visible svg,
+        .site-settings-button[aria-expanded="true"] svg {
+            transform: rotate(45deg);
+        }
+
+        .site-menu-chevron {
+            width: 8px;
+            height: 8px;
+            border-right: 1.5px solid currentColor;
+            border-bottom: 1.5px solid currentColor;
+            transform: translateY(-2px) rotate(45deg);
+            transition: transform .18s ease;
+        }
+
+        .site-menu-toggle[aria-expanded="true"] .site-menu-chevron {
+            transform: translateY(2px) rotate(225deg);
+        }
+
+        .site-mobile-toggle {
+            width: 42px;
+            padding: 0;
+            display: none;
+            font-size: 21px;
+        }
+
+        .site-tools-menu {
+            position: absolute;
+            z-index: 120;
+            top: calc(100% - 5px);
+            right: 16px;
+            width: min(300px, calc(100vw - 32px));
+            padding: 7px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            box-shadow: 0 16px 38px rgba(0,0,0,.18);
+        }
+
+        .site-tools-menu[hidden] { display: none; }
+
+        .site-theme-panel {
+            position: absolute;
+            z-index: 121;
+            top: calc(100% - 5px);
+            right: 16px;
+            width: min(340px, calc(100vw - 32px));
+            padding: 13px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            box-shadow: 0 16px 38px rgba(0,0,0,.18);
+        }
+
+        .site-theme-panel[hidden] { display: none; }
+
+        .site-theme-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 3px;
+        }
+
+        .site-theme-title {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .site-theme-close {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--muted);
+            background: transparent;
+            border: 0;
+            border-radius: 7px;
+            font-size: 21px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .site-theme-close:hover {
+            color: var(--text);
+            background: var(--panel);
+        }
+
+        .site-theme-help {
+            margin: 0 0 11px;
+            color: var(--muted);
+            font-size: 10.5px;
+            line-height: 1.45;
+        }
+
+        .site-theme-panel .theme-options {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .site-menu-label {
+            padding: 6px 9px 5px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 750;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .site-menu-item {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 9px;
+            color: var(--text);
+            background: transparent;
+            border: 0;
+            border-radius: 8px;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        a.site-menu-item:hover,
+        .site-menu-item[aria-current="page"] {
+            background: var(--accent-soft);
+        }
+
+        .site-menu-item[aria-disabled="true"] {
+            opacity: .72;
+            cursor: default;
+        }
+
+        .site-menu-home { display: none; }
+
+        .site-menu-icon {
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .site-menu-name {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .site-menu-description {
+            display: block;
+            margin-top: 1px;
+            color: var(--muted);
+            font-size: 9.5px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .site-menu-status {
+            color: var(--muted);
+            font-size: 8.5px;
+            font-weight: 700;
+        }
+
+        .site-content {
+            padding: 16px;
+        }
 
         .app-shell {
             width: min(760px, 100%);
@@ -965,7 +1314,16 @@ The software is provided "as is" without warranty of any kind.
         .switch-row label { margin: 0; color: var(--text); font-weight: 500; }
 
         @media (max-width: 620px) {
-            body { padding: 6px; background: var(--surface); }
+            body { background: var(--surface); }
+            .site-header-inner { min-height: 58px; padding: 8px 10px; }
+            .site-brand-mark { width: 38px; height: 38px; flex-basis: 38px; border-radius: 9px; }
+            .site-brand-title { font-size: 14px; }
+            .site-nav { display: none; }
+            .site-mobile-toggle { display: inline-flex; }
+            .site-tools-menu { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
+            .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
+            .site-menu-home { display: grid; }
+            .site-content { padding: 6px; }
             .app-shell { border-radius: 9px; box-shadow: none; border-color: var(--line); }
             .app-main { padding: 11px; }
             .top-fields { grid-template-columns: 1fr; gap: 0; }
@@ -987,6 +1345,7 @@ The software is provided "as is" without warranty of any kind.
         }
 
         @media (max-width: 380px) {
+            .site-brand-domain { display: none; }
             .app-header { padding-left: 12px; }
             .app-title { font-size: 17px; }
             .version-badge { display: none; }
@@ -1071,6 +1430,106 @@ The software is provided "as is" without warranty of any kind.
 </head>
 <body>
 
+<header class="site-header">
+    <div class="site-header-inner">
+        <a class="site-brand" href="/" aria-label="Teacher Tools home">
+            <span class="site-brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 28 28">
+                    <path d="M5.5 7.5h17v15h-17z" />
+                    <path d="M9 4.5v6M19 4.5v6M5.5 12h17" />
+                    <path d="m10 17 2.2 2.2L18 14.7" />
+                </svg>
+            </span>
+            <span class="site-brand-copy">
+                <span class="site-brand-title">Teacher Tools</span>
+                <span class="site-brand-domain">tools.jacobosinjapan.com</span>
+            </span>
+        </a>
+
+        <div class="site-header-actions">
+            <nav class="site-nav" aria-label="Main navigation">
+                <a class="site-nav-link" href="/">Home</a>
+                <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
+                    Tools <span class="site-menu-chevron" aria-hidden="true"></span>
+                </button>
+            </nav>
+
+            <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+                </svg>
+            </button>
+
+            <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">☰</button>
+        </div>
+
+        <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
+            <a class="site-menu-item site-menu-home" href="/">
+                <span class="site-menu-icon" aria-hidden="true">⌂</span>
+                <span>
+                    <span class="site-menu-name">Home</span>
+                    <span class="site-menu-description">Return to the Teacher Tools landing page</span>
+                </span>
+            </a>
+
+            <div class="site-menu-label">Available tools</div>
+
+            <a class="site-menu-item" href="/scheduler/" aria-current="page">
+                <span class="site-menu-icon" aria-hidden="true">▣</span>
+                <span>
+                    <span class="site-menu-name">Class Scheduler</span>
+                    <span class="site-menu-description">Create calendar events from bell times</span>
+                </span>
+                <span class="site-menu-status">OPEN</span>
+            </a>
+
+            <div class="site-menu-item" aria-disabled="true">
+                <span class="site-menu-icon" aria-hidden="true">◷</span>
+                <span>
+                    <span class="site-menu-name">Classroom Timer</span>
+                    <span class="site-menu-description">Simple timing for activities and games</span>
+                </span>
+                <span class="site-menu-status">PLANNED</span>
+            </div>
+        </nav>
+
+        <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
+            <div class="site-theme-header">
+                <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
+                <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings">×</button>
+            </div>
+            <p class="site-theme-help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
+
+            <div class="theme-options" role="radiogroup" aria-label="Site color theme">
+                <label class="theme-option" data-theme-option="ocean-blue">
+                    <input type="radio" name="siteThemeChoice" value="ocean-blue">
+                    <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                    <span class="theme-name">Ocean Blue</span>
+                </label>
+
+                <label class="theme-option" data-theme-option="color-pop">
+                    <input type="radio" name="siteThemeChoice" value="color-pop">
+                    <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                    <span class="theme-name">Color Pop</span>
+                </label>
+
+                <label class="theme-option" data-theme-option="pretty-in-pink">
+                    <input type="radio" name="siteThemeChoice" value="pretty-in-pink">
+                    <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                    <span class="theme-name">Pretty in Pink</span>
+                </label>
+
+                <label class="theme-option" data-theme-option="true-dark">
+                    <input type="radio" name="siteThemeChoice" value="true-dark">
+                    <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                    <span class="theme-name">True Dark</span>
+                </label>
+            </div>
+        </section>
+    </div>
+</header>
+
+<div class="site-content">
 <div class="app-shell">
     <header class="app-header">
         <div class="title-wrap">
@@ -1078,7 +1537,7 @@ The software is provided "as is" without warranty of any kind.
             <span class="version-badge">v3.4</span>
         </div>
 
-        <button type="button" id="settingsOpenBtn" class="icon-button" title="Settings" aria-label="Open settings">
+        <button type="button" id="settingsOpenBtn" class="icon-button" title="Scheduler settings" aria-label="Open scheduler settings">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
             </svg>
@@ -1160,6 +1619,7 @@ The software is provided "as is" without warranty of any kind.
             Redistribution, resale, commercial use, and distribution of modified versions require prior permission.
         </div>
     </footer>
+</div>
 </div>
 
 <!-- SETTINGS MODAL -->
@@ -1266,7 +1726,7 @@ The software is provided "as is" without warranty of any kind.
                     </div>
 
                     <div class="appearance-note">
-                        Theme changes apply immediately and are saved with your scheduler preferences and Version 3 backups.
+                        Theme changes apply immediately across Teacher Tools in this browser and remain included in Version 3 scheduler backups.
                     </div>
                 </div>
             </section>
@@ -1319,6 +1779,166 @@ The software is provided "as is" without warranty of any kind.
 <script>
 
     /* =====================================================
+     * TEACHER TOOLS SITE NAVIGATION
+     * ===================================================== */
+
+    const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
+    const ALLOWED_SITE_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+    const siteToolsMenu = document.getElementById("siteToolsMenu");
+    const siteMenuButtons = [
+        document.getElementById("siteToolsMenuButton"),
+        document.getElementById("siteMobileMenuButton")
+    ];
+    const siteSettingsButton = document.getElementById("siteSettingsButton");
+    const siteThemePanel = document.getElementById("siteThemePanel");
+    const siteThemeCloseButton = document.getElementById("siteThemeCloseButton");
+
+    function normalizeSiteTheme(value) {
+        return ALLOWED_SITE_THEMES.includes(value) ? value : "ocean-blue";
+    }
+
+    function themeFromStoredSitePreferences(value) {
+        if (!value) return null;
+
+        try {
+            const saved = JSON.parse(value);
+            return saved && ALLOWED_SITE_THEMES.includes(saved.theme)
+                ? saved.theme
+                : null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function readGlobalTheme() {
+        try {
+            return themeFromStoredSitePreferences(localStorage.getItem(SITE_PREFERENCES_KEY));
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function saveGlobalTheme(theme) {
+        try {
+            localStorage.setItem(
+                SITE_PREFERENCES_KEY,
+                JSON.stringify({ version: 1, theme })
+            );
+        } catch (error) {
+            // The scheduler remains usable when browser storage is restricted.
+        }
+    }
+
+    function applyThemeAttributes(requestedTheme, persistGlobal = false) {
+        const theme = normalizeSiteTheme(requestedTheme);
+
+        if (theme === "ocean-blue") {
+            document.documentElement.removeAttribute("data-theme");
+            document.body.removeAttribute("data-theme");
+        } else {
+            document.documentElement.setAttribute("data-theme", theme);
+            document.body.setAttribute("data-theme", theme);
+        }
+
+        document.querySelectorAll('input[name="siteThemeChoice"], input[name="themeChoice"]').forEach(input => {
+            const selected = input.value === theme;
+            input.checked = selected;
+            const option = input.closest(".theme-option");
+            if (option) option.classList.toggle("selected", selected);
+        });
+
+        if (persistGlobal) saveGlobalTheme(theme);
+        return theme;
+    }
+
+    function setSiteToolsMenu(open) {
+        if (open) setSiteThemePanel(false);
+        siteToolsMenu.hidden = !open;
+        siteMenuButtons.forEach(button => {
+            button.setAttribute("aria-expanded", String(open));
+        });
+    }
+
+    function setSiteThemePanel(open) {
+        if (open) setSiteToolsMenu(false);
+        siteThemePanel.hidden = !open;
+        siteSettingsButton.setAttribute("aria-expanded", String(open));
+
+        if (open) {
+            const selected = siteThemePanel.querySelector('input[name="siteThemeChoice"]:checked');
+            if (selected) selected.focus();
+        }
+    }
+
+    siteMenuButtons.forEach(button => {
+        button.addEventListener("click", event => {
+            event.stopPropagation();
+            setSiteToolsMenu(siteToolsMenu.hidden);
+        });
+    });
+
+    siteToolsMenu.addEventListener("click", event => {
+        event.stopPropagation();
+    });
+
+    siteSettingsButton.addEventListener("click", event => {
+        event.stopPropagation();
+        setSiteThemePanel(siteThemePanel.hidden);
+    });
+
+    siteThemeCloseButton.addEventListener("click", () => {
+        setSiteThemePanel(false);
+        siteSettingsButton.focus();
+    });
+
+    siteThemePanel.addEventListener("click", event => {
+        event.stopPropagation();
+    });
+
+    document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
+        input.addEventListener("change", () => {
+            if (!input.checked) return;
+            const theme = applyTheme(input.value, true);
+            appState.preferences.theme = theme;
+            saveState();
+        });
+    });
+
+    document.addEventListener("click", () => {
+        if (!siteToolsMenu.hidden) setSiteToolsMenu(false);
+        if (!siteThemePanel.hidden) setSiteThemePanel(false);
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key !== "Escape") return;
+
+        if (!siteThemePanel.hidden) {
+            setSiteThemePanel(false);
+            siteSettingsButton.focus();
+            return;
+        }
+
+        if (!siteToolsMenu.hidden) {
+            setSiteToolsMenu(false);
+            const visibleButton = siteMenuButtons.find(button => button.offsetParent !== null);
+            if (visibleButton) visibleButton.focus();
+        }
+    });
+
+    window.addEventListener("storage", event => {
+        if (event.key !== SITE_PREFERENCES_KEY) return;
+        const theme = themeFromStoredSitePreferences(event.newValue) || "ocean-blue";
+        appState.preferences.theme = theme;
+        applyTheme(theme, false);
+        saveState();
+    });
+
+    applyThemeAttributes(
+        readGlobalTheme() || document.documentElement.getAttribute("data-theme") || "ocean-blue",
+        false
+    );
+
+    /* =====================================================
      * COMPACT UI / SETTINGS MODAL
      * ===================================================== */
 
@@ -1369,7 +1989,7 @@ The software is provided "as is" without warranty of any kind.
         input.addEventListener("change", () => {
             if (!input.checked) return;
             appState.preferences.theme = input.value;
-            applyTheme(input.value);
+            applyTheme(input.value, true);
             saveState();
         });
     });
@@ -1797,29 +2417,22 @@ The software is provided "as is" without warranty of any kind.
 
     let appState = loadState();
 
-    function applyTheme(themeName) {
-        const allowedThemes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
-        const theme = allowedThemes.includes(themeName) ? themeName : "ocean-blue";
-
-        if (theme === "ocean-blue") {
-            document.body.removeAttribute("data-theme");
-        } else {
-            document.body.setAttribute("data-theme", theme);
-        }
-
-        document.querySelectorAll('input[name="themeChoice"]').forEach(input => {
-            const selected = input.value === theme;
-            input.checked = selected;
-            const option = input.closest(".theme-option");
-            if (option) option.classList.toggle("selected", selected);
-        });
+    function applyTheme(themeName, persistGlobal = false) {
+        return applyThemeAttributes(themeName, persistGlobal);
     }
 
-    applyTheme(appState.preferences.theme);
+    const savedAppletTheme = normalizeSiteTheme(appState.preferences.theme);
+    const savedGlobalTheme = readGlobalTheme();
+    const initialSharedTheme = savedGlobalTheme || savedAppletTheme;
+
+    appState.preferences.theme = initialSharedTheme;
+    applyTheme(initialSharedTheme, !savedGlobalTheme);
 
     function saveState() {
         storageSet(STORAGE_KEY_V3, JSON.stringify(appState));
     }
+
+    if (savedAppletTheme !== initialSharedTheme) saveState();
 
     function getSchoolById(id) {
         return appState.schools.find(s => s.id === id) || null;
@@ -2909,6 +3522,10 @@ The software is provided "as is" without warranty of any kind.
                 }
 
                 appState = importedState;
+                appState.preferences.theme = applyTheme(
+                    appState.preferences.theme,
+                    true
+                );
                 saveState();
 
                 refreshAllSchoolSelects();
@@ -2936,12 +3553,14 @@ The software is provided "as is" without warranty of any kind.
 
     function restoreFactoryDefaults() {
         const confirmed = confirm(
-            "Restore factory defaults? This will replace all schools, bell times, lunch settings, schedule dates, and saved preferences."
+            "Restore Scheduler factory defaults? This will replace all schools, bell times, lunch settings, schedule dates, and Scheduler preferences. Your current Teacher Tools site theme will be kept."
         );
 
         if (!confirmed) return;
 
         appState = deepClone(DEFAULT_STATE);
+        appState.preferences.theme = readGlobalTheme() || "ocean-blue";
+        applyTheme(appState.preferences.theme, false);
         saveState();
 
         refreshAllSchoolSelects();
