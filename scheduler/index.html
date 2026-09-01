@@ -18,11 +18,13 @@ NOT PERMITTED WITHOUT PRIOR WRITTEN PERMISSION:
 No ownership rights are transferred by access to or use of this software.
 The software is provided "as is" without warranty of any kind.
 -->
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create correctly timed Google Calendar events from locally saved school schedules and bell times.">
     <title>ALT Class Scheduler</title>
+    <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:START -->
     <script>
         (() => {
             const key = "teacherTools.sitePreferences.v1";
@@ -33,18 +35,26 @@ The software is provided "as is" without warranty of any kind.
                 const theme = saved && themes.includes(saved.theme) ? saved.theme : "ocean-blue";
                 if (theme !== "ocean-blue") document.documentElement.setAttribute("data-theme", theme);
             } catch (error) {
-                // Scheduler migration runs after its existing saved state loads.
+                // Ocean Blue remains the safe default when storage is unavailable.
             }
         })();
     </script>
+<!-- TEACHER-TOOLS:THEME-BOOTSTRAP:END -->
     <style>
+        /* TEACHER-TOOLS:SHARED-STYLES:START */
+        /*
+         * Teacher Tools canonical theme tokens.
+         * This file is embedded into registered Workbench pages by the shared UI sync.
+         * Published applets remain self-contained and never load this file at runtime.
+         */
+
         :root {
-            /* Ocean Blue theme (default) */
+            color-scheme: light;
             --accent: #1e40af;
             --accent-secondary: #60a5fa;
             --accent-soft: #dbeafe;
             --accent-border: #93c5fd;
-            --focus-ring: rgba(30, 64, 175, .12);
+            --focus-ring: rgba(30, 64, 175, 0.18);
             --text: #2f3337;
             --muted: #697078;
             --line: #dfe3e8;
@@ -63,27 +73,28 @@ The software is provided "as is" without warranty of any kind.
             --accent-secondary: #fbbf24;
             --accent-soft: #e9d5ff;
             --accent-border: #c4b5fd;
-            --focus-ring: rgba(139, 92, 246, .12);
+            --focus-ring: rgba(139, 92, 246, 0.18);
             --bg: #faf8ff;
             --panel: #fcfaff;
         }
 
         html[data-theme="pretty-in-pink"] {
             --accent: #db2777;
-            --accent-secondary: #DD79A5;
+            --accent-secondary: #dd79a5;
             --accent-soft: #fce7f3;
             --accent-border: #f9a8d4;
-            --focus-ring: rgba(219, 39, 119, .12);
+            --focus-ring: rgba(219, 39, 119, 0.18);
             --bg: #fff8fb;
             --panel: #fffafd;
         }
 
         html[data-theme="true-dark"] {
+            color-scheme: dark;
             --accent: #8ab4f8;
             --accent-secondary: #c4a7ff;
             --accent-soft: #18263c;
             --accent-border: #35557e;
-            --focus-ring: rgba(138, 180, 248, .18);
+            --focus-ring: rgba(138, 180, 248, 0.24);
             --text: #eef2f7;
             --muted: #a9b1bc;
             --line: #30363d;
@@ -97,31 +108,51 @@ The software is provided "as is" without warranty of any kind.
             --tooltip-text: #07101d;
         }
 
+        /* Global Teacher Tools page foundation */
         * { box-sizing: border-box; }
 
-        html, body { margin: 0; min-height: 100%; }
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 180ms ease, color 180ms ease;
         }
 
         body.modal-open { overflow: hidden; }
 
-        button, input, select, textarea { font: inherit; }
+        button,
+        input,
+        select,
+        textarea { font: inherit; }
 
+        button { -webkit-tap-highlight-color: transparent; }
+
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible,
+        [tabindex]:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Shared Teacher Tools header */
         .site-header {
             position: sticky;
             top: 0;
             z-index: 100;
             background: var(--surface);
             border-bottom: 1px solid var(--line);
-            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
         }
-
-        .site-header-inner {
+         .site-header-inner {
             position: relative;
             width: min(1000px, 100%);
             min-height: 64px;
@@ -132,8 +163,7 @@ The software is provided "as is" without warranty of any kind.
             justify-content: space-between;
             gap: 18px;
         }
-
-        .site-brand {
+         .site-brand {
             min-width: 0;
             display: inline-flex;
             align-items: center;
@@ -141,8 +171,7 @@ The software is provided "as is" without warranty of any kind.
             color: inherit;
             text-decoration: none;
         }
-
-        .site-brand-mark {
+         .site-brand-mark {
             width: 42px;
             height: 42px;
             flex: 0 0 42px;
@@ -153,12 +182,9 @@ The software is provided "as is" without warranty of any kind.
             border-radius: 11px;
             box-shadow: 0 5px 14px var(--focus-ring);
         }
-
-        html[data-theme="true-dark"] .site-brand-mark {
-            color: #07101d;
-        }
-
-        .site-brand-mark svg {
+         html[data-theme="true-dark"] .site-brand-mark,
+        html[data-theme="true-dark"] .button-primary { color: #07101d; }
+         .site-brand-mark svg {
             width: 25px;
             height: 25px;
             fill: none;
@@ -167,14 +193,8 @@ The software is provided "as is" without warranty of any kind.
             stroke-linecap: round;
             stroke-linejoin: round;
         }
-
-        .site-brand-copy {
-            min-width: 0;
-            display: grid;
-            gap: 1px;
-        }
-
-        .site-brand-title {
+         .site-brand-copy { min-width: 0; display: grid; gap: 1px; }
+         .site-brand-title {
             overflow: hidden;
             color: var(--accent);
             font-size: 16px;
@@ -183,8 +203,7 @@ The software is provided "as is" without warranty of any kind.
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
-        .site-brand-domain {
+         .site-brand-domain {
             overflow: hidden;
             color: var(--muted);
             font-size: 10px;
@@ -192,20 +211,9 @@ The software is provided "as is" without warranty of any kind.
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
-        .site-nav {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .site-header-actions {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .site-nav-link,
+         .site-nav,
+        .site-header-actions { display: flex; align-items: center; gap: 4px; }
+         .site-nav-link,
         .site-menu-toggle,
         .site-mobile-toggle {
             min-height: 40px;
@@ -224,8 +232,7 @@ The software is provided "as is" without warranty of any kind.
             text-decoration: none;
             cursor: pointer;
         }
-
-        .site-nav-link:hover,
+         .site-nav-link:hover,
         .site-menu-toggle:hover,
         .site-menu-toggle[aria-expanded="true"],
         .site-mobile-toggle:hover,
@@ -234,18 +241,7 @@ The software is provided "as is" without warranty of any kind.
             background: var(--accent-soft);
             border-color: var(--accent-border);
         }
-
-        .site-nav-link:focus-visible,
-        .site-menu-toggle:focus-visible,
-        .site-mobile-toggle:focus-visible,
-        .site-settings-button:focus-visible,
-        .site-theme-close:focus-visible,
-        .site-menu-item:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        .site-settings-button {
+         .site-settings-button {
             width: 40px;
             height: 40px;
             flex: 0 0 40px;
@@ -258,133 +254,68 @@ The software is provided "as is" without warranty of any kind.
             border: 1px solid transparent;
             border-radius: 50%;
             cursor: pointer;
-            transition: color .18s ease;
+            transition: color 180ms ease;
         }
-
-        .site-settings-button:hover,
-        .site-settings-button[aria-expanded="true"] {
-            color: var(--accent-secondary);
+         .site-settings-button:hover,
+        .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
+         .site-settings-button svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
         }
-
-        .site-settings-button svg {
+         .settings-icon {
             width: 20px;
             height: 20px;
             fill: currentColor;
             transform-origin: center;
-            transition: transform .26s ease;
+            transition: transform 260ms ease;
         }
-
-        .site-settings-button:hover svg,
-        .site-settings-button:focus-visible svg,
-        .site-settings-button[aria-expanded="true"] svg {
-            transform: rotate(45deg);
-        }
-
-        .site-menu-chevron {
+         .icon-button:hover .settings-icon,
+        .icon-button:focus-visible .settings-icon { transform: rotate(45deg); }
+         .site-menu-chevron {
             width: 8px;
             height: 8px;
             border-right: 1.5px solid currentColor;
             border-bottom: 1.5px solid currentColor;
             transform: translateY(-2px) rotate(45deg);
-            transition: transform .18s ease;
+            transition: transform 180ms ease;
         }
-
-        .site-menu-toggle[aria-expanded="true"] .site-menu-chevron {
+         .site-menu-toggle[aria-expanded="true"] .site-menu-chevron {
             transform: translateY(2px) rotate(225deg);
         }
-
-        .site-mobile-toggle {
-            width: 42px;
-            padding: 0;
-            display: none;
-            font-size: 21px;
+         .site-mobile-toggle { width: 42px; height: 40px; padding: 0; display: none; line-height: 0; }
+         .site-mobile-toggle svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
         }
-
-        .site-tools-menu {
-            position: absolute;
-            z-index: 120;
-            top: calc(100% - 5px);
-            right: 16px;
-            width: min(300px, calc(100vw - 32px));
-            padding: 7px;
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 11px;
-            box-shadow: 0 16px 38px rgba(0,0,0,.18);
-        }
-
-        .site-tools-menu[hidden] { display: none; }
-
+         .site-tools-menu,
         .site-theme-panel {
             position: absolute;
-            z-index: 121;
-            top: calc(100% - 5px);
             right: 16px;
-            width: min(340px, calc(100vw - 32px));
-            padding: 13px;
+            z-index: 120;
+            top: calc(100% - 5px);
             background: var(--surface);
             border: 1px solid var(--line);
             border-radius: 11px;
-            box-shadow: 0 16px 38px rgba(0,0,0,.18);
+            box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
         }
-
-        .site-theme-panel[hidden] { display: none; }
-
-        .site-theme-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 3px;
-        }
-
-        .site-theme-title {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        .site-theme-close {
-            width: 30px;
-            height: 30px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            color: var(--muted);
-            background: transparent;
-            border: 0;
-            border-radius: 7px;
-            font-size: 21px;
-            line-height: 1;
-            cursor: pointer;
-        }
-
-        .site-theme-close:hover {
-            color: var(--text);
-            background: var(--panel);
-        }
-
-        .site-theme-help {
-            margin: 0 0 11px;
-            color: var(--muted);
-            font-size: 10.5px;
-            line-height: 1.45;
-        }
-
-        .site-theme-panel .theme-options {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .site-menu-label {
+         .site-tools-menu { width: min(300px, calc(100vw - 32px)); padding: 7px; }
+        .site-theme-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
+        .site-tools-menu[hidden], .site-theme-panel[hidden] { display: none; }
+         .site-menu-label {
             padding: 6px 9px 5px;
             color: var(--muted);
             font-size: 9px;
             font-weight: 750;
-            letter-spacing: .08em;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
         }
-
-        .site-menu-item {
+         .site-menu-item {
             width: 100%;
             display: grid;
             grid-template-columns: 30px minmax(0, 1fr) auto;
@@ -398,20 +329,11 @@ The software is provided "as is" without warranty of any kind.
             text-align: left;
             text-decoration: none;
         }
-
-        a.site-menu-item:hover,
-        .site-menu-item[aria-current="page"] {
-            background: var(--accent-soft);
-        }
-
-        .site-menu-item[aria-disabled="true"] {
-            opacity: .72;
-            cursor: default;
-        }
-
+         a.site-menu-item:hover,
+        .site-menu-item[aria-current="page"] { background: var(--accent-soft); }
+        .site-menu-item[aria-disabled="true"] { opacity: 0.72; cursor: default; }
         .site-menu-home { display: none; }
-
-        .site-menu-icon {
+         .site-menu-icon {
             width: 30px;
             height: 30px;
             display: grid;
@@ -421,14 +343,22 @@ The software is provided "as is" without warranty of any kind.
             border-radius: 7px;
             font-size: 14px;
         }
-
-        .site-menu-name {
+         .site-menu-icon svg {
+            width: 20px;
+            height: 20px;
             display: block;
-            font-size: 12px;
-            font-weight: 700;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
-
-        .site-menu-description {
+         .site-menu-icon .icon-fill {
+            fill: currentColor;
+            stroke: none;
+        }
+         .site-menu-name { display: block; font-size: 12px; font-weight: 700; }
+         .site-menu-description {
             display: block;
             margin-top: 1px;
             color: var(--muted);
@@ -436,12 +366,358 @@ The software is provided "as is" without warranty of any kind.
             font-weight: 500;
             line-height: 1.3;
         }
-
-        .site-menu-status {
-            color: var(--muted);
-            font-size: 8.5px;
-            font-weight: 700;
+         .site-menu-status { color: var(--muted); font-size: 8.5px; font-weight: 700; }
+         .site-theme-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 3px;
         }
+         .site-theme-title { margin: 0; font-size: 14px; }
+         .site-theme-close,
+        .close-button {
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--muted);
+            background: transparent;
+            border: 0;
+            border-radius: 7px;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+        }
+         .site-theme-close:hover,
+        .close-button:hover { color: var(--text); background: var(--panel); }
+         .site-theme-help {
+            margin: 0 0 11px;
+            color: var(--muted);
+            font-size: 10.5px;
+            line-height: 1.45;
+        }
+         .site-theme-options {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+         .site-theme-option {
+            --theme-primary: #1e40af;
+            --theme-secondary: #60a5fa;
+            --theme-light: #dbeafe;
+            position: relative;
+            display: grid;
+            gap: 6px;
+            padding: 7px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+         .site-theme-option:hover,
+        .site-theme-option.selected { border-color: var(--theme-primary); }
+         .site-theme-option.selected {
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-primary) 18%, transparent);
+        }
+         .site-theme-option input { position: absolute; opacity: 0; pointer-events: none; }
+        .site-theme-option:focus-within { outline: 2px solid var(--theme-primary); outline-offset: 2px; }
+         .site-theme-preview {
+            height: 25px;
+            display: flex;
+            overflow: hidden;
+            border: 1px solid color-mix(in srgb, var(--theme-primary) 25%, transparent);
+            border-radius: 5px;
+        }
+         .site-theme-preview span:nth-child(1) { flex: 1.35; background: var(--theme-primary); }
+        .site-theme-preview span:nth-child(2) { flex: 0.8; background: var(--theme-secondary); }
+        .site-theme-preview span:nth-child(3) { flex: 1; background: var(--theme-light); }
+         .site-theme-name {
+            overflow: hidden;
+            color: var(--text);
+            font-size: 9.5px;
+            font-weight: 700;
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+         .site-theme-option[data-theme-option="color-pop"] {
+            --theme-primary: #8b5cf6; --theme-secondary: #fbbf24; --theme-light: #e9d5ff;
+        }
+         .site-theme-option[data-theme-option="pretty-in-pink"] {
+            --theme-primary: #db2777; --theme-secondary: #dd79a5; --theme-light: #fce7f3;
+        }
+        .site-theme-option[data-theme-option="true-dark"] {
+            --theme-primary: #8ab4f8; --theme-secondary: #c4a7ff; --theme-light: #0d0f12;
+        }
+
+        /* Shared contextual help */
+        .field-label-row,
+        .section-heading-row,
+        .mode-heading-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .field-label-row {
+            justify-content: flex-start;
+            min-height: 15px;
+        }
+
+        .field-label-row > label,
+        .field-label-row > .field-label { margin-block: 0; }
+
+        .tooltip-trigger {
+            width: 13px;
+            height: 13px;
+            flex: 0 0 13px;
+            align-self: center;
+            display: inline-grid;
+            place-items: center;
+            padding: 0;
+            color: var(--accent);
+            background: color-mix(in srgb, var(--accent-soft) 35%, var(--surface));
+            border: 1px solid var(--accent-border);
+            border-radius: 50%;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 8.5px;
+            font-weight: 750;
+            line-height: 11px;
+            cursor: help;
+        }
+
+        .tooltip-trigger:hover,
+        .tooltip-trigger:focus-visible,
+        .tooltip-trigger[aria-expanded="true"] {
+            color: var(--accent-secondary);
+            background: var(--accent-soft);
+            border-color: var(--accent-secondary);
+        }
+
+        .teacher-tools-tooltip {
+            --tooltip-arrow-left: 50%;
+            --tooltip-background: var(--accent);
+            --tooltip-border-color: var(--accent-border);
+            --tooltip-foreground: var(--tooltip-text);
+            position: fixed;
+            z-index: 400;
+            width: max-content;
+            min-width: min(170px, calc(100vw - 24px));
+            max-width: min(300px, calc(100vw - 24px));
+            pointer-events: none;
+        }
+
+        .teacher-tools-tooltip[hidden] { display: none; }
+
+        .teacher-tools-tooltip-content {
+            max-height: calc(100dvh - 24px);
+            overflow-y: auto;
+            padding: 8px 10px;
+            color: var(--tooltip-foreground);
+            background: var(--tooltip-background);
+            border: 1px solid var(--tooltip-border-color);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+            white-space: normal;
+        }
+
+        .teacher-tools-tooltip::before {
+            content: "";
+            position: absolute;
+            left: var(--tooltip-arrow-left);
+            width: 9px;
+            height: 9px;
+            background: var(--tooltip-background);
+            border: 1px solid var(--tooltip-border-color);
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .teacher-tools-tooltip[data-placement="below"]::before {
+            top: -5px;
+            border-right: 0;
+            border-bottom: 0;
+        }
+
+        .teacher-tools-tooltip[data-placement="above"]::before {
+            bottom: -5px;
+            border-left: 0;
+            border-top: 0;
+        }
+
+        .teacher-tools-tooltip.warning {
+            --tooltip-background: var(--warning-text);
+            --tooltip-border-color: var(--warning-border);
+            --tooltip-foreground: var(--warning-bg);
+        }
+
+        /* Shared input and optional-mode patterns */
+        .section-card,
+        .mode-panel {
+            padding: 15px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+        }
+
+        .section-card + .section-card,
+        .section-card + .mode-panel,
+        .mode-panel + .section-card { margin-top: 14px; }
+
+        .section-heading {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.3;
+        }
+
+        .section-copy {
+            margin: 4px 0 12px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .field-full { grid-column: 1 / -1; }
+
+        .checkbox-control,
+        .mode-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            color: var(--text);
+            font-size: 11.5px;
+            font-weight: 650;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .mode-switch-group {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .checkbox-control input { accent-color: var(--accent); }
+
+        .mode-panel {
+            transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+        }
+
+        .mode-panel.active {
+            color: var(--warning-text);
+            background: var(--warning-bg);
+            border-color: var(--warning-border);
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--warning-border) 24%, transparent);
+        }
+
+        .mode-panel.active .section-copy,
+        .mode-panel.active .helper-text { color: var(--warning-text); }
+
+        .mode-panel.active .mode-switch,
+        .mode-panel.active .field-label { color: var(--warning-text); }
+
+        .mode-panel.active .tooltip-trigger {
+            color: var(--warning-text);
+            background: color-mix(in srgb, var(--warning-bg) 70%, var(--surface));
+            border-color: var(--warning-border);
+        }
+
+        .mode-switch input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .mode-switch-track {
+            position: relative;
+            width: 42px;
+            height: 23px;
+            flex: 0 0 42px;
+            background: color-mix(in srgb, var(--muted) 38%, var(--surface));
+            border-radius: 999px;
+            transition: background-color 180ms ease;
+        }
+
+        .mode-switch-track::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 19px;
+            height: 19px;
+            background: var(--surface);
+            border-radius: 50%;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+            transition: transform 180ms ease;
+        }
+
+        .mode-switch input:checked + .mode-switch-track { background: #e6a536; }
+        .mode-switch input:checked + .mode-switch-track::after { transform: translateX(19px); }
+        .mode-switch input:focus-visible + .mode-switch-track { outline: 2px solid var(--accent); outline-offset: 2px; }
+        html[data-theme="true-dark"] .mode-switch-track::after { background: #f3f5f7; }
+
+        .mode-details {
+            margin-top: 13px;
+            padding-top: 13px;
+            border-top: 1px solid var(--warning-border);
+        }
+
+        .mode-details[hidden] { display: none; }
+
+        .disclosure-button {
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 0;
+            color: var(--accent);
+            background: transparent;
+            border: 0;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .disclosure-indicator { transition: transform 180ms ease; }
+        .disclosure-button[aria-expanded="true"] .disclosure-indicator { transform: rotate(45deg); }
+        .disclosure-panel { margin-top: 9px; }
+        .disclosure-panel[hidden] { display: none; }
+
+        @media (max-width: 620px) {
+            .site-header-inner { min-height: 58px; padding: 8px 10px; }
+            .site-brand-mark { width: 38px; height: 38px; flex-basis: 38px; border-radius: 9px; }
+            .site-brand-title { font-size: 14px; }
+            .site-nav { display: none; }
+            .site-mobile-toggle { display: inline-flex; }
+            .site-tools-menu,
+            .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
+            .site-menu-home { display: grid; }
+            .control-grid { grid-template-columns: 1fr; }
+            .field-full { grid-column: auto; }
+            .section-card,
+            .mode-panel { padding: 13px; }
+        }
+
+        @media (max-width: 380px) {
+            .site-brand-domain { display: none; }
+        }
+/* TEACHER-TOOLS:SHARED-STYLES:END */
+
+        /* Scheduler-specific styles begin here. */
 
         .site-content {
             padding: 16px;
@@ -702,17 +978,6 @@ The software is provided "as is" without warranty of any kind.
 
         .irregular-main.visible { display: flex; }
 
-        .irregular-main.active {
-            background: var(--warning-bg);
-            border-color: var(--warning-border);
-            box-shadow: 0 0 0 1px rgba(245, 214, 123, .18);
-        }
-
-        .irregular-main.active .switch-control {
-            color: var(--warning-text);
-        }
-
-        .label-with-info,
         .inline-info-row {
             display: flex;
             align-items: center;
@@ -722,171 +987,13 @@ The software is provided "as is" without warranty of any kind.
         .inline-info-row {
             width: 100%;
             min-height: 23px;
+            justify-content: space-between;
         }
 
-        .label-with-info {
-            justify-content: flex-start;
-            min-height: 15px;
-            margin-bottom: 5px;
-        }
+        .scheduler-field-label-row { margin-bottom: 5px; }
+        .scheduler-field-label-row > label { margin-bottom: 0; }
 
-        .label-with-info > label {
-            margin-bottom: 0;
-        }
-
-        .info-tip {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            flex: 0 0 auto;
-        }
-
-        .info-button {
-            width: 13px;
-            height: 13px;
-            padding: 0;
-            border: 1px solid var(--accent-border);
-            border-radius: 50%;
-            background: color-mix(in srgb, var(--accent-soft) 35%, var(--surface));
-            color: var(--accent);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8.5px;
-            line-height: 11px;
-            font-weight: 750;
-            font-family: Georgia, "Times New Roman", serif;
-            cursor: help;
-        }
-
-        .info-button:hover,
-        .info-button:focus-visible {
-            color: var(--accent-secondary);
-            border-color: var(--accent-secondary);
-            background: var(--accent-soft);
-            outline: none;
-        }
-
-        .irregular-main.active .info-button {
-            color: var(--warning-text);
-            border-color: var(--warning-border);
-            background: color-mix(in srgb, var(--warning-bg) 70%, var(--surface));
-        }
-
-        .irregular-main.active .info-tooltip {
-            background: var(--warning-text);
-            color: var(--warning-bg);
-            border-color: var(--warning-border);
-        }
-
-        .irregular-main.active .info-tooltip::before {
-            border-bottom-color: var(--warning-text);
-        }
-
-        .info-tooltip {
-            position: absolute;
-            z-index: 30;
-            right: 0;
-            top: calc(100% + 7px);
-            width: min(270px, calc(100vw - 52px));
-            padding: 7px 9px;
-            border: 1px solid var(--accent-border);
-            border-radius: 7px;
-            background: var(--accent);
-            color: var(--tooltip-text);
-            box-shadow: 0 6px 18px rgba(0,0,0,.18);
-            font-size: 10.5px;
-            font-weight: 500;
-            line-height: 1.4;
-            white-space: normal;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transform: translateY(-2px);
-            transition: opacity .14s ease, transform .14s ease, visibility .14s ease;
-        }
-
-        .info-tooltip::before {
-            content: "";
-            position: absolute;
-            right: 4px;
-            bottom: 100%;
-            border: 5px solid transparent;
-            border-bottom-color: var(--accent);
-        }
-
-        .info-tip:hover .info-tooltip,
-        .info-tip:focus-within .info-tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .switch-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0;
-            line-height: 1.2;
-            cursor: pointer;
-            user-select: none;
-            color: var(--muted);
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .switch-control input {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .switch-track {
-            width: 42px;
-            height: 23px;
-            border-radius: 999px;
-            background: #c7ccd1;
-            position: relative;
-            transition: background .2s ease;
-            flex: 0 0 42px;
-        }
-
-        .switch-track::after {
-            content: "";
-            position: absolute;
-            width: 19px;
-            height: 19px;
-            left: 2px;
-            top: 2px;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,.25);
-            transition: transform .2s ease;
-        }
-
-        .switch-control input:checked + .switch-track { background: #e6a536; }
-        .switch-control input:checked + .switch-track::after { transform: translateX(19px); }
-
-        .switch-control input:focus-visible + .switch-track {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        .note-toggle {
-            border: 0;
-            background: transparent;
-            color: var(--accent);
-            font-size: 12px;
-            font-weight: 650;
-            padding: 3px 0;
-            margin: 0 0 8px;
-            cursor: pointer;
-        }
-
-        .note-toggle:hover { text-decoration: underline; }
-        .note-panel { display: none; margin-bottom: 10px; }
-        .note-panel.open { display: block; }
+        .disclosure-panel { margin-bottom: 10px; }
 
         .grid-title {
             display: flex;
@@ -1018,7 +1125,7 @@ The software is provided "as is" without warranty of any kind.
             border-bottom: 1px solid var(--line);
         }
 
-        .modal-title { font-size: 16px; font-weight: 750; }
+        .modal-title { margin: 0; font-size: 16px; font-weight: 750; }
 
         .close-button {
             width: 34px;
@@ -1141,7 +1248,7 @@ The software is provided "as is" without warranty of any kind.
 
         .settings-tabs {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 5px;
             padding: 10px 14px 0;
         }
@@ -1184,6 +1291,8 @@ The software is provided "as is" without warranty of any kind.
             color: var(--muted);
         }
 
+        #schoolEditor h3 { margin-top: 12px; }
+
         .settings-buttons {
             display: flex;
             gap: 7px;
@@ -1205,110 +1314,6 @@ The software is provided "as is" without warranty of any kind.
 
         .settings-btn:hover { background: var(--accent-soft); border-color: var(--accent-border); }
         .danger-btn { color: var(--danger); }
-
-        .theme-options {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 8px;
-        }
-
-        .theme-option {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 7px;
-            padding: 9px;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            background: var(--surface);
-            color: var(--text);
-            cursor: pointer;
-            transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
-        }
-
-        .theme-option:hover {
-            border-color: var(--theme-primary);
-            transform: translateY(-1px);
-        }
-
-        .theme-option.selected {
-            border-color: var(--theme-primary);
-            box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-primary) 16%, transparent);
-        }
-
-        .theme-option input {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .theme-option:focus-within {
-            outline: 2px solid var(--theme-primary);
-            outline-offset: 2px;
-        }
-
-        .theme-preview {
-            height: 28px;
-            display: flex;
-            overflow: hidden;
-            border-radius: 6px;
-            border: 1px solid rgba(0,0,0,.06);
-            background: var(--theme-light);
-        }
-
-        .theme-preview span:nth-child(1) { flex: 1.35; background: var(--theme-primary); }
-        .theme-preview span:nth-child(2) { flex: .8; background: var(--theme-secondary); }
-        .theme-preview span:nth-child(3) { flex: 1; background: var(--theme-light); }
-
-        .theme-name {
-            font-size: 11px;
-            line-height: 1.25;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .theme-option[data-theme-option="ocean-blue"] {
-            --theme-primary: #1e40af;
-            --theme-secondary: #60a5fa;
-            --theme-light: #dbeafe;
-        }
-
-        .theme-option[data-theme-option="color-pop"] {
-            --theme-primary: #8b5cf6;
-            --theme-secondary: #fbbf24;
-            --theme-light: #e9d5ff;
-        }
-
-        .theme-option[data-theme-option="pretty-in-pink"] {
-            --theme-primary: #db2777;
-            --theme-secondary: #DD79A5;
-            --theme-light: #fce7f3;
-        }
-
-        .theme-option[data-theme-option="true-dark"] {
-            --theme-primary: #8ab4f8;
-            --theme-secondary: #c4a7ff;
-            --theme-light: #0d0f12;
-            background: #15191e;
-            color: #eef2f7;
-            border-color: #30363d;
-        }
-
-        .theme-option[data-theme-option="true-dark"] .theme-name {
-            color: #eef2f7;
-        }
-
-        .theme-option[data-theme-option="true-dark"] .theme-preview {
-            border-color: #30363d;
-        }
-
-        .appearance-note {
-            margin-top: 9px;
-            color: var(--muted);
-            font-size: 10.5px;
-            line-height: 1.4;
-        }
 
         .saved-dates-header {
             display: grid;
@@ -1429,14 +1434,6 @@ The software is provided "as is" without warranty of any kind.
 
         @media (max-width: 620px) {
             body { background: var(--surface); }
-            .site-header-inner { min-height: 58px; padding: 8px 10px; }
-            .site-brand-mark { width: 38px; height: 38px; flex-basis: 38px; border-radius: 9px; }
-            .site-brand-title { font-size: 14px; }
-            .site-nav { display: none; }
-            .site-mobile-toggle { display: inline-flex; }
-            .site-tools-menu { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
-            .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
-            .site-menu-home { display: grid; }
             .site-content { padding: 6px; }
             .app-shell { border-radius: 9px; box-shadow: none; border-color: var(--line); }
             .app-main { padding: 11px; }
@@ -1444,35 +1441,29 @@ The software is provided "as is" without warranty of any kind.
             .class-row { grid-template-columns: 1fr; gap: 7px; }
             .irregular-main.visible { display: block; }
             .irregular-main .inline-info-row { justify-content: space-between; }
-            .info-tooltip { width: min(250px, calc(100vw - 36px)); }
-            .label-with-info .info-tooltip { left: 0; right: auto; }
-            .label-with-info .info-tooltip::before { left: 4px; right: auto; }
             .slot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .modal-backdrop { padding: 6px; align-items: stretch; }
             .modal-card { max-height: calc(100dvh - 12px); border-radius: 9px; }
             .tutorial-step { grid-template-columns: 32px minmax(0, 1fr); align-items: start; }
             .tutorial-step-action { grid-column: 2; justify-self: start; }
             .settings-tabs {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
                 padding-left: 8px;
                 padding-right: 8px;
             }
-            .theme-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .settings-scroll { padding: 10px 8px 12px; }
             .storage-warning { margin-left: 8px; margin-right: 8px; }
         }
 
         @media (max-width: 380px) {
-            .site-brand-domain { display: none; }
             .app-header { padding-left: 12px; }
             .app-title { font-size: 17px; }
             .version-badge { display: none; }
             .slot-btn { padding: 8px; }
             .slot-time { font-size: 10px; }
             .settings-tab { font-size: 10px; }
-            .theme-options { grid-template-columns: 1fr; }
         }
-    
+
         /* True Dark refinements */
         body[data-theme="true-dark"] {
             color-scheme: dark;
@@ -1525,14 +1516,6 @@ The software is provided "as is" without warranty of any kind.
             color: var(--accent);
         }
 
-        body[data-theme="true-dark"] .switch-track {
-            background: #414852;
-        }
-
-        body[data-theme="true-dark"] .switch-track::after {
-            background: #f3f5f7;
-        }
-
         body[data-theme="true-dark"] .lunch-btn {
             background: #332b12;
             border-color: #8a7125;
@@ -1548,119 +1531,130 @@ The software is provided "as is" without warranty of any kind.
 </head>
 <body>
 
-<header class="site-header">
-    <div class="site-header-inner">
-        <a class="site-brand" href="/" aria-label="Teacher Tools home">
-            <span class="site-brand-mark" aria-hidden="true">
-                <svg viewBox="0 0 28 28">
-                    <path d="M5.5 7.5h17v15h-17z" />
-                    <path d="M9 4.5v6M19 4.5v6M5.5 12h17" />
-                    <path d="m10 17 2.2 2.2L18 14.7" />
-                </svg>
-            </span>
-            <span class="site-brand-copy">
-                <span class="site-brand-title">Teacher Tools</span>
-                <span class="site-brand-domain">tools.jacobosinjapan.com</span>
-            </span>
-        </a>
-
-        <div class="site-header-actions">
-            <nav class="site-nav" aria-label="Main navigation">
-                <a class="site-nav-link" href="/">Home</a>
-                <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
-                    Tools <span class="site-menu-chevron" aria-hidden="true"></span>
+<!-- TEACHER-TOOLS:SITE-HEADER:START -->
+    <header class="site-header" data-teacher-tools-header>
+        <div class="site-header-inner">
+            <a class="site-brand" href="/" aria-label="Teacher Tools home">
+                <span class="site-brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 28 28">
+                        <path d="M5.5 7.5h17v15h-17z" />
+                        <path d="M9 4.5v6M19 4.5v6M5.5 12h17" />
+                        <path d="m10 17 2.2 2.2L18 14.7" />
+                    </svg>
+                </span>
+                <span class="site-brand-copy">
+                    <span class="site-brand-title">Teacher Tools</span>
+                    <span class="site-brand-domain">tools.jacobosinjapan.com</span>
+                </span>
+            </a>
+             <div class="site-header-actions">
+                <nav class="site-nav" aria-label="Main navigation">
+                    <a class="site-nav-link" href="/">Home</a>
+                    <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
+                        Tools <span class="site-menu-chevron" aria-hidden="true"></span>
+                    </button>
+                </nav>
+                 <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
+                    </svg>
                 </button>
+                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 7h14M5 12h14M5 17h14" />
+                    </svg>
+                </button>
+            </div>
+             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
+                <a class="site-menu-item site-menu-home" href="/">
+                    <span class="site-menu-icon" aria-hidden="true">⌂</span>
+                    <span><span class="site-menu-name">Home</span><span class="site-menu-description">Teacher Tools overview and updates</span></span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+                 <div class="site-menu-label">Available tools</div>
+                 <a class="site-menu-item" href="/" aria-current="page">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <path d="M5.5 7.5h17v15h-17z" />
+                            <path d="M9 4.5v6M19 4.5v6M5.5 12h17" />
+                            <path d="m10 17 2.2 2.2L18 14.7" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
+                    <span class="site-menu-status">HERE</span>
+                </a>
+                 <a class="site-menu-item" href="/spinner/">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <path class="icon-fill" d="M14 14V5a9 9 0 0 1 6.36 2.64ZM14 14h9a9 9 0 0 1-2.64 6.36ZM14 14v9a9 9 0 0 1-6.36-2.64ZM14 14H5a9 9 0 0 1 2.64-6.36Z" />
+                            <circle cx="14" cy="14" r="9" />
+                            <path d="M14 5v18M5 14h18M7.64 7.64l12.72 12.72M20.36 7.64 7.64 20.36" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+
+                 <div class="site-menu-item" aria-disabled="true">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <circle cx="14" cy="16" r="7.5" />
+                            <path d="M11.5 5h5v2h-5zM14 7v1.5" />
+                            <path d="m19.5 9 2-2M20.5 6l1.5 1.5" />
+                            <path d="M14 12v4l3 1.8" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Simple timing for activities and games</span></span>
+                    <span class="site-menu-status">PLANNED</span>
+                </div>
             </nav>
-
-            <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
-                </svg>
-            </button>
-
-            <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">☰</button>
+             <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
+                <div class="site-theme-header">
+                    <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
+                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings">×</button>
+                </div>
+                <p class="site-theme-help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
+                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme">
+                    <label class="site-theme-option" data-theme-option="ocean-blue">
+                        <input type="radio" name="siteThemeChoice" value="ocean-blue">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name">Ocean Blue</span>
+                    </label>
+                    <label class="site-theme-option" data-theme-option="color-pop">
+                        <input type="radio" name="siteThemeChoice" value="color-pop">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name">Color Pop</span>
+                    </label>
+                    <label class="site-theme-option" data-theme-option="pretty-in-pink">
+                        <input type="radio" name="siteThemeChoice" value="pretty-in-pink">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name">Pretty in Pink</span>
+                    </label>
+                    <label class="site-theme-option" data-theme-option="true-dark">
+                        <input type="radio" name="siteThemeChoice" value="true-dark">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name">True Dark</span>
+                    </label>
+                </div>
+            </section>
         </div>
-
-        <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
-            <a class="site-menu-item site-menu-home" href="/">
-                <span class="site-menu-icon" aria-hidden="true">⌂</span>
-                <span>
-                    <span class="site-menu-name">Home</span>
-                    <span class="site-menu-description">Return to the Teacher Tools landing page</span>
-                </span>
-            </a>
-
-            <div class="site-menu-label">Available tools</div>
-
-            <a class="site-menu-item" href="/scheduler/" aria-current="page">
-                <span class="site-menu-icon" aria-hidden="true">▣</span>
-                <span>
-                    <span class="site-menu-name">Class Scheduler</span>
-                    <span class="site-menu-description">Create calendar events from bell times</span>
-                </span>
-                <span class="site-menu-status">OPEN</span>
-            </a>
-
-            <div class="site-menu-item" aria-disabled="true">
-                <span class="site-menu-icon" aria-hidden="true">◷</span>
-                <span>
-                    <span class="site-menu-name">Classroom Timer</span>
-                    <span class="site-menu-description">Simple timing for activities and games</span>
-                </span>
-                <span class="site-menu-status">PLANNED</span>
-            </div>
-        </nav>
-
-        <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
-            <div class="site-theme-header">
-                <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
-                <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings">×</button>
-            </div>
-            <p class="site-theme-help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
-
-            <div class="theme-options" role="radiogroup" aria-label="Site color theme">
-                <label class="theme-option" data-theme-option="ocean-blue">
-                    <input type="radio" name="siteThemeChoice" value="ocean-blue">
-                    <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                    <span class="theme-name">Ocean Blue</span>
-                </label>
-
-                <label class="theme-option" data-theme-option="color-pop">
-                    <input type="radio" name="siteThemeChoice" value="color-pop">
-                    <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                    <span class="theme-name">Color Pop</span>
-                </label>
-
-                <label class="theme-option" data-theme-option="pretty-in-pink">
-                    <input type="radio" name="siteThemeChoice" value="pretty-in-pink">
-                    <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                    <span class="theme-name">Pretty in Pink</span>
-                </label>
-
-                <label class="theme-option" data-theme-option="true-dark">
-                    <input type="radio" name="siteThemeChoice" value="true-dark">
-                    <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                    <span class="theme-name">True Dark</span>
-                </label>
-            </div>
-        </section>
-    </div>
-</header>
+    </header>
+<!-- TEACHER-TOOLS:SITE-HEADER:END -->
 
 <div class="site-content">
 <div class="app-shell">
     <header class="app-header">
         <div class="title-wrap">
             <h1 class="app-title">ALT Class Scheduler</h1>
-            <span class="version-badge">v3.4</span>
+            <span class="version-badge">v3.5</span>
         </div>
 
         <div class="app-header-actions">
-            <button type="button" id="tutorialOpenBtn" class="icon-button" title="Getting started" aria-label="Open getting started help" aria-haspopup="dialog">
+            <button type="button" id="tutorialOpenBtn" class="icon-button" data-modal-open="tutorialModal" title="Getting started" aria-label="Open getting started help" aria-haspopup="dialog">
                 <span class="help-button-mark" aria-hidden="true">?</span>
             </button>
 
-            <button type="button" id="settingsOpenBtn" class="icon-button" title="Scheduler settings" aria-label="Open scheduler settings">
+            <button type="button" id="settingsOpenBtn" class="icon-button" data-modal-open="settingsModal" title="Scheduler settings" aria-label="Open scheduler settings" aria-haspopup="dialog">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
                 </svg>
@@ -1676,14 +1670,9 @@ The software is provided "as is" without warranty of any kind.
             </div>
 
             <div class="field">
-                <div class="label-with-info">
+                <div class="field-label-row scheduler-field-label-row">
                     <label for="eventDate">Target Date</label>
-                    <span class="info-tip">
-                        <button type="button" class="info-button" aria-label="About schedule navigation" aria-describedby="scheduleNavigationTip">i</button>
-                        <span class="info-tooltip" id="scheduleNavigationTip" role="tooltip">
-                            Navigation uses the saved schedule for the selected school.
-                        </span>
-                    </span>
+                    <button type="button" class="tooltip-trigger" data-tooltip="Navigation uses the saved schedule for the selected school." aria-label="About schedule navigation">i</button>
                 </div>
                 <input type="date" id="eventDate">
             </div>
@@ -1704,25 +1693,23 @@ The software is provided "as is" without warranty of any kind.
                 <select id="classSelect"></select>
             </div>
 
-            <div id="irregularMainWrap" class="irregular-main">
+            <div id="irregularMainWrap" class="irregular-main mode-panel">
                 <div class="inline-info-row">
-                    <label class="switch-control" for="useIrregularSchedule">
-                        <input type="checkbox" id="useIrregularSchedule">
-                        <span class="switch-track" aria-hidden="true"></span>
+                    <label class="mode-switch" for="useIrregularSchedule">
+                        <input type="checkbox" id="useIrregularSchedule" role="switch" aria-controls="slotGridContainer">
+                        <span class="mode-switch-track" aria-hidden="true"></span>
                         <span>Irregular schedule</span>
                     </label>
-                    <span class="info-tip">
-                        <button type="button" class="info-button" aria-label="About irregular schedules" aria-describedby="irregularScheduleTip">i</button>
-                        <span class="info-tooltip" id="irregularScheduleTip" role="tooltip">
-                            Use this for opening weeks, special schedules, shortened days, or other alternate bell times.
-                        </span>
-                    </span>
+                    <button type="button" class="tooltip-trigger" data-tooltip="Use this for opening weeks, special schedules, shortened days, or other alternate bell times." aria-label="About irregular schedules">i</button>
                 </div>
             </div>
         </div>
 
-        <button type="button" id="noteToggleBtn" class="note-toggle" aria-expanded="false">＋ Add lesson note</button>
-        <div id="notePanel" class="note-panel">
+        <button type="button" id="noteToggleBtn" class="disclosure-button" aria-expanded="false" aria-controls="notePanel">
+            <span class="disclosure-indicator" aria-hidden="true">＋</span>
+            <span>Add lesson note</span>
+        </button>
+        <div id="notePanel" class="disclosure-panel" hidden>
             <label for="eventNotes">Lesson / Note (optional)</label>
             <textarea id="eventNotes" placeholder="e.g. Unit 4 Lesson 2, worksheet, activity..."></textarea>
         </div>
@@ -1737,7 +1724,7 @@ The software is provided "as is" without warranty of any kind.
     </main>
 
     <footer class="app-footer">
-        <div class="footer-version">ALT Class Scheduler · v3.4</div>
+        <div class="footer-version">ALT Class Scheduler · v3.5</div>
         <div class="footer-copyright">
             © 2026 · All rights reserved. Free for personal, classroom, and non-commercial educational use.
             Redistribution, resale, commercial use, and distribution of modified versions require prior permission.
@@ -1747,11 +1734,11 @@ The software is provided "as is" without warranty of any kind.
 </div>
 
 <!-- GETTING STARTED MODAL -->
-<div id="tutorialModal" class="modal-backdrop" aria-hidden="true">
+<div id="tutorialModal" class="modal-backdrop" data-shared-modal data-first-use-storage-key="classSchedulerTutorial.v1" aria-hidden="true">
     <div class="modal-card tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialModalTitle" aria-describedby="tutorialIntro">
         <div class="modal-header">
-            <div id="tutorialModalTitle" class="modal-title">Getting started</div>
-            <button type="button" id="tutorialCloseBtn" class="close-button" aria-label="Close getting started help">×</button>
+            <h2 id="tutorialModalTitle" class="modal-title">Getting started</h2>
+            <button type="button" id="tutorialCloseBtn" class="close-button" data-modal-close aria-label="Close getting started help">×</button>
         </div>
 
         <div class="tutorial-scroll">
@@ -1766,7 +1753,7 @@ The software is provided "as is" without warranty of any kind.
                         <h3 class="tutorial-step-title">Add your schools and bell schedules</h3>
                         <p class="tutorial-step-copy">Rename or add schools, enter their classes and locations, and adjust regular, irregular, and lunch times.</p>
                     </div>
-                    <button type="button" class="tutorial-step-action" data-tutorial-tab="schools">Open Schools</button>
+                    <button type="button" class="tutorial-step-action" data-tutorial-tab="schools" data-modal-switch="settingsModal">Open Schools</button>
                 </li>
 
                 <li class="tutorial-step">
@@ -1775,7 +1762,7 @@ The software is provided "as is" without warranty of any kind.
                         <h3 class="tutorial-step-title">Save your teaching dates</h3>
                         <p class="tutorial-step-copy">Add dates for each school so the Target Date controls can quickly move between your scheduled school days.</p>
                     </div>
-                    <button type="button" class="tutorial-step-action" data-tutorial-tab="schedule">Open Schedule</button>
+                    <button type="button" class="tutorial-step-action" data-tutorial-tab="schedule" data-modal-switch="settingsModal">Open Schedule</button>
                 </li>
 
                 <li class="tutorial-step">
@@ -1784,23 +1771,23 @@ The software is provided "as is" without warranty of any kind.
                         <h3 class="tutorial-step-title">Back up or move your data</h3>
                         <p class="tutorial-step-copy">Export a backup file periodically. Import it to restore your setup or move it to another browser or device.</p>
                     </div>
-                    <button type="button" class="tutorial-step-action" data-tutorial-tab="backup">Open Backup</button>
+                    <button type="button" class="tutorial-step-action" data-tutorial-tab="backup" data-modal-switch="settingsModal">Open Backup</button>
                 </li>
             </ol>
         </div>
 
         <div class="tutorial-footer">
-            <button type="button" id="tutorialDoneBtn" class="tutorial-done-button">Got it</button>
+            <button type="button" id="tutorialDoneBtn" class="tutorial-done-button" data-modal-close>Got it</button>
         </div>
     </div>
 </div>
 
 <!-- SETTINGS MODAL -->
-<div id="settingsModal" class="modal-backdrop" aria-hidden="true">
+<div id="settingsModal" class="modal-backdrop" data-shared-modal aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
         <div class="modal-header">
-            <div id="settingsModalTitle" class="modal-title">Settings</div>
-            <button type="button" id="settingsCloseBtn" class="close-button" aria-label="Close settings">×</button>
+            <h2 id="settingsModalTitle" class="modal-title">Settings</h2>
+            <button type="button" id="settingsCloseBtn" class="close-button" data-modal-close aria-label="Close settings">×</button>
         </div>
 
         <div class="storage-warning">
@@ -1811,14 +1798,13 @@ The software is provided "as is" without warranty of any kind.
         </div>
 
         <div class="settings-tabs" role="tablist" aria-label="Settings sections">
-            <button type="button" class="settings-tab active" data-settings-tab="schedule" role="tab">Schedule</button>
-            <button type="button" class="settings-tab" data-settings-tab="schools" role="tab">Schools</button>
-            <button type="button" class="settings-tab" data-settings-tab="appearance" role="tab">Appearance</button>
-            <button type="button" class="settings-tab" data-settings-tab="backup" role="tab">Backup</button>
+            <button type="button" id="settingsTab-schedule" class="settings-tab active" data-settings-tab="schedule" role="tab" aria-selected="true" aria-controls="settingsPanel-schedule">Schedule</button>
+            <button type="button" id="settingsTab-schools" class="settings-tab" data-settings-tab="schools" role="tab" aria-selected="false" aria-controls="settingsPanel-schools" tabindex="-1">Schools</button>
+            <button type="button" id="settingsTab-backup" class="settings-tab" data-settings-tab="backup" role="tab" aria-selected="false" aria-controls="settingsPanel-backup" tabindex="-1">Backup</button>
         </div>
 
         <div class="settings-scroll">
-            <section id="settingsPanel-schedule" class="settings-panel active">
+            <section id="settingsPanel-schedule" class="settings-panel active" role="tabpanel" aria-labelledby="settingsTab-schedule">
                 <div class="settings-section">
                     <h3>Schedule Dates</h3>
 
@@ -1849,7 +1835,7 @@ The software is provided "as is" without warranty of any kind.
                 </div>
             </section>
 
-            <section id="settingsPanel-schools" class="settings-panel">
+            <section id="settingsPanel-schools" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-schools" hidden>
                 <div class="settings-section">
                     <h3>Schools & Bell Times</h3>
 
@@ -1867,44 +1853,7 @@ The software is provided "as is" without warranty of any kind.
                 </div>
             </section>
 
-
-            <section id="settingsPanel-appearance" class="settings-panel">
-                <div class="settings-section">
-                    <h3>Theme</h3>
-
-                    <div class="theme-options" role="radiogroup" aria-label="Color theme">
-                        <label class="theme-option" data-theme-option="ocean-blue">
-                            <input type="radio" name="themeChoice" value="ocean-blue">
-                            <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                            <span class="theme-name">Ocean Blue</span>
-                        </label>
-
-                        <label class="theme-option" data-theme-option="color-pop">
-                            <input type="radio" name="themeChoice" value="color-pop">
-                            <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                            <span class="theme-name">Color Pop</span>
-                        </label>
-
-                        <label class="theme-option" data-theme-option="pretty-in-pink">
-                            <input type="radio" name="themeChoice" value="pretty-in-pink">
-                            <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                            <span class="theme-name">Pretty in Pink</span>
-                        </label>
-
-                        <label class="theme-option" data-theme-option="true-dark">
-                            <input type="radio" name="themeChoice" value="true-dark">
-                            <span class="theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                            <span class="theme-name">True Dark</span>
-                        </label>
-                    </div>
-
-                    <div class="appearance-note">
-                        Theme changes apply immediately across Teacher Tools in this browser and remain included in Version 3 scheduler backups.
-                    </div>
-                </div>
-            </section>
-
-            <section id="settingsPanel-backup" class="settings-panel">
+            <section id="settingsPanel-backup" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-backup" hidden>
                 <div class="settings-section">
                     <h3>Backup & Restore</h3>
 
@@ -1920,7 +1869,7 @@ The software is provided "as is" without warranty of any kind.
                     </div>
 
                     <div class="backup-note">
-                        Version 3 backups include schools, locations, classes, regular and irregular bell times, lunch settings, schedule dates, theme, and preferences.
+                        Version 3 backups include schools, locations, classes, regular and irregular bell times, lunch settings, schedule dates, and preferences. Existing theme data remains compatible with earlier backups.
                         Version 1 and Version 2 backups can also be imported.
                     </div>
                 </div>
@@ -1949,22 +1898,421 @@ The software is provided "as is" without warranty of any kind.
     <input type="hidden" name="etz" value="Asia/Tokyo">
 </form>
 
+<!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
+    <script>
+        (() => {
+            "use strict";
+
+            const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
+            const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            let activeModal = null;
+            let activeModalOpener = null;
+            let activeTooltipTrigger = null;
+            let tooltipElement = null;
+            let tooltipContent = null;
+            let tooltipPinned = false;
+            let tooltipFrame = 0;
+
+            function storageGet(key) {
+                try {
+                    return localStorage.getItem(key);
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function storageSet(key, value) {
+                try {
+                    localStorage.setItem(key, value);
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            function normalizeTheme(value) {
+                return ALLOWED_THEMES.includes(value) ? value : "ocean-blue";
+            }
+
+            function themeFromStoredValue(value) {
+                if (!value) return null;
+
+                try {
+                    const saved = JSON.parse(value);
+                    return saved && ALLOWED_THEMES.includes(saved.theme) ? saved.theme : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function applyGlobalTheme(requestedTheme, persist = true) {
+                const theme = normalizeTheme(requestedTheme);
+
+                if (theme === "ocean-blue") {
+                    document.documentElement.removeAttribute("data-theme");
+                    document.body.removeAttribute("data-theme");
+                } else {
+                    document.documentElement.setAttribute("data-theme", theme);
+                    document.body.setAttribute("data-theme", theme);
+                }
+
+                document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
+                    const selected = input.value === theme;
+                    input.checked = selected;
+                    const option = input.closest(".site-theme-option");
+                    if (option) option.classList.toggle("selected", selected);
+                });
+
+                if (persist) {
+                    storageSet(SITE_PREFERENCES_KEY, JSON.stringify({ version: 1, theme }));
+                }
+            }
+
+            function focusableElements(container) {
+                return [...container.querySelectorAll(
+                    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+                )].filter(element => element.offsetParent !== null);
+            }
+
+            function positionTooltip() {
+                if (!activeTooltipTrigger || !tooltipElement || tooltipElement.hidden) return;
+
+                const margin = 12;
+                const gap = 9;
+                const anchor = activeTooltipTrigger.getBoundingClientRect();
+                const tooltip = tooltipElement.getBoundingClientRect();
+                const viewportWidth = document.documentElement.clientWidth;
+                const viewportHeight = document.documentElement.clientHeight;
+                const roomAbove = anchor.top - margin - gap;
+                const roomBelow = viewportHeight - anchor.bottom - margin - gap;
+                const placeAbove = tooltip.height <= roomAbove || roomAbove > roomBelow;
+                const idealLeft = anchor.left + anchor.width / 2 - tooltip.width / 2;
+                const left = Math.max(margin, Math.min(idealLeft, viewportWidth - margin - tooltip.width));
+                const idealTop = placeAbove
+                    ? anchor.top - gap - tooltip.height
+                    : anchor.bottom + gap;
+                const top = Math.max(margin, Math.min(idealTop, viewportHeight - margin - tooltip.height));
+                const arrowLeft = Math.max(13, Math.min(anchor.left + anchor.width / 2 - left, tooltip.width - 13));
+
+                tooltipElement.dataset.placement = placeAbove ? "above" : "below";
+                tooltipElement.style.left = `${Math.round(left)}px`;
+                tooltipElement.style.top = `${Math.round(top)}px`;
+                tooltipElement.style.setProperty("--tooltip-arrow-left", `${Math.round(arrowLeft)}px`);
+            }
+
+            function scheduleTooltipPosition() {
+                window.cancelAnimationFrame(tooltipFrame);
+                tooltipFrame = window.requestAnimationFrame(positionTooltip);
+            }
+
+            function showTooltip(trigger, pinned = false) {
+                const text = trigger.dataset.tooltip;
+                if (!text || !tooltipElement) return;
+
+                if (activeTooltipTrigger && activeTooltipTrigger !== trigger) {
+                    activeTooltipTrigger.setAttribute("aria-expanded", "false");
+                    activeTooltipTrigger.removeAttribute("aria-describedby");
+                }
+
+                activeTooltipTrigger = trigger;
+                tooltipPinned = pinned;
+                tooltipContent.textContent = text;
+                tooltipElement.classList.toggle("warning", Boolean(trigger.closest(".mode-panel.active")));
+                tooltipElement.hidden = false;
+                trigger.setAttribute("aria-expanded", "true");
+                trigger.setAttribute("aria-describedby", tooltipElement.id);
+                scheduleTooltipPosition();
+            }
+
+            function hideTooltip(force = false) {
+                if (!activeTooltipTrigger || !tooltipElement) return;
+                if (tooltipPinned && !force) return;
+
+                activeTooltipTrigger.setAttribute("aria-expanded", "false");
+                activeTooltipTrigger.removeAttribute("aria-describedby");
+                activeTooltipTrigger = null;
+                tooltipPinned = false;
+                tooltipElement.hidden = true;
+            }
+
+            function initTooltips() {
+                const triggers = [...document.querySelectorAll("[data-tooltip]")];
+                if (triggers.length === 0) return;
+
+                tooltipElement = document.createElement("div");
+                tooltipElement.id = "teacherToolsSharedTooltip";
+                tooltipElement.className = "teacher-tools-tooltip";
+                tooltipElement.setAttribute("role", "tooltip");
+                tooltipElement.hidden = true;
+                tooltipContent = document.createElement("div");
+                tooltipContent.className = "teacher-tools-tooltip-content";
+                tooltipElement.appendChild(tooltipContent);
+                document.body.appendChild(tooltipElement);
+
+                triggers.forEach(trigger => {
+                    trigger.setAttribute("aria-expanded", "false");
+                    trigger.addEventListener("pointerenter", () => showTooltip(trigger, false));
+                    trigger.addEventListener("pointerleave", () => hideTooltip());
+                    trigger.addEventListener("focus", () => showTooltip(trigger, false));
+                    trigger.addEventListener("blur", () => hideTooltip());
+                    trigger.addEventListener("click", event => {
+                        event.stopPropagation();
+                        if (activeTooltipTrigger === trigger && tooltipPinned) {
+                            hideTooltip(true);
+                        } else {
+                            showTooltip(trigger, true);
+                        }
+                    });
+                });
+
+                document.addEventListener("click", event => {
+                    if (activeTooltipTrigger && !activeTooltipTrigger.contains(event.target)) {
+                        hideTooltip(true);
+                    }
+                });
+                window.addEventListener("resize", scheduleTooltipPosition);
+                window.addEventListener("scroll", scheduleTooltipPosition, true);
+            }
+
+            function closeModal(restoreFocus = true) {
+                if (!activeModal) return;
+
+                const modalToClose = activeModal;
+                const opener = activeModalOpener;
+                const firstUseKey = modalToClose.dataset.firstUseStorageKey;
+
+                modalToClose.classList.remove("open");
+                modalToClose.setAttribute("aria-hidden", "true");
+                activeModal = null;
+                activeModalOpener = null;
+                document.body.classList.remove("modal-open");
+
+                if (firstUseKey) {
+                    storageSet(firstUseKey, JSON.stringify({ version: 1, seen: true }));
+                }
+
+                if (restoreFocus && opener) opener.focus();
+            }
+
+            function openModal(modalOrId, opener = null) {
+                const modal = typeof modalOrId === "string"
+                    ? document.getElementById(modalOrId)
+                    : modalOrId;
+                if (!modal) return;
+
+                if (activeModal) closeModal(false);
+                closeSiteOverlays();
+                activeModal = modal;
+                activeModalOpener = opener;
+                modal.classList.add("open");
+                modal.setAttribute("aria-hidden", "false");
+                document.body.classList.add("modal-open");
+
+                const preferredFocus = modal.querySelector("[data-modal-initial-focus], .close-button");
+                if (preferredFocus) preferredFocus.focus();
+            }
+
+            function closeSiteOverlays() {
+                const toolsMenu = document.getElementById("siteToolsMenu");
+                const themePanel = document.getElementById("siteThemePanel");
+                const settingsButton = document.getElementById("siteSettingsButton");
+                const menuButtons = [
+                    document.getElementById("siteToolsMenuButton"),
+                    document.getElementById("siteMobileMenuButton")
+                ].filter(Boolean);
+
+                if (toolsMenu) toolsMenu.hidden = true;
+                if (themePanel) themePanel.hidden = true;
+                if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                menuButtons.forEach(button => button.setAttribute("aria-expanded", "false"));
+            }
+
+            function initSiteHeader() {
+                const siteHeader = document.querySelector("[data-teacher-tools-header]");
+                if (!siteHeader) return;
+
+                const toolsMenu = document.getElementById("siteToolsMenu");
+                const menuButtons = [
+                    document.getElementById("siteToolsMenuButton"),
+                    document.getElementById("siteMobileMenuButton")
+                ].filter(Boolean);
+                const settingsButton = document.getElementById("siteSettingsButton");
+                const themePanel = document.getElementById("siteThemePanel");
+                const themeCloseButton = document.getElementById("siteThemeCloseButton");
+
+                function setToolsMenu(open) {
+                    if (!toolsMenu) return;
+                    if (open && themePanel) themePanel.hidden = true;
+                    if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    toolsMenu.hidden = !open;
+                    menuButtons.forEach(button => button.setAttribute("aria-expanded", String(open)));
+                }
+
+                function setThemePanel(open) {
+                    if (!themePanel || !settingsButton) return;
+                    if (open) setToolsMenu(false);
+                    themePanel.hidden = !open;
+                    settingsButton.setAttribute("aria-expanded", String(open));
+
+                    if (open) {
+                        const selected = themePanel.querySelector('input[name="siteThemeChoice"]:checked');
+                        if (selected) selected.focus();
+                    }
+                }
+
+                menuButtons.forEach(button => {
+                    button.addEventListener("click", event => {
+                        event.stopPropagation();
+                        setToolsMenu(toolsMenu ? toolsMenu.hidden : false);
+                    });
+                });
+
+                if (toolsMenu) toolsMenu.addEventListener("click", event => event.stopPropagation());
+
+                if (settingsButton) {
+                    settingsButton.addEventListener("click", event => {
+                        event.stopPropagation();
+                        setThemePanel(themePanel ? themePanel.hidden : false);
+                    });
+                }
+
+                if (themeCloseButton) {
+                    themeCloseButton.addEventListener("click", () => {
+                        setThemePanel(false);
+                        settingsButton.focus();
+                    });
+                }
+
+                if (themePanel) themePanel.addEventListener("click", event => event.stopPropagation());
+
+                document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
+                    input.addEventListener("change", () => {
+                        if (input.checked) applyGlobalTheme(input.value);
+                    });
+                });
+
+                document.addEventListener("click", closeSiteOverlays);
+            }
+
+            function initModals() {
+                document.querySelectorAll("[data-modal-open]").forEach(button => {
+                    button.addEventListener("click", () => openModal(button.dataset.modalOpen, button));
+                });
+
+                document.querySelectorAll("[data-modal-close]").forEach(button => {
+                    button.addEventListener("click", () => closeModal());
+                });
+
+                document.querySelectorAll("[data-modal-switch]").forEach(button => {
+                    button.addEventListener("click", () => {
+                        closeModal(false);
+                        const targetId = button.dataset.modalSwitch;
+                        const targetOpener = document.querySelector(`[data-modal-open="${targetId}"]`);
+                        openModal(targetId, targetOpener);
+                    });
+                });
+
+                document.querySelectorAll("[data-shared-modal]").forEach(modal => {
+                    modal.addEventListener("click", event => {
+                        if (event.target === modal) closeModal();
+                    });
+                });
+
+                const firstUseModal = document.querySelector("[data-first-use-storage-key]");
+                if (firstUseModal && !storageGet(firstUseModal.dataset.firstUseStorageKey)) {
+                    const opener = document.querySelector(`[data-modal-open="${firstUseModal.id}"]`);
+                    window.setTimeout(() => openModal(firstUseModal, opener), 0);
+                }
+            }
+
+            document.addEventListener("keydown", event => {
+                if (activeModal) {
+                    if (event.key === "Escape") {
+                        event.preventDefault();
+                        closeModal();
+                        return;
+                    }
+
+                    if (event.key === "Tab") {
+                        const focusable = focusableElements(activeModal);
+                        if (focusable.length === 0) return;
+                        const first = focusable[0];
+                        const last = focusable[focusable.length - 1];
+
+                        if (event.shiftKey && document.activeElement === first) {
+                            event.preventDefault();
+                            last.focus();
+                        } else if (!event.shiftKey && document.activeElement === last) {
+                            event.preventDefault();
+                            first.focus();
+                        }
+                    }
+                    return;
+                }
+
+                if (event.key !== "Escape") return;
+
+                if (activeTooltipTrigger) {
+                    hideTooltip(true);
+                    return;
+                }
+
+                const themePanel = document.getElementById("siteThemePanel");
+                const toolsMenu = document.getElementById("siteToolsMenu");
+                const settingsButton = document.getElementById("siteSettingsButton");
+                const menuButtons = [
+                    document.getElementById("siteToolsMenuButton"),
+                    document.getElementById("siteMobileMenuButton")
+                ].filter(Boolean);
+
+                if (themePanel && !themePanel.hidden) {
+                    closeSiteOverlays();
+                    if (settingsButton) settingsButton.focus();
+                    return;
+                }
+
+                if (toolsMenu && !toolsMenu.hidden) {
+                    closeSiteOverlays();
+                    const visibleButton = menuButtons.find(button => button.offsetParent !== null);
+                    if (visibleButton) visibleButton.focus();
+                }
+            });
+
+            window.addEventListener("storage", event => {
+                if (event.key !== SITE_PREFERENCES_KEY) return;
+                applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+            });
+
+            window.TeacherToolsUI = Object.freeze({
+                applyGlobalTheme,
+                closeModal,
+                openModal,
+                storageGet,
+                storageSet
+            });
+
+            applyGlobalTheme(
+                themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY)) ||
+                document.documentElement.getAttribute("data-theme") ||
+                "ocean-blue",
+                false
+            );
+            initSiteHeader();
+            initModals();
+            initTooltips();
+        })();
+    </script>
+<!-- TEACHER-TOOLS:SHARED-BEHAVIOR:END -->
+
+<!-- Scheduler-specific behavior begins here. -->
 <script>
 
     /* =====================================================
-     * TEACHER TOOLS SITE NAVIGATION
+     * TEACHER TOOLS THEME COMPATIBILITY
      * ===================================================== */
 
     const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
     const ALLOWED_SITE_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
-    const siteToolsMenu = document.getElementById("siteToolsMenu");
-    const siteMenuButtons = [
-        document.getElementById("siteToolsMenuButton"),
-        document.getElementById("siteMobileMenuButton")
-    ];
-    const siteSettingsButton = document.getElementById("siteSettingsButton");
-    const siteThemePanel = document.getElementById("siteThemePanel");
-    const siteThemeCloseButton = document.getElementById("siteThemeCloseButton");
 
     function normalizeSiteTheme(value) {
         return ALLOWED_SITE_THEMES.includes(value) ? value : "ocean-blue";
@@ -1984,268 +2332,78 @@ The software is provided "as is" without warranty of any kind.
     }
 
     function readGlobalTheme() {
-        try {
-            return themeFromStoredSitePreferences(localStorage.getItem(SITE_PREFERENCES_KEY));
-        } catch (error) {
-            return null;
-        }
+        return themeFromStoredSitePreferences(
+            window.TeacherToolsUI.storageGet(SITE_PREFERENCES_KEY)
+        );
     }
 
-    function saveGlobalTheme(theme) {
-        try {
-            localStorage.setItem(
-                SITE_PREFERENCES_KEY,
-                JSON.stringify({ version: 1, theme })
-            );
-        } catch (error) {
-            // The scheduler remains usable when browser storage is restricted.
-        }
-    }
-
-    function applyThemeAttributes(requestedTheme, persistGlobal = false) {
+    function applyTheme(requestedTheme, persistGlobal = false) {
         const theme = normalizeSiteTheme(requestedTheme);
-
-        if (theme === "ocean-blue") {
-            document.documentElement.removeAttribute("data-theme");
-            document.body.removeAttribute("data-theme");
-        } else {
-            document.documentElement.setAttribute("data-theme", theme);
-            document.body.setAttribute("data-theme", theme);
-        }
-
-        document.querySelectorAll('input[name="siteThemeChoice"], input[name="themeChoice"]').forEach(input => {
-            const selected = input.value === theme;
-            input.checked = selected;
-            const option = input.closest(".theme-option");
-            if (option) option.classList.toggle("selected", selected);
-        });
-
-        if (persistGlobal) saveGlobalTheme(theme);
+        window.TeacherToolsUI.applyGlobalTheme(theme, persistGlobal);
         return theme;
     }
-
-    function setSiteToolsMenu(open) {
-        if (open) setSiteThemePanel(false);
-        siteToolsMenu.hidden = !open;
-        siteMenuButtons.forEach(button => {
-            button.setAttribute("aria-expanded", String(open));
-        });
-    }
-
-    function setSiteThemePanel(open) {
-        if (open) setSiteToolsMenu(false);
-        siteThemePanel.hidden = !open;
-        siteSettingsButton.setAttribute("aria-expanded", String(open));
-
-        if (open) {
-            const selected = siteThemePanel.querySelector('input[name="siteThemeChoice"]:checked');
-            if (selected) selected.focus();
-        }
-    }
-
-    siteMenuButtons.forEach(button => {
-        button.addEventListener("click", event => {
-            event.stopPropagation();
-            setSiteToolsMenu(siteToolsMenu.hidden);
-        });
-    });
-
-    siteToolsMenu.addEventListener("click", event => {
-        event.stopPropagation();
-    });
-
-    siteSettingsButton.addEventListener("click", event => {
-        event.stopPropagation();
-        setSiteThemePanel(siteThemePanel.hidden);
-    });
-
-    siteThemeCloseButton.addEventListener("click", () => {
-        setSiteThemePanel(false);
-        siteSettingsButton.focus();
-    });
-
-    siteThemePanel.addEventListener("click", event => {
-        event.stopPropagation();
-    });
-
-    document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
-        input.addEventListener("change", () => {
-            if (!input.checked) return;
-            const theme = applyTheme(input.value, true);
-            appState.preferences.theme = theme;
-            saveState();
-        });
-    });
-
-    document.addEventListener("click", () => {
-        if (!siteToolsMenu.hidden) setSiteToolsMenu(false);
-        if (!siteThemePanel.hidden) setSiteThemePanel(false);
-    });
-
-    document.addEventListener("keydown", event => {
-        if (event.key !== "Escape") return;
-
-        if (!siteThemePanel.hidden) {
-            setSiteThemePanel(false);
-            siteSettingsButton.focus();
-            return;
-        }
-
-        if (!siteToolsMenu.hidden) {
-            setSiteToolsMenu(false);
-            const visibleButton = siteMenuButtons.find(button => button.offsetParent !== null);
-            if (visibleButton) visibleButton.focus();
-        }
-    });
-
-    window.addEventListener("storage", event => {
-        if (event.key !== SITE_PREFERENCES_KEY) return;
-        const theme = themeFromStoredSitePreferences(event.newValue) || "ocean-blue";
-        appState.preferences.theme = theme;
-        applyTheme(theme, false);
-        saveState();
-    });
-
-    applyThemeAttributes(
-        readGlobalTheme() || document.documentElement.getAttribute("data-theme") || "ocean-blue",
-        false
-    );
 
     /* =====================================================
      * COMPACT UI / SETTINGS MODAL
      * ===================================================== */
 
-    const settingsModal = document.getElementById("settingsModal");
-    const settingsOpenBtn = document.getElementById("settingsOpenBtn");
-    const settingsCloseBtn = document.getElementById("settingsCloseBtn");
-    const TUTORIAL_STORAGE_KEY = "classSchedulerTutorial.v1";
-    const tutorialModal = document.getElementById("tutorialModal");
-    const tutorialOpenBtn = document.getElementById("tutorialOpenBtn");
-    const tutorialCloseBtn = document.getElementById("tutorialCloseBtn");
-    const tutorialDoneBtn = document.getElementById("tutorialDoneBtn");
     const noteToggleBtn = document.getElementById("noteToggleBtn");
     const notePanel = document.getElementById("notePanel");
 
-    function hasSeenTutorial() {
-        try {
-            return localStorage.getItem(TUTORIAL_STORAGE_KEY) === "seen";
-        } catch (error) {
-            return false;
-        }
-    }
-
-    function rememberTutorial() {
-        try {
-            localStorage.setItem(TUTORIAL_STORAGE_KEY, "seen");
-        } catch (error) {
-            // Help remains available even when browser storage is restricted.
-        }
-    }
-
-    function openTutorialModal(markAsSeen = false) {
-        setSiteToolsMenu(false);
-        setSiteThemePanel(false);
-        tutorialModal.classList.add("open");
-        tutorialModal.setAttribute("aria-hidden", "false");
-        document.body.classList.add("modal-open");
-        if (markAsSeen) rememberTutorial();
-        tutorialCloseBtn.focus();
-    }
-
-    function closeTutorialModal(restoreFocus = true) {
-        tutorialModal.classList.remove("open");
-        tutorialModal.setAttribute("aria-hidden", "true");
-        if (!settingsModal.classList.contains("open")) {
-            document.body.classList.remove("modal-open");
-        }
-        if (restoreFocus) tutorialOpenBtn.focus();
-    }
-
-    function openSettingsModal() {
-        settingsModal.classList.add("open");
-        settingsModal.setAttribute("aria-hidden", "false");
-        document.body.classList.add("modal-open");
-        settingsCloseBtn.focus();
-    }
-
-    function closeSettingsModal() {
-        settingsModal.classList.remove("open");
-        settingsModal.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("modal-open");
-        settingsOpenBtn.focus();
-    }
-
     function showSettingsTab(tabName) {
         document.querySelectorAll(".settings-tab").forEach(button => {
-            button.classList.toggle("active", button.dataset.settingsTab === tabName);
+            const selected = button.dataset.settingsTab === tabName;
+            button.classList.toggle("active", selected);
+            button.setAttribute("aria-selected", String(selected));
+            button.tabIndex = selected ? 0 : -1;
         });
 
         document.querySelectorAll(".settings-panel").forEach(panel => {
-            panel.classList.toggle("active", panel.id === "settingsPanel-" + tabName);
+            const selected = panel.id === "settingsPanel-" + tabName;
+            panel.classList.toggle("active", selected);
+            panel.hidden = !selected;
         });
     }
 
-    settingsOpenBtn.addEventListener("click", openSettingsModal);
-    settingsCloseBtn.addEventListener("click", closeSettingsModal);
-    tutorialOpenBtn.addEventListener("click", () => openTutorialModal(true));
-    tutorialCloseBtn.addEventListener("click", () => closeTutorialModal());
-    tutorialDoneBtn.addEventListener("click", () => closeTutorialModal());
-
-    tutorialModal.addEventListener("click", event => {
-        if (event.target === tutorialModal) {
-            closeTutorialModal();
-        }
-    });
-
     document.querySelectorAll("[data-tutorial-tab]").forEach(button => {
-        button.addEventListener("click", () => {
-            closeTutorialModal(false);
-            showSettingsTab(button.dataset.tutorialTab);
-            openSettingsModal();
-        });
+        button.addEventListener("click", () => showSettingsTab(button.dataset.tutorialTab));
     });
 
-    settingsModal.addEventListener("click", event => {
-        if (event.target === settingsModal) {
-            closeSettingsModal();
-        }
-    });
+    const settingsTabs = [...document.querySelectorAll(".settings-tab")];
 
-    document.querySelectorAll(".settings-tab").forEach(button => {
+    settingsTabs.forEach(button => {
         button.addEventListener("click", () => showSettingsTab(button.dataset.settingsTab));
     });
 
-    document.querySelectorAll('input[name="themeChoice"]').forEach(input => {
-        input.addEventListener("change", () => {
-            if (!input.checked) return;
-            appState.preferences.theme = input.value;
-            applyTheme(input.value, true);
-            saveState();
-        });
+    document.querySelector(".settings-tabs").addEventListener("keydown", event => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+
+        const currentIndex = settingsTabs.indexOf(document.activeElement);
+        if (currentIndex < 0) return;
+
+        event.preventDefault();
+        let nextIndex;
+
+        if (event.key === "Home") nextIndex = 0;
+        else if (event.key === "End") nextIndex = settingsTabs.length - 1;
+        else if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % settingsTabs.length;
+        else nextIndex = (currentIndex - 1 + settingsTabs.length) % settingsTabs.length;
+
+        const nextTab = settingsTabs[nextIndex];
+        showSettingsTab(nextTab.dataset.settingsTab);
+        nextTab.focus();
     });
 
     noteToggleBtn.addEventListener("click", () => {
-        const isOpen = notePanel.classList.toggle("open");
+        const isOpen = noteToggleBtn.getAttribute("aria-expanded") !== "true";
         noteToggleBtn.setAttribute("aria-expanded", String(isOpen));
-        noteToggleBtn.textContent = isOpen ? "− Hide lesson note" : "＋ Add lesson note";
+        notePanel.hidden = !isOpen;
+        noteToggleBtn.lastElementChild.textContent = isOpen
+            ? "Hide lesson note"
+            : "Add lesson note";
 
         if (isOpen) {
             document.getElementById("eventNotes").focus();
-        }
-    });
-
-    document.addEventListener("keydown", event => {
-        if (event.key !== "Escape") return;
-
-        if (tutorialModal.classList.contains("open")) {
-            event.preventDefault();
-            closeTutorialModal();
-            return;
-        }
-
-        if (settingsModal.classList.contains("open")) {
-            event.preventDefault();
-            closeSettingsModal();
         }
     });
 
@@ -2655,10 +2813,6 @@ The software is provided "as is" without warranty of any kind.
 
     let appState = loadState();
 
-    function applyTheme(themeName, persistGlobal = false) {
-        return applyThemeAttributes(themeName, persistGlobal);
-    }
-
     const savedAppletTheme = normalizeSiteTheme(appState.preferences.theme);
     const savedGlobalTheme = readGlobalTheme();
     const initialSharedTheme = savedGlobalTheme || savedAppletTheme;
@@ -2671,6 +2825,21 @@ The software is provided "as is" without warranty of any kind.
     }
 
     if (savedAppletTheme !== initialSharedTheme) saveState();
+
+    document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
+        input.addEventListener("change", () => {
+            if (!input.checked) return;
+            appState.preferences.theme = normalizeSiteTheme(input.value);
+            saveState();
+        });
+    });
+
+    window.addEventListener("storage", event => {
+        if (event.key !== SITE_PREFERENCES_KEY) return;
+        appState.preferences.theme =
+            themeFromStoredSitePreferences(event.newValue) || "ocean-blue";
+        saveState();
+    });
 
     function getSchoolById(id) {
         return appState.schools.find(s => s.id === id) || null;
@@ -3910,9 +4079,6 @@ The software is provided "as is" without warranty of any kind.
     renderScheduleSettings();
     renderSchoolEditor();
 
-    if (!hasSeenTutorial()) {
-        openTutorialModal(true);
-    }
 </script>
 
 </body>
