@@ -232,7 +232,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             background: var(--accent-soft);
             border-color: var(--accent-border);
         }
-         .site-settings-button {
+         .site-data-button,
+        .site-settings-button {
             width: 40px;
             height: 40px;
             flex: 0 0 40px;
@@ -247,8 +248,19 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             cursor: pointer;
             transition: color 180ms ease;
         }
-         .site-settings-button:hover,
+         .site-data-button:hover,
+        .site-data-button[aria-expanded="true"],
+        .site-settings-button:hover,
         .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
+         .site-data-button svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
          .site-settings-button svg {
             width: 24px;
             height: 24px;
@@ -285,6 +297,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             stroke-linecap: round;
         }
          .site-tools-menu,
+        .site-data-panel,
         .site-theme-panel {
             position: absolute;
             right: 16px;
@@ -296,8 +309,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
         }
          .site-tools-menu { width: min(300px, calc(100vw - 32px)); padding: 7px; }
+        .site-data-panel { z-index: 121; width: min(380px, calc(100vw - 32px)); padding: 13px; }
         .site-theme-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
-        .site-tools-menu[hidden], .site-theme-panel[hidden] { display: none; }
+        .site-tools-menu[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
          .site-menu-label {
             padding: 6px 9px 5px;
             color: var(--muted);
@@ -358,15 +372,18 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             line-height: 1.3;
         }
          .site-menu-status { color: var(--muted); font-size: 8.5px; font-weight: 700; }
-         .site-theme-header {
+         .site-data-header,
+        .site-theme-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
             margin-bottom: 3px;
         }
-         .site-theme-title { margin: 0; font-size: 14px; }
-         .site-theme-close,
+         .site-data-title,
+        .site-theme-title { margin: 0; font-size: 14px; }
+         .site-data-close,
+        .site-theme-close,
         .close-button {
             width: 34px;
             height: 34px;
@@ -382,14 +399,93 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             line-height: 1;
             cursor: pointer;
         }
-         .site-theme-close:hover,
+         .site-data-close:hover,
+        .site-theme-close:hover,
         .close-button:hover { color: var(--text); background: var(--panel); }
-         .site-theme-help {
+         .site-data-help,
+        .site-theme-help {
             margin: 0 0 11px;
             color: var(--muted);
             font-size: 10.5px;
             line-height: 1.45;
         }
+         .site-data-summary {
+            display: grid;
+            gap: 5px;
+            margin: 0 0 11px;
+            padding: 0;
+            list-style: none;
+        }
+         .site-data-summary-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 30px;
+            padding: 6px 8px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 7px;
+            font-size: 10.5px;
+        }
+         .site-data-summary-state {
+            flex: 0 0 auto;
+            color: var(--muted);
+            font-size: 8.5px;
+            font-weight: 750;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+         .site-data-summary-state.saved { color: var(--accent); }
+         .site-data-summary-state.invalid { color: var(--danger); }
+         .site-data-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+         .site-data-action {
+            min-height: 38px;
+            padding: 8px 10px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 10.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+         .site-data-action:hover { color: var(--accent); border-color: var(--accent-border); }
+         .site-data-action-primary {
+            color: #ffffff;
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+         .site-data-action-primary:hover { color: #ffffff; filter: brightness(0.96); }
+         html[data-theme="true-dark"] .site-data-action-primary,
+        html[data-theme="true-dark"] .site-data-action-primary:hover { color: #07101d; }
+         .site-data-file {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+        }
+         .site-data-note {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
+            line-height: 1.45;
+        }
+         .site-data-status {
+            min-height: 15px;
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
+            font-weight: 650;
+            line-height: 1.4;
+        }
+         .site-data-status.error { color: var(--danger); }
          .site-theme-options {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -695,6 +791,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             .site-nav { display: none; }
             .site-mobile-toggle { display: inline-flex; }
             .site-tools-menu,
+            .site-data-panel,
             .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
             .site-menu-home { display: grid; }
             .control-grid { grid-template-columns: 1fr; }
@@ -778,6 +875,16 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         .icon-button:hover { color: var(--accent-secondary); background: var(--panel); }
         .icon-button:disabled { opacity: 0.45; cursor: not-allowed; }
 
+        .presentation-icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
         .help-button-mark {
             width: 21px;
             height: 21px;
@@ -858,8 +965,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             position: absolute;
             z-index: 3;
             inset: 50% auto auto 50%;
-            width: min(250px, 72%);
-            padding: 12px 14px;
+            width: min(360px, 80%);
+            padding: 18px 20px;
             text-align: center;
             background: color-mix(in srgb, var(--surface) 94%, transparent);
             border: 2px solid var(--accent);
@@ -870,9 +977,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         }
 
         .result-card[hidden] { display: none; }
-        .result-label { display: block; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
-        .result-value { display: block; overflow-wrap: anywhere; margin: 4px 0; color: var(--accent); font-size: clamp(20px, 5vw, 31px); line-height: 1.1; }
-        .result-detail { display: block; color: var(--muted); font-size: 10px; line-height: 1.35; }
+        .result-label { display: block; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+        .result-value { display: block; overflow-wrap: anywhere; margin: 7px 0; color: var(--accent); font-size: clamp(34px, 8vw, 54px); line-height: 1.04; }
+        .result-detail { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; }
 
         .spin-area { width: min(440px, 100%); margin: 13px auto 0; text-align: center; }
 
@@ -925,6 +1032,83 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
         .round-panel[hidden] { display: none; }
         .round-copy { color: var(--muted); font-size: 10.5px; line-height: 1.4; }
+
+        body.presentation-open { overflow: hidden; }
+        body.presentation-open .modal-backdrop { z-index: 700; }
+
+        .app-shell.is-presenting {
+            position: fixed;
+            z-index: 500;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            max-width: none;
+            display: flex;
+            flex-direction: column;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .app-shell.is-presenting .app-header { flex: 0 0 auto; }
+        .app-shell.is-presenting #helpOpenButton,
+        .app-shell.is-presenting #settingsOpenButton { display: none; }
+        .app-shell.is-presenting .app-main { flex: 1 1 auto; min-height: 0; padding: clamp(10px, 2vh, 20px); }
+        .app-shell.is-presenting .app-footer { display: none; }
+
+        .app-shell.is-presenting .wheel-card {
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(250px, 34vw);
+            grid-template-rows: auto minmax(0, 1fr);
+            align-items: center;
+            gap: clamp(12px, 2.2vw, 30px);
+            padding: clamp(12px, 2vw, 24px);
+        }
+
+        .app-shell.is-presenting .wheel-summary {
+            grid-column: 2;
+            grid-row: 1;
+            align-self: end;
+            margin: 0;
+            font-size: clamp(12px, 1.2vw, 17px);
+        }
+
+        .app-shell.is-presenting .mode-badge { font-size: clamp(10px, 1vw, 14px); }
+
+        .app-shell.is-presenting .wheel-stage {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+            width: auto;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            align-self: center;
+            justify-self: center;
+        }
+
+        .app-shell.is-presenting .spin-area {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: center;
+            width: 100%;
+            margin: 0;
+        }
+
+        .app-shell.is-presenting .spin-button {
+            min-height: clamp(58px, 9vh, 82px);
+            font-size: clamp(18px, 2vw, 28px);
+        }
+
+        .app-shell.is-presenting .spin-icon { font-size: clamp(24px, 2.7vw, 36px); }
+        .app-shell.is-presenting .wheel-status { min-height: 40px; font-size: clamp(12px, 1.15vw, 16px); }
+        .app-shell.is-presenting .round-copy { font-size: clamp(11px, 1vw, 14px); }
+        .app-shell.is-presenting .result-card { width: min(540px, 84%); padding: clamp(24px, 3vw, 38px); border-width: 3px; }
+        .app-shell.is-presenting .result-label { font-size: clamp(14px, 1.35vw, 20px); }
+        .app-shell.is-presenting .result-value { margin: 10px 0; font-size: clamp(54px, 7vw, 100px); }
+        .app-shell.is-presenting .result-detail { font-size: clamp(14px, 1.35vw, 20px); }
 
         .button {
             min-height: 40px;
@@ -1126,6 +1310,28 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             .field-full { grid-column: auto; }
         }
 
+        @media (orientation: portrait), (max-width: 720px) {
+            .app-shell.is-presenting .app-main { padding: 8px; }
+            .app-shell.is-presenting .wheel-card {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: auto minmax(0, 1fr) auto;
+                gap: 8px;
+                padding: 9px;
+            }
+            .app-shell.is-presenting .wheel-summary { grid-column: 1; grid-row: 1; align-self: center; }
+            .app-shell.is-presenting .wheel-stage {
+                grid-column: 1;
+                grid-row: 2;
+                width: min(100%, calc(100dvh - 250px));
+                height: auto;
+                max-height: 100%;
+            }
+            .app-shell.is-presenting .spin-area { grid-column: 1; grid-row: 3; }
+            .app-shell.is-presenting .spin-button { min-height: 54px; font-size: 17px; }
+            .app-shell.is-presenting .wheel-status { min-height: 28px; margin-top: 5px; font-size: 11px; }
+            .app-shell.is-presenting .round-panel { margin-top: 5px; padding: 7px 9px; }
+        }
+
         @media (max-width: 380px) {
             .app-header { padding-left: 12px; }
             .app-title { font-size: 17px; }
@@ -1134,6 +1340,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             .round-panel { flex-direction: column; }
             .settings-select { width: 48%; }
             .modal-actions .button { flex: 1 1 auto; }
+            .result-card { width: 86%; padding: 15px 16px; }
+            .result-value { font-size: clamp(31px, 11vw, 44px); }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1147,6 +1355,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
     </style>
 </head>
 <body>
+    <!-- Workbench links are relative. Use /, /scheduler/, and /spinner/ in production. -->
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
@@ -1170,6 +1379,11 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                         Tools <span class="site-menu-chevron" aria-hidden="true"></span>
                     </button>
                 </nav>
+                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3" />
+                    </svg>
+                </button>
                  <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
@@ -1199,7 +1413,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
-                 <a class="site-menu-item" href="/spinner/" aria-current="page">
+                <a class="site-menu-item" href="/spinner/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <path class="icon-fill" d="M14 14V5a9 9 0 0 1 6.36 2.64ZM14 14h9a9 9 0 0 1-2.64 6.36ZM14 14v9a9 9 0 0 1-6.36-2.64ZM14 14H5a9 9 0 0 1 2.64-6.36Z" />
@@ -1210,8 +1424,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
                     <span class="site-menu-status">HERE</span>
                 </a>
-
-                 <div class="site-menu-item" aria-disabled="true">
+                 <a class="site-menu-item" href="/timer/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <circle cx="14" cy="16" r="7.5" />
@@ -1220,10 +1433,47 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                             <path d="M14 12v4l3 1.8" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Simple timing for activities and games</span></span>
+                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+
+                 <div class="site-menu-label">Planned tools</div>
+                 <div class="site-menu-item" aria-disabled="true">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <rect x="5.5" y="5.5" width="17" height="17" rx="3" />
+                            <path d="m9.5 14 3 3 6-7" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
+                    <span class="site-menu-status">PLANNED</span>
+                </div>
+                 <div class="site-menu-item" aria-disabled="true">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <rect class="icon-fill" x="7" y="5" width="16" height="15" rx="2" opacity=".24" />
+                            <rect x="4.5" y="7.5" width="16" height="15" rx="2" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Google Slides Automator</span><span class="site-menu-description">Build lesson slides from common fields</span></span>
                     <span class="site-menu-status">PLANNED</span>
                 </div>
             </nav>
+             <section id="siteDataPanel" class="site-data-panel" role="dialog" aria-labelledby="siteDataTitle" hidden>
+                <div class="site-data-header">
+                    <h2 id="siteDataTitle" class="site-data-title">Backup & restore</h2>
+                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore">×</button>
+                </div>
+                <p class="site-data-help">Export one local file containing saved data from every Teacher Tools applet in this browser. Nothing is uploaded.</p>
+                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data"></ul>
+                <div class="site-data-actions">
+                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary">Export all data</button>
+                    <button type="button" id="siteDataImportButton" class="site-data-action">Import backup</button>
+                </div>
+                <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
+                <p class="site-data-note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
+                <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+            </section>
              <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
                 <div class="site-theme-header">
                     <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
@@ -1262,10 +1512,15 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             <header class="app-header">
                 <div class="title-wrap">
                     <h1 class="app-title">Spinner Wheel</h1>
-                    <span class="version-badge">v1.0</span>
+                    <span class="version-badge">v1.1</span>
                 </div>
 
                 <div class="app-header-actions">
+                    <button type="button" id="presentationButton" class="icon-button" aria-label="Enter presentation mode" aria-pressed="false" title="Presentation mode">
+                        <svg class="presentation-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8.5 4.5h-4v4M15.5 4.5h4v4M19.5 15.5v4h-4M8.5 19.5h-4v-4" />
+                        </svg>
+                    </button>
                     <button type="button" id="helpOpenButton" class="icon-button" data-modal-open="helpModal" aria-label="Open Spinner Wheel help" aria-haspopup="dialog" title="Spinner Wheel help">
                         <span class="help-button-mark" aria-hidden="true">?</span>
                     </button>
@@ -1312,11 +1567,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             </div>
 
             <footer class="app-footer">
-                <div class="footer-version">Spinner Wheel · v1.0</div>
-                <div class="footer-copyright">
-                    © 2026 · All rights reserved. Free for personal, classroom, and non-commercial educational use.
-                    Redistribution, resale, commercial use, and distribution of modified versions require prior permission.
-                </div>
+                <div class="footer-version">Spinner Wheel · v1.1</div>
+                <div class="footer-copyright">© 2026 · All rights reserved. Free for personal, classroom, and non-commercial educational use. Choices stay in this browser and are not uploaded.</div>
             </footer>
         </div>
     </main>
@@ -1342,7 +1594,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     </section>
                     <section class="help-step">
                         <h3>3. Spin and announce the result</h3>
-                        <p>The selected choice is shown in full and announced for screen readers. Reduced-motion preferences replace the long spin with a brief transition.</p>
+                        <p>The selected choice is shown in full and announced for screen readers. Presentation mode enlarges the wheel for smartboards and landscape displays, while reduced-motion preferences replace the long spin with a brief transition.</p>
                     </section>
                 </div>
                 <div class="privacy-note" role="note">Your settings and custom choices are saved only in this browser. Clearing site data can remove them; export a backup if the list is important.</div>
@@ -1432,17 +1684,28 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     <div class="setting-row">
                         <label for="spinLengthInput">
                             <span class="setting-label">Spin length</span>
-                            <span class="setting-description">Choose a quick, standard, or more dramatic classroom spin.</span>
+                            <span class="setting-description">Choose a quick, standard, dramatic, or suspenseful classroom spin.</span>
                         </label>
                         <select id="spinLengthInput" class="settings-select">
                             <option value="quick">Quick</option>
                             <option value="standard" selected>Standard</option>
                             <option value="dramatic">Dramatic</option>
+                            <option value="suspenseful">Suspenseful</option>
                         </select>
                     </div>
                     <div class="setting-row">
                         <span>
-                            <span class="setting-label">Result sound</span>
+                            <span class="setting-label">Spinning sound</span>
+                            <span class="setting-description">Play a mechanical ticking effect while the wheel is moving.</span>
+                        </span>
+                        <label class="switch">
+                            <input id="spinSoundInput" type="checkbox" aria-label="Play a sound while the wheel spins">
+                            <span class="switch-track" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <span>
+                            <span class="setting-label">Final-selection sound</span>
                             <span class="setting-description">Play a short locally generated chime when the wheel stops.</span>
                         </span>
                         <label class="switch">
@@ -1453,16 +1716,13 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 </section>
 
                 <section class="settings-section" aria-labelledby="dataHeading">
-                    <h3 id="dataHeading" class="settings-heading">Local data</h3>
-                    <p class="settings-help">Backups include both wheel modes and applet settings. Imports are checked before replacing the current data.</p>
+                    <h3 id="dataHeading" class="settings-heading">Reset Spinner Wheel</h3>
+                    <p class="settings-help">Use Backup & restore in the Teacher Tools header to export or import your saved data across all applets.</p>
                     <div class="settings-button-row">
-                        <button type="button" id="exportButton" class="button button-secondary button-small">Export backup</button>
-                        <label for="importInput" class="button button-neutral button-small">Import backup</label>
-                        <input id="importInput" class="visually-hidden-file" type="file" accept="application/json,.json">
                         <button type="button" id="resetButton" class="button button-danger button-small">Reset applet</button>
                     </div>
                     <p id="dataStatus" class="data-status" role="status" aria-live="polite"></p>
-                    <div class="privacy-note" role="note">Custom entries may contain student names. They are not uploaded, but exported backup files should still be handled carefully.</div>
+                    <div class="privacy-note" role="note">Custom entries may contain student names. Nothing is uploaded, but exported Teacher Tools backup files should still be handled carefully.</div>
                 </section>
             </div>
 
@@ -1479,6 +1739,45 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
             const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
+            const SITE_BACKUP_SCHEMA_VERSION = 1;
+            const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
+            const SITE_DATA_RECORDS = Object.freeze([
+                {
+                    id: "appearance",
+                    label: "Site appearance",
+                    storageKey: SITE_PREFERENCES_KEY,
+                    validate: value => isPlainObject(value) &&
+                        value.version === 1 && ALLOWED_THEMES.includes(value.theme)
+                },
+                {
+                    id: "scheduler",
+                    label: "ALT Class Scheduler",
+                    storageKey: "classAutomatorData_v3",
+                    validate: value => isPlainObject(value) && value.version === 3 &&
+                        Array.isArray(value.schools) && isPlainObject(value.schedule) &&
+                        isPlainObject(value.preferences)
+                },
+                {
+                    id: "spinner",
+                    label: "Spinner Wheel",
+                    storageKey: "teacherTools.spinnerWheel.state.v1",
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        ["numbers", "custom"].includes(value.mode) &&
+                        ["minimum", "maximum", "exclusions", "customChoices"].every(
+                            key => typeof value[key] === "string"
+                        )
+                },
+                {
+                    id: "timer",
+                    label: "Classroom Timer",
+                    storageKey: "teacherTools.classroomTimer.state.v1",
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        typeof value.soundEnabled === "boolean" &&
+                        Number.isInteger(value.defaultSeconds) &&
+                        Array.isArray(value.quickPresets) && Array.isArray(value.presets)
+                }
+            ]);
             let activeModal = null;
             let activeModalOpener = null;
             let activeTooltipTrigger = null;
@@ -1502,6 +1801,300 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 } catch (error) {
                     return false;
                 }
+            }
+
+            function storageRemove(key) {
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            function isPlainObject(value) {
+                return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+            }
+
+            function readSiteDataRecord(definition) {
+                const raw = storageGet(definition.storageKey);
+                if (raw === null) return { definition, state: "missing", value: null };
+
+                try {
+                    const value = JSON.parse(raw);
+                    return definition.validate(value)
+                        ? { definition, state: "saved", value }
+                        : { definition, state: "invalid", value: null };
+                } catch (error) {
+                    return { definition, state: "invalid", value: null };
+                }
+            }
+
+            function siteDataSnapshot() {
+                return SITE_DATA_RECORDS.map(readSiteDataRecord);
+            }
+
+            function setSiteDataStatus(message, error = false) {
+                const status = document.getElementById("siteDataStatus");
+                if (!status) return;
+                status.textContent = message;
+                status.classList.toggle("error", error);
+            }
+
+            function updateSiteDataSummary() {
+                const summary = document.getElementById("siteDataSummary");
+                if (!summary) return;
+
+                summary.replaceChildren(...siteDataSnapshot().map(record => {
+                    const item = document.createElement("li");
+                    item.className = "site-data-summary-item";
+                    const label = document.createElement("span");
+                    label.textContent = record.definition.label;
+                    const state = document.createElement("span");
+                    state.className = `site-data-summary-state ${record.state}`;
+                    state.textContent = record.state === "saved"
+                        ? "Saved"
+                        : record.state === "invalid" ? "Needs attention" : "No saved data";
+                    item.append(label, state);
+                    return item;
+                }));
+            }
+
+            function localDateStamp(date = new Date()) {
+                return [
+                    date.getFullYear(),
+                    String(date.getMonth() + 1).padStart(2, "0"),
+                    String(date.getDate()).padStart(2, "0")
+                ].join("-");
+            }
+
+            function downloadJsonFile(payload, filename) {
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+            }
+
+            function exportSiteDataBackup() {
+                const snapshot = siteDataSnapshot();
+                const invalid = snapshot.filter(record => record.state === "invalid");
+                if (invalid.length) {
+                    setSiteDataStatus(
+                        `Unable to export: ${invalid.map(record => record.definition.label).join(", ")} has unreadable saved data.`,
+                        true
+                    );
+                    return;
+                }
+
+                const saved = snapshot.filter(record => record.state === "saved");
+                if (!saved.length) {
+                    setSiteDataStatus("No saved Teacher Tools data was found in this browser yet.", true);
+                    return;
+                }
+
+                const records = Object.fromEntries(
+                    saved.map(record => [record.definition.id, record.value])
+                );
+                const payload = {
+                    app: SITE_BACKUP_APP_ID,
+                    schemaVersion: SITE_BACKUP_SCHEMA_VERSION,
+                    exportedAt: new Date().toISOString(),
+                    records
+                };
+
+                downloadJsonFile(payload, `teacher-tools-backup-${localDateStamp()}.json`);
+                setSiteDataStatus(
+                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`
+                );
+            }
+
+            function readFileText(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.addEventListener("load", () => resolve(String(reader.result || "")));
+                    reader.addEventListener("error", () => reject(new Error("The backup file could not be read.")));
+                    reader.readAsText(file);
+                });
+            }
+
+            function globalBackupPlan(payload) {
+                if (!isPlainObject(payload) || payload.app !== SITE_BACKUP_APP_ID ||
+                    payload.schemaVersion !== SITE_BACKUP_SCHEMA_VERSION || !isPlainObject(payload.records)) {
+                    throw new Error("This is not a supported Teacher Tools site backup.");
+                }
+
+                const changes = [];
+                const labels = [];
+                SITE_DATA_RECORDS.forEach(definition => {
+                    if (!Object.prototype.hasOwnProperty.call(payload.records, definition.id)) return;
+                    const value = payload.records[definition.id];
+                    if (!definition.validate(value)) {
+                        throw new Error(`${definition.label} data in this backup is not valid.`);
+                    }
+                    changes.push({ key: definition.storageKey, value: JSON.stringify(value) });
+                    labels.push(definition.label);
+                });
+
+                if (!changes.length) {
+                    throw new Error("This backup does not contain any supported Teacher Tools data.");
+                }
+                return { changes, labels, legacy: false };
+            }
+
+            function spinnerBackupPlan(payload) {
+                if (!isPlainObject(payload) || payload.app !== "teacher-tools-spinner-wheel" ||
+                    payload.schemaVersion !== 1) return null;
+
+                const definition = SITE_DATA_RECORDS.find(record => record.id === "spinner");
+                if (!definition.validate(payload.state)) {
+                    throw new Error("The Spinner Wheel data in this backup is not valid.");
+                }
+                return {
+                    changes: [{ key: definition.storageKey, value: JSON.stringify(payload.state) }],
+                    labels: [definition.label],
+                    legacy: true
+                };
+            }
+
+            function schedulerBackupPlan(payload) {
+                if (!isPlainObject(payload) || ![1, 2, 3].includes(payload.version)) return null;
+
+                if (payload.version === 1) {
+                    if (!isPlainObject(payload.schedule)) {
+                        throw new Error("The Version 1 Scheduler data in this backup is not valid.");
+                    }
+                    return {
+                        changes: [
+                            { key: "classAutomatorData_v3", value: null },
+                            { key: "classAutomatorData_v2", value: null },
+                            { key: "classAutomatorSchedule_v1", value: JSON.stringify(payload.schedule) }
+                        ],
+                        labels: ["ALT Class Scheduler"],
+                        legacy: true
+                    };
+                }
+
+                if (!Array.isArray(payload.schools) || !isPlainObject(payload.schedule) ||
+                    (payload.preferences !== undefined && !isPlainObject(payload.preferences))) {
+                    throw new Error(`The Version ${payload.version} Scheduler data in this backup is not valid.`);
+                }
+
+                const theme = isPlainObject(payload.preferences) &&
+                    ALLOWED_THEMES.includes(payload.preferences.theme)
+                    ? payload.preferences.theme
+                    : null;
+                const themeChange = theme
+                    ? [{ key: SITE_PREFERENCES_KEY, value: JSON.stringify({ version: 1, theme }) }]
+                    : [];
+                const labels = theme ? ["ALT Class Scheduler", "Site appearance"] : ["ALT Class Scheduler"];
+
+                if (payload.version === 2) {
+                    return {
+                        changes: [
+                            { key: "classAutomatorData_v3", value: null },
+                            { key: "classAutomatorData_v2", value: JSON.stringify(payload) },
+                            ...themeChange
+                        ],
+                        labels,
+                        legacy: true
+                    };
+                }
+
+                return {
+                    changes: [
+                        { key: "classAutomatorData_v3", value: JSON.stringify(payload) },
+                        ...themeChange
+                    ],
+                    labels,
+                    legacy: true
+                };
+            }
+
+            function buildImportPlan(payload) {
+                if (isPlainObject(payload) && payload.app === SITE_BACKUP_APP_ID) {
+                    return globalBackupPlan(payload);
+                }
+                const spinnerPlan = spinnerBackupPlan(payload);
+                if (spinnerPlan) return spinnerPlan;
+                const schedulerPlan = schedulerBackupPlan(payload);
+                if (schedulerPlan) return schedulerPlan;
+                throw new Error("This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.");
+            }
+
+            function applyStorageChanges(changes) {
+                const previous = new Map();
+                const changed = [];
+
+                try {
+                    changes.forEach(change => {
+                        previous.set(change.key, storageGet(change.key));
+                        const succeeded = change.value === null
+                            ? storageRemove(change.key)
+                            : storageSet(change.key, change.value);
+                        if (!succeeded) {
+                            throw new Error("Browser storage is unavailable or full.");
+                        }
+                        changed.push(change.key);
+                    });
+                } catch (error) {
+                    changed.forEach(key => {
+                        const oldValue = previous.get(key);
+                        if (oldValue === null) storageRemove(key);
+                        else storageSet(key, oldValue);
+                    });
+                    throw error;
+                }
+            }
+
+            async function importSiteDataBackup(file) {
+                if (!file) return;
+                if (file.size > SITE_BACKUP_MAX_BYTES) {
+                    setSiteDataStatus("That file is too large to be a Teacher Tools backup.", true);
+                    return;
+                }
+
+                try {
+                    const plan = buildImportPlan(JSON.parse(await readFileText(file)));
+                    const confirmed = window.confirm(
+                        `Import this ${plan.legacy ? "older single-tool" : "Teacher Tools"} backup? ` +
+                        `It will replace saved data for: ${plan.labels.join(", ")}. ` +
+                        "Other saved tool data will remain unchanged. This page will reload afterward."
+                    );
+                    if (!confirmed) {
+                        setSiteDataStatus("Import cancelled.");
+                        return;
+                    }
+
+                    applyStorageChanges(plan.changes);
+                    setSiteDataStatus("Backup imported successfully. Reloading this page…");
+                    window.alert("Teacher Tools backup imported successfully. This page will now reload.");
+                    window.location.reload();
+                } catch (error) {
+                    setSiteDataStatus(
+                        error instanceof Error ? error.message : "The backup could not be imported.",
+                        true
+                    );
+                }
+            }
+
+            function initSiteDataBackup() {
+                const exportButton = document.getElementById("siteDataExportButton");
+                const importButton = document.getElementById("siteDataImportButton");
+                const importFile = document.getElementById("siteDataImportFile");
+                if (!exportButton || !importButton || !importFile) return;
+
+                exportButton.addEventListener("click", exportSiteDataBackup);
+                importButton.addEventListener("click", () => importFile.click());
+                importFile.addEventListener("change", async () => {
+                    await importSiteDataBackup(importFile.files[0]);
+                    importFile.value = "";
+                });
+                updateSiteDataSummary();
             }
 
             function normalizeTheme(value) {
@@ -1688,7 +2281,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
             function closeSiteOverlays() {
                 const toolsMenu = document.getElementById("siteToolsMenu");
+                const dataPanel = document.getElementById("siteDataPanel");
                 const themePanel = document.getElementById("siteThemePanel");
+                const dataButton = document.getElementById("siteDataButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
                     document.getElementById("siteToolsMenuButton"),
@@ -1696,7 +2291,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 ].filter(Boolean);
 
                 if (toolsMenu) toolsMenu.hidden = true;
+                if (dataPanel) dataPanel.hidden = true;
                 if (themePanel) themePanel.hidden = true;
+                if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                 if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                 menuButtons.forEach(button => button.setAttribute("aria-expanded", "false"));
             }
@@ -1710,21 +2307,50 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     document.getElementById("siteToolsMenuButton"),
                     document.getElementById("siteMobileMenuButton")
                 ].filter(Boolean);
+                const dataButton = document.getElementById("siteDataButton");
+                const dataPanel = document.getElementById("siteDataPanel");
+                const dataCloseButton = document.getElementById("siteDataCloseButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const themePanel = document.getElementById("siteThemePanel");
                 const themeCloseButton = document.getElementById("siteThemeCloseButton");
 
                 function setToolsMenu(open) {
                     if (!toolsMenu) return;
-                    if (open && themePanel) themePanel.hidden = true;
-                    if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    if (open) {
+                        if (dataPanel) dataPanel.hidden = true;
+                        if (themePanel) themePanel.hidden = true;
+                        if (dataButton) dataButton.setAttribute("aria-expanded", "false");
+                        if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    }
                     toolsMenu.hidden = !open;
                     menuButtons.forEach(button => button.setAttribute("aria-expanded", String(open)));
                 }
 
+                function setDataPanel(open) {
+                    if (!dataPanel || !dataButton) return;
+                    if (open) {
+                        setToolsMenu(false);
+                        if (themePanel) themePanel.hidden = true;
+                        if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    }
+                    dataPanel.hidden = !open;
+                    dataButton.setAttribute("aria-expanded", String(open));
+
+                    if (open) {
+                        updateSiteDataSummary();
+                        setSiteDataStatus("");
+                        const firstAction = document.getElementById("siteDataExportButton");
+                        if (firstAction) firstAction.focus();
+                    }
+                }
+
                 function setThemePanel(open) {
                     if (!themePanel || !settingsButton) return;
-                    if (open) setToolsMenu(false);
+                    if (open) {
+                        setToolsMenu(false);
+                        if (dataPanel) dataPanel.hidden = true;
+                        if (dataButton) dataButton.setAttribute("aria-expanded", "false");
+                    }
                     themePanel.hidden = !open;
                     settingsButton.setAttribute("aria-expanded", String(open));
 
@@ -1742,6 +2368,22 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 });
 
                 if (toolsMenu) toolsMenu.addEventListener("click", event => event.stopPropagation());
+
+                if (dataButton) {
+                    dataButton.addEventListener("click", event => {
+                        event.stopPropagation();
+                        setDataPanel(dataPanel ? dataPanel.hidden : false);
+                    });
+                }
+
+                if (dataCloseButton) {
+                    dataCloseButton.addEventListener("click", () => {
+                        setDataPanel(false);
+                        dataButton.focus();
+                    });
+                }
+
+                if (dataPanel) dataPanel.addEventListener("click", event => event.stopPropagation());
 
                 if (settingsButton) {
                     settingsButton.addEventListener("click", event => {
@@ -1831,13 +2473,21 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     return;
                 }
 
+                const dataPanel = document.getElementById("siteDataPanel");
                 const themePanel = document.getElementById("siteThemePanel");
                 const toolsMenu = document.getElementById("siteToolsMenu");
+                const dataButton = document.getElementById("siteDataButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
                     document.getElementById("siteToolsMenuButton"),
                     document.getElementById("siteMobileMenuButton")
                 ].filter(Boolean);
+
+                if (dataPanel && !dataPanel.hidden) {
+                    closeSiteOverlays();
+                    if (dataButton) dataButton.focus();
+                    return;
+                }
 
                 if (themePanel && !themePanel.hidden) {
                     closeSiteOverlays();
@@ -1872,6 +2522,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 false
             );
             initSiteHeader();
+            initSiteDataBackup();
             initModals();
             initTooltips();
         })();
@@ -1884,8 +2535,6 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             "use strict";
 
             const STORAGE_KEY = "teacherTools.spinnerWheel.state.v1";
-            const BACKUP_APP_ID = "teacher-tools-spinner-wheel";
-            const BACKUP_SCHEMA_VERSION = 1;
             const MAX_CHOICES = 100;
             const TWO_PI = Math.PI * 2;
             const DEFAULT_STATE = Object.freeze({
@@ -1897,11 +2546,15 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 customChoices: "",
                 removeAfterSpin: false,
                 spinLength: "standard",
+                spinSound: false,
                 sound: false
             });
 
             const canvas = document.getElementById("wheelCanvas");
+            const wheelStage = document.querySelector(".wheel-stage");
             const context = canvas.getContext("2d");
+            const appShell = document.querySelector(".app-shell");
+            const presentationButton = document.getElementById("presentationButton");
             const modeBadge = document.getElementById("modeBadge");
             const choiceCountText = document.getElementById("choiceCountText");
             const selectionBehaviorText = document.getElementById("selectionBehaviorText");
@@ -1931,9 +2584,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             const clearCustomButton = document.getElementById("clearCustomButton");
             const removeAfterSpinInput = document.getElementById("removeAfterSpinInput");
             const spinLengthInput = document.getElementById("spinLengthInput");
+            const spinSoundInput = document.getElementById("spinSoundInput");
             const soundInput = document.getElementById("soundInput");
-            const exportButton = document.getElementById("exportButton");
-            const importInput = document.getElementById("importInput");
             const resetButton = document.getElementById("resetButton");
             const dataStatus = document.getElementById("dataStatus");
 
@@ -1946,6 +2598,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             let isSpinning = false;
             let animationFrame = 0;
             let audioContext = null;
+            let spinClickBuffer = null;
+            let presentationMode = false;
+            let presentationUsesFullscreen = false;
 
             function normalizeState(candidate) {
                 const value = candidate && typeof candidate === "object" ? candidate : {};
@@ -1957,7 +2612,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     exclusions: typeof value.exclusions === "string" ? value.exclusions.slice(0, 1000) : "",
                     customChoices: typeof value.customChoices === "string" ? value.customChoices.slice(0, 12000) : "",
                     removeAfterSpin: Boolean(value.removeAfterSpin),
-                    spinLength: ["quick", "standard", "dramatic"].includes(value.spinLength) ? value.spinLength : "standard",
+                    spinLength: ["quick", "standard", "dramatic", "suspenseful"].includes(value.spinLength) ? value.spinLength : "standard",
+                    spinSound: Boolean(value.spinSound),
                     sound: Boolean(value.sound)
                 };
             }
@@ -1986,6 +2642,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 customChoicesInput.value = state.customChoices;
                 removeAfterSpinInput.checked = state.removeAfterSpin;
                 spinLengthInput.value = state.spinLength;
+                spinSoundInput.checked = state.spinSound;
                 soundInput.checked = state.sound;
                 updateModePresentation();
             }
@@ -2131,6 +2788,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             function readPreferenceControls() {
                 state.removeAfterSpin = removeAfterSpinInput.checked;
                 state.spinLength = spinLengthInput.value;
+                state.spinSound = spinSoundInput.checked;
                 state.sound = soundInput.checked;
                 saveState();
                 refreshWheel();
@@ -2179,8 +2837,35 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             }
 
             function truncateLabel(label, count) {
-                const limit = count <= 12 ? 18 : count <= 24 ? 11 : count <= 40 ? 7 : 4;
+                const limit = count <= 8 ? 24 : count <= 12 ? 20 : count <= 24 ? 18 : count <= 40 ? 14 : 8;
                 return label.length > limit ? `${label.slice(0, Math.max(1, limit - 1))}…` : label;
+            }
+
+            function wheelLabelFontSize(label, count, radius, slice) {
+                const densityScale = count <= 8 ? 0.12 : count <= 12 ? 0.1 : count <= 24 ? 0.075 : count <= 40 ? 0.06 : 0.04;
+                const radialLimit = radius * 0.64;
+                const arcLimit = Math.max(radius * 0.018, radius * 0.78 * slice * 0.84);
+                let fontSize = Math.min(radius * densityScale, arcLimit);
+                const minimum = radius * 0.024;
+                const maximum = radius * 0.13;
+                fontSize = Math.max(minimum, Math.min(maximum, fontSize));
+
+                context.font = `750 ${fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+                const measuredWidth = context.measureText(label).width;
+                if (measuredWidth > radialLimit) fontSize *= radialLimit / measuredWidth;
+                return Math.max(minimum, fontSize);
+            }
+
+            function resizeCanvas() {
+                const bounds = wheelStage.getBoundingClientRect();
+                const cssSize = Math.max(1, Math.floor(Math.min(bounds.width, bounds.height || bounds.width)));
+                const density = Math.min(window.devicePixelRatio || 1, 2);
+                const pixelSize = Math.max(360, Math.round(cssSize * density));
+                if (canvas.width !== pixelSize || canvas.height !== pixelSize) {
+                    canvas.width = pixelSize;
+                    canvas.height = pixelSize;
+                }
+                drawWheel(currentRotation, activeEntries);
             }
 
             function drawWheel(rotation, entries) {
@@ -2208,7 +2893,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
                 const palette = getWheelPalette();
                 const slice = TWO_PI / entries.length;
-                const showLabels = entries.length <= 50;
+                const showLabels = entries.length <= 60;
+                const canvasScale = canvas.width / Math.max(1, canvas.getBoundingClientRect().width);
+                const outerPadding = 16 * canvasScale;
                 entries.forEach((entry, index) => {
                     const start = rotation + index * slice;
                     const end = start + slice;
@@ -2228,15 +2915,14 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     context.save();
                     context.translate(center, center);
                     context.rotate(middle);
-                    context.translate(radius * 0.66, 0);
-                    const normalized = ((middle % TWO_PI) + TWO_PI) % TWO_PI;
-                    if (normalized > Math.PI / 2 && normalized < Math.PI * 1.5) context.rotate(Math.PI);
-                    const fontSize = entries.length <= 12 ? 23 : entries.length <= 24 ? 17 : entries.length <= 40 ? 12 : 10;
+                    context.translate(radius - outerPadding, 0);
+                    const displayLabel = truncateLabel(entry.label, entries.length);
+                    const fontSize = wheelLabelFontSize(displayLabel, entries.length, radius, slice);
                     context.fillStyle = contrastColor(color);
                     context.font = `750 ${fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
-                    context.textAlign = "center";
+                    context.textAlign = "right";
                     context.textBaseline = "middle";
-                    context.fillText(truncateLabel(entry.label, entries.length), 0, 0);
+                    context.fillText(displayLabel, 0, 0);
                     context.restore();
                 });
 
@@ -2267,15 +2953,61 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
             function spinDuration() {
                 if (reducedMotionRequested()) return 180;
-                return { quick: 1700, standard: 3500, dramatic: 5500 }[state.spinLength] || 3500;
+                return { quick: 1700, standard: 3500, dramatic: 5500, suspenseful: 8500 }[state.spinLength] || 3500;
             }
 
-            function prepareAudio() {
-                if (!state.sound) return;
+            async function prepareAudio() {
+                if (!state.sound && !state.spinSound) return false;
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
+                if (!AudioContext) return false;
                 if (!audioContext) audioContext = new AudioContext();
-                if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+                try {
+                    if (audioContext.state === "suspended") await audioContext.resume();
+                    return audioContext.state === "running";
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            function getSpinClickBuffer() {
+                if (spinClickBuffer) return spinClickBuffer;
+                const length = Math.max(1, Math.floor(audioContext.sampleRate * 0.028));
+                const buffer = audioContext.createBuffer(1, length, audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let index = 0; index < length; index += 1) {
+                    const decay = Math.pow(1 - index / length, 3);
+                    data[index] = (Math.random() * 2 - 1) * decay;
+                }
+                spinClickBuffer = buffer;
+                return buffer;
+            }
+
+            function playSpinningSound(duration) {
+                if (!state.spinSound || !audioContext || audioContext.state !== "running" || duration < 500) return;
+                try {
+                    const startedAt = audioContext.currentTime;
+                    const durationSeconds = duration / 1000;
+                    const clickBuffer = getSpinClickBuffer();
+                    let elapsed = 0;
+
+                    while (elapsed < durationSeconds - 0.08) {
+                        const progress = elapsed / durationSeconds;
+                        const source = audioContext.createBufferSource();
+                        const filter = audioContext.createBiquadFilter();
+                        const gain = audioContext.createGain();
+                        const tickTime = startedAt + elapsed;
+                        source.buffer = clickBuffer;
+                        filter.type = "bandpass";
+                        filter.frequency.value = 950 - progress * 350;
+                        filter.Q.value = 0.8;
+                        gain.gain.value = 0.12;
+                        source.connect(filter).connect(gain).connect(audioContext.destination);
+                        source.start(tickTime);
+                        elapsed += 0.07 + 0.18 * Math.pow(progress, 2.1);
+                    }
+                } catch (error) {
+                    // Spinning sound is optional and must never block the wheel.
+                }
             }
 
             function playResultSound() {
@@ -2321,9 +3053,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 }, 450);
             }
 
-            function spinWheel() {
+            async function spinWheel() {
                 if (isSpinning || activeEntries.length < 2) return;
-                prepareAudio();
+                await prepareAudio();
                 const entriesAtStart = activeEntries.slice();
                 const selectedIndex = randomIndex(entriesAtStart.length);
                 const selectedEntry = entriesAtStart[selectedIndex];
@@ -2346,6 +3078,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 spinButtonText.textContent = "Spinning…";
                 wheelStatus.classList.remove("error");
                 wheelStatus.textContent = "The wheel is spinning.";
+                playSpinningSound(duration);
 
                 cancelAnimationFrame(animationFrame);
                 function animate(now) {
@@ -2362,71 +3095,70 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 animationFrame = requestAnimationFrame(animate);
             }
 
-            function exportBackup() {
-                const payload = {
-                    app: BACKUP_APP_ID,
-                    schemaVersion: BACKUP_SCHEMA_VERSION,
-                    exportedAt: new Date().toISOString(),
-                    state
-                };
-                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = `spinner-wheel-backup-${new Date().toISOString().slice(0, 10)}.json`;
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                URL.revokeObjectURL(url);
-                dataStatus.textContent = "Backup exported.";
-            }
-
-            function validateBackup(payload) {
-                if (!payload || payload.app !== BACKUP_APP_ID || payload.schemaVersion !== BACKUP_SCHEMA_VERSION) {
-                    throw new Error("This is not a supported Spinner Wheel backup.");
-                }
-                if (!payload.state || payload.state.version !== 1) {
-                    throw new Error("The backup data version is not supported.");
-                }
-                const requiredStrings = ["minimum", "maximum", "exclusions", "customChoices"];
-                if (requiredStrings.some(key => typeof payload.state[key] !== "string")) {
-                    throw new Error("The backup is missing required wheel data.");
-                }
-                if (!["numbers", "custom"].includes(payload.state.mode)) {
-                    throw new Error("The backup contains an unknown wheel mode.");
-                }
-                return normalizeState(payload.state);
-            }
-
-            async function importBackup(file) {
-                if (!file) return;
-                if (file.size > 1024 * 1024) {
-                    dataStatus.textContent = "That file is too large to be a Spinner Wheel backup.";
-                    return;
-                }
-                try {
-                    const imported = validateBackup(JSON.parse(await file.text()));
-                    if (!window.confirm("Import this backup and replace the current Spinner Wheel settings and choices?")) return;
-                    state = imported;
-                    removedEntryIds.clear();
-                    syncControlsFromState();
-                    saveState();
-                    refreshWheel({ resetRound: true, clearSelection: true });
-                    dataStatus.textContent = "Backup imported successfully.";
-                } catch (error) {
-                    dataStatus.textContent = error instanceof Error ? error.message : "The backup could not be imported.";
-                } finally {
-                    importInput.value = "";
-                }
-            }
-
             [minimumInput, maximumInput, exclusionsInput, customChoicesInput].forEach(input => {
                 input.addEventListener("input", readEntryControls);
             });
 
             modeToggle.addEventListener("change", readEntryControls);
-            [removeAfterSpinInput, spinLengthInput, soundInput].forEach(input => {
+            [removeAfterSpinInput, spinLengthInput, spinSoundInput, soundInput].forEach(input => {
                 input.addEventListener("change", readPreferenceControls);
+            });
+
+            function updatePresentationButton() {
+                presentationButton.setAttribute("aria-pressed", String(presentationMode));
+                presentationButton.setAttribute("aria-label", presentationMode ? "Exit presentation mode" : "Enter presentation mode");
+                presentationButton.title = presentationMode ? "Exit presentation mode" : "Presentation mode";
+            }
+
+            function setPresentationMode(active) {
+                presentationMode = active;
+                appShell.classList.toggle("is-presenting", active);
+                document.body.classList.toggle("presentation-open", active);
+                updatePresentationButton();
+                window.setTimeout(resizeCanvas, 0);
+            }
+
+            async function enterPresentationMode() {
+                setPresentationMode(true);
+                presentationUsesFullscreen = false;
+                if (typeof appShell.requestFullscreen !== "function") return;
+                try {
+                    await appShell.requestFullscreen();
+                    presentationUsesFullscreen = document.fullscreenElement === appShell;
+                } catch (error) {
+                    // The fixed presentation layout remains available when Fullscreen API access is restricted.
+                }
+            }
+
+            async function exitPresentationMode() {
+                if (presentationUsesFullscreen && document.fullscreenElement && typeof document.exitFullscreen === "function") {
+                    try {
+                        await document.exitFullscreen();
+                    } catch (error) {
+                        // Continue by returning to the standard in-page layout.
+                    }
+                }
+                presentationUsesFullscreen = false;
+                setPresentationMode(false);
+            }
+
+            presentationButton.addEventListener("click", () => {
+                if (presentationMode) exitPresentationMode();
+                else enterPresentationMode();
+            });
+
+            document.addEventListener("fullscreenchange", () => {
+                if (presentationUsesFullscreen && document.fullscreenElement !== appShell) {
+                    presentationUsesFullscreen = false;
+                    setPresentationMode(false);
+                }
+            });
+
+            document.addEventListener("keydown", event => {
+                if (event.key === "Escape" && presentationMode && !document.fullscreenElement) {
+                    event.preventDefault();
+                    exitPresentationMode();
+                }
             });
 
             spinButton.addEventListener("click", spinWheel);
@@ -2446,8 +3178,6 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 refreshWheel({ resetRound: true, clearSelection: true });
             });
 
-            exportButton.addEventListener("click", exportBackup);
-            importInput.addEventListener("change", () => importBackup(importInput.files[0]));
             resetButton.addEventListener("click", () => {
                 if (!window.confirm("Reset Spinner Wheel to numbers 1–24 and clear all saved custom choices and applet settings?")) return;
                 state = { ...DEFAULT_STATE };
@@ -2472,8 +3202,16 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 attributeFilter: ["data-theme"]
             });
 
+            if (typeof ResizeObserver === "function") {
+                new ResizeObserver(resizeCanvas).observe(wheelStage);
+            } else {
+                window.addEventListener("resize", resizeCanvas);
+            }
+
             syncControlsFromState();
             refreshWheel({ resetRound: true });
+            updatePresentationButton();
+            window.setTimeout(resizeCanvas, 0);
         })();
     </script>
 </body>

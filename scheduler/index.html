@@ -241,7 +241,8 @@ The software is provided "as is" without warranty of any kind.
             background: var(--accent-soft);
             border-color: var(--accent-border);
         }
-         .site-settings-button {
+         .site-data-button,
+        .site-settings-button {
             width: 40px;
             height: 40px;
             flex: 0 0 40px;
@@ -256,8 +257,19 @@ The software is provided "as is" without warranty of any kind.
             cursor: pointer;
             transition: color 180ms ease;
         }
-         .site-settings-button:hover,
+         .site-data-button:hover,
+        .site-data-button[aria-expanded="true"],
+        .site-settings-button:hover,
         .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
+         .site-data-button svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
          .site-settings-button svg {
             width: 24px;
             height: 24px;
@@ -294,6 +306,7 @@ The software is provided "as is" without warranty of any kind.
             stroke-linecap: round;
         }
          .site-tools-menu,
+        .site-data-panel,
         .site-theme-panel {
             position: absolute;
             right: 16px;
@@ -305,8 +318,9 @@ The software is provided "as is" without warranty of any kind.
             box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
         }
          .site-tools-menu { width: min(300px, calc(100vw - 32px)); padding: 7px; }
+        .site-data-panel { z-index: 121; width: min(380px, calc(100vw - 32px)); padding: 13px; }
         .site-theme-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
-        .site-tools-menu[hidden], .site-theme-panel[hidden] { display: none; }
+        .site-tools-menu[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
          .site-menu-label {
             padding: 6px 9px 5px;
             color: var(--muted);
@@ -367,15 +381,18 @@ The software is provided "as is" without warranty of any kind.
             line-height: 1.3;
         }
          .site-menu-status { color: var(--muted); font-size: 8.5px; font-weight: 700; }
-         .site-theme-header {
+         .site-data-header,
+        .site-theme-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
             margin-bottom: 3px;
         }
-         .site-theme-title { margin: 0; font-size: 14px; }
-         .site-theme-close,
+         .site-data-title,
+        .site-theme-title { margin: 0; font-size: 14px; }
+         .site-data-close,
+        .site-theme-close,
         .close-button {
             width: 34px;
             height: 34px;
@@ -391,14 +408,93 @@ The software is provided "as is" without warranty of any kind.
             line-height: 1;
             cursor: pointer;
         }
-         .site-theme-close:hover,
+         .site-data-close:hover,
+        .site-theme-close:hover,
         .close-button:hover { color: var(--text); background: var(--panel); }
-         .site-theme-help {
+         .site-data-help,
+        .site-theme-help {
             margin: 0 0 11px;
             color: var(--muted);
             font-size: 10.5px;
             line-height: 1.45;
         }
+         .site-data-summary {
+            display: grid;
+            gap: 5px;
+            margin: 0 0 11px;
+            padding: 0;
+            list-style: none;
+        }
+         .site-data-summary-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 30px;
+            padding: 6px 8px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 7px;
+            font-size: 10.5px;
+        }
+         .site-data-summary-state {
+            flex: 0 0 auto;
+            color: var(--muted);
+            font-size: 8.5px;
+            font-weight: 750;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+         .site-data-summary-state.saved { color: var(--accent); }
+         .site-data-summary-state.invalid { color: var(--danger); }
+         .site-data-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+         .site-data-action {
+            min-height: 38px;
+            padding: 8px 10px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 10.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+         .site-data-action:hover { color: var(--accent); border-color: var(--accent-border); }
+         .site-data-action-primary {
+            color: #ffffff;
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+         .site-data-action-primary:hover { color: #ffffff; filter: brightness(0.96); }
+         html[data-theme="true-dark"] .site-data-action-primary,
+        html[data-theme="true-dark"] .site-data-action-primary:hover { color: #07101d; }
+         .site-data-file {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+        }
+         .site-data-note {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
+            line-height: 1.45;
+        }
+         .site-data-status {
+            min-height: 15px;
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
+            font-weight: 650;
+            line-height: 1.4;
+        }
+         .site-data-status.error { color: var(--danger); }
          .site-theme-options {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -704,6 +800,7 @@ The software is provided "as is" without warranty of any kind.
             .site-nav { display: none; }
             .site-mobile-toggle { display: inline-flex; }
             .site-tools-menu,
+            .site-data-panel,
             .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
             .site-menu-home { display: grid; }
             .control-grid { grid-template-columns: 1fr; }
@@ -1554,6 +1651,11 @@ The software is provided "as is" without warranty of any kind.
                         Tools <span class="site-menu-chevron" aria-hidden="true"></span>
                     </button>
                 </nav>
+                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3" />
+                    </svg>
+                </button>
                  <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
@@ -1572,7 +1674,7 @@ The software is provided "as is" without warranty of any kind.
                     <span class="site-menu-status">OPEN</span>
                 </a>
                  <div class="site-menu-label">Available tools</div>
-                 <a class="site-menu-item" href="/" aria-current="page">
+                 <a class="site-menu-item" href="/scheduler/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <path d="M5.5 7.5h17v15h-17z" />
@@ -1583,7 +1685,7 @@ The software is provided "as is" without warranty of any kind.
                     <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
                     <span class="site-menu-status">HERE</span>
                 </a>
-                 <a class="site-menu-item" href="/spinner/">
+                <a class="site-menu-item" href="/spinner/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <path class="icon-fill" d="M14 14V5a9 9 0 0 1 6.36 2.64ZM14 14h9a9 9 0 0 1-2.64 6.36ZM14 14v9a9 9 0 0 1-6.36-2.64ZM14 14H5a9 9 0 0 1 2.64-6.36Z" />
@@ -1594,8 +1696,7 @@ The software is provided "as is" without warranty of any kind.
                     <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
-
-                 <div class="site-menu-item" aria-disabled="true">
+                 <a class="site-menu-item" href="/timer/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <circle cx="14" cy="16" r="7.5" />
@@ -1604,10 +1705,47 @@ The software is provided "as is" without warranty of any kind.
                             <path d="M14 12v4l3 1.8" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Simple timing for activities and games</span></span>
+                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+
+                 <div class="site-menu-label">Planned tools</div>
+                 <div class="site-menu-item" aria-disabled="true">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <rect x="5.5" y="5.5" width="17" height="17" rx="3" />
+                            <path d="m9.5 14 3 3 6-7" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
+                    <span class="site-menu-status">PLANNED</span>
+                </div>
+                 <div class="site-menu-item" aria-disabled="true">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <rect class="icon-fill" x="7" y="5" width="16" height="15" rx="2" opacity=".24" />
+                            <rect x="4.5" y="7.5" width="16" height="15" rx="2" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Google Slides Automator</span><span class="site-menu-description">Build lesson slides from common fields</span></span>
                     <span class="site-menu-status">PLANNED</span>
                 </div>
             </nav>
+             <section id="siteDataPanel" class="site-data-panel" role="dialog" aria-labelledby="siteDataTitle" hidden>
+                <div class="site-data-header">
+                    <h2 id="siteDataTitle" class="site-data-title">Backup & restore</h2>
+                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore">×</button>
+                </div>
+                <p class="site-data-help">Export one local file containing saved data from every Teacher Tools applet in this browser. Nothing is uploaded.</p>
+                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data"></ul>
+                <div class="site-data-actions">
+                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary">Export all data</button>
+                    <button type="button" id="siteDataImportButton" class="site-data-action">Import backup</button>
+                </div>
+                <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
+                <p class="site-data-note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
+                <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+            </section>
              <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
                 <div class="site-theme-header">
                     <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
@@ -1769,9 +1907,8 @@ The software is provided "as is" without warranty of any kind.
                     <span class="tutorial-step-number" aria-hidden="true">3</span>
                     <div>
                         <h3 class="tutorial-step-title">Back up or move your data</h3>
-                        <p class="tutorial-step-copy">Export a backup file periodically. Import it to restore your setup or move it to another browser or device.</p>
+                        <p class="tutorial-step-copy">Use the download-arrow button in the Teacher Tools header to export or restore one backup covering all of your saved tools.</p>
                     </div>
-                    <button type="button" class="tutorial-step-action" data-tutorial-tab="backup" data-modal-switch="settingsModal">Open Backup</button>
                 </li>
             </ol>
         </div>
@@ -1793,14 +1930,13 @@ The software is provided "as is" without warranty of any kind.
         <div class="storage-warning">
             <strong>CAUTION:</strong>
             Your schools, schedules, and settings are saved only in this browser/profile.
-            They are not synced through your Google account. Export a backup periodically
-            if you want to preserve your data or move it to another device or browser.
+            They are not synced through your Google account. Use Backup & restore in the
+            Teacher Tools header to preserve your data or move it to another browser.
         </div>
 
         <div class="settings-tabs" role="tablist" aria-label="Settings sections">
             <button type="button" id="settingsTab-schedule" class="settings-tab active" data-settings-tab="schedule" role="tab" aria-selected="true" aria-controls="settingsPanel-schedule">Schedule</button>
             <button type="button" id="settingsTab-schools" class="settings-tab" data-settings-tab="schools" role="tab" aria-selected="false" aria-controls="settingsPanel-schools" tabindex="-1">Schools</button>
-            <button type="button" id="settingsTab-backup" class="settings-tab" data-settings-tab="backup" role="tab" aria-selected="false" aria-controls="settingsPanel-backup" tabindex="-1">Backup</button>
         </div>
 
         <div class="settings-scroll">
@@ -1850,28 +1986,11 @@ The software is provided "as is" without warranty of any kind.
                     </div>
 
                     <div id="schoolEditor"></div>
-                </div>
-            </section>
-
-            <section id="settingsPanel-backup" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-backup" hidden>
-                <div class="settings-section">
-                    <h3>Backup & Restore</h3>
-
-                    <div class="settings-buttons">
-                        <button type="button" id="exportBackupBtn" class="settings-btn">Export Backup</button>
-                        <button type="button" id="importBackupBtn" class="settings-btn">Import Backup</button>
-                    </div>
-
-                    <input type="file" id="importBackupFile" accept=".json,application/json" style="display:none;">
 
                     <div class="settings-buttons">
                         <button type="button" id="restoreDefaultsBtn" class="settings-btn danger-btn">Restore Factory Defaults</button>
                     </div>
-
-                    <div class="backup-note">
-                        Version 3 backups include schools, locations, classes, regular and irregular bell times, lunch settings, schedule dates, and preferences. Existing theme data remains compatible with earlier backups.
-                        Version 1 and Version 2 backups can also be imported.
-                    </div>
+                    <div class="backup-note">This resets only the Scheduler. Your site appearance and data saved by other Teacher Tools applets are kept.</div>
                 </div>
             </section>
         </div>
@@ -1905,6 +2024,45 @@ The software is provided "as is" without warranty of any kind.
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
             const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
+            const SITE_BACKUP_SCHEMA_VERSION = 1;
+            const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
+            const SITE_DATA_RECORDS = Object.freeze([
+                {
+                    id: "appearance",
+                    label: "Site appearance",
+                    storageKey: SITE_PREFERENCES_KEY,
+                    validate: value => isPlainObject(value) &&
+                        value.version === 1 && ALLOWED_THEMES.includes(value.theme)
+                },
+                {
+                    id: "scheduler",
+                    label: "ALT Class Scheduler",
+                    storageKey: "classAutomatorData_v3",
+                    validate: value => isPlainObject(value) && value.version === 3 &&
+                        Array.isArray(value.schools) && isPlainObject(value.schedule) &&
+                        isPlainObject(value.preferences)
+                },
+                {
+                    id: "spinner",
+                    label: "Spinner Wheel",
+                    storageKey: "teacherTools.spinnerWheel.state.v1",
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        ["numbers", "custom"].includes(value.mode) &&
+                        ["minimum", "maximum", "exclusions", "customChoices"].every(
+                            key => typeof value[key] === "string"
+                        )
+                },
+                {
+                    id: "timer",
+                    label: "Classroom Timer",
+                    storageKey: "teacherTools.classroomTimer.state.v1",
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        typeof value.soundEnabled === "boolean" &&
+                        Number.isInteger(value.defaultSeconds) &&
+                        Array.isArray(value.quickPresets) && Array.isArray(value.presets)
+                }
+            ]);
             let activeModal = null;
             let activeModalOpener = null;
             let activeTooltipTrigger = null;
@@ -1928,6 +2086,300 @@ The software is provided "as is" without warranty of any kind.
                 } catch (error) {
                     return false;
                 }
+            }
+
+            function storageRemove(key) {
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            function isPlainObject(value) {
+                return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+            }
+
+            function readSiteDataRecord(definition) {
+                const raw = storageGet(definition.storageKey);
+                if (raw === null) return { definition, state: "missing", value: null };
+
+                try {
+                    const value = JSON.parse(raw);
+                    return definition.validate(value)
+                        ? { definition, state: "saved", value }
+                        : { definition, state: "invalid", value: null };
+                } catch (error) {
+                    return { definition, state: "invalid", value: null };
+                }
+            }
+
+            function siteDataSnapshot() {
+                return SITE_DATA_RECORDS.map(readSiteDataRecord);
+            }
+
+            function setSiteDataStatus(message, error = false) {
+                const status = document.getElementById("siteDataStatus");
+                if (!status) return;
+                status.textContent = message;
+                status.classList.toggle("error", error);
+            }
+
+            function updateSiteDataSummary() {
+                const summary = document.getElementById("siteDataSummary");
+                if (!summary) return;
+
+                summary.replaceChildren(...siteDataSnapshot().map(record => {
+                    const item = document.createElement("li");
+                    item.className = "site-data-summary-item";
+                    const label = document.createElement("span");
+                    label.textContent = record.definition.label;
+                    const state = document.createElement("span");
+                    state.className = `site-data-summary-state ${record.state}`;
+                    state.textContent = record.state === "saved"
+                        ? "Saved"
+                        : record.state === "invalid" ? "Needs attention" : "No saved data";
+                    item.append(label, state);
+                    return item;
+                }));
+            }
+
+            function localDateStamp(date = new Date()) {
+                return [
+                    date.getFullYear(),
+                    String(date.getMonth() + 1).padStart(2, "0"),
+                    String(date.getDate()).padStart(2, "0")
+                ].join("-");
+            }
+
+            function downloadJsonFile(payload, filename) {
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+            }
+
+            function exportSiteDataBackup() {
+                const snapshot = siteDataSnapshot();
+                const invalid = snapshot.filter(record => record.state === "invalid");
+                if (invalid.length) {
+                    setSiteDataStatus(
+                        `Unable to export: ${invalid.map(record => record.definition.label).join(", ")} has unreadable saved data.`,
+                        true
+                    );
+                    return;
+                }
+
+                const saved = snapshot.filter(record => record.state === "saved");
+                if (!saved.length) {
+                    setSiteDataStatus("No saved Teacher Tools data was found in this browser yet.", true);
+                    return;
+                }
+
+                const records = Object.fromEntries(
+                    saved.map(record => [record.definition.id, record.value])
+                );
+                const payload = {
+                    app: SITE_BACKUP_APP_ID,
+                    schemaVersion: SITE_BACKUP_SCHEMA_VERSION,
+                    exportedAt: new Date().toISOString(),
+                    records
+                };
+
+                downloadJsonFile(payload, `teacher-tools-backup-${localDateStamp()}.json`);
+                setSiteDataStatus(
+                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`
+                );
+            }
+
+            function readFileText(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.addEventListener("load", () => resolve(String(reader.result || "")));
+                    reader.addEventListener("error", () => reject(new Error("The backup file could not be read.")));
+                    reader.readAsText(file);
+                });
+            }
+
+            function globalBackupPlan(payload) {
+                if (!isPlainObject(payload) || payload.app !== SITE_BACKUP_APP_ID ||
+                    payload.schemaVersion !== SITE_BACKUP_SCHEMA_VERSION || !isPlainObject(payload.records)) {
+                    throw new Error("This is not a supported Teacher Tools site backup.");
+                }
+
+                const changes = [];
+                const labels = [];
+                SITE_DATA_RECORDS.forEach(definition => {
+                    if (!Object.prototype.hasOwnProperty.call(payload.records, definition.id)) return;
+                    const value = payload.records[definition.id];
+                    if (!definition.validate(value)) {
+                        throw new Error(`${definition.label} data in this backup is not valid.`);
+                    }
+                    changes.push({ key: definition.storageKey, value: JSON.stringify(value) });
+                    labels.push(definition.label);
+                });
+
+                if (!changes.length) {
+                    throw new Error("This backup does not contain any supported Teacher Tools data.");
+                }
+                return { changes, labels, legacy: false };
+            }
+
+            function spinnerBackupPlan(payload) {
+                if (!isPlainObject(payload) || payload.app !== "teacher-tools-spinner-wheel" ||
+                    payload.schemaVersion !== 1) return null;
+
+                const definition = SITE_DATA_RECORDS.find(record => record.id === "spinner");
+                if (!definition.validate(payload.state)) {
+                    throw new Error("The Spinner Wheel data in this backup is not valid.");
+                }
+                return {
+                    changes: [{ key: definition.storageKey, value: JSON.stringify(payload.state) }],
+                    labels: [definition.label],
+                    legacy: true
+                };
+            }
+
+            function schedulerBackupPlan(payload) {
+                if (!isPlainObject(payload) || ![1, 2, 3].includes(payload.version)) return null;
+
+                if (payload.version === 1) {
+                    if (!isPlainObject(payload.schedule)) {
+                        throw new Error("The Version 1 Scheduler data in this backup is not valid.");
+                    }
+                    return {
+                        changes: [
+                            { key: "classAutomatorData_v3", value: null },
+                            { key: "classAutomatorData_v2", value: null },
+                            { key: "classAutomatorSchedule_v1", value: JSON.stringify(payload.schedule) }
+                        ],
+                        labels: ["ALT Class Scheduler"],
+                        legacy: true
+                    };
+                }
+
+                if (!Array.isArray(payload.schools) || !isPlainObject(payload.schedule) ||
+                    (payload.preferences !== undefined && !isPlainObject(payload.preferences))) {
+                    throw new Error(`The Version ${payload.version} Scheduler data in this backup is not valid.`);
+                }
+
+                const theme = isPlainObject(payload.preferences) &&
+                    ALLOWED_THEMES.includes(payload.preferences.theme)
+                    ? payload.preferences.theme
+                    : null;
+                const themeChange = theme
+                    ? [{ key: SITE_PREFERENCES_KEY, value: JSON.stringify({ version: 1, theme }) }]
+                    : [];
+                const labels = theme ? ["ALT Class Scheduler", "Site appearance"] : ["ALT Class Scheduler"];
+
+                if (payload.version === 2) {
+                    return {
+                        changes: [
+                            { key: "classAutomatorData_v3", value: null },
+                            { key: "classAutomatorData_v2", value: JSON.stringify(payload) },
+                            ...themeChange
+                        ],
+                        labels,
+                        legacy: true
+                    };
+                }
+
+                return {
+                    changes: [
+                        { key: "classAutomatorData_v3", value: JSON.stringify(payload) },
+                        ...themeChange
+                    ],
+                    labels,
+                    legacy: true
+                };
+            }
+
+            function buildImportPlan(payload) {
+                if (isPlainObject(payload) && payload.app === SITE_BACKUP_APP_ID) {
+                    return globalBackupPlan(payload);
+                }
+                const spinnerPlan = spinnerBackupPlan(payload);
+                if (spinnerPlan) return spinnerPlan;
+                const schedulerPlan = schedulerBackupPlan(payload);
+                if (schedulerPlan) return schedulerPlan;
+                throw new Error("This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.");
+            }
+
+            function applyStorageChanges(changes) {
+                const previous = new Map();
+                const changed = [];
+
+                try {
+                    changes.forEach(change => {
+                        previous.set(change.key, storageGet(change.key));
+                        const succeeded = change.value === null
+                            ? storageRemove(change.key)
+                            : storageSet(change.key, change.value);
+                        if (!succeeded) {
+                            throw new Error("Browser storage is unavailable or full.");
+                        }
+                        changed.push(change.key);
+                    });
+                } catch (error) {
+                    changed.forEach(key => {
+                        const oldValue = previous.get(key);
+                        if (oldValue === null) storageRemove(key);
+                        else storageSet(key, oldValue);
+                    });
+                    throw error;
+                }
+            }
+
+            async function importSiteDataBackup(file) {
+                if (!file) return;
+                if (file.size > SITE_BACKUP_MAX_BYTES) {
+                    setSiteDataStatus("That file is too large to be a Teacher Tools backup.", true);
+                    return;
+                }
+
+                try {
+                    const plan = buildImportPlan(JSON.parse(await readFileText(file)));
+                    const confirmed = window.confirm(
+                        `Import this ${plan.legacy ? "older single-tool" : "Teacher Tools"} backup? ` +
+                        `It will replace saved data for: ${plan.labels.join(", ")}. ` +
+                        "Other saved tool data will remain unchanged. This page will reload afterward."
+                    );
+                    if (!confirmed) {
+                        setSiteDataStatus("Import cancelled.");
+                        return;
+                    }
+
+                    applyStorageChanges(plan.changes);
+                    setSiteDataStatus("Backup imported successfully. Reloading this page…");
+                    window.alert("Teacher Tools backup imported successfully. This page will now reload.");
+                    window.location.reload();
+                } catch (error) {
+                    setSiteDataStatus(
+                        error instanceof Error ? error.message : "The backup could not be imported.",
+                        true
+                    );
+                }
+            }
+
+            function initSiteDataBackup() {
+                const exportButton = document.getElementById("siteDataExportButton");
+                const importButton = document.getElementById("siteDataImportButton");
+                const importFile = document.getElementById("siteDataImportFile");
+                if (!exportButton || !importButton || !importFile) return;
+
+                exportButton.addEventListener("click", exportSiteDataBackup);
+                importButton.addEventListener("click", () => importFile.click());
+                importFile.addEventListener("change", async () => {
+                    await importSiteDataBackup(importFile.files[0]);
+                    importFile.value = "";
+                });
+                updateSiteDataSummary();
             }
 
             function normalizeTheme(value) {
@@ -2114,7 +2566,9 @@ The software is provided "as is" without warranty of any kind.
 
             function closeSiteOverlays() {
                 const toolsMenu = document.getElementById("siteToolsMenu");
+                const dataPanel = document.getElementById("siteDataPanel");
                 const themePanel = document.getElementById("siteThemePanel");
+                const dataButton = document.getElementById("siteDataButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
                     document.getElementById("siteToolsMenuButton"),
@@ -2122,7 +2576,9 @@ The software is provided "as is" without warranty of any kind.
                 ].filter(Boolean);
 
                 if (toolsMenu) toolsMenu.hidden = true;
+                if (dataPanel) dataPanel.hidden = true;
                 if (themePanel) themePanel.hidden = true;
+                if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                 if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                 menuButtons.forEach(button => button.setAttribute("aria-expanded", "false"));
             }
@@ -2136,21 +2592,50 @@ The software is provided "as is" without warranty of any kind.
                     document.getElementById("siteToolsMenuButton"),
                     document.getElementById("siteMobileMenuButton")
                 ].filter(Boolean);
+                const dataButton = document.getElementById("siteDataButton");
+                const dataPanel = document.getElementById("siteDataPanel");
+                const dataCloseButton = document.getElementById("siteDataCloseButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const themePanel = document.getElementById("siteThemePanel");
                 const themeCloseButton = document.getElementById("siteThemeCloseButton");
 
                 function setToolsMenu(open) {
                     if (!toolsMenu) return;
-                    if (open && themePanel) themePanel.hidden = true;
-                    if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    if (open) {
+                        if (dataPanel) dataPanel.hidden = true;
+                        if (themePanel) themePanel.hidden = true;
+                        if (dataButton) dataButton.setAttribute("aria-expanded", "false");
+                        if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    }
                     toolsMenu.hidden = !open;
                     menuButtons.forEach(button => button.setAttribute("aria-expanded", String(open)));
                 }
 
+                function setDataPanel(open) {
+                    if (!dataPanel || !dataButton) return;
+                    if (open) {
+                        setToolsMenu(false);
+                        if (themePanel) themePanel.hidden = true;
+                        if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    }
+                    dataPanel.hidden = !open;
+                    dataButton.setAttribute("aria-expanded", String(open));
+
+                    if (open) {
+                        updateSiteDataSummary();
+                        setSiteDataStatus("");
+                        const firstAction = document.getElementById("siteDataExportButton");
+                        if (firstAction) firstAction.focus();
+                    }
+                }
+
                 function setThemePanel(open) {
                     if (!themePanel || !settingsButton) return;
-                    if (open) setToolsMenu(false);
+                    if (open) {
+                        setToolsMenu(false);
+                        if (dataPanel) dataPanel.hidden = true;
+                        if (dataButton) dataButton.setAttribute("aria-expanded", "false");
+                    }
                     themePanel.hidden = !open;
                     settingsButton.setAttribute("aria-expanded", String(open));
 
@@ -2168,6 +2653,22 @@ The software is provided "as is" without warranty of any kind.
                 });
 
                 if (toolsMenu) toolsMenu.addEventListener("click", event => event.stopPropagation());
+
+                if (dataButton) {
+                    dataButton.addEventListener("click", event => {
+                        event.stopPropagation();
+                        setDataPanel(dataPanel ? dataPanel.hidden : false);
+                    });
+                }
+
+                if (dataCloseButton) {
+                    dataCloseButton.addEventListener("click", () => {
+                        setDataPanel(false);
+                        dataButton.focus();
+                    });
+                }
+
+                if (dataPanel) dataPanel.addEventListener("click", event => event.stopPropagation());
 
                 if (settingsButton) {
                     settingsButton.addEventListener("click", event => {
@@ -2257,13 +2758,21 @@ The software is provided "as is" without warranty of any kind.
                     return;
                 }
 
+                const dataPanel = document.getElementById("siteDataPanel");
                 const themePanel = document.getElementById("siteThemePanel");
                 const toolsMenu = document.getElementById("siteToolsMenu");
+                const dataButton = document.getElementById("siteDataButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
                     document.getElementById("siteToolsMenuButton"),
                     document.getElementById("siteMobileMenuButton")
                 ].filter(Boolean);
+
+                if (dataPanel && !dataPanel.hidden) {
+                    closeSiteOverlays();
+                    if (dataButton) dataButton.focus();
+                    return;
+                }
 
                 if (themePanel && !themePanel.hidden) {
                     closeSiteOverlays();
@@ -2298,6 +2807,7 @@ The software is provided "as is" without warranty of any kind.
                 false
             );
             initSiteHeader();
+            initSiteDataBackup();
             initModals();
             initTooltips();
         })();
@@ -3839,125 +4349,6 @@ The software is provided "as is" without warranty of any kind.
         document.getElementById("gcalForm").submit();
     }
 
-    function buildBackupObject() {
-        return {
-            version: APP_VERSION,
-            exported: formatLocalDate(new Date()),
-            schools: deepClone(appState.schools),
-            schedule: deepClone(appState.schedule),
-            preferences: deepClone(appState.preferences)
-        };
-    }
-
-    function exportBackup() {
-        const backup = buildBackupObject();
-        const json = JSON.stringify(backup, null, 2);
-        const blob = new Blob([json], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "alt-class-scheduler-backup-" + backup.exported + "-v3.json";
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        URL.revokeObjectURL(url);
-    }
-
-    function convertVersion1Backup(backup) {
-        if (
-            !backup ||
-            backup.version !== 1 ||
-            !backup.schedule ||
-            typeof backup.schedule !== "object"
-        ) {
-            throw new Error("Not a valid Version 1 backup.");
-        }
-
-        const state = deepClone(DEFAULT_STATE);
-        const map = {
-            "AA Elementary School": "school1",
-            "BB Elementary School": "school2",
-            "CC Junior High School": "school3"
-        };
-
-        Object.entries(map).forEach(([oldKey, newId]) => {
-            if (Array.isArray(backup.schedule[oldKey])) {
-                state.schedule[newId] = [
-                    ...new Set(
-                        backup.schedule[oldKey].filter(isValidDateString)
-                    )
-                ].sort();
-            }
-        });
-
-        return state;
-    }
-
-    function importBackup(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-
-        reader.onload = function(loadEvent) {
-            try {
-                const backup = JSON.parse(loadEvent.target.result);
-                let importedState;
-
-                if (backup.version === 3 || backup.version === 2) {
-                    importedState = normalizeState({
-                        schools: backup.schools,
-                        schedule: backup.schedule,
-                        preferences: backup.preferences
-                    });
-                } else if (backup.version === 1) {
-                    importedState = convertVersion1Backup(backup);
-                } else {
-                    throw new Error("Unsupported backup version.");
-                }
-
-                const confirmed = confirm(
-                    "Import this backup? This will replace your current schools, bell times, lunch settings, schedule dates, and saved preferences."
-                );
-
-                if (!confirmed) {
-                    event.target.value = "";
-                    return;
-                }
-
-                appState = importedState;
-                appState.preferences.theme = applyTheme(
-                    appState.preferences.theme,
-                    true
-                );
-                saveState();
-
-                refreshAllSchoolSelects();
-                handleMainSchoolChange();
-                renderScheduleSettings();
-                renderSchoolEditor();
-
-                alert(
-                    backup.version === 1
-                        ? "Version 1 backup imported and upgraded to Version 3."
-                        : backup.version === 2
-                            ? "Version 2 backup imported and upgraded to Version 3."
-                            : "Backup imported successfully."
-                );
-            } catch (error) {
-                console.error(error);
-                alert("That file does not appear to be a valid Class Slot Automator backup.");
-            }
-
-            event.target.value = "";
-        };
-
-        reader.readAsText(file);
-    }
-
     function restoreFactoryDefaults() {
         const confirmed = confirm(
             "Restore Scheduler factory defaults? This will replace all schools, bell times, lunch settings, schedule dates, and Scheduler preferences. Your current Teacher Tools site theme will be kept."
@@ -4020,20 +4411,6 @@ The software is provided "as is" without warranty of any kind.
     document
         .getElementById("deleteSchoolBtn")
         .addEventListener("click", deleteSelectedSchool);
-
-    document
-        .getElementById("exportBackupBtn")
-        .addEventListener("click", exportBackup);
-
-    document
-        .getElementById("importBackupBtn")
-        .addEventListener("click", () => {
-            document.getElementById("importBackupFile").click();
-        });
-
-    document
-        .getElementById("importBackupFile")
-        .addEventListener("change", importBackup);
 
     document
         .getElementById("restoreDefaultsBtn")

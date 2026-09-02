@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <!--
-Teacher Tools
+Classroom Timer · Teacher Tools
 Copyright © 2026. All rights reserved.
 
 Free for personal, classroom, and non-commercial educational use.
+Redistribution, resale, commercial use, and distribution of modified versions require prior permission.
 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Free practical browser-based tools for ALTs and teachers.">
-    <title>Teacher Tools</title>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A simple classroom countdown and stopwatch with locally saved presets.">
+    <title>Classroom Timer · Teacher Tools</title>
+
     <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:START -->
     <script>
         (() => {
@@ -27,6 +30,7 @@ Free for personal, classroom, and non-commercial educational use.
         })();
     </script>
 <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:END -->
+
     <style>
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
@@ -801,341 +805,616 @@ Free for personal, classroom, and non-commercial educational use.
         }
 /* TEACHER-TOOLS:SHARED-STYLES:END */
 
-        .home-main {
-            --success: #18794e;
-            --success-soft: #e8f7ef;
-            width: min(960px, 100%);
+        /* Classroom Timer styles begin here. */
+        .page-main { width: 100%; padding: 24px 16px 34px; }
+
+        .app-shell {
+            width: min(760px, 100%);
             margin: 0 auto;
-            padding: 28px 18px 34px;
-        }
-
-        html[data-theme="true-dark"] .home-main {
-            --success: #75d5a6;
-            --success-soft: #163426;
-        }
-
-        .home-intro {
-            display: grid;
-            grid-template-columns: minmax(0, 1.45fr) minmax(230px, .75fr);
-            gap: 18px;
-            align-items: stretch;
-        }
-
-        .welcome-panel,
-        .construction-panel,
-        .tool-entry,
-        .updates-panel {
+            overflow: hidden;
             background: var(--surface);
             border: 1px solid var(--line);
             border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0,0,0,.07);
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.09);
         }
 
-        .welcome-panel {
-            padding: 26px;
+        .app-header {
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px 10px 18px;
+            border-bottom: 1px solid var(--line);
         }
 
-        .welcome-kicker {
-            margin: 0 0 7px;
-            color: var(--accent);
+        .title-wrap {
+            min-width: 0;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .app-title { margin: 0; color: var(--accent); font-size: 19px; line-height: 1.2; font-weight: 750; }
+
+        .version-badge {
+            padding: 2px 7px;
+            color: var(--muted);
+            border: 1px solid var(--line);
+            border-radius: 999px;
             font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .app-header-actions { display: flex; align-items: center; gap: 2px; }
+
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--accent);
+            background: transparent;
+            border: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: color 180ms ease, background-color 180ms ease;
+        }
+
+        .icon-button:hover { color: var(--accent-secondary); background: var(--panel); }
+        .settings-icon { width: 23px; height: 23px; fill: currentColor; }
+
+        .presentation-icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .help-button-mark {
+            width: 21px;
+            height: 21px;
+            display: grid;
+            place-items: center;
+            border: 1.8px solid currentColor;
+            border-radius: 50%;
+            font-size: 13px;
             font-weight: 800;
-            letter-spacing: .09em;
+            line-height: 1;
+        }
+
+        .app-main { padding: 18px; }
+
+        .mode-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            padding: 4px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+        }
+
+        .mode-tab {
+            min-height: 42px;
+            padding: 8px 12px;
+            color: var(--muted);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        .mode-tab[aria-selected="true"] {
+            color: var(--accent);
+            background: var(--surface);
+            border-color: var(--accent-border);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+        }
+
+        .timer-panel { padding-top: 16px; }
+        .timer-panel[hidden] { display: none; }
+
+        .countdown-setup {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--line);
+        }
+
+        .section-label {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: 0.02em;
             text-transform: uppercase;
         }
 
-        .welcome-title {
-            max-width: 600px;
-            margin: 0;
-            color: var(--text);
-            font-size: clamp(25px, 4vw, 38px);
-            line-height: 1.12;
-            letter-spacing: -.025em;
+        .preset-list { display: flex; flex-wrap: wrap; gap: 7px; }
+        #savedPresetButtons { display: contents; }
+
+        .preset-button {
+            min-height: 36px;
+            padding: 7px 11px;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            border-radius: 999px;
+            font-size: 11.5px;
+            font-weight: 750;
+            cursor: pointer;
         }
 
-        .welcome-copy {
-            max-width: 620px;
-            margin: 12px 0 0;
+        .preset-button:hover { filter: brightness(0.97); }
+        .saved-preset-button::before { content: "★"; margin-right: 5px; font-size: 9px; }
+
+        .quick-preset-empty {
             color: var(--muted);
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 11px;
+            line-height: 36px;
         }
 
-        .primary-link {
+        .quick-preset-empty[hidden] { display: none; }
+
+        .time-entry {
+            display: flex;
+            align-items: end;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 13px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+        }
+
+        .time-field { min-width: 0; flex: 1 1 0; display: grid; gap: 5px; }
+        .field-label { color: var(--muted); font-size: 11px; font-weight: 700; }
+
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 10px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+
+        input:hover { border-color: var(--accent-border); }
+        input:disabled { opacity: 0.62; cursor: not-allowed; }
+
+        .time-separator {
+            align-self: center;
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .timer-stage {
+            display: grid;
+            justify-items: center;
+            gap: 12px;
+            padding: 19px 0 5px;
+        }
+
+        .timer-face {
+            --progress: 1;
+            position: relative;
+            width: min(330px, 76vw);
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            isolation: isolate;
+            background: conic-gradient(var(--accent) calc(var(--progress) * 1turn), var(--line) 0);
+            border-radius: 50%;
+            transition: background 180ms linear;
+        }
+
+        .timer-face::before {
+            content: "";
+            position: absolute;
+            inset: 12px;
+            z-index: -1;
+            background: var(--surface);
+            border-radius: 50%;
+            box-shadow: inset 0 0 0 1px var(--line);
+        }
+
+        .timer-face.finished {
+            background: conic-gradient(var(--warning-border) 1turn, var(--warning-border) 0);
+            animation: finish-pulse 900ms ease-in-out 2;
+        }
+
+        .time-display {
+            font-size: clamp(48px, 11vw, 82px);
+            font-weight: 800;
+            letter-spacing: -0.055em;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stopwatch-display { font-size: clamp(42px, 10vw, 72px); }
+
+        .timer-status {
+            min-height: 21px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+            text-align: center;
+        }
+
+        .timer-status.finished { color: var(--warning-text); }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .button {
             min-height: 42px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 7px;
-            margin-top: 18px;
-            padding: 10px 15px;
-            color: #ffffff;
-            background: var(--accent);
+            padding: 9px 17px;
             border: 1px solid var(--accent);
             border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            text-decoration: none;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
         }
 
-        .primary-link:hover { filter: brightness(.96); }
+        .button:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+        .button-primary { color: #ffffff; background: var(--accent); }
+        .button-secondary { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
+        .button-neutral { color: var(--text); background: var(--surface); border-color: var(--line); }
+        .button-danger { color: var(--danger); background: var(--surface); border-color: currentColor; }
+        .button:hover:not(:disabled) { filter: brightness(0.97); }
+        html[data-theme="true-dark"] .button-primary { color: #07101d; }
 
-        html[data-theme="true-dark"] .primary-link { color: #07101d; }
-
-        .construction-panel {
-            padding: 20px;
-            color: var(--warning-text);
-            background: var(--warning-bg);
-            border-color: var(--warning-border);
-            box-shadow: none;
+        .button-symbol {
+            min-width: 1.1em;
+            display: inline-block;
+            font-size: 1.05em;
+            font-weight: 800;
+            line-height: 1;
+            text-align: center;
         }
 
-        .construction-icon {
-            width: 38px;
-            height: 38px;
-            display: grid;
-            place-items: center;
-            margin-bottom: 13px;
-            color: var(--warning-text);
-            background: color-mix(in srgb, var(--warning-border) 32%, transparent);
-            border: 1px solid var(--warning-border);
-            border-radius: 10px;
-            font-size: 19px;
+        .keyboard-hint { margin: 8px 0 0; color: var(--muted); font-size: 10.5px; text-align: center; }
+        .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+        .app-footer {
+            padding: 11px 16px 13px;
+            text-align: center;
+            background: var(--panel);
+            border-top: 1px solid var(--line);
         }
 
-        .construction-title {
-            margin: 0 0 6px;
-            font-size: 15px;
-        }
+        .footer-version { margin-bottom: 4px; color: var(--muted); font-size: 10.5px; font-weight: 700; }
+        .footer-copyright { color: var(--muted); font-size: 9.5px; line-height: 1.4; }
 
-        .construction-copy {
-            margin: 0;
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .home-section {
-            margin-top: 24px;
-        }
-
-        .section-heading-row {
-            display: flex;
-            align-items: end;
-            justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 9px;
-        }
-
-        .section-title {
-            margin: 0;
-            font-size: 17px;
-        }
-
-        .section-description {
-            margin: 3px 0 0;
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.45;
-        }
-
-        .tool-list {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .tool-entry {
-            position: relative;
-            display: grid;
-            grid-template-columns: 44px minmax(0, 1fr);
-            gap: 12px;
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
             padding: 16px;
-            box-shadow: none;
+            background: rgba(15, 23, 42, 0.58);
         }
 
-        .tool-entry.available {
-            border-color: var(--accent-border);
+        .modal-backdrop.open { display: flex; }
+
+        .modal-card {
+            width: min(560px, 100%);
+            max-height: min(680px, calc(100dvh - 32px));
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
         }
 
-        .tool-icon {
-            width: 44px;
-            height: 44px;
-            display: grid;
-            place-items: center;
-            color: var(--accent);
-            background: var(--accent-soft);
-            border-radius: 10px;
-            font-size: 20px;
-        }
-
-        .tool-icon svg {
-            width: 25px;
-            height: 25px;
-            display: block;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.7;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .tool-icon .icon-fill {
-            fill: currentColor;
-            stroke: none;
-        }
-
-        .tool-name-row {
+        .modal-header {
+            min-height: 52px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 12px;
+            padding: 8px 10px 8px 16px;
+            border-bottom: 1px solid var(--line);
         }
 
-        .tool-name {
-            margin: 0;
-            font-size: 14px;
+        .modal-title { margin: 0; font-size: 16px; font-weight: 750; }
+        .modal-content { overflow-y: auto; padding: 16px; }
+
+        .settings-section + .settings-section {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--line);
         }
 
-        .tool-status {
-            flex: 0 0 auto;
-            padding: 3px 7px;
-            color: var(--muted);
-            background: var(--panel);
+        .settings-heading { margin: 0 0 4px; font-size: 14px; }
+        .settings-help { margin: 0 0 10px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+
+        .setting-row {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 7px 0;
+        }
+
+        .setting-label { display: block; font-size: 12px; font-weight: 700; }
+        .setting-description { display: block; margin-top: 2px; color: var(--muted); font-size: 10.5px; line-height: 1.4; }
+        .switch { position: relative; width: 42px; height: 24px; flex: 0 0 42px; }
+        .switch input { position: absolute; opacity: 0; }
+
+        .switch-track {
+            position: absolute;
+            inset: 0;
+            background: var(--line);
             border: 1px solid var(--line);
             border-radius: 999px;
-            font-size: 8.5px;
-            font-weight: 750;
-            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 180ms ease, border-color 180ms ease;
         }
 
-        .tool-entry.available .tool-status {
-            color: var(--success);
-            background: var(--success-soft);
-            border-color: color-mix(in srgb, var(--success) 25%, transparent);
+        .switch-track::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 16px;
+            height: 16px;
+            background: var(--surface);
+            border-radius: 50%;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+            transition: transform 180ms ease;
         }
 
-        .tool-description {
-            margin: 5px 0 0;
-            color: var(--muted);
-            font-size: 11.5px;
-            line-height: 1.45;
-        }
+        .switch input:checked + .switch-track { background: var(--accent); border-color: var(--accent); }
+        .switch input:checked + .switch-track::after { transform: translateX(18px); }
+        .switch input:focus-visible + .switch-track { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-        .tool-link {
-            display: inline-flex;
-            margin-top: 10px;
-            color: var(--accent);
-            font-size: 11px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .tool-link:hover { text-decoration: underline; }
-
-        .updates-panel {
-            overflow: hidden;
-            box-shadow: none;
-        }
-
-        .update-entry {
+        .preset-form {
             display: grid;
-            grid-template-columns: 105px minmax(0, 1fr);
-            gap: 18px;
-            padding: 17px 18px;
+            grid-template-columns: minmax(130px, 1.4fr) repeat(3, minmax(62px, 0.55fr)) auto;
+            align-items: end;
+            gap: 7px;
         }
 
-        .update-entry + .update-entry { border-top: 1px solid var(--line); }
+        .preset-form .button { padding-inline: 12px; }
 
-        .update-date {
-            color: var(--muted);
-            font-size: 10px;
-            font-weight: 650;
-            line-height: 1.4;
+        .default-time-form {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(62px, 1fr));
+            align-items: end;
+            gap: 7px;
         }
 
-        .update-version {
-            display: inline-block;
-            margin-top: 5px;
-            padding: 2px 6px;
+        .quick-preset-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 7px;
+            margin-top: 12px;
+        }
+
+        .quick-preset-setting-label { display: block; margin-top: 14px; }
+
+        .quick-preset-option {
+            min-height: 38px;
+            justify-content: center;
+            padding: 7px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+
+        .saved-list { display: grid; gap: 7px; margin-top: 12px; }
+        .saved-empty { margin: 0; padding: 10px; color: var(--muted); background: var(--panel); border-radius: 8px; font-size: 11px; }
+
+        .saved-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 9px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+
+        .saved-name { min-width: 0; font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+        .saved-duration { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; font-weight: 500; }
+
+        .mini-button {
+            min-height: 32px;
+            padding: 5px 9px;
             color: var(--accent);
-            background: var(--accent-soft);
-            border-radius: 999px;
-            font-size: 8.5px;
-            font-weight: 750;
+            background: var(--surface);
+            border: 1px solid var(--accent-border);
+            border-radius: 7px;
+            font-size: 10.5px;
+            font-weight: 700;
+            cursor: pointer;
         }
 
-        .update-title {
-            margin: 0 0 5px;
-            font-size: 13px;
-        }
+        .mini-button.danger { color: var(--danger); border-color: currentColor; }
+        .form-message { min-height: 17px; margin: 7px 0 0; color: var(--muted); font-size: 10.5px; }
+        .form-message.error { color: var(--danger); }
 
-        .update-copy {
-            margin: 0;
-            color: var(--muted);
+        .notice {
+            margin-top: 12px;
+            padding: 10px 12px;
+            color: var(--warning-text);
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 8px;
             font-size: 11.5px;
             line-height: 1.5;
         }
 
-        .update-link {
-            display: inline-flex;
-            margin-top: 8px;
+        .tutorial-intro { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .tutorial-steps { display: grid; gap: 10px; }
+
+        .tutorial-step {
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr);
+            gap: 11px;
+            padding: 12px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 9px;
+        }
+
+        .tutorial-number {
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
             color: var(--accent);
-            font-size: 10.5px;
-            font-weight: 700;
-            text-decoration: none;
+            background: var(--accent-soft);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
         }
 
-        .update-link:hover { text-decoration: underline; }
+        .tutorial-step h3 { margin: 1px 0 3px; font-size: 13px; }
+        .tutorial-step p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
 
-        .site-footer {
-            padding: 14px 18px 18px;
-            color: var(--muted);
-            text-align: center;
-            font-size: 9.5px;
-            line-height: 1.45;
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 16px;
+            border-top: 1px solid var(--line);
         }
 
-        @media (max-width: 700px) {
-            .home-intro { grid-template-columns: 1fr; }
-            .construction-panel {
-                display: grid;
-                grid-template-columns: 38px minmax(0, 1fr);
-                gap: 12px;
-                align-items: start;
-            }
-            .construction-icon { margin: 0; }
+        body.presentation-open { overflow: hidden; }
+        body.presentation-open .modal-backdrop { z-index: 700; }
+
+        .app-shell.is-presenting {
+            position: fixed;
+            z-index: 500;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            max-width: none;
+            display: flex;
+            flex-direction: column;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .app-shell.is-presenting .app-header { flex: 0 0 auto; }
+        .app-shell.is-presenting #helpOpenButton,
+        .app-shell.is-presenting #settingsOpenButton { display: none; }
+        .app-shell.is-presenting .app-main {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            padding: clamp(10px, 2vh, 20px);
+        }
+        .app-shell.is-presenting .app-footer,
+        .app-shell.is-presenting .countdown-setup,
+        .app-shell.is-presenting .keyboard-hint { display: none; }
+        .app-shell.is-presenting .mode-tabs { flex: 0 0 auto; width: min(430px, 100%); margin: 0 auto; }
+        .app-shell.is-presenting .timer-panel { flex: 1 1 auto; min-height: 0; padding-top: clamp(8px, 1.5vh, 16px); }
+        .app-shell.is-presenting .timer-stage { height: 100%; grid-template-rows: minmax(0, 1fr) auto auto; padding: 0; }
+        .app-shell.is-presenting .timer-face {
+            --presentation-timer-size: clamp(80px, min(48vw, calc(100dvh - 300px)), 520px);
+            width: var(--presentation-timer-size);
+            height: var(--presentation-timer-size);
+            min-width: 0;
+            min-height: 0;
+            max-width: none;
+            max-height: none;
+            aspect-ratio: 1 / 1;
+            align-self: center;
+            justify-self: center;
+        }
+        .app-shell.is-presenting .time-display { font-size: clamp(16px, calc(var(--presentation-timer-size) * 0.18), 92px); }
+        .app-shell.is-presenting .timer-status { font-size: clamp(15px, 1.6vw, 22px); }
+        .app-shell.is-presenting .button { min-height: clamp(48px, 7vh, 66px); padding-inline: clamp(18px, 2.4vw, 30px); font-size: clamp(15px, 1.7vw, 22px); }
+
+        @keyframes finish-pulse {
+            50% { transform: scale(1.025); }
         }
 
         @media (max-width: 620px) {
-            .home-main { padding: 16px 8px 24px; }
-            .welcome-panel { padding: 20px 17px; }
-            .tool-list { grid-template-columns: 1fr; }
-            .update-entry { grid-template-columns: 1fr; gap: 6px; }
-            .update-version { margin: 0 0 0 6px; }
+            .page-main { padding: 16px 8px 24px; }
+            .app-shell { border-radius: 10px; }
+            .app-main { padding: 14px; }
+            .timer-face { width: min(290px, 78vw); }
+            .modal-backdrop { align-items: stretch; padding: 6px; }
+            .modal-card { max-height: calc(100dvh - 12px); border-radius: 9px; }
+            .preset-form { grid-template-columns: repeat(3, 1fr); }
+            .preset-name-field { grid-column: 1 / -1; }
+            .preset-form .button { grid-column: 1 / -1; }
+            .default-time-form { grid-template-columns: repeat(3, 1fr); }
+            .quick-preset-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (orientation: portrait), (max-width: 720px) {
+            .app-shell.is-presenting .app-main { padding: 8px; }
+            .app-shell.is-presenting .timer-face {
+                --presentation-timer-size: clamp(80px, min(78vw, calc(100dvh - 270px)), 520px);
+                width: var(--presentation-timer-size);
+                height: var(--presentation-timer-size);
+            }
+            .app-shell.is-presenting .button { min-height: 48px; font-size: 15px; }
         }
 
         @media (max-width: 380px) {
-            .welcome-title { font-size: 25px; }
-            .construction-panel { grid-template-columns: 1fr; }
-            .construction-icon { display: none; }
-            .tool-entry { grid-template-columns: 38px minmax(0, 1fr); padding: 13px; }
-            .tool-icon { width: 38px; height: 38px; }
+            .app-header { padding-left: 12px; }
+            .app-title { font-size: 17px; }
+            .time-entry { gap: 5px; padding: 10px; }
+            .time-separator { font-size: 17px; }
+            .button { flex: 1 1 auto; padding-inline: 11px; }
+            .tutorial-step { grid-template-columns: 1fr; }
+            .saved-row { grid-template-columns: minmax(0, 1fr) auto; }
+            .saved-row .danger { grid-column: 2; }
         }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 scroll-behavior: auto !important;
-                transition-duration: .01ms !important;
-                animation-duration: .01ms !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Workbench links are relative. Use production routes only after release approval. -->
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
-            <a class="site-brand" href="/" aria-label="Teacher Tools home" aria-current="page">
+            <a class="site-brand" href="/" aria-label="Teacher Tools home">
                 <span class="site-brand-mark" aria-hidden="true">
                     <svg viewBox="0 0 28 28">
                         <path d="M5.5 7.5h17v15h-17z" />
@@ -1150,7 +1429,7 @@ Free for personal, classroom, and non-commercial educational use.
             </a>
              <div class="site-header-actions">
                 <nav class="site-nav" aria-label="Main navigation">
-                    <a class="site-nav-link" href="/" aria-current="page">Home</a>
+                    <a class="site-nav-link" href="/">Home</a>
                     <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
                         Tools <span class="site-menu-chevron" aria-hidden="true"></span>
                     </button>
@@ -1172,10 +1451,10 @@ Free for personal, classroom, and non-commercial educational use.
                 </button>
             </div>
              <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
-                <a class="site-menu-item site-menu-home" href="/" aria-current="page">
+                <a class="site-menu-item site-menu-home" href="/">
                     <span class="site-menu-icon" aria-hidden="true">⌂</span>
                     <span><span class="site-menu-name">Home</span><span class="site-menu-description">Teacher Tools overview and updates</span></span>
-                    <span class="site-menu-status">HERE</span>
+                    <span class="site-menu-status">OPEN</span>
                 </a>
                  <div class="site-menu-label">Available tools</div>
                  <a class="site-menu-item" href="/scheduler/">
@@ -1200,7 +1479,7 @@ Free for personal, classroom, and non-commercial educational use.
                     <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
-                 <a class="site-menu-item" href="/timer/">
+                 <a class="site-menu-item" href="/timer/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <circle cx="14" cy="16" r="7.5" />
@@ -1210,7 +1489,7 @@ Free for personal, classroom, and non-commercial educational use.
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span class="site-menu-status">HERE</span>
                 </a>
 
                  <div class="site-menu-label">Planned tools</div>
@@ -1283,185 +1562,214 @@ Free for personal, classroom, and non-commercial educational use.
     </header>
 <!-- TEACHER-TOOLS:SITE-HEADER:END -->
 
-    <main class="home-main">
-        <div class="home-intro">
-            <section class="welcome-panel">
-                <p class="welcome-kicker">Welcome to Teacher Tools</p>
-                <h1 class="welcome-title">Practical tools for ALTs and teachers.</h1>
-                <p class="welcome-copy">Simple browser-based utilities designed to make everyday planning and classroom work a little easier.</p>
-                <a class="primary-link" href="/scheduler/">Open Class Scheduler <span aria-hidden="true">→</span></a>
-            </section>
-
-            <aside class="construction-panel" aria-labelledby="constructionTitle">
-                <div class="construction-icon" aria-hidden="true">⌁</div>
-                <div>
-                    <h2 id="constructionTitle" class="construction-title">This page is under construction</h2>
-                    <p class="construction-copy">Please check back soon as the Teacher Tools collection continues to grow.</p>
+    <main class="page-main">
+        <div class="app-shell">
+            <header class="app-header">
+                <div class="title-wrap">
+                    <h1 class="app-title">Classroom Timer</h1>
+                    <span class="version-badge">v1.0</span>
                 </div>
-            </aside>
+                <div class="app-header-actions">
+                    <button type="button" id="presentationButton" class="icon-button" aria-label="Enter presentation mode" aria-pressed="false" title="Presentation mode">
+                        <svg class="presentation-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8.5 4.5h-4v4M15.5 4.5h4v4M19.5 15.5v4h-4M8.5 19.5h-4v-4" />
+                        </svg>
+                    </button>
+                    <button type="button" id="helpOpenButton" class="icon-button" data-modal-open="tutorialModal" aria-label="Open getting started help" aria-haspopup="dialog" title="Getting started">
+                        <span class="help-button-mark" aria-hidden="true">?</span>
+                    </button>
+                    <button type="button" id="settingsOpenButton" class="icon-button" data-modal-open="settingsModal" aria-label="Open timer settings" aria-haspopup="dialog" title="Timer settings">
+                        <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="app-main">
+                <div class="mode-tabs" role="tablist" aria-label="Timer mode">
+                    <button type="button" id="countdownTab" class="mode-tab" role="tab" aria-selected="true" aria-controls="countdownPanel">Countdown</button>
+                    <button type="button" id="stopwatchTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="stopwatchPanel" tabindex="-1">Stopwatch</button>
+                </div>
+
+                <section id="countdownPanel" class="timer-panel" role="tabpanel" aria-labelledby="countdownTab">
+                    <div class="timer-stage">
+                        <div id="countdownFace" class="timer-face">
+                            <div id="countdownDisplay" class="time-display" aria-hidden="true">05:00</div>
+                        </div>
+                        <p id="countdownStatus" class="timer-status" role="status" aria-live="polite">Ready</p>
+                        <span id="countdownAnnouncement" class="visually-hidden" aria-live="assertive"></span>
+                        <div class="button-row">
+                            <button type="button" id="countdownStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label">Start</span></button>
+                            <button type="button" id="countdownResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span>Reset</span></button>
+                            <button type="button" id="addMinuteButton" class="button button-neutral">+1 minute</button>
+                        </div>
+                    </div>
+                    <p class="keyboard-hint">Press Space to start or pause while no field or dialog is active.</p>
+
+                    <div class="countdown-setup">
+                        <span class="section-label">Quick presets</span>
+                        <div id="presetList" class="preset-list" role="group" aria-label="Countdown presets">
+                            <button type="button" class="preset-button" data-seconds="60" data-quick-preset="60">1 min</button>
+                            <button type="button" class="preset-button" data-seconds="180" data-quick-preset="180">3 min</button>
+                            <button type="button" class="preset-button" data-seconds="300" data-quick-preset="300">5 min</button>
+                            <button type="button" class="preset-button" data-seconds="600" data-quick-preset="600">10 min</button>
+                            <button type="button" class="preset-button" data-seconds="900" data-quick-preset="900">15 min</button>
+                            <span id="savedPresetButtons"></span>
+                            <span id="quickPresetEmpty" class="quick-preset-empty" hidden>No quick presets selected.</span>
+                        </div>
+
+                        <div class="time-entry" aria-label="Set countdown duration">
+                            <label class="time-field">
+                                <span class="field-label">Hours</span>
+                                <input id="countdownHours" type="number" min="0" max="23" value="0" inputmode="numeric">
+                            </label>
+                            <span class="time-separator" aria-hidden="true">:</span>
+                            <label class="time-field">
+                                <span class="field-label">Minutes</span>
+                                <input id="countdownMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
+                            </label>
+                            <span class="time-separator" aria-hidden="true">:</span>
+                            <label class="time-field">
+                                <span class="field-label">Seconds</span>
+                                <input id="countdownSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="stopwatchPanel" class="timer-panel" role="tabpanel" aria-labelledby="stopwatchTab" hidden>
+                    <div class="timer-stage">
+                        <div id="stopwatchFace" class="timer-face">
+                            <div id="stopwatchDisplay" class="time-display stopwatch-display" aria-hidden="true">00:00.0</div>
+                        </div>
+                        <p id="stopwatchStatus" class="timer-status" role="status" aria-live="polite">Ready</p>
+                        <div class="button-row">
+                            <button type="button" id="stopwatchStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label">Start</span></button>
+                            <button type="button" id="stopwatchResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span>Reset</span></button>
+                        </div>
+                    </div>
+                    <p class="keyboard-hint">Press Space to start or pause while no field or dialog is active.</p>
+                </section>
+            </div>
+
+            <footer class="app-footer">
+                <div class="footer-version">Classroom Timer · v1.0</div>
+                <div class="footer-copyright">© 2026 · All rights reserved. Free for personal, classroom, and non-commercial educational use. Timer data stays in this browser.</div>
+            </footer>
         </div>
-
-        <section class="home-section" aria-labelledby="toolsTitle">
-            <div class="section-heading-row">
-                <div>
-                    <h2 id="toolsTitle" class="section-title">Available tools</h2>
-                    <p class="section-description">Open a tool or see what is currently being planned.</p>
-                </div>
-            </div>
-
-            <div class="tool-list">
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <path d="M5.5 7.5h17v15h-17z" />
-                            <path d="M9 4.5v6M19 4.5v6M5.5 12h17" />
-                            <path d="m10 17 2.2 2.2L18 14.7" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name">ALT Class Scheduler</h3>
-                            <span class="tool-status">Available</span>
-                        </div>
-                        <p class="tool-description">Create templated Google Calendar events using the real class schedules and bell times for multiple schools.</p>
-                        <a class="tool-link" href="/scheduler/">Open scheduler →</a>
-                    </div>
-                </article>
-
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <path class="icon-fill" d="M14 14V5a9 9 0 0 1 6.36 2.64ZM14 14h9a9 9 0 0 1-2.64 6.36ZM14 14v9a9 9 0 0 1-6.36-2.64ZM14 14H5a9 9 0 0 1 2.64-6.36Z" />
-                            <circle cx="14" cy="14" r="9" />
-                            <path d="M14 5v18M5 14h18M7.64 7.64l12.72 12.72M20.36 7.64 7.64 20.36" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name">Spinner Wheel</h3>
-                            <span class="tool-status">Available</span>
-                        </div>
-                        <p class="tool-description">Choose a random number, student name, or custom classroom choice with a visual wheel.</p>
-                        <a class="tool-link" href="/spinner/">Open Spinner Wheel →</a>
-                    </div>
-                </article>
-
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <circle cx="14" cy="16" r="7.5" />
-                            <path d="M11.5 5h5v2h-5zM14 7v1.5" />
-                            <path d="m19.5 9 2-2M20.5 6l1.5 1.5" />
-                            <path d="M14 12v4l3 1.8" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name">Classroom Timer</h3>
-                            <span class="tool-status">Available</span>
-                        </div>
-                        <p class="tool-description">Run accurate classroom countdowns and a stopwatch, with quick durations, saved presets, finish alerts, and a presentation view.</p>
-                        <a class="tool-link" href="/timer/">Open Classroom Timer →</a>
-                    </div>
-                </article>
-
-                <article class="tool-entry">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <rect x="5.5" y="5.5" width="17" height="17" rx="3" />
-                            <path d="m9.5 14 3 3 6-7" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name">Class Tracker</h3>
-                            <span class="tool-status">Planned</span>
-                        </div>
-                        <p class="tool-description">A simple dashboard for checking off class progress through lessons or textbook sections.</p>
-                    </div>
-                </article>
-
-                <article class="tool-entry">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <rect class="icon-fill" x="7" y="5" width="16" height="15" rx="2" opacity=".24" />
-                            <rect x="4.5" y="7.5" width="16" height="15" rx="2" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name">Google Slides Automator</h3>
-                            <span class="tool-status">Planned</span>
-                        </div>
-                        <p class="tool-description">Enter common lesson fields such as Today’s Goals and Target Language Structure, then generate a starter Google Slides presentation from a reusable template.</p>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <section class="home-section" aria-labelledby="updatesTitle">
-            <div class="section-heading-row">
-                <div>
-                    <h2 id="updatesTitle" class="section-title">Latest updates</h2>
-                    <p class="section-description">Release notes and noteworthy changes, newest first.</p>
-                </div>
-            </div>
-
-            <div class="updates-panel">
-                <article class="update-entry">
-                    <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
-                        <span class="update-version">v1.0</span>
-                    </div>
-                    <div>
-                        <h3 class="update-title">Classroom Timer v1.0</h3>
-                        <p class="update-copy">Added accurate countdown and stopwatch modes, quick and saved durations, optional finish sound, keyboard controls, and a responsive presentation view for classroom displays.</p>
-                        <a class="update-link" href="/timer/">Open Classroom Timer →</a>
-                    </div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
-                        <span class="update-version">Site</span>
-                    </div>
-                    <div>
-                        <h3 class="update-title">One backup for all Teacher Tools</h3>
-                        <p class="update-copy">Backup and restore now lives in the shared header, making it possible to export recognized data from every Teacher Tools applet together in one local file.</p>
-                    </div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
-                        <span class="update-version">v1.1</span>
-                    </div>
-                    <div>
-                        <h3 class="update-title">Spinner Wheel v1.1</h3>
-                        <p class="update-copy">Improved wheel-label clarity and spinning sound, added a Suspenseful spin length, and introduced a responsive presentation mode with a larger classroom result display.</p>
-                        <a class="update-link" href="/spinner/">Open Spinner Wheel →</a>
-                    </div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
-                        <span class="update-version">v3.5</span>
-                    </div>
-                    <div>
-                        <h3 class="update-title">ALT Class Scheduler v3.5</h3>
-                        <p class="update-copy">Updated the Scheduler to the current Teacher Tools interface, streamlined appearance controls, and improved responsive, keyboard, and touch behavior while preserving existing schedules and backups.</p>
-                        <a class="update-link" href="/scheduler/">Open Class Scheduler →</a>
-                    </div>
-                </article>
-            </div>
-        </section>
     </main>
 
-    <footer class="site-footer">
-        Teacher Tools · tools.jacobosinjapan.com<br>
-        Free practical tools for ALTs and teachers. · © 2026
-    </footer>
+    <div id="tutorialModal" class="modal-backdrop" data-shared-modal data-first-use-storage-key="teacherTools.classroomTimer.tutorialSeen.v1" aria-hidden="true">
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" aria-describedby="tutorialIntro">
+            <header class="modal-header">
+                <h2 id="tutorialTitle" class="modal-title">Getting started</h2>
+                <button type="button" class="close-button" data-modal-close aria-label="Close getting started help">×</button>
+            </header>
+            <div class="modal-content">
+                <p id="tutorialIntro" class="tutorial-intro">Use the Classroom Timer for a quick activity countdown or as a stopwatch.</p>
+                <div class="tutorial-steps">
+                    <section class="tutorial-step">
+                        <span class="tutorial-number" aria-hidden="true">1</span>
+                        <div><h3>Choose a time</h3><p>Pick a quick preset or enter hours, minutes, and seconds.</p></div>
+                    </section>
+                    <section class="tutorial-step">
+                        <span class="tutorial-number" aria-hidden="true">2</span>
+                        <div><h3>Start, pause, or add time</h3><p>The countdown remains accurate when the browser tab is in the background. Add one minute at any time.</p></div>
+                    </section>
+                    <section class="tutorial-step">
+                        <span class="tutorial-number" aria-hidden="true">3</span>
+                        <div><h3>Save frequent countdowns</h3><p>Create named presets in Settings. They are stored only in this browser and may be lost if site data is cleared.</p></div>
+                    </section>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="button button-primary" data-modal-close>Start timing</button>
+            </div>
+        </section>
+    </div>
+
+    <div id="settingsModal" class="modal-backdrop" data-shared-modal aria-hidden="true">
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+            <header class="modal-header">
+                <h2 id="settingsTitle" class="modal-title">Timer settings</h2>
+                <button type="button" class="close-button" data-modal-close aria-label="Close timer settings">×</button>
+            </header>
+            <div class="modal-content">
+                <section class="settings-section">
+                    <h3 class="settings-heading">Countdown defaults</h3>
+                    <p class="settings-help">Choose the countdown shown when Classroom Timer first opens and which built-in shortcuts appear below it. Changes save automatically.</p>
+                    <div id="defaultCountdownSettings">
+                        <div class="default-time-form">
+                            <label class="time-field">
+                                <span class="field-label">Hours</span>
+                                <input id="defaultHours" type="number" min="0" max="23" value="0" inputmode="numeric">
+                            </label>
+                            <label class="time-field">
+                                <span class="field-label">Minutes</span>
+                                <input id="defaultMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
+                            </label>
+                            <label class="time-field">
+                                <span class="field-label">Seconds</span>
+                                <input id="defaultSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
+                            </label>
+                        </div>
+
+                        <span class="field-label quick-preset-setting-label">Quick presets to show</span>
+                        <div class="quick-preset-grid" role="group" aria-label="Quick presets to show">
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="60" checked><span>1 min</span></label>
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="180" checked><span>3 min</span></label>
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="300" checked><span>5 min</span></label>
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="600" checked><span>10 min</span></label>
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="900" checked><span>15 min</span></label>
+                        </div>
+                    </div>
+                    <p id="defaultCountdownMessage" class="form-message" role="status" aria-live="polite"></p>
+                </section>
+
+                <section class="settings-section">
+                    <h3 class="settings-heading">Sound</h3>
+                    <div class="setting-row">
+                        <span>
+                            <span class="setting-label">Play a finish sound</span>
+                            <span class="setting-description">Uses a short sound generated on this device. Nothing is downloaded.</span>
+                        </span>
+                        <label class="switch">
+                            <input id="soundEnabledInput" type="checkbox" aria-label="Play a sound when the countdown finishes" checked>
+                            <span class="switch-track" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="settings-section">
+                    <h3 class="settings-heading">Saved countdowns</h3>
+                    <p class="settings-help">Save up to 12 named presets on this browser.</p>
+                    <form id="presetForm" class="preset-form">
+                        <label class="time-field preset-name-field">
+                            <span class="field-label">Name</span>
+                            <input id="presetName" type="text" maxlength="40" placeholder="Warm-up" autocomplete="off" required>
+                        </label>
+                        <label class="time-field">
+                            <span class="field-label">Hours</span>
+                            <input id="presetHours" type="number" min="0" max="23" value="0" inputmode="numeric">
+                        </label>
+                        <label class="time-field">
+                            <span class="field-label">Minutes</span>
+                            <input id="presetMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
+                        </label>
+                        <label class="time-field">
+                            <span class="field-label">Seconds</span>
+                            <input id="presetSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
+                        </label>
+                        <button type="submit" class="button button-secondary">Save</button>
+                    </form>
+                    <p id="presetFormMessage" class="form-message" role="status" aria-live="polite"></p>
+                    <div id="savedPresetList" class="saved-list"></div>
+                    <div class="notice" role="note">Saved countdowns are private to this browser. Clearing browser or site data removes them.</div>
+                </section>
+            </div>
+        </section>
+    </div>
 
     <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
     <script>
@@ -2259,5 +2567,632 @@ Free for personal, classroom, and non-commercial educational use.
         })();
     </script>
 <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:END -->
+
+    <script>
+        (() => {
+            "use strict";
+
+            const STORAGE_KEY = "teacherTools.classroomTimer.state.v1";
+            const BASE_TITLE = "Classroom Timer · Teacher Tools";
+            const MAX_PRESETS = 12;
+            const MAX_SECONDS = (23 * 60 * 60) + (59 * 60) + 59;
+            const { storageGet, storageSet, closeModal } = window.TeacherToolsUI;
+
+            const elements = {
+                appShell: document.querySelector(".app-shell"),
+                presentationButton: document.getElementById("presentationButton"),
+                countdownTab: document.getElementById("countdownTab"),
+                stopwatchTab: document.getElementById("stopwatchTab"),
+                countdownPanel: document.getElementById("countdownPanel"),
+                stopwatchPanel: document.getElementById("stopwatchPanel"),
+                countdownHours: document.getElementById("countdownHours"),
+                countdownMinutes: document.getElementById("countdownMinutes"),
+                countdownSeconds: document.getElementById("countdownSeconds"),
+                countdownFace: document.getElementById("countdownFace"),
+                countdownDisplay: document.getElementById("countdownDisplay"),
+                countdownStatus: document.getElementById("countdownStatus"),
+                countdownAnnouncement: document.getElementById("countdownAnnouncement"),
+                countdownStartButton: document.getElementById("countdownStartButton"),
+                countdownResetButton: document.getElementById("countdownResetButton"),
+                addMinuteButton: document.getElementById("addMinuteButton"),
+                stopwatchFace: document.getElementById("stopwatchFace"),
+                stopwatchDisplay: document.getElementById("stopwatchDisplay"),
+                stopwatchStatus: document.getElementById("stopwatchStatus"),
+                stopwatchStartButton: document.getElementById("stopwatchStartButton"),
+                stopwatchResetButton: document.getElementById("stopwatchResetButton"),
+                savedPresetButtons: document.getElementById("savedPresetButtons"),
+                quickPresetEmpty: document.getElementById("quickPresetEmpty"),
+                soundEnabledInput: document.getElementById("soundEnabledInput"),
+                defaultHours: document.getElementById("defaultHours"),
+                defaultMinutes: document.getElementById("defaultMinutes"),
+                defaultSeconds: document.getElementById("defaultSeconds"),
+                defaultCountdownMessage: document.getElementById("defaultCountdownMessage"),
+                quickPresetSettings: [...document.querySelectorAll("[data-quick-preset-setting]")],
+                presetForm: document.getElementById("presetForm"),
+                presetName: document.getElementById("presetName"),
+                presetHours: document.getElementById("presetHours"),
+                presetMinutes: document.getElementById("presetMinutes"),
+                presetSeconds: document.getElementById("presetSeconds"),
+                presetFormMessage: document.getElementById("presetFormMessage"),
+                savedPresetList: document.getElementById("savedPresetList")
+            };
+
+            let activeMode = "countdown";
+            let state = readState();
+            let presentationMode = false;
+            let presentationUsesFullscreen = false;
+            let audioContext = null;
+            let configuredMs = state.defaultSeconds * 1000;
+            let remainingMs = configuredMs;
+            let countdownEndAt = 0;
+            let countdownRunning = false;
+            let stopwatchElapsedMs = 0;
+            let stopwatchStartedAt = 0;
+            let stopwatchRunning = false;
+            let animationFrame = 0;
+            let lastDocumentTitle = BASE_TITLE;
+
+            function clampInteger(value, minimum, maximum) {
+                const number = Number.parseInt(value, 10);
+                if (!Number.isFinite(number)) return minimum;
+                return Math.min(maximum, Math.max(minimum, number));
+            }
+
+            function durationFromInputs(hoursInput, minutesInput, secondsInput) {
+                const hours = clampInteger(hoursInput.value, 0, 23);
+                const minutes = clampInteger(minutesInput.value, 0, 59);
+                const seconds = clampInteger(secondsInput.value, 0, 59);
+                hoursInput.value = String(hours);
+                minutesInput.value = String(minutes);
+                secondsInput.value = String(seconds);
+                return ((hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
+            }
+
+            function setInputGroupDuration(milliseconds, hoursInput, minutesInput, secondsInput) {
+                const totalSeconds = Math.min(MAX_SECONDS, Math.max(0, Math.round(milliseconds / 1000)));
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                hoursInput.value = String(hours);
+                minutesInput.value = String(minutes);
+                secondsInput.value = String(seconds);
+            }
+
+            function setDurationInputs(milliseconds) {
+                setInputGroupDuration(
+                    milliseconds,
+                    elements.countdownHours,
+                    elements.countdownMinutes,
+                    elements.countdownSeconds
+                );
+            }
+
+            function formatCountdown(milliseconds) {
+                const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+                return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+            }
+
+            function formatStopwatch(milliseconds) {
+                const tenths = Math.floor(Math.max(0, milliseconds) / 100) % 10;
+                const totalSeconds = Math.floor(Math.max(0, milliseconds) / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${tenths}`;
+                return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${tenths}`;
+            }
+
+            function validPreset(value) {
+                return value && typeof value.id === "string" && typeof value.name === "string" &&
+                    value.name.trim().length > 0 && value.name.trim().length <= 40 &&
+                    Number.isInteger(value.seconds) && value.seconds >= 1 && value.seconds <= MAX_SECONDS;
+            }
+
+            function readState() {
+                const allQuickPresets = [60, 180, 300, 600, 900];
+                const fallback = {
+                    version: 1,
+                    soundEnabled: true,
+                    defaultSeconds: 300,
+                    quickPresets: allQuickPresets,
+                    presets: []
+                };
+                const raw = storageGet(STORAGE_KEY);
+                if (!raw) return fallback;
+                try {
+                    const saved = JSON.parse(raw);
+                    if (!saved || saved.version !== 1) return fallback;
+                    const quickPresets = Array.isArray(saved.quickPresets)
+                        ? [...new Set(saved.quickPresets.filter(value => allQuickPresets.includes(value)))]
+                        : allQuickPresets;
+                    return {
+                        version: 1,
+                        soundEnabled: saved.soundEnabled !== false,
+                        defaultSeconds: Number.isInteger(saved.defaultSeconds) && saved.defaultSeconds >= 1 && saved.defaultSeconds <= MAX_SECONDS
+                            ? saved.defaultSeconds
+                            : 300,
+                        quickPresets,
+                        presets: Array.isArray(saved.presets) ? saved.presets.filter(validPreset).slice(0, MAX_PRESETS) : []
+                    };
+                } catch (error) {
+                    return fallback;
+                }
+            }
+
+            function persistState() {
+                storageSet(STORAGE_KEY, JSON.stringify(state));
+            }
+
+            function createPresetId() {
+                if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
+                return `preset-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            }
+
+            function syncDefaultControls() {
+                setInputGroupDuration(
+                    state.defaultSeconds * 1000,
+                    elements.defaultHours,
+                    elements.defaultMinutes,
+                    elements.defaultSeconds
+                );
+                elements.quickPresetSettings.forEach(input => {
+                    input.checked = state.quickPresets.includes(Number(input.dataset.quickPresetSetting));
+                });
+            }
+
+            function setMode(mode, moveFocus = false) {
+                activeMode = mode;
+                const isCountdown = mode === "countdown";
+                elements.countdownTab.setAttribute("aria-selected", String(isCountdown));
+                elements.countdownTab.tabIndex = isCountdown ? 0 : -1;
+                elements.stopwatchTab.setAttribute("aria-selected", String(!isCountdown));
+                elements.stopwatchTab.tabIndex = isCountdown ? -1 : 0;
+                elements.countdownPanel.hidden = !isCountdown;
+                elements.stopwatchPanel.hidden = isCountdown;
+                if (moveFocus) (isCountdown ? elements.countdownTab : elements.stopwatchTab).focus();
+                updateDocumentTitle();
+            }
+
+            function setRunButton(button, running, label = running ? "Pause" : "Start") {
+                button.querySelector(".button-symbol").textContent = running ? "❚❚" : "▶";
+                button.querySelector(".button-label").textContent = label;
+            }
+
+            function updatePresentationButton() {
+                elements.presentationButton.setAttribute("aria-pressed", String(presentationMode));
+                elements.presentationButton.setAttribute("aria-label", presentationMode ? "Exit presentation mode" : "Enter presentation mode");
+                elements.presentationButton.title = presentationMode ? "Exit presentation mode" : "Presentation mode";
+            }
+
+            function setPresentationMode(active) {
+                presentationMode = active;
+                elements.appShell.classList.toggle("is-presenting", active);
+                document.body.classList.toggle("presentation-open", active);
+                updatePresentationButton();
+            }
+
+            async function enterPresentationMode() {
+                setPresentationMode(true);
+                presentationUsesFullscreen = false;
+                if (typeof elements.appShell.requestFullscreen !== "function") return;
+                try {
+                    await elements.appShell.requestFullscreen();
+                    presentationUsesFullscreen = document.fullscreenElement === elements.appShell;
+                } catch (error) {
+                    // The fixed presentation layout remains available when fullscreen access is restricted.
+                }
+            }
+
+            async function exitPresentationMode() {
+                if (presentationUsesFullscreen && document.fullscreenElement && typeof document.exitFullscreen === "function") {
+                    try {
+                        await document.exitFullscreen();
+                    } catch (error) {
+                        // Continue by returning to the standard in-page layout.
+                    }
+                }
+                presentationUsesFullscreen = false;
+                setPresentationMode(false);
+            }
+
+            function setCountdownInputsDisabled(disabled) {
+                elements.countdownHours.disabled = disabled;
+                elements.countdownMinutes.disabled = disabled;
+                elements.countdownSeconds.disabled = disabled;
+            }
+
+            function syncCountdownFromInputs() {
+                if (countdownRunning) return;
+                configuredMs = durationFromInputs(elements.countdownHours, elements.countdownMinutes, elements.countdownSeconds);
+                remainingMs = configuredMs;
+                elements.countdownFace.classList.remove("finished");
+                elements.countdownStatus.classList.remove("finished");
+                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
+                renderCountdown();
+            }
+
+            function setCountdown(milliseconds) {
+                pauseCountdown(false);
+                configuredMs = Math.min(MAX_SECONDS * 1000, Math.max(0, milliseconds));
+                remainingMs = configuredMs;
+                setDurationInputs(configuredMs);
+                elements.countdownFace.classList.remove("finished");
+                elements.countdownStatus.classList.remove("finished");
+                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
+                renderCountdown();
+                setMode("countdown");
+            }
+
+            function prepareAudio() {
+                if (!state.soundEnabled) return;
+                try {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioContextClass) return;
+                    if (!audioContext) audioContext = new AudioContextClass();
+                    if (audioContext.state === "suspended") audioContext.resume();
+                } catch (error) {
+                    audioContext = null;
+                }
+            }
+
+            function playFinishSound() {
+                if (!state.soundEnabled || !audioContext) return;
+                try {
+                    const now = audioContext.currentTime;
+                    [659.25, 783.99, 987.77].forEach((frequency, index) => {
+                        const oscillator = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        const start = now + (index * 0.16);
+                        oscillator.type = "sine";
+                        oscillator.frequency.value = frequency;
+                        gain.gain.setValueAtTime(0.0001, start);
+                        gain.gain.exponentialRampToValueAtTime(0.16, start + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
+                        oscillator.connect(gain);
+                        gain.connect(audioContext.destination);
+                        oscillator.start(start);
+                        oscillator.stop(start + 0.3);
+                    });
+                } catch (error) {
+                    // The visual and accessible finish states remain available.
+                }
+            }
+
+            function startCountdown() {
+                if (remainingMs <= 0) syncCountdownFromInputs();
+                if (remainingMs <= 0) {
+                    elements.countdownStatus.textContent = "Choose a time to begin";
+                    elements.countdownHours.focus();
+                    return;
+                }
+                prepareAudio();
+                countdownEndAt = Date.now() + remainingMs;
+                countdownRunning = true;
+                setRunButton(elements.countdownStartButton, true);
+                elements.countdownStatus.textContent = "Counting down";
+                elements.countdownFace.classList.remove("finished");
+                elements.countdownStatus.classList.remove("finished");
+                setCountdownInputsDisabled(true);
+                ensureAnimationLoop();
+            }
+
+            function pauseCountdown(updateStatus = true) {
+                if (countdownRunning) remainingMs = Math.max(0, countdownEndAt - Date.now());
+                countdownRunning = false;
+                setRunButton(elements.countdownStartButton, false);
+                setCountdownInputsDisabled(false);
+                if (updateStatus && remainingMs > 0) elements.countdownStatus.textContent = "Paused";
+                renderCountdown();
+            }
+
+            function resetCountdown() {
+                pauseCountdown(false);
+                remainingMs = configuredMs;
+                elements.countdownFace.classList.remove("finished");
+                elements.countdownStatus.classList.remove("finished");
+                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
+                elements.countdownAnnouncement.textContent = "";
+                renderCountdown();
+            }
+
+            function addMinute() {
+                const maximumMs = MAX_SECONDS * 1000;
+                configuredMs = Math.min(maximumMs, configuredMs + 60000);
+                remainingMs = Math.min(maximumMs, remainingMs + 60000);
+                if (countdownRunning) countdownEndAt = Date.now() + remainingMs;
+                setDurationInputs(configuredMs);
+                elements.countdownFace.classList.remove("finished");
+                elements.countdownStatus.classList.remove("finished");
+                elements.countdownStatus.textContent = countdownRunning ? "One minute added" : "One minute added — ready";
+                renderCountdown();
+            }
+
+            function finishCountdown() {
+                countdownRunning = false;
+                remainingMs = 0;
+                setRunButton(elements.countdownStartButton, false, "Start again");
+                setCountdownInputsDisabled(false);
+                elements.countdownFace.classList.add("finished");
+                elements.countdownStatus.classList.add("finished");
+                elements.countdownStatus.textContent = "Time is up!";
+                elements.countdownAnnouncement.textContent = "Time is up.";
+                renderCountdown();
+                playFinishSound();
+            }
+
+            function renderCountdown() {
+                const display = formatCountdown(remainingMs);
+                elements.countdownDisplay.textContent = display;
+                const progress = configuredMs > 0 ? Math.min(1, Math.max(0, remainingMs / configuredMs)) : 0;
+                elements.countdownFace.style.setProperty("--progress", String(progress));
+                updateDocumentTitle();
+            }
+
+            function startStopwatch() {
+                stopwatchStartedAt = Date.now() - stopwatchElapsedMs;
+                stopwatchRunning = true;
+                setRunButton(elements.stopwatchStartButton, true);
+                elements.stopwatchStatus.textContent = "Running";
+                ensureAnimationLoop();
+            }
+
+            function pauseStopwatch() {
+                if (stopwatchRunning) stopwatchElapsedMs = Date.now() - stopwatchStartedAt;
+                stopwatchRunning = false;
+                setRunButton(elements.stopwatchStartButton, false);
+                elements.stopwatchStatus.textContent = stopwatchElapsedMs > 0 ? "Paused" : "Ready";
+                renderStopwatch();
+            }
+
+            function resetStopwatch() {
+                stopwatchRunning = false;
+                stopwatchElapsedMs = 0;
+                setRunButton(elements.stopwatchStartButton, false);
+                elements.stopwatchStatus.textContent = "Ready";
+                renderStopwatch();
+            }
+
+            function renderStopwatch() {
+                elements.stopwatchDisplay.textContent = formatStopwatch(stopwatchElapsedMs);
+                updateDocumentTitle();
+            }
+
+            function updateDocumentTitle() {
+                let title = BASE_TITLE;
+                if (activeMode === "countdown" && countdownRunning) title = `${formatCountdown(remainingMs)} · ${BASE_TITLE}`;
+                if (activeMode === "stopwatch" && stopwatchRunning) title = `${formatStopwatch(stopwatchElapsedMs)} · ${BASE_TITLE}`;
+                if (title !== lastDocumentTitle) {
+                    document.title = title;
+                    lastDocumentTitle = title;
+                }
+            }
+
+            function animationTick() {
+                animationFrame = 0;
+                if (countdownRunning) {
+                    remainingMs = Math.max(0, countdownEndAt - Date.now());
+                    renderCountdown();
+                    if (remainingMs <= 0) finishCountdown();
+                }
+                if (stopwatchRunning) {
+                    stopwatchElapsedMs = Date.now() - stopwatchStartedAt;
+                    renderStopwatch();
+                }
+                if (countdownRunning || stopwatchRunning) animationFrame = window.requestAnimationFrame(animationTick);
+            }
+
+            function ensureAnimationLoop() {
+                if (!animationFrame) animationFrame = window.requestAnimationFrame(animationTick);
+            }
+
+            function renderPresets() {
+                document.querySelectorAll("[data-quick-preset]").forEach(button => {
+                    button.hidden = !state.quickPresets.includes(Number(button.dataset.quickPreset));
+                });
+                elements.savedPresetButtons.replaceChildren();
+                state.presets.forEach(preset => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "preset-button saved-preset-button";
+                    button.textContent = preset.name;
+                    button.title = `${preset.name}: ${formatCountdown(preset.seconds * 1000)}`;
+                    button.addEventListener("click", () => setCountdown(preset.seconds * 1000));
+                    elements.savedPresetButtons.append(" ", button);
+                });
+                elements.quickPresetEmpty.hidden = state.quickPresets.length > 0 || state.presets.length > 0;
+
+                elements.savedPresetList.replaceChildren();
+                if (state.presets.length === 0) {
+                    const empty = document.createElement("p");
+                    empty.className = "saved-empty";
+                    empty.textContent = "No saved countdowns yet.";
+                    elements.savedPresetList.append(empty);
+                    return;
+                }
+
+                state.presets.forEach(preset => {
+                    const row = document.createElement("div");
+                    row.className = "saved-row";
+                    const name = document.createElement("span");
+                    name.className = "saved-name";
+                    name.textContent = preset.name;
+                    const duration = document.createElement("span");
+                    duration.className = "saved-duration";
+                    duration.textContent = formatCountdown(preset.seconds * 1000);
+                    name.append(duration);
+
+                    const useButton = document.createElement("button");
+                    useButton.type = "button";
+                    useButton.className = "mini-button";
+                    useButton.textContent = "Use";
+                    useButton.addEventListener("click", () => {
+                        setCountdown(preset.seconds * 1000);
+                        closeModal();
+                    });
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.type = "button";
+                    deleteButton.className = "mini-button danger";
+                    deleteButton.textContent = "Delete";
+                    deleteButton.setAttribute("aria-label", `Delete ${preset.name} preset`);
+                    deleteButton.addEventListener("click", () => {
+                        if (!window.confirm(`Delete the saved countdown “${preset.name}”?`)) return;
+                        state.presets = state.presets.filter(item => item.id !== preset.id);
+                        persistState();
+                        renderPresets();
+                        elements.presetFormMessage.className = "form-message";
+                        elements.presetFormMessage.textContent = "Saved countdown deleted.";
+                    });
+
+                    row.append(name, useButton, deleteButton);
+                    elements.savedPresetList.append(row);
+                });
+            }
+
+            function savePreset(event) {
+                event.preventDefault();
+                const name = elements.presetName.value.trim();
+                const milliseconds = durationFromInputs(elements.presetHours, elements.presetMinutes, elements.presetSeconds);
+                elements.presetFormMessage.className = "form-message";
+
+                if (!name) {
+                    elements.presetFormMessage.className = "form-message error";
+                    elements.presetFormMessage.textContent = "Enter a name for this countdown.";
+                    elements.presetName.focus();
+                    return;
+                }
+                if (milliseconds <= 0) {
+                    elements.presetFormMessage.className = "form-message error";
+                    elements.presetFormMessage.textContent = "Choose a duration longer than zero seconds.";
+                    elements.presetMinutes.focus();
+                    return;
+                }
+                if (state.presets.length >= MAX_PRESETS) {
+                    elements.presetFormMessage.className = "form-message error";
+                    elements.presetFormMessage.textContent = "Delete a saved countdown before adding another.";
+                    return;
+                }
+
+                state.presets.push({ id: createPresetId(), name, seconds: Math.round(milliseconds / 1000) });
+                persistState();
+                renderPresets();
+                elements.presetName.value = "";
+                elements.presetFormMessage.textContent = `Saved “${name}”.`;
+            }
+
+            function saveCountdownDefaults() {
+                const milliseconds = durationFromInputs(
+                    elements.defaultHours,
+                    elements.defaultMinutes,
+                    elements.defaultSeconds
+                );
+                elements.defaultCountdownMessage.className = "form-message";
+
+                if (milliseconds <= 0) {
+                    elements.defaultCountdownMessage.className = "form-message error";
+                    elements.defaultCountdownMessage.textContent = "Choose a default longer than zero seconds.";
+                    elements.defaultMinutes.focus();
+                    return;
+                }
+
+                state.defaultSeconds = Math.round(milliseconds / 1000);
+                state.quickPresets = elements.quickPresetSettings
+                    .filter(input => input.checked)
+                    .map(input => Number(input.dataset.quickPresetSetting));
+                persistState();
+                renderPresets();
+                elements.defaultCountdownMessage.textContent = "Saved automatically. The default time will be used the next time the app opens.";
+            }
+
+            elements.countdownTab.addEventListener("click", () => setMode("countdown"));
+            elements.stopwatchTab.addEventListener("click", () => setMode("stopwatch"));
+            [elements.countdownTab, elements.stopwatchTab].forEach(tab => {
+                tab.addEventListener("keydown", event => {
+                    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                    event.preventDefault();
+                    setMode(activeMode === "countdown" ? "stopwatch" : "countdown", true);
+                });
+            });
+
+            document.getElementById("presetList").addEventListener("click", event => {
+                const button = event.target.closest("button[data-seconds]");
+                if (button) setCountdown(Number(button.dataset.seconds) * 1000);
+            });
+
+            [elements.countdownHours, elements.countdownMinutes, elements.countdownSeconds].forEach(input => {
+                input.addEventListener("change", syncCountdownFromInputs);
+            });
+
+            elements.countdownStartButton.addEventListener("click", () => {
+                if (countdownRunning) pauseCountdown();
+                else if (remainingMs <= 0 && configuredMs > 0) {
+                    remainingMs = configuredMs;
+                    startCountdown();
+                } else startCountdown();
+            });
+            elements.countdownResetButton.addEventListener("click", resetCountdown);
+            elements.addMinuteButton.addEventListener("click", addMinute);
+            elements.stopwatchStartButton.addEventListener("click", () => {
+                if (stopwatchRunning) pauseStopwatch(); else startStopwatch();
+            });
+            elements.stopwatchResetButton.addEventListener("click", resetStopwatch);
+            elements.presetForm.addEventListener("submit", savePreset);
+            [elements.defaultHours, elements.defaultMinutes, elements.defaultSeconds, ...elements.quickPresetSettings].forEach(input => {
+                input.addEventListener("change", saveCountdownDefaults);
+            });
+
+            elements.soundEnabledInput.addEventListener("change", () => {
+                state.soundEnabled = elements.soundEnabledInput.checked;
+                persistState();
+                if (state.soundEnabled) prepareAudio();
+            });
+
+            elements.presentationButton.addEventListener("click", () => {
+                if (presentationMode) exitPresentationMode();
+                else enterPresentationMode();
+            });
+
+            document.addEventListener("fullscreenchange", () => {
+                if (presentationUsesFullscreen && document.fullscreenElement !== elements.appShell) {
+                    presentationUsesFullscreen = false;
+                    setPresentationMode(false);
+                }
+            });
+
+            document.addEventListener("keydown", event => {
+                if (event.key === "Escape" && presentationMode && !document.fullscreenElement) {
+                    event.preventDefault();
+                    exitPresentationMode();
+                    return;
+                }
+                if (event.code !== "Space" || event.defaultPrevented || event.repeat) return;
+                const target = event.target;
+                if (target.closest("input, textarea, select, button, [role='dialog']")) return;
+                event.preventDefault();
+                if (activeMode === "countdown") elements.countdownStartButton.click();
+                else elements.stopwatchStartButton.click();
+            });
+
+            window.addEventListener("storage", event => {
+                if (event.key !== STORAGE_KEY) return;
+                state = readState();
+                elements.soundEnabledInput.checked = state.soundEnabled;
+                syncDefaultControls();
+                renderPresets();
+            });
+
+            elements.soundEnabledInput.checked = state.soundEnabled;
+            syncDefaultControls();
+            renderPresets();
+            setCountdown(state.defaultSeconds * 1000);
+            renderStopwatch();
+            setMode("countdown");
+            updatePresentationButton();
+        })();
+    </script>
 </body>
 </html>
