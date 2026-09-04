@@ -1245,7 +1245,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     <div class="settings-section"><h3 class="settings-heading">School Information</h3><label class="field"><span class="field-label">Edit School</span><select id="settingsSchoolSelect"></select></label><div class="school-actions"><button type="button" id="addSchoolButton" class="button">＋ Add School</button><button type="button" id="deleteSchoolButton" class="button button-danger">− Delete School</button></div><div id="schoolEditor" class="school-editor"></div><p id="schoolStatus" class="status" role="status">Changes save automatically to this browser.</p></div>
                 </section>
                 <section id="settingsPanel-textbooks" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-textbooks" hidden>
-                    <section class="settings-section"><h3 class="settings-heading">Textbook presets</h3><p class="settings-help">Check the books you want to see in the dashboard dropdown. Unchecking a book does not remove it from classes already using it.</p><div id="presetList" class="textbook-list"></div><p class="settings-help">One short sample is available in this preview. More textbook presets will be added later.</p></section>
+                    <section class="settings-section"><h3 class="settings-heading">Textbook presets</h3><p class="settings-help">Check the books you want to see in the dashboard dropdown. Unchecking a book does not remove it from classes already using it.</p><div id="presetList" class="textbook-list"></div><p class="settings-help">NEW HORIZON Elementary 6 is included. More textbook presets can be added through the preset source workflow.</p></section>
                     <section class="settings-section textbook-section"><h3 class="settings-heading">Custom textbooks</h3><p class="settings-help">Your saved textbooks are available to all your classes. Edit a book below, or add a new one.</p><div id="customTextbookList" class="textbook-list"></div><div class="button-row"><button type="button" id="newTemplateButton" class="button">＋ Add Custom Textbook</button></div></section>
                     <section id="textbookEditor" class="settings-section textbook-section" hidden aria-labelledby="textbookEditorTitle"><h3 id="textbookEditorTitle" class="settings-heading">Add custom textbook</h3><p class="settings-help">Use one line per item. Start lines with <strong>#</strong>, <strong>##</strong>, or <strong>###</strong> for levels 1–3. Add an icon with <strong>[G]</strong> goal, <strong>[W]</strong> watch, <strong>[L]</strong> listen, <strong>[R]</strong> read, <strong>[S]</strong> speak, <strong>[LS]</strong> Let's Sing, <strong>[LC]</strong> Let's Chant, <strong>[ST]</strong> Small Talk, or <strong>[P]</strong> write. Edits apply to every class using this textbook; unchanged items retain their checks.</p><label class="field"><span class="field-label">Textbook Title</span><input id="customTitleInput" type="text" maxlength="200" placeholder="Let's Try! 4 Textbook"></label><label class="field"><span class="field-label">Textbook Sections and Activities</span><textarea id="customItemsInput" placeholder="# Unit 1&#10;## [G] Unit goal&#10;### [L] Listen and repeat"></textarea></label><div class="button-row"><button type="button" id="saveTemplateButton" class="button button-primary">Save Textbook</button><button type="button" id="cancelTemplateButton" class="button">Cancel</button></div></section>
                     <p id="templateStatus" class="status" role="status"></p>
@@ -2094,17 +2094,1740 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         "use strict";
         const TRACKER_KEY = "teacherTools.classTracker.state.v1";
         const SCHEDULER_KEY = "classAutomatorData_v3";
-        const sampleTemplate = { id:"preset-new-horizon-6-sample", title:"New Horizon 6 Textbook (sample)", source:"preset", items:[
-            {id:"u1",level:1,text:"Unit 1"},{id:"u1p1",level:2,text:"Part 1"},{id:"u1p1a",level:3,text:"Listen and repeat"},{id:"u1p1b",level:3,text:"Practice the dialog"},{id:"u1p2",level:2,text:"Part 2"},{id:"u1p2a",level:3,text:"Read and think"},{id:"u1goal",level:2,text:"Unit goal"}
-        ]};
+        /* CLASS-TRACKER:TEXTBOOK-PRESETS:START */
+        const TEXTBOOK_PRESETS = [
+            {
+                "id": "preset-new-horizon-6-sample",
+                "title": "NEW HORIZON Elementary 6",
+                "source": "preset",
+                "items": [
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9a1748f03f6a",
+                        "level": 1,
+                        "text": "Unit 1: This is me! | pp.6–15"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-b63e62be4aff",
+                        "level": 2,
+                        "text": "Starting Out — pp.6–7"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-affc27289d91",
+                        "level": 3,
+                        "text": "[G] Our Goal — 好きなものや宝物などについて紹介し合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-87e2707f8bba",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — Hello, everyone."
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2bf5768595db",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Do you have a dog?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f7621b98f1d5",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物の自己紹介を聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0905442aeed2",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — My treasure is this ball."
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-1b9ed96008d4",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 自己紹介を見て、自分なら何を伝えたいか考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-003b3a7d3b86",
+                        "level": 3,
+                        "text": "[R] [W] Let's Read and Write — 自分の名前などを読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c489fe175a11",
+                        "level": 2,
+                        "text": "Your Turn — pp.8–9"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-01aad0bf1df3",
+                        "level": 3,
+                        "text": "[W] Let's Watch 1 — 好きなものの紹介の仕方"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-40dca8514afc",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 好きなものを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f6befd2a3007",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — 好きなものをたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-fbe7fc7af6e4",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 好きなことについて読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2737ee0dba4f",
+                        "level": 3,
+                        "text": "[W] Let's Watch 2 — 宝物の紹介の仕方"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9a8af198c7ad",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — 宝物を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2cd0dd4e2340",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — 宝物とその理由をたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e52064e46798",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 宝物について読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7b99e6a3f8ad",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What sport do you like?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a451b3b4a5a5",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.10–11"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f5cec3d9b9fa",
+                        "level": 3,
+                        "text": "Step 1 — 自己紹介のモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-15f7357d9277",
+                        "level": 3,
+                        "text": "Step 2 — 発表する内容を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-06d67dedb272",
+                        "level": 3,
+                        "text": "[G] Your Goal — 好きなものや宝物について紹介しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9197ae702a53",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What is your treasure?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e036ef63f9ec",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.12–13"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c291804bacd2",
+                        "level": 3,
+                        "text": "[W] 文化探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-19d788163d6c",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-aec99d02a1ba",
+                        "level": 3,
+                        "text": "[W] 世界探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-52c823e42d63",
+                        "level": 3,
+                        "text": "[L] [R] 物語探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0d40487cc5f4",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What country do you like?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ef2b0afe6232",
+                        "level": 3,
+                        "text": "Plus! Word Bingo — スポーツ"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5b63405b691c",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.14–15"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-bdb69148f262",
+                        "level": 3,
+                        "text": "Letter Images"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-378c39a0438e",
+                        "level": 3,
+                        "text": "Bb の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-beb092210bb7",
+                        "level": 3,
+                        "text": "Cc の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9d30d26af645",
+                        "level": 3,
+                        "text": "Dd の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ba5316fe8dc8",
+                        "level": 3,
+                        "text": "Ff の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7fbf65d09ac9",
+                        "level": 3,
+                        "text": "Gg の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-6cdc6d0deafc",
+                        "level": 3,
+                        "text": "Review ①"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0fc458370840",
+                        "level": 3,
+                        "text": "Aa の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3dbbfca8a6ed",
+                        "level": 3,
+                        "text": "聞いてみよう ①"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c6582081b474",
+                        "level": 1,
+                        "text": "Unit 2: My Daily Schedule | pp.16–25"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-419face911f9",
+                        "level": 2,
+                        "text": "Starting Out — pp.16–17"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3dce4035ae93",
+                        "level": 3,
+                        "text": "[G] Our Goal — 日常生活について紹介し合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-64af0db4fbfc",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — It's Sunday!"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c8e611caa901",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What time is it in New York?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7c14e4f19ec5",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物の日常生活を聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-25ca91dcbd88",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — Tell me about your daily schedule."
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-012adc98051b",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 週末の過ごし方についての話を見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7975965a14a7",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 日常生活について読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9ff1867c73bb",
+                        "level": 2,
+                        "text": "Your Turn — pp.18–19"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-8aec0458b644",
+                        "level": 3,
+                        "text": "[W] Let's Watch"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5c17a2e9eb20",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 週末の時刻や過ごし方を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-dee80ffeb270",
+                        "level": 3,
+                        "text": "Let's Try 1 — 起床・朝食・就寝時刻などをたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-dfc945948494",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cc128c730ce7",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — 家事をする頻度を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-948d52652993",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — 家事などの頻度を伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0bd1581ed194",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 週末にすることについて書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0573eec797b9",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What time do you get up?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-68a53eef8f34",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.20–21"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e9ab4cbc158c",
+                        "level": 3,
+                        "text": "Step 1 — 週末の過ごし方の紹介モデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-6611be40f818",
+                        "level": 3,
+                        "text": "Step 2 — 週末の過ごし方カードを作ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-57f034e2bf49",
+                        "level": 3,
+                        "text": "[G] Your Goal — 自分の週末の過ごし方を紹介しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-367e69a066eb",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What time do you go to bed?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-fa89c0e21cb3",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.22–23"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cc6879b2ee32",
+                        "level": 3,
+                        "text": "[W] 文化探検 — アメリカの小学校生活"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-bb68df97d726",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a7b1c6dea7c8",
+                        "level": 3,
+                        "text": "[W] 世界探検 — スウェーデンの子どもの生活"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-50c5176f224a",
+                        "level": 3,
+                        "text": "[L] [R] 物語探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e1e557d9556e",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Tell me about your daily schedule."
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-8cefc0b918d1",
+                        "level": 3,
+                        "text": "Plus! Word Bingo — 一日の生活・頻度"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-49a7fd448927",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.24–25"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e4debfe54309",
+                        "level": 3,
+                        "text": "Letter Images"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7f179034262e",
+                        "level": 3,
+                        "text": "Hh の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-d7a98416c682",
+                        "level": 3,
+                        "text": "Jj の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3727f4e1a036",
+                        "level": 3,
+                        "text": "Ll の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-098d395c2067",
+                        "level": 3,
+                        "text": "Mm の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a553325de7cc",
+                        "level": 3,
+                        "text": "Nn の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cf9bbd1bd8d8",
+                        "level": 3,
+                        "text": "Review ②"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0c86bd08bd91",
+                        "level": 3,
+                        "text": "Oo の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f2611481b093",
+                        "level": 3,
+                        "text": "聞いてみよう ②"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a180ab693e58",
+                        "level": 1,
+                        "text": "Unit 3: My Weekend | pp.26–35"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f61ee0dff9b3",
+                        "level": 2,
+                        "text": "Starting Out — pp.26–27"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c1cf567f5d19",
+                        "level": 3,
+                        "text": "[G] Our Goal — 週末にしたことを伝え合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-12d1c01702f4",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — How was your weekend?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e9f454d76143",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What do you do on weekends?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ee6bb3204118",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物が週末にしたことを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-75c824a19096",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — It was great!"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-aaa8f60fae79",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 週末についての話を見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-aef147dd56bb",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 週末に行った場所について読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ec7dacc37314",
+                        "level": 2,
+                        "text": "Your Turn — pp.28–29"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-791b964e2ab7",
+                        "level": 3,
+                        "text": "[W] Let's Watch — 週末にしたことや感想のたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e13ba9431f39",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 週末にしたことを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ba6bf795dbcd",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — 週末にしたことを伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2f46060356c4",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 週末に楽しんだことを書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e35e529c9552",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-8f8a410a1a0e",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-32c6b6f5be68",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 週末の出来事について詳しく書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a5af4963e2cc",
+                        "level": 3,
+                        "text": "[ST] Small Talk — How was your breakfast?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cfe3bb73b7dc",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.30–31"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7757da9c16a1",
+                        "level": 3,
+                        "text": "Step 1 — 週末の出来事を伝えるモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-38c8310fd5d8",
+                        "level": 3,
+                        "text": "Step 2 — 伝えたい週末の出来事を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a43389aca952",
+                        "level": 3,
+                        "text": "[G] Your Goal — 週末の出来事を伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5af47b251253",
+                        "level": 3,
+                        "text": "[ST] Small Talk — How was your dinner last night?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-62ebe8b6f78e",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.32–33"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-876ad23ce5be",
+                        "level": 3,
+                        "text": "[W] 文化探検 — 世界の子どもの夏休み"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5ccc014a978a",
+                        "level": 3,
+                        "text": "フカボリ！ — スペインの夏祭り"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-bb8ffad2e347",
+                        "level": 3,
+                        "text": "[W] 世界探検 — インドの子どもの週末"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f1ab9a696744",
+                        "level": 3,
+                        "text": "[L] [R] 物語探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7d152046ae9e",
+                        "level": 3,
+                        "text": "[ST] Small Talk — How was your summer vacation?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-362b4f02e233",
+                        "level": 3,
+                        "text": "Plus! Word Bingo — したこと"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-29f3663abbff",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.34–35"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-98db05f50072",
+                        "level": 3,
+                        "text": "Letter Images"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a3ff92ecd4a1",
+                        "level": 3,
+                        "text": "Kk の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-8a52c557a503",
+                        "level": 3,
+                        "text": "Pp の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2bf706457730",
+                        "level": 3,
+                        "text": "Rr の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-779a46e49167",
+                        "level": 3,
+                        "text": "Ss の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0486e1ccde05",
+                        "level": 3,
+                        "text": "Tt の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0100ff4d6b5e",
+                        "level": 3,
+                        "text": "Review ③"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9b02e5cf74da",
+                        "level": 3,
+                        "text": "Uu の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5491498306d0",
+                        "level": 3,
+                        "text": "聞いてみよう ③"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-4465288e64b7",
+                        "level": 1,
+                        "text": "Check Your Steps 1 | pp.36–37"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-59869f3ef05c",
+                        "level": 2,
+                        "text": "発信！ わたしのニュースあれこれ"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7c4ff431a63b",
+                        "level": 3,
+                        "text": "[G] Your Goal  — 最近の出来事などについて、内容を理して発表しよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-171903c8f6d7",
+                        "level": 3,
+                        "text": "[L] HOP — Unit 1–3 の表現を振り返ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-eae70f06fbbd",
+                        "level": 3,
+                        "text": "STEP — 自分について伝えるニュースを整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-054ad3ddb5f0",
+                        "level": 3,
+                        "text": "[S] JUMP — 自分のニュースを発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-530957722044",
+                        "level": 3,
+                        "text": "Digital Notebook: Brainstorming"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7cc9741f8804",
+                        "level": 1,
+                        "text": "Unit 4: Let's see the world. | pp.38–47"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-4f3a931d2c9d",
+                        "level": 2,
+                        "text": "Starting Out — pp.38–39"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-6149b2d6f67e",
+                        "level": 3,
+                        "text": "[G] Our Goal — 行きたい国の魅力を伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-dc7ad1e623f0",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — I want to go to America!"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3f85e316086c",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What's this country?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-32fce2c71afc",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 行きたい国についての会話を聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9ff3b7a51408",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — You can eat spicy food."
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c03ea09f8c61",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 行きたい国やそこでできることについての話を見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ad8178d7b0ff",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 行きたい国について読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-291cd4054e96",
+                        "level": 2,
+                        "text": "Your Turn — pp.40–41"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0a1b628efb73",
+                        "level": 3,
+                        "text": "[W] Let's Watch — 行きたい国のたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-fe110b50da54",
+                        "level": 3,
+                        "text": "[L] Let's Listen — 行きたい国やそこでできることを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-989e26ae3dc1",
+                        "level": 3,
+                        "text": "[ST] Let's Try — 行きたい国とそこでできることを伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ab40effe4ac3",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 行きたい国とそこでできることについて書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7c20a36ace48",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Where do you want to go?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a6dccea9ad08",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.42–43"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-4c3f85d0e647",
+                        "level": 3,
+                        "text": "Step 1 — 国を紹介するモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-b18824ad1820",
+                        "level": 3,
+                        "text": "Step 2 — 行きたい国とその魅力について内容を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-d79806a957f2",
+                        "level": 3,
+                        "text": "[G] Your Goal — 行きたい国とその魅力を紹介しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9a9296389192",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What do you want to eat?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-def3f4d24e63",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.44–45"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cdf4e79d854a",
+                        "level": 3,
+                        "text": "[W] 文化探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-8c5d6f25fe34",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-1fc11539d12b",
+                        "level": 3,
+                        "text": "[W] 世界探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c61dc1975bc5",
+                        "level": 3,
+                        "text": "[L] [R] 物語探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e6d25586500a",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What do you want to see?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e5a2ee746c6a",
+                        "level": 3,
+                        "text": "Plus! Word Bingo — 感想・様子"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-29fdad733fd3",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.46–47"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7eff589ce693",
+                        "level": 3,
+                        "text": "Letter Images"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3dda543ce051",
+                        "level": 3,
+                        "text": "Vv の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5e82ce18d4d5",
+                        "level": 3,
+                        "text": "Ww の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7121ac7f8014",
+                        "level": 3,
+                        "text": "Yy の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-312c2aef55d7",
+                        "level": 3,
+                        "text": "Zz の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cc3981187c73",
+                        "level": 3,
+                        "text": "Xx の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-21fa00488cdb",
+                        "level": 3,
+                        "text": "Review ④"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-df42d857409a",
+                        "level": 3,
+                        "text": "Ii の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c86e8ac3f958",
+                        "level": 3,
+                        "text": "聞いてみよう ④"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2b4d3f4d56f6",
+                        "level": 1,
+                        "text": "Unit 5: Where is it from? | pp.48–59"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-993b16120227",
+                        "level": 2,
+                        "text": "Starting Out — pp.48–49"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-b467812235ca",
+                        "level": 3,
+                        "text": "[G] Our Goal — 世界とのつながりを考え、グループで発表しよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ef10a1eaf20a",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — One Big World"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-1a98a0aca9d1",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Where is New Zealand?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-fb4685ad7267",
+                        "level": 3,
+                        "text": "[L] Listen and Think — どの国から来たものか聞き取ろう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a11ac7a117e5",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — Where is this chicken from?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c7517f011217",
+                        "level": 3,
+                        "text": "[W] Watch and Think — ものの産地についての話を見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-41dfc54bb20e",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 産地について読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-8f59f92656cf",
+                        "level": 2,
+                        "text": "Your Turn — pp.50–51"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-553a6db55504",
+                        "level": 3,
+                        "text": "[W] Let's Watch — 身の回りのもののたずね方・紹介の仕方"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-11409ab1a99a",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 食材や産地を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-4bb61a987ffe",
+                        "level": 3,
+                        "text": "[ST] Let's Try — オリジナルサンドイッチの食材と産地を伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-20e7e7b3225e",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write 1"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-8b94e1858a77",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-218ef21d39bb",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write 2"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9e579520fb0b",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What vegetable do you like?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ef42f88a9d5d",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.52–53"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-d7bf77aeed34",
+                        "level": 3,
+                        "text": "[W] [L] [R] Step 1 — サンドイッチを紹介するモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-1313173ab359",
+                        "level": 3,
+                        "text": "[S] [W] Step 2 — オリジナルサンドイッチの内容を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-4bd1ccc5acda",
+                        "level": 3,
+                        "text": "[G] Your Goal — オリジナルサンドイッチを紹介しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9f2690b289d4",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Is your glue from Japan?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-489ab3229e91",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.54–57"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e72ccadc5534",
+                        "level": 3,
+                        "text": "[W] 文化探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c0413f6483bb",
+                        "level": 3,
+                        "text": "フカボリ！ — 資料 No.1–25"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-b59d164f1370",
+                        "level": 3,
+                        "text": "[W] 世界探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-070d393c7b6c",
+                        "level": 3,
+                        "text": "[L] [R] 物語探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f9ae465c16ed",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Where is your water bottle from?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a791fb0b5f17",
+                        "level": 3,
+                        "text": "Plus! Word Bingo — 食材"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c9be775d1b69",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.58–59"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a435042bc528",
+                        "level": 3,
+                        "text": "Letter Images"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-88288d5fb54c",
+                        "level": 3,
+                        "text": "Qq の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-d3a47ad68e78",
+                        "level": 3,
+                        "text": "Ee の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e0e2b1a7df1c",
+                        "level": 3,
+                        "text": "Review ⑤"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-31f3c8f9f4f0",
+                        "level": 3,
+                        "text": "聞いてみよう ⑤"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7865f0841084",
+                        "level": 3,
+                        "text": "Review ⑥"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a8abf447b321",
+                        "level": 3,
+                        "text": "聞いてみよう ⑥"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-509c1e65f77c",
+                        "level": 3,
+                        "text": "Review ⑦"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3eed9f974e21",
+                        "level": 3,
+                        "text": "聞いてみよう ⑦"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3096e5141e56",
+                        "level": 1,
+                        "text": "Unit 6: Save the animals. | pp.60–69"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-46fa028df55d",
+                        "level": 2,
+                        "text": "Starting Out — pp.60–61"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9594607772d2",
+                        "level": 3,
+                        "text": "[G] Our Goal — 生き物を守るためにできることを伝えよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-1fabd205e943",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — We all live together."
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-83d99d254a48",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What animal do you like?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-d844076c085f",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 絶滅危惧種などについての話を聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-d605d8bbc8af",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — Let's save the animals!"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cac3c41a04bd",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 生き物が抱える問題についての話を見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-05b3113a7c97",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 生き物について読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-1c32962d0b6b",
+                        "level": 2,
+                        "text": "Your Turn — pp.62–63"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ca21af2893d2",
+                        "level": 3,
+                        "text": "[W] Let's Watch"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-d318d3b8748c",
+                        "level": 3,
+                        "text": "[L] Let's Listen"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-72f5424cc93c",
+                        "level": 3,
+                        "text": "[ST] Let's Try"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0c7d5ab7c243",
+                        "level": 3,
+                        "text": "[R] Let's Read — 生き物についてのポスターを読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-79549ad4d450",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 生き物の暮らす場所や問題について書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f1c63b3140f4",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What do penguins eat?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-b9a17e4901e2",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.64–65"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5ea86fd0ccdb",
+                        "level": 3,
+                        "text": "[W] [L] [R] Step 1 — 生き物を救うための発表モデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-6b9bcacc90fa",
+                        "level": 3,
+                        "text": "[S] [P] Step 2 — 救いたい生き物と自分たちにできることを整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ed29c3255c93",
+                        "level": 3,
+                        "text": "[G] [S] Your Goal — 生き物を守るためにできることを発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-4c9c97f25896",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Where do lions live?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0bebc5794558",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.66–67"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-b2dd32749164",
+                        "level": 3,
+                        "text": "[W] 文化探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-bcaf88c539e8",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ae6496e2a286",
+                        "level": 3,
+                        "text": "[W] 世界探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-af102a5c503a",
+                        "level": 3,
+                        "text": "[L] [R] 物語探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7b3bc1635e31",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What can we do for the sea turtles?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-56556d120ad9",
+                        "level": 3,
+                        "text": "Plus! Word Bingo — 自然"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-376f4b218d50",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.68–69"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-398d0c29a86c",
+                        "level": 3,
+                        "text": "ch の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-b0ee4f572ad4",
+                        "level": 3,
+                        "text": "sh の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ff3e67ad705f",
+                        "level": 3,
+                        "text": "th の音 ①"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3bf7d3190c7b",
+                        "level": 3,
+                        "text": "th の音 ②"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e41d13c52da6",
+                        "level": 3,
+                        "text": "wh の音"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-eeba384a1d93",
+                        "level": 3,
+                        "text": "Review ⑧"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cd9afd2381f3",
+                        "level": 3,
+                        "text": "Review ⑨"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cdf4fa272e98",
+                        "level": 3,
+                        "text": "聞いてみよう ⑧"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-58123e72e6ad",
+                        "level": 1,
+                        "text": "Check Your Steps 2 | pp.70–71"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cdf01b9e0baf",
+                        "level": 2,
+                        "text": "始めよう！ 地球のためにできること"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-939227492d10",
+                        "level": 3,
+                        "text": "[G] Your Goal — 地球を守るために自分ができることについて、内容を整理して発表しよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e8fa1844a5e1",
+                        "level": 3,
+                        "text": "[L] HOP — Unit 4–6 の表現を振り返ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-dd38658458a2",
+                        "level": 3,
+                        "text": "STEP — 地球のためにできることを整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-05cba34b3391",
+                        "level": 3,
+                        "text": "[S] JUMP — 自分たちにできることを発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7a8216d90b2d",
+                        "level": 3,
+                        "text": "Digital Notebook: Brainstorming"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-77a8814266d9",
+                        "level": 1,
+                        "text": "Unit 7 My Best Memory | pp.72–81"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7c6a108093b2",
+                        "level": 2,
+                        "text": "Starting Out — pp.72–73"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-37d74d70054c",
+                        "level": 3,
+                        "text": "[G] Our Goal — 小学校生活の一番の思い出を伝え合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2409d9bf72b9",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — Four Seasons"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c14b75672232",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What do you like about school?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2ef5e8297f84",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 小学校生活の思い出について聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-49ae04b56d4f",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — What's your best memory?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-611165de81b7",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 思い出についての話を見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2ef529b8380f",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 思い出について読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2f46b11cecf0",
+                        "level": 2,
+                        "text": "Your Turn — pp.74–75"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-93ad4def82d9",
+                        "level": 3,
+                        "text": "[W] Let's Watch"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ec2b020677c1",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-97f7e4c0457b",
+                        "level": 3,
+                        "text": "[ST] Let's Try — 一番の思い出について伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5255f24412cc",
+                        "level": 3,
+                        "text": "[R] Let's Read — 思い出について書かれた文を読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-78b06aec2564",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — 発表を聞いて読み方を確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-feb2126b7a23",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 一番の思い出でしたことや感想を書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-6975b01723a1",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What school event do you like?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ac58d79c1d42",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.76–77"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3a0ead441389",
+                        "level": 3,
+                        "text": "[W] [L] [R] Step 1 — 思い出を伝えるモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-601b0de3282c",
+                        "level": 3,
+                        "text": "[ST] [P] Step 2 — 一番の思い出について内容を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ef06bdd83ac2",
+                        "level": 3,
+                        "text": "[G] Your Goal — 小学校生活の一番の思い出を伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3b745e7598e2",
+                        "level": 3,
+                        "text": "[ST] Small Talk — How was your school trip?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ebf2b49cd8bd",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.78–79"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c62ef6b1d78c",
+                        "level": 3,
+                        "text": "[W] 文化探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-e5c8c5d46c78",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-52cd1a854067",
+                        "level": 3,
+                        "text": "[W]世界探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-94cb3327715e",
+                        "level": 3,
+                        "text": "[L] [R] 物語探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-98e4491093e6",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What’s your best memory?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-72328664a16c",
+                        "level": 3,
+                        "text": "Plus! Word Bingo — 学校行事・したこと"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-71ee42c82caa",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.80–81"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c1fc05afb72b",
+                        "level": 3,
+                        "text": "文を読んでみよう ① p.72"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-00cd0fa3954a",
+                        "level": 3,
+                        "text": "文を読んでみよう ② p.72"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-55813df7c7c8",
+                        "level": 3,
+                        "text": "文を読んでみよう ③ p.75"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-85ad50d92300",
+                        "level": 3,
+                        "text": "文を読んでみよう ④ p.75"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-09802241c460",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑤ p.77"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a297c1ab17d9",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑥ p.77"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-508fe1441f87",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑦ p.79"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7d45ee898402",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑧ p.79"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0f1c20904beb",
+                        "level": 1,
+                        "text": "Unit 8: My Future, My Dream | pp.82–91"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9451cc08af04",
+                        "level": 2,
+                        "text": "Starting Out — pp.82–83"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-25209cd76028",
+                        "level": 3,
+                        "text": "[G] Our Goal — 将来したいことや夢について伝え合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-88a945a57479",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — My Future Dream"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-92e6166d43ba",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Are you in a club now?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-b24bbf5a5e64",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 将来の夢について聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-263ab55007d6",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — I want to be a star!"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0d868c4a1409",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 将来の夢についての話を見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-18c52df5876e",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 将来したいことについて読んで書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-257ec00b86ec",
+                        "level": 2,
+                        "text": "Your Turn — pp.84–85"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-31b18385cb95",
+                        "level": 3,
+                        "text": "[W] Let's Watch"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-333972ce2b06",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-970166ba3941",
+                        "level": 3,
+                        "text": "[ST] Let's Try — 将来したいことについて伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3d527b4353cb",
+                        "level": 3,
+                        "text": "[R] Let's Read — 将来の夢についての文を読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-80e6e40ecbbc",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a680322d1526",
+                        "level": 3,
+                        "text": "[R] [P] Let's Read and Write — 将来したいことやその理由を書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-11376433df37",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What club do you want to join?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-fc3f9c87d54c",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.86–87"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-205040f67f1c",
+                        "level": 3,
+                        "text": "[W] [L] [R] Step 1 — 将来の夢を伝えるモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ccf03de778f1",
+                        "level": 3,
+                        "text": "[ST] [P] Step 2 — 発表する夢や理由を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cb3a849a4fdb",
+                        "level": 3,
+                        "text": "[G] Your Goal — 将来の夢について発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-a071ec6503c5",
+                        "level": 3,
+                        "text": "[ST] Small Talk — What do you want to be?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-eade72ab2f20",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.88–89"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2e393345e134",
+                        "level": 3,
+                        "text": "[W] 文化探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-36260cb1350f",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-cb4ea4e81a21",
+                        "level": 3,
+                        "text": "[W] 世界探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-d98ef0529c92",
+                        "level": 3,
+                        "text": "[L] [R] 物語探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f89d0979af23",
+                        "level": 3,
+                        "text": "[ST] Small Talk — Do you like English?"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-26bd575a76ef",
+                        "level": 3,
+                        "text": "Plus! Word Bingo — 職業"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-3fe833951fc0",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.90–91"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-fef6f3deea8b",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑨ p.82"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-02e81f5e37a4",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑩ p.82"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-94472ad3317a",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑪ p.85"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0860b2fcb965",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑫ p.85"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ddb309bf1335",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑬ p.87"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f9e9c35d3768",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑭ p.87"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-f058962fd16d",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑮ p.89"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7c338fdb2528",
+                        "level": 3,
+                        "text": "文を読んでみよう ⑯ p.89"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-863882e50fbc",
+                        "level": 1,
+                        "text": "Check Your Steps 3 | pp.92–93"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-00df686add93",
+                        "level": 2,
+                        "text": "卒業！ 今伝えたい、わたしの思い"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-7358a28caddb",
+                        "level": 3,
+                        "text": "[G] Your Goal — 小学校生活の思い出や将来の夢について、内容を整理して発表しよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-0df4639704fc",
+                        "level": 3,
+                        "text": "[L] HOP — これまでの表現を振り返ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-bfbe97298d5e",
+                        "level": 3,
+                        "text": "STEP — 今伝えたいことを整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-46e56f7c85c5",
+                        "level": 3,
+                        "text": "[S] JUMP — 小学校生活を振り返って発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-75a390ca3e43",
+                        "level": 3,
+                        "text": "プロフィールシート"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-1fb07f3000ec",
+                        "level": 1,
+                        "text": "Going to Junior High School | pp.94–95"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-669a283b000e",
+                        "level": 3,
+                        "text": "中学生になったらどんなことができるようになるのかな。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ab44b48ca8ae",
+                        "level": 3,
+                        "text": "どのように英語を学ぶのかな。"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-6a5ef2252748",
+                        "level": 1,
+                        "text": "Try it! | p. 96"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-5d9b74a66f9c",
+                        "level": 2,
+                        "text": "A Message from Lucas — p.96"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-05e47bbb69e0",
+                        "level": 3,
+                        "text": "Hello from Milan"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-297a34e9055e",
+                        "level": 2,
+                        "text": "Special Extra — p.96"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-2c9e23558ea0",
+                        "level": 3,
+                        "text": "World Report — 放課後にすること"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-9af55ac14533",
+                        "level": 3,
+                        "text": "World Report — 日曜日の過ごし方"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-c53ebd3f2c38",
+                        "level": 3,
+                        "text": "World Report — 週末にしたこと"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-ead74b318648",
+                        "level": 3,
+                        "text": "World Report — 行きたい場所"
+                    },
+                    {
+                        "id": "preset-new-horizon-6-sample-item-383f21dd8c32",
+                        "level": 3,
+                        "text": "World Report — 将来の夢"
+                    }
+                ]
+            }
+        ];
+        /* CLASS-TRACKER:TEXTBOOK-PRESETS:END */
         const fallbackSchools = [{id:"school-1",name:"My School",location:"",classes:["Class 6-1"],teachersByClass:{},studentCounts:{},periods:[],irregular:{enabled:false,periods:[]},lunch:{enabled:false,mode:"general",start:"12:00",duration:45,generalTitle:"Lunch"}}];
-        const blankTracker = () => ({version:1,templates:[sampleTemplate],assignments:{},progress:{},points:{},pointAudit:{},expanded:{},preferences:{selectedSchoolId:"",selectedClass:""}});
+        const blankTracker = () => ({version:1,templates:clone(TEXTBOOK_PRESETS),assignments:{},progress:{},points:{},pointAudit:{},expanded:{},preferences:{selectedSchoolId:"",selectedClass:""}});
         const get = key => { try { return localStorage.getItem(key); } catch(e) { return null; } };
         const set = (key,value) => { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch(e) { return false; } };
         const clone = value => JSON.parse(JSON.stringify(value));
         const makeId = prefix => prefix+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7);
         function readScheduler() { try { const value=JSON.parse(get(SCHEDULER_KEY)); if(value && value.version===3 && Array.isArray(value.schools)) { value.schools.forEach(school=>{ school.location=school.location||""; school.classes=Array.isArray(school.classes)?school.classes:[]; school.teachersByClass=school.teachersByClass&&typeof school.teachersByClass==="object"?school.teachersByClass:{}; school.studentCounts=school.studentCounts&&typeof school.studentCounts==="object"?school.studentCounts:{}; }); return value; } } catch(e) {} return {version:3,schools:clone(fallbackSchools),schedule:{},preferences:{selectedSchoolId:"school-1",selectedClassBySchool:{},theme:"ocean-blue"}}; }
-        function readTracker() { try { const value=JSON.parse(get(TRACKER_KEY)); if(value && value.version===1 && Array.isArray(value.templates)) { if(!value.templates.some(t=>t.id===sampleTemplate.id)) value.templates.unshift(sampleTemplate); return value; } } catch(e) {} return blankTracker(); }
+        function readTracker() { try { const value=JSON.parse(get(TRACKER_KEY)); if(value && value.version===1 && Array.isArray(value.templates)) { const presetIds=new Set(TEXTBOOK_PRESETS.map(preset=>preset.id)); value.templates=[...clone(TEXTBOOK_PRESETS),...value.templates.filter(template=>template.source!=="preset"&&!presetIds.has(template.id))]; return value; } } catch(e) {} return blankTracker(); }
         let scheduler=readScheduler(), state=readTracker();
         if(!state.points || typeof state.points!=="object" || Array.isArray(state.points)) state.points={};
         if(!state.pointAudit || typeof state.pointAudit!=="object" || Array.isArray(state.pointAudit)) state.pointAudit={};
