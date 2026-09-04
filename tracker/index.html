@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-Classroom Timer · Teacher Tools
+Class Tracker · Teacher Tools
 Copyright © 2026. All rights reserved.
 
 Free for personal, classroom, and non-commercial educational use.
@@ -11,9 +11,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
-    <meta name="description" content="A simple classroom countdown and stopwatch with locally saved presets.">
-    <title>Classroom Timer · Teacher Tools</title>
-
+    <meta name="description" content="Track each class's progress through lessons and textbook sections with reusable checklists.">
+    <title>Class Tracker · Teacher Tools</title>
     <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:START -->
     <script>
         (() => {
@@ -30,7 +29,6 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         })();
     </script>
 <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:END -->
-
     <style>
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
@@ -829,612 +827,192 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         }
 /* TEACHER-TOOLS:SHARED-STYLES:END */
 
-        /* Classroom Timer styles begin here. */
         .page-main { width: 100%; padding: 24px 16px 34px; }
-
-        .app-shell {
-            width: min(760px, 100%);
-            margin: 0 auto;
-            overflow: hidden;
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.09);
-        }
-
-        .app-header {
-            min-height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 10px 12px 10px 18px;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .title-wrap {
-            min-width: 0;
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 9px;
-        }
-
+        .app-shell { width: min(900px, 100%); margin: 0 auto; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 8px 26px rgba(0,0,0,.09); }
+        .app-header { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 18px; border-bottom: 1px solid var(--line); }
+        .title-wrap { min-width: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 9px; }
         .app-title { margin: 0; color: var(--accent); font-size: 19px; line-height: 1.2; font-weight: 750; }
-
-        .version-badge {
-            padding: 2px 7px;
-            color: var(--muted);
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            font-size: 10px;
-            white-space: nowrap;
-        }
-
-        .app-header-actions { display: flex; align-items: center; gap: 2px; }
-
-        .icon-button {
-            width: 40px;
-            height: 40px;
-            flex: 0 0 40px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            color: var(--accent);
-            background: transparent;
-            border: 0;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: color 180ms ease, background-color 180ms ease;
-        }
-
-        .icon-button:hover { color: var(--accent-secondary); background: var(--panel); }
-        .settings-icon { width: 23px; height: 23px; fill: currentColor; }
-
-        .presentation-icon {
-            width: 20px;
-            height: 20px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.9;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .help-button-mark {
-            width: 21px;
-            height: 21px;
-            display: grid;
-            place-items: center;
-            border: 1.8px solid currentColor;
-            border-radius: 50%;
-            font-size: 13px;
-            font-weight: 800;
-            line-height: 1;
-        }
-
+        .version-badge { padding: 2px 7px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; font-size: 10px; white-space: nowrap; }
+        .app-header-actions { display: flex; gap: 2px; }
+        .icon-button { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; padding: 0; color: var(--accent); background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+        .icon-button:hover { background: var(--panel); }
+        .help-button-mark { width: 21px; height: 21px; display: grid; place-items: center; border: 1.8px solid currentColor; border-radius: 50%; font-size: 13px; font-weight: 800; }
         .app-main { padding: 18px; }
-
-        .mode-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
-            padding: 4px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 10px;
-        }
-
-        .mode-tab {
-            min-height: 42px;
-            padding: 8px 12px;
-            color: var(--muted);
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 7px;
-            font-size: 13px;
-            font-weight: 750;
-            cursor: pointer;
-        }
-
-        .mode-tab[aria-selected="true"] {
-            color: var(--accent);
-            background: var(--surface);
-            border-color: var(--accent-border);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-        }
-
-        .timer-panel { padding-top: 16px; }
-        .timer-panel[hidden] { display: none; }
-
-        .countdown-setup {
-            margin-top: 18px;
-            padding-top: 16px;
-            border-top: 1px solid var(--line);
-        }
-
-        .section-label {
-            display: block;
-            margin-bottom: 7px;
-            color: var(--muted);
-            font-size: 11px;
-            font-weight: 750;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-        }
-
-        .preset-list { display: flex; flex-wrap: wrap; gap: 7px; }
-        #savedPresetButtons { display: contents; }
-
-        .preset-button {
-            min-height: 36px;
-            padding: 7px 11px;
-            color: var(--accent);
-            background: var(--accent-soft);
-            border: 1px solid var(--accent-border);
-            border-radius: 999px;
-            font-size: 11.5px;
-            font-weight: 750;
-            cursor: pointer;
-        }
-
-        .preset-button:hover { filter: brightness(0.97); }
-        .saved-preset-button::before { content: "★"; margin-right: 5px; font-size: 9px; }
-
-        .quick-preset-empty {
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 36px;
-        }
-
-        .quick-preset-empty[hidden] { display: none; }
-
-        .time-entry {
-            display: flex;
-            align-items: end;
-            gap: 8px;
-            margin-top: 14px;
-            padding: 13px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 10px;
-        }
-
-        .time-field { min-width: 0; flex: 1 1 0; display: grid; gap: 5px; }
-        .field-label { color: var(--muted); font-size: 11px; font-weight: 700; }
-
-        input[type="number"],
-        input[type="text"] {
-            width: 100%;
-            min-height: 40px;
-            padding: 8px 10px;
-            color: var(--text);
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 8px;
-        }
-
-        input:hover { border-color: var(--accent-border); }
-        input:disabled { opacity: 0.62; cursor: not-allowed; }
-
-        .time-separator {
-            align-self: center;
-            margin-top: 18px;
-            color: var(--muted);
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .timer-stage {
-            display: grid;
-            justify-items: center;
-            gap: 12px;
-            padding: 19px 0 5px;
-        }
-
-        .timer-face {
-            --progress: 1;
-            position: relative;
-            width: min(330px, 76vw);
-            aspect-ratio: 1;
-            display: grid;
-            place-items: center;
-            isolation: isolate;
-            background: conic-gradient(var(--accent) calc(var(--progress) * 1turn), var(--line) 0);
-            border-radius: 50%;
-            transition: background 180ms linear;
-        }
-
-        .timer-face::before {
-            content: "";
-            position: absolute;
-            inset: 12px;
-            z-index: -1;
-            background: var(--surface);
-            border-radius: 50%;
-            box-shadow: inset 0 0 0 1px var(--line);
-        }
-
-        .timer-face.finished {
-            background: conic-gradient(var(--warning-border) 1turn, var(--warning-border) 0);
-            animation: finish-pulse 900ms ease-in-out 2;
-        }
-
-        .time-display {
-            font-size: clamp(48px, 11vw, 82px);
-            font-weight: 800;
-            letter-spacing: -0.055em;
-            line-height: 1;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .stopwatch-display { font-size: clamp(42px, 10vw, 72px); }
-
-        .timer-status {
-            min-height: 21px;
-            margin: 0;
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 650;
-            text-align: center;
-        }
-
-        .timer-status.finished { color: var(--warning-text); }
-
-        .button-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .button {
-            min-height: 42px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            padding: 9px 17px;
-            border: 1px solid var(--accent);
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 750;
-            cursor: pointer;
-        }
-
-        .button:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
-        .button-primary { color: #ffffff; background: var(--accent); }
-        .button-secondary { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
-        .button-neutral { color: var(--text); background: var(--surface); border-color: var(--line); }
-        .button-danger { color: var(--danger); background: var(--surface); border-color: currentColor; }
-        .button:hover:not(:disabled) { filter: brightness(0.97); }
+        .intro { margin-bottom: 16px; }
+        .intro h2 { margin: 0 0 5px; font-size: 17px; }
+        .intro p, .helper-text, .empty-copy { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .dashboard-grid { display: grid; grid-template-columns: minmax(220px, .72fr) minmax(0, 1.6fr); gap: 14px; align-items: start; }
+        .picker-card, .tracker-card { padding: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+        .field { display: grid; gap: 5px; margin-bottom: 11px; }
+        .field-label { color: var(--muted); font-size: 12px; font-weight: 700; }
+        input[type="text"], select, textarea { width: 100%; min-height: 40px; padding: 8px 10px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+        textarea { min-height: 150px; resize: vertical; }
+        .assignment-summary { margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--line); }
+        .eyebrow { margin: 0 0 4px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+        .assignment-title { margin: 0; font-size: 15px; }
+        .progress-line { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 11px; }
+        .progress-track { height: 7px; margin-top: 5px; overflow: hidden; background: var(--line); border-radius: 999px; }
+        .progress-fill { width: 0; height: 100%; background: var(--accent); border-radius: inherit; transition: width 180ms ease; }
+        .tracker-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+        .tracker-heading h2 { margin: 0; font-size: 16px; }
+        .button { min-height: 38px; display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .button-primary { color: #fff; background: var(--accent); border-color: var(--accent); }
         html[data-theme="true-dark"] .button-primary { color: #07101d; }
-
-        .button-symbol {
-            min-width: 1.1em;
-            display: inline-block;
-            font-size: 1.05em;
-            font-weight: 800;
-            line-height: 1;
-            text-align: center;
-        }
-
-        .keyboard-hint { margin: 8px 0 0; color: var(--muted); font-size: 10.5px; text-align: center; }
-        .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-        .app-footer {
-            padding: 11px 16px 13px;
-            text-align: center;
-            background: var(--panel);
-            border-top: 1px solid var(--line);
-        }
-
-        .footer-version { margin-bottom: 4px; color: var(--muted); font-size: 10.5px; font-weight: 700; }
-        .footer-copyright { color: var(--muted); font-size: 9.5px; line-height: 1.4; }
-
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 200;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            background: rgba(15, 23, 42, 0.58);
-        }
-
+        .button-danger { color: var(--danger); background: var(--surface); border-color: var(--danger); }
+        .button[hidden] { display: none !important; }
+        .checklist { display: grid; gap: 5px; }
+        .check-row { min-height: 44px; display: grid; grid-template-columns: 26px minmax(0,1fr); align-items: center; gap: 7px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+        .check-row.collapsible { grid-template-columns: 26px 28px minmax(0,1fr); }
+        .check-row[hidden] { display: none; }
+        .check-row input { width: 18px; height: 18px; accent-color: var(--accent); }
+        .collapse-button { width: 28px; height: 28px; display: grid; place-items: center; padding: 0; color: var(--accent); background: transparent; border: 0; border-radius: 6px; cursor: pointer; }
+        .collapse-button:hover { background: color-mix(in srgb,var(--accent) 9%,transparent); }
+        .collapse-chevron { display: block; font-size: 13px; transition: transform 160ms ease; }
+        .collapse-button[aria-expanded="true"] .collapse-chevron { transform: rotate(90deg); }
+        .check-copy { min-width: 0; display: flex; align-items: center; gap: 7px; }
+        .check-marker-icons { display: inline-flex; align-items: center; gap: 3px; flex: 0 0 auto; color: var(--accent); }
+        .check-marker-icon { width: 22px; height: 22px; display: block; overflow: visible; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+        .check-label-text { min-width: 0; overflow-wrap: anywhere; }
+        .check-row.level-1 { margin-top: 6px; background: var(--accent-soft); border-color: var(--accent-border); font-weight: 800; }
+        .check-row.level-2 { margin-left: 12px; background: var(--surface); font-weight: 700; }
+        .check-row.level-3 { margin-left: 26px; background: color-mix(in srgb, var(--panel) 76%, var(--accent-soft)); font-size: 13px; }
+        .check-row.complete .check-label-text { color: var(--muted); text-decoration: line-through; }
+        .empty-state { padding: 28px 18px; text-align: center; border: 1px dashed var(--accent-border); border-radius: 8px; }
+        .empty-state strong { display: block; margin-bottom: 5px; font-size: 14px; }
+        .app-footer { padding: 11px 16px 13px; text-align: center; background: var(--panel); border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+        .modal-backdrop { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(15,23,42,.58); }
         .modal-backdrop.open { display: flex; }
-
-        .modal-card {
-            width: min(560px, 100%);
-            max-height: min(680px, calc(100dvh - 32px));
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
-        }
-
-        .modal-header {
-            min-height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 8px 10px 8px 16px;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .modal-title { margin: 0; font-size: 16px; font-weight: 750; }
+        .modal-card { width: min(620px,100%); max-height: min(760px,calc(100dvh - 32px)); overflow: hidden; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+        .modal-header { min-height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 8px 10px 8px 16px; border-bottom: 1px solid var(--line); }
+        .modal-title { margin: 0; font-size: 16px; }
+        .close-button { width: 40px; height: 40px; color: var(--muted); background: transparent; border: 0; border-radius: 50%; font-size: 24px; cursor: pointer; }
         .modal-content { overflow-y: auto; padding: 16px; }
+        .storage-warning { margin: 10px 14px 0; padding: 9px 10px; color: var(--warning-text); background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 7px; font-size: 10.5px; line-height: 1.4; }
+        .settings-tabs { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 5px; padding: 10px 14px 0; }
+        .settings-tab { padding: 8px 6px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 7px 7px 0 0; font-size: 11px; font-weight: 650; cursor: pointer; }
+        .settings-tab.active { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
+        .settings-scroll { overflow-y: auto; padding: 12px 14px 16px; }
+        .settings-panel { display: none; }
+        .settings-panel.active { display: block; }
+        .settings-heading { margin: 0 0 5px; font-size: 14px; }
+        .settings-help { margin: 0 0 12px; color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .settings-section { padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; }
+        .school-editor { display: grid; gap: 10px; margin-top: 10px; }
+        .school-editor h4 { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+        .school-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 7px; }
+        .school-actions .button { flex: 1; min-width: 110px; }
+        .class-list { display: grid; gap: 5px; }
+        .class-edit-row { display: grid; grid-template-columns: minmax(70px,.8fr) minmax(90px,1fr) 76px 34px; align-items: end; gap: 6px; padding: 7px 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+        .class-edit-row .field { margin: 0; }
+        .class-edit-row .field-label { font-size: 10px; }
+        .class-edit-row input { min-width: 0; }
+        .remove-class-button { width: 34px; min-width: 34px; height: 40px; padding: 0; color: var(--danger); background: transparent; border: 1px solid var(--line); border-radius: 7px; font-size: 18px; cursor: pointer; }
+        .add-class-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 7px; }
+        .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .status { min-height: 18px; margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+        .notice { padding: 10px 12px; color: var(--warning-text); background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 8px; font-size: 11.5px; line-height: 1.5; }
+        .tutorial-steps { display: grid; gap: 12px; }
+        .tutorial-step { display: grid; grid-template-columns: 28px 1fr; gap: 10px; }
+        .tutorial-number { width: 26px; height: 26px; display: grid; place-items: center; color: var(--accent); background: var(--accent-soft); border-radius: 50%; font-size: 12px; font-weight: 800; }
+        .tutorial-step h3 { margin: 2px 0 3px; font-size: 14px; }
+        .tutorial-step p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .modal-actions { display: flex; justify-content: flex-end; padding: 12px 16px; border-top: 1px solid var(--line); }
+        @media (max-width: 700px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 620px) { .page-main { padding: 16px 8px 24px; } .app-shell { border-radius: 10px; } .app-main { padding: 14px; } .modal-backdrop { align-items: stretch; padding: 6px; } .modal-card { max-height: calc(100dvh - 12px); } .settings-grid { grid-template-columns: 1fr; } .class-edit-row { grid-template-columns: minmax(0,1fr) 34px; } .class-edit-row .class-detail-field { grid-column: 1 / -1; } }
+        @media (max-width: 380px) { .check-row.level-2 { margin-left: 7px; } .check-row.level-3 { margin-left: 14px; } }
+        @media (prefers-reduced-motion: reduce) { *,*::before,*::after { transition-duration: .01ms !important; } }
 
-        .settings-section + .settings-section {
-            margin-top: 18px;
-            padding-top: 16px;
-            border-top: 1px solid var(--line);
+        /* Schools: match Scheduler's applet-owned field and row patterns. */
+        .textbook-section { margin-top: 12px; }
+        .dashboard-tabs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; margin-bottom: 14px; }
+        .dashboard-tab { min-height: 40px; padding: 8px; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); background: var(--surface); font-size: 12px; font-weight: 650; cursor: pointer; }
+        .dashboard-tab.active { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
+        .class-points-summary { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 10px; padding: 11px 13px; color: var(--text); background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 8px; }
+        .class-points-summary span { font-size: 12px; font-weight: 750; }
+        .class-points-summary strong { color: var(--accent); font-size: 22px; line-height: 1; }
+        .points-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .points-table caption { width: 100%; padding: 0 0 6px; text-align: left; }
+        .points-table th { padding: 8px; color: var(--muted); font-size: 11px; text-align: left; }
+        .points-table td, .points-table tbody th { padding: 8px; border-top: 1px solid var(--line); }
+        .points-table tbody th { width: 48px; color: var(--text); font-size: 13px; }
+        .points-audit { min-width: 175px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+        .points-control { display: flex; align-items: center; gap: 7px; }
+        .points-star { color: var(--accent); font-size: 22px; line-height: 1; }
+        .points-input { width: 90px; min-width: 0; min-height: 40px; padding: 8px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; }
+        .points-step { width: 40px; height: 40px; padding: 0; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 7px; font-size: 19px; cursor: pointer; }
+        .points-step:disabled { opacity: .45; cursor: default; }
+        #textbookEditor[hidden] { display: none; }
+        .textbook-list { display: grid; gap: 7px; }
+        .textbook-entry { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 9px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; }
+        .textbook-entry .book-copy { flex: 1 1 160px; min-width: 0; overflow-wrap: anywhere; font-size: 12px; }
+        .book-copy small { display: block; margin-top: 3px; color: var(--muted); font-size: 10.5px; }
+        .preset-choice { display: flex; align-items: center; gap: 9px; min-height: 40px; font-size: 12px; cursor: pointer; }
+        .preset-choice input { width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; }
+        .book-actions { display: flex; gap: 5px; }
+        #settingsModal .modal-card { width: min(680px,100%); max-height: min(780px,calc(100dvh - 36px)); border: 0; border-radius: 13px; box-shadow: 0 18px 55px rgba(0,0,0,.25); }
+        #settingsModal .modal-header { gap: 12px; padding: 12px 14px 10px 16px; }
+        #settingsModal .close-button { width: 34px; height: 34px; border-radius: 7px; line-height: 1; }
+        #settingsPanel-schools .settings-heading, #schoolEditor h3 { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+        #schoolEditor h3 { margin-top: 12px; }
+        #schoolEditor .classes-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; }
+        #schoolEditor .classes-heading-row h3 { margin: 0; }
+        #schoolEditor { display: block; margin-top: 0; }
+        #settingsPanel-schools .field { display: block; margin: 0 0 12px; }
+        #settingsPanel-schools .field-label { display: block; margin-bottom: 5px; font-size: 12px; line-height: 15px; font-weight: 600; }
+        #settingsPanel-schools input, #settingsPanel-schools select { width: 100%; min-height: 0; padding: 9px 10px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; font-size: 14px; }
+        #settingsPanel-schools select { border-color: var(--accent-border); background: color-mix(in srgb,var(--accent-soft) 26%,var(--surface)); }
+        #settingsPanel-schools .school-name-editor { display: grid; grid-template-columns: 1fr; gap: 7px; }
+        #settingsPanel-schools .button { display: block; flex: 1; min-height: 0; min-width: 105px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; color: var(--text); background: var(--surface); font-size: 11px; font-weight: 400; }
+        #settingsPanel-schools .button:hover { background: var(--accent-soft); border-color: var(--accent-border); }
+        #settingsPanel-schools .button-danger { color: var(--danger); }
+        #settingsPanel-schools .helper-text, #schoolStatus { margin: 5px 0 0; min-height: 0; color: var(--muted); font-size: 10.5px; line-height: 1.4; }
+        #settingsPanel-schools .class-edit-row { display: grid; grid-template-columns: 24px minmax(72px,1fr) auto 24px; align-items: center; gap: 6px; font-size: 11px; }
+        #settingsPanel-schools .class-sort-button { flex: 0 0 auto; min-width: 0; padding: 5px 8px; font-size: 10px; white-space: nowrap; }
+        #settingsPanel-schools .class-name-input { width: 100%; min-width: 0; padding: 5px 6px; font-size: 10px; font-weight: 400; line-height: 1.2; }
+        .class-details { display: grid; grid-template-columns: auto auto; align-items: center; gap: 6px; }
+        #settingsPanel-schools .class-detail-field { display: grid; grid-template-columns: auto auto; align-items: center; gap: 4px; margin: 0; }
+        #settingsPanel-schools .class-detail-field .field-label { margin-bottom: 5px; font-size: 9px; font-weight: 650; }
+        #settingsPanel-schools .class-teacher-input { width: 104px; padding: 5px; font-size: 10px; }
+        #settingsPanel-schools .class-students-input { width: 52px; padding: 5px; font-size: 10px; }
+        #settingsPanel-schools .class-order-controls { display: grid; grid-template-rows: repeat(2,20px); gap: 2px; }
+        #settingsPanel-schools .class-order-button { width: 24px; height: 20px; padding: 0; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; font-size: 10px; line-height: 1; cursor: pointer; }
+        #settingsPanel-schools .class-order-button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+        #settingsPanel-schools .class-order-button:disabled { opacity: .3; cursor: default; }
+        #settingsPanel-schools .remove-class-button { width: auto; min-width: 0; height: auto; border: 0; border-radius: 0; font-size: 16px; font-weight: 700; }
+        #settingsPanel-schools .add-class-row { display: flex; gap: 7px; align-items: end; margin-top: 7px; }
+        #settingsPanel-schools .add-class-row > * { flex: 1; }
+        @media (max-width:620px) {
+            #settingsModal .modal-card { max-height: calc(100dvh - 12px); border-radius: 9px; }
+            #settingsModal .settings-tabs { padding-left: 8px; padding-right: 8px; }
+            #settingsModal .settings-scroll { padding: 10px 8px 12px; }
+            #settingsModal .storage-warning { margin-left: 8px; margin-right: 8px; }
+            #settingsPanel-schools .class-detail-field { grid-column: auto; }
         }
-
-        .settings-heading { margin: 0 0 4px; font-size: 14px; }
-        .settings-help { margin: 0 0 10px; color: var(--muted); font-size: 11px; line-height: 1.45; }
-
-        .setting-row {
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            padding: 7px 0;
+        @media (max-width:520px) {
+            #settingsPanel-schools .class-edit-row { grid-template-columns: 24px minmax(0,1fr) 24px; }
+            #settingsPanel-schools .class-order-controls { grid-column: 1; grid-row: 1; }
+            #settingsPanel-schools .class-name-input { grid-column: 2; grid-row: 1; }
+            #settingsPanel-schools .remove-class-button { grid-column: 3; grid-row: 1; }
+            .class-details { grid-column: 1 / -1; grid-row: 2; }
+            .points-table, .points-table tbody { display: block; }
+            .points-table caption { display: block; }
+            .points-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+            .points-table tr { display: grid; grid-template-columns: 34px minmax(0,1fr); align-items: center; border-top: 1px solid var(--line); }
+            .points-table td, .points-table tbody th { border-top: 0; }
+            .points-table tbody th { grid-column: 1; grid-row: 1; width: auto; }
+            .points-table tbody td:not(.points-audit) { grid-column: 2; grid-row: 1; }
+            .points-audit { grid-column: 1 / -1; grid-row: 2; min-width: 0; padding-top: 0 !important; }
+            .points-audit::before { content: "Audit: "; font-weight: 700; }
+            .points-control { justify-content: flex-start; }
+            .points-input { width: min(90px,100%); }
         }
-
-        .setting-label { display: block; font-size: 12px; font-weight: 700; }
-        .setting-description { display: block; margin-top: 2px; color: var(--muted); font-size: 10.5px; line-height: 1.4; }
-        .switch { position: relative; width: 42px; height: 24px; flex: 0 0 42px; }
-        .switch input { position: absolute; opacity: 0; }
-
-        .switch-track {
-            position: absolute;
-            inset: 0;
-            background: var(--line);
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            cursor: pointer;
-            transition: background-color 180ms ease, border-color 180ms ease;
-        }
-
-        .switch-track::after {
-            content: "";
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 16px;
-            height: 16px;
-            background: var(--surface);
-            border-radius: 50%;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
-            transition: transform 180ms ease;
-        }
-
-        .switch input:checked + .switch-track { background: var(--accent); border-color: var(--accent); }
-        .switch input:checked + .switch-track::after { transform: translateX(18px); }
-        .switch input:focus-visible + .switch-track { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-        .preset-form {
-            display: grid;
-            grid-template-columns: minmax(130px, 1.4fr) repeat(3, minmax(62px, 0.55fr)) auto;
-            align-items: end;
-            gap: 7px;
-        }
-
-        .preset-form .button { padding-inline: 12px; }
-
-        .default-time-form {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(62px, 1fr));
-            align-items: end;
-            gap: 7px;
-        }
-
-        .quick-preset-grid {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 7px;
-            margin-top: 12px;
-        }
-
-        .quick-preset-setting-label { display: block; margin-top: 14px; }
-
-        .quick-preset-option {
-            min-height: 38px;
-            justify-content: center;
-            padding: 7px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 8px;
-        }
-
-        .saved-list { display: grid; gap: 7px; margin-top: 12px; }
-        .saved-empty { margin: 0; padding: 10px; color: var(--muted); background: var(--panel); border-radius: 8px; font-size: 11px; }
-
-        .saved-row {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto auto;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 9px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 8px;
-        }
-
-        .saved-name { min-width: 0; font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
-        .saved-duration { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; font-weight: 500; }
-
-        .mini-button {
-            min-height: 32px;
-            padding: 5px 9px;
-            color: var(--accent);
-            background: var(--surface);
-            border: 1px solid var(--accent-border);
-            border-radius: 7px;
-            font-size: 10.5px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .mini-button.danger { color: var(--danger); border-color: currentColor; }
-        .form-message { min-height: 17px; margin: 7px 0 0; color: var(--muted); font-size: 10.5px; }
-        .form-message.error { color: var(--danger); }
-
-        .notice {
-            margin-top: 12px;
-            padding: 10px 12px;
-            color: var(--warning-text);
-            background: var(--warning-bg);
-            border: 1px solid var(--warning-border);
-            border-radius: 8px;
-            font-size: 11.5px;
-            line-height: 1.5;
-        }
-
-        .tutorial-intro { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
-        .tutorial-steps { display: grid; gap: 10px; }
-
-        .tutorial-step {
-            display: grid;
-            grid-template-columns: 30px minmax(0, 1fr);
-            gap: 11px;
-            padding: 12px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 9px;
-        }
-
-        .tutorial-number {
-            width: 30px;
-            height: 30px;
-            display: grid;
-            place-items: center;
-            color: var(--accent);
-            background: var(--accent-soft);
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 800;
-        }
-
-        .tutorial-step h3 { margin: 1px 0 3px; font-size: 13px; }
-        .tutorial-step p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            padding: 12px 16px;
-            border-top: 1px solid var(--line);
-        }
-
-        body.presentation-open { overflow: hidden; }
-        body.presentation-open .modal-backdrop { z-index: 700; }
-
-        .app-shell.is-presenting {
-            position: fixed;
-            z-index: 500;
-            inset: 0;
-            width: 100vw;
-            height: 100dvh;
-            max-width: none;
-            display: flex;
-            flex-direction: column;
-            border: 0;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .app-shell.is-presenting .app-header { flex: 0 0 auto; }
-        .app-shell.is-presenting #helpOpenButton,
-        .app-shell.is-presenting #settingsOpenButton { display: none; }
-        .app-shell.is-presenting .app-main {
-            flex: 1 1 auto;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-            padding: clamp(10px, 2vh, 20px);
-        }
-        .app-shell.is-presenting .app-footer,
-        .app-shell.is-presenting .countdown-setup,
-        .app-shell.is-presenting .keyboard-hint { display: none; }
-        .app-shell.is-presenting .mode-tabs { flex: 0 0 auto; width: min(430px, 100%); margin: 0 auto; }
-        .app-shell.is-presenting .timer-panel { flex: 1 1 auto; min-height: 0; padding-top: clamp(8px, 1.5vh, 16px); }
-        .app-shell.is-presenting .timer-stage { height: 100%; grid-template-rows: minmax(0, 1fr) auto auto; padding: 0; }
-        .app-shell.is-presenting .timer-face {
-            --presentation-timer-size: clamp(80px, min(48vw, calc(100dvh - 300px)), 520px);
-            width: var(--presentation-timer-size);
-            height: var(--presentation-timer-size);
-            min-width: 0;
-            min-height: 0;
-            max-width: none;
-            max-height: none;
-            aspect-ratio: 1 / 1;
-            align-self: center;
-            justify-self: center;
-        }
-        .app-shell.is-presenting .time-display { font-size: clamp(16px, calc(var(--presentation-timer-size) * 0.18), 92px); }
-        .app-shell.is-presenting .timer-status { font-size: clamp(15px, 1.6vw, 22px); }
-        .app-shell.is-presenting .button { min-height: clamp(48px, 7vh, 66px); padding-inline: clamp(18px, 2.4vw, 30px); font-size: clamp(15px, 1.7vw, 22px); }
-
-        @keyframes finish-pulse {
-            50% { transform: scale(1.025); }
-        }
-
-        @media (max-width: 620px) {
-            .page-main { padding: 16px 8px 24px; }
-            .app-shell { border-radius: 10px; }
-            .app-main { padding: 14px; }
-            .timer-face { width: min(290px, 78vw); }
-            .modal-backdrop { align-items: stretch; padding: 6px; }
-            .modal-card { max-height: calc(100dvh - 12px); border-radius: 9px; }
-            .preset-form { grid-template-columns: repeat(3, 1fr); }
-            .preset-name-field { grid-column: 1 / -1; }
-            .preset-form .button { grid-column: 1 / -1; }
-            .default-time-form { grid-template-columns: repeat(3, 1fr); }
-            .quick-preset-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        @media (orientation: portrait), (max-width: 720px) {
-            .app-shell.is-presenting .app-main { padding: 8px; }
-            .app-shell.is-presenting .timer-face {
-                --presentation-timer-size: clamp(80px, min(78vw, calc(100dvh - 270px)), 520px);
-                width: var(--presentation-timer-size);
-                height: var(--presentation-timer-size);
-            }
-            .app-shell.is-presenting .button { min-height: 48px; font-size: 15px; }
-        }
-
-        @media (max-width: 380px) {
-            .app-header { padding-left: 12px; }
-            .app-title { font-size: 17px; }
-            .time-entry { gap: 5px; padding: 10px; }
-            .time-separator { font-size: 17px; }
-            .button { flex: 1 1 auto; padding-inline: 11px; }
-            .tutorial-step { grid-template-columns: 1fr; }
-            .saved-row { grid-template-columns: minmax(0, 1fr) auto; }
-            .saved-row .danger { grid-column: 2; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                scroll-behavior: auto !important;
-                transition-duration: 0.01ms !important;
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-            }
+        @media (max-width:380px) {
+            #settingsModal .settings-tab { font-size: 10px; }
         }
     </style>
 </head>
 <body>
-    <!-- Workbench links are relative. Use production routes only after release approval. -->
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
@@ -1503,7 +1081,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
-                 <a class="site-menu-item" href="/timer/" aria-current="page">
+                 <a class="site-menu-item" href="/timer/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <circle cx="14" cy="16" r="7.5" />
@@ -1513,9 +1091,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
-                    <span class="site-menu-status">HERE</span>
+                    <span class="site-menu-status">OPEN</span>
                 </a>
-                 <a class="site-menu-item" href="/tracker/">
+                 <a class="site-menu-item" href="/tracker/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <rect x="5.5" y="5.5" width="17" height="17" rx="3" />
@@ -1523,7 +1101,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span class="site-menu-status">HERE</span>
                 </a>
                  <a class="site-menu-item" href="/tricks/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1596,211 +1174,81 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         </div>
     </header>
 <!-- TEACHER-TOOLS:SITE-HEADER:END -->
-
     <main class="page-main">
         <div class="app-shell">
             <header class="app-header">
-                <div class="title-wrap">
-                    <h1 class="app-title">Classroom Timer</h1>
-                    <span class="version-badge">v1.0</span>
-                </div>
+                <div class="title-wrap"><h1 class="app-title">Class Tracker</h1><span class="version-badge">v1.0</span></div>
                 <div class="app-header-actions">
-                    <button type="button" id="presentationButton" class="icon-button" aria-label="Enter presentation mode" aria-pressed="false" title="Presentation mode">
-                        <svg class="presentation-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M8.5 4.5h-4v4M15.5 4.5h4v4M19.5 15.5v4h-4M8.5 19.5h-4v-4" />
-                        </svg>
-                    </button>
-                    <button type="button" id="helpOpenButton" class="icon-button" data-modal-open="tutorialModal" aria-label="Open getting started help" aria-haspopup="dialog" title="Getting started">
-                        <span class="help-button-mark" aria-hidden="true">?</span>
-                    </button>
-                    <button type="button" id="settingsOpenButton" class="icon-button" data-modal-open="settingsModal" aria-label="Open timer settings" aria-haspopup="dialog" title="Timer settings">
-                        <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <button type="button" class="icon-button" data-modal-open="tutorialModal" aria-label="Open getting started help" title="Getting started"><span class="help-button-mark" aria-hidden="true">?</span></button>
+                    <button type="button" class="icon-button" data-modal-open="settingsModal" aria-label="Open Class Tracker settings" title="Settings"><svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
-                        </svg>
-                    </button>
+                        </svg></button>
                 </div>
             </header>
-
             <div class="app-main">
-                <div class="mode-tabs" role="tablist" aria-label="Timer mode">
-                    <button type="button" id="countdownTab" class="mode-tab" role="tab" aria-selected="true" aria-controls="countdownPanel">Countdown</button>
-                    <button type="button" id="stopwatchTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="stopwatchPanel" tabindex="-1">Stopwatch</button>
+                <section class="intro"><h2>Keep every class moving forward</h2><p>Choose a class, assign a reusable checklist, and mark lesson or textbook progress as you teach.</p></section>
+                <div class="dashboard-grid">
+                    <aside class="picker-card" aria-label="Class and textbook selection">
+                        <label class="field"><span class="field-label">School</span><select id="schoolSelect"></select></label>
+                        <label class="field"><span class="field-label">Class</span><select id="classSelect"></select></label>
+                        <label class="field"><span class="field-label">Assigned Textbook</span><select id="templateSelect"></select></label>
+                        <button type="button" id="assignButton" class="button button-primary">Assign Textbook</button>
+                        <div class="assignment-summary">
+                            <p class="eyebrow">Current class</p><h2 id="classHeading" class="assignment-title">Choose a class</h2>
+                            <div class="progress-line"><span>Progress</span><strong id="progressText">0 of 0</strong></div><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+                        </div>
+                    </aside>
+                    <section class="tracker-card" aria-label="Class tracking">
+                        <div class="dashboard-tabs" role="tablist" aria-label="Class tracking views">
+                            <button type="button" id="dashboardTab-progress" class="dashboard-tab active" role="tab" aria-selected="true" aria-controls="dashboardPanel-progress" data-dashboard-tab="progress">Progress</button>
+                            <button type="button" id="dashboardTab-points" class="dashboard-tab" role="tab" aria-selected="false" aria-controls="dashboardPanel-points" tabindex="-1" data-dashboard-tab="points">Points</button>
+                        </div>
+                        <section id="dashboardPanel-progress" role="tabpanel" aria-labelledby="dashboardTab-progress">
+                            <div class="tracker-heading"><h2 id="checklistHeading">Textbook Progress</h2><button type="button" id="clearProgressButton" class="button" hidden>Clear checks</button></div>
+                            <div id="checklist" class="checklist"></div>
+                        </section>
+                        <section id="dashboardPanel-points" role="tabpanel" aria-labelledby="dashboardTab-points" hidden>
+                            <div class="tracker-heading"><h2>Student points</h2></div>
+                            <div class="class-points-summary" aria-live="polite"><span>Class Points</span><strong id="classPointsTotal">—</strong></div>
+                            <p class="settings-help">Points are saved separately for this class by student number. Audit totals combine adjustments made within a five-minute window. Set the student count in Settings → Schools.</p>
+                            <div id="pointsRows"></div>
+                            <p id="pointsStatus" class="status" role="status"></p>
+                        </section>
+                    </section>
                 </div>
-
-                <section id="countdownPanel" class="timer-panel" role="tabpanel" aria-labelledby="countdownTab">
-                    <div class="timer-stage">
-                        <div id="countdownFace" class="timer-face">
-                            <div id="countdownDisplay" class="time-display" aria-hidden="true">05:00</div>
-                        </div>
-                        <p id="countdownStatus" class="timer-status" role="status" aria-live="polite">Ready</p>
-                        <span id="countdownAnnouncement" class="visually-hidden" aria-live="assertive"></span>
-                        <div class="button-row">
-                            <button type="button" id="countdownStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label">Start</span></button>
-                            <button type="button" id="countdownResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span>Reset</span></button>
-                            <button type="button" id="addMinuteButton" class="button button-neutral">+1 minute</button>
-                        </div>
-                    </div>
-                    <p class="keyboard-hint">Press Space to start or pause while no field or dialog is active.</p>
-
-                    <div class="countdown-setup">
-                        <span class="section-label">Quick presets</span>
-                        <div id="presetList" class="preset-list" role="group" aria-label="Countdown presets">
-                            <button type="button" class="preset-button" data-seconds="60" data-quick-preset="60">1 min</button>
-                            <button type="button" class="preset-button" data-seconds="180" data-quick-preset="180">3 min</button>
-                            <button type="button" class="preset-button" data-seconds="300" data-quick-preset="300">5 min</button>
-                            <button type="button" class="preset-button" data-seconds="600" data-quick-preset="600">10 min</button>
-                            <button type="button" class="preset-button" data-seconds="900" data-quick-preset="900">15 min</button>
-                            <span id="savedPresetButtons"></span>
-                            <span id="quickPresetEmpty" class="quick-preset-empty" hidden>No quick presets selected.</span>
-                        </div>
-
-                        <div class="time-entry" aria-label="Set countdown duration">
-                            <label class="time-field">
-                                <span class="field-label">Hours</span>
-                                <input id="countdownHours" type="number" min="0" max="23" value="0" inputmode="numeric">
-                            </label>
-                            <span class="time-separator" aria-hidden="true">:</span>
-                            <label class="time-field">
-                                <span class="field-label">Minutes</span>
-                                <input id="countdownMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
-                            </label>
-                            <span class="time-separator" aria-hidden="true">:</span>
-                            <label class="time-field">
-                                <span class="field-label">Seconds</span>
-                                <input id="countdownSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
-                            </label>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="stopwatchPanel" class="timer-panel" role="tabpanel" aria-labelledby="stopwatchTab" hidden>
-                    <div class="timer-stage">
-                        <div id="stopwatchFace" class="timer-face">
-                            <div id="stopwatchDisplay" class="time-display stopwatch-display" aria-hidden="true">00:00.0</div>
-                        </div>
-                        <p id="stopwatchStatus" class="timer-status" role="status" aria-live="polite">Ready</p>
-                        <div class="button-row">
-                            <button type="button" id="stopwatchStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label">Start</span></button>
-                            <button type="button" id="stopwatchResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span>Reset</span></button>
-                        </div>
-                    </div>
-                    <p class="keyboard-hint">Press Space to start or pause while no field or dialog is active.</p>
-                </section>
             </div>
-
-            <footer class="app-footer">
-                <div class="footer-version">Classroom Timer · v1.0</div>
-                <div class="footer-copyright">Teacher Tools · Timer data stays in this browser.</div>
-            </footer>
+            <footer class="app-footer">Class Tracker · v1.0 · Data stays in this browser</footer>
         </div>
     </main>
 
-    <div id="tutorialModal" class="modal-backdrop" data-shared-modal data-first-use-storage-key="teacherTools.classroomTimer.tutorialSeen.v1" aria-hidden="true">
-        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" aria-describedby="tutorialIntro">
-            <header class="modal-header">
-                <h2 id="tutorialTitle" class="modal-title">Getting started</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close getting started help">×</button>
-            </header>
-            <div class="modal-content">
-                <p id="tutorialIntro" class="tutorial-intro">Use the Classroom Timer for a quick activity countdown or as a stopwatch.</p>
-                <div class="tutorial-steps">
-                    <section class="tutorial-step">
-                        <span class="tutorial-number" aria-hidden="true">1</span>
-                        <div><h3>Choose a time</h3><p>Pick a quick preset or enter hours, minutes, and seconds.</p></div>
-                    </section>
-                    <section class="tutorial-step">
-                        <span class="tutorial-number" aria-hidden="true">2</span>
-                        <div><h3>Start, pause, or add time</h3><p>The countdown remains accurate when the browser tab is in the background. Add one minute at any time.</p></div>
-                    </section>
-                    <section class="tutorial-step">
-                        <span class="tutorial-number" aria-hidden="true">3</span>
-                        <div><h3>Save frequent countdowns</h3><p>Create named presets in Settings. They are stored only in this browser and may be lost if site data is cleared.</p></div>
-                    </section>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="button button-primary" data-modal-close>Start timing</button>
-            </div>
+    <div id="tutorialModal" class="modal-backdrop" data-shared-modal data-first-use-storage-key="teacherTools.classTracker.tutorialSeen.v1" aria-hidden="true">
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+            <header class="modal-header"><h2 id="tutorialTitle" class="modal-title">Getting started</h2><button type="button" class="close-button" data-modal-close aria-label="Close help">×</button></header>
+            <div class="modal-content"><div class="tutorial-steps">
+                <section class="tutorial-step"><span class="tutorial-number">1</span><div><h3>Choose a school and class</h3><p>Class Tracker uses the same school and class list as ALT Class Scheduler in this browser.</p></div></section>
+                <section class="tutorial-step"><span class="tutorial-number">2</span><div><h3>Assign a textbook</h3><p>Use a textbook preset or create a custom three-level progress list in Settings, then assign it to any class.</p></div></section>
+                <section class="tutorial-step"><span class="tutorial-number">3</span><div><h3>Check off progress</h3><p>Each class keeps its own progress. Your data is local to this browser profile, so use Teacher Tools backup and restore to protect it.</p></div></section>
+            </div></div><div class="modal-actions"><button type="button" class="button button-primary" data-modal-close>Start tracking</button></div>
         </section>
     </div>
 
     <div id="settingsModal" class="modal-backdrop" data-shared-modal aria-hidden="true">
         <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-            <header class="modal-header">
-                <h2 id="settingsTitle" class="modal-title">Timer settings</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close timer settings">×</button>
-            </header>
-            <div class="modal-content">
-                <section class="settings-section">
-                    <h3 class="settings-heading">Countdown defaults</h3>
-                    <p class="settings-help">Choose the countdown shown when Classroom Timer first opens and which built-in shortcuts appear below it. Changes save automatically.</p>
-                    <div id="defaultCountdownSettings">
-                        <div class="default-time-form">
-                            <label class="time-field">
-                                <span class="field-label">Hours</span>
-                                <input id="defaultHours" type="number" min="0" max="23" value="0" inputmode="numeric">
-                            </label>
-                            <label class="time-field">
-                                <span class="field-label">Minutes</span>
-                                <input id="defaultMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
-                            </label>
-                            <label class="time-field">
-                                <span class="field-label">Seconds</span>
-                                <input id="defaultSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
-                            </label>
-                        </div>
-
-                        <span class="field-label quick-preset-setting-label">Quick presets to show</span>
-                        <div class="quick-preset-grid" role="group" aria-label="Quick presets to show">
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="60" checked><span>1 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="180" checked><span>3 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="300" checked><span>5 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="600" checked><span>10 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="900" checked><span>15 min</span></label>
-                        </div>
-                    </div>
-                    <p id="defaultCountdownMessage" class="form-message" role="status" aria-live="polite"></p>
+            <header class="modal-header"><h2 id="settingsTitle" class="modal-title">Class Tracker settings</h2><button type="button" class="close-button" data-modal-close aria-label="Close settings">×</button></header>
+            <div class="storage-warning"><strong>CAUTION:</strong> Your schools, textbooks, and progress are saved only in this browser/profile. Use Backup &amp; restore in the Teacher Tools header to preserve or move them.</div>
+            <div class="settings-tabs" role="tablist" aria-label="Settings sections">
+                <button type="button" id="settingsTab-schools" class="settings-tab active" data-settings-tab="schools" role="tab" aria-selected="true" aria-controls="settingsPanel-schools">Schools</button>
+                <button type="button" id="settingsTab-textbooks" class="settings-tab" data-settings-tab="textbooks" role="tab" aria-selected="false" aria-controls="settingsPanel-textbooks" tabindex="-1">Textbooks</button>
+            </div>
+            <div class="settings-scroll">
+                <section id="settingsPanel-schools" class="settings-panel active" role="tabpanel" aria-labelledby="settingsTab-schools">
+                    <div class="settings-section"><h3 class="settings-heading">School Information</h3><label class="field"><span class="field-label">Edit School</span><select id="settingsSchoolSelect"></select></label><div class="school-actions"><button type="button" id="addSchoolButton" class="button">＋ Add School</button><button type="button" id="deleteSchoolButton" class="button button-danger">− Delete School</button></div><div id="schoolEditor" class="school-editor"></div><p id="schoolStatus" class="status" role="status">Changes save automatically to this browser.</p></div>
                 </section>
-
-                <section class="settings-section">
-                    <h3 class="settings-heading">Sound</h3>
-                    <div class="setting-row">
-                        <span>
-                            <span class="setting-label">Play a finish sound</span>
-                            <span class="setting-description">Uses a short sound generated on this device. Nothing is downloaded.</span>
-                        </span>
-                        <label class="switch">
-                            <input id="soundEnabledInput" type="checkbox" aria-label="Play a sound when the countdown finishes" checked>
-                            <span class="switch-track" aria-hidden="true"></span>
-                        </label>
-                    </div>
-                </section>
-
-                <section class="settings-section">
-                    <h3 class="settings-heading">Saved countdowns</h3>
-                    <p class="settings-help">Save up to 12 named presets on this browser.</p>
-                    <form id="presetForm" class="preset-form">
-                        <label class="time-field preset-name-field">
-                            <span class="field-label">Name</span>
-                            <input id="presetName" type="text" maxlength="40" placeholder="Warm-up" autocomplete="off" required>
-                        </label>
-                        <label class="time-field">
-                            <span class="field-label">Hours</span>
-                            <input id="presetHours" type="number" min="0" max="23" value="0" inputmode="numeric">
-                        </label>
-                        <label class="time-field">
-                            <span class="field-label">Minutes</span>
-                            <input id="presetMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
-                        </label>
-                        <label class="time-field">
-                            <span class="field-label">Seconds</span>
-                            <input id="presetSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
-                        </label>
-                        <button type="submit" class="button button-secondary">Save</button>
-                    </form>
-                    <p id="presetFormMessage" class="form-message" role="status" aria-live="polite"></p>
-                    <div id="savedPresetList" class="saved-list"></div>
-                    <div class="notice" role="note">Saved countdowns are private to this browser. Clearing browser or site data removes them.</div>
+                <section id="settingsPanel-textbooks" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-textbooks" hidden>
+                    <section class="settings-section"><h3 class="settings-heading">Textbook presets</h3><p class="settings-help">Check the books you want to see in the dashboard dropdown. Unchecking a book does not remove it from classes already using it.</p><div id="presetList" class="textbook-list"></div><p class="settings-help">One short sample is available in this preview. More textbook presets will be added later.</p></section>
+                    <section class="settings-section textbook-section"><h3 class="settings-heading">Custom textbooks</h3><p class="settings-help">Your saved textbooks are available to all your classes. Edit a book below, or add a new one.</p><div id="customTextbookList" class="textbook-list"></div><div class="button-row"><button type="button" id="newTemplateButton" class="button">＋ Add Custom Textbook</button></div></section>
+                    <section id="textbookEditor" class="settings-section textbook-section" hidden aria-labelledby="textbookEditorTitle"><h3 id="textbookEditorTitle" class="settings-heading">Add custom textbook</h3><p class="settings-help">Use one line per item. Start lines with <strong>#</strong>, <strong>##</strong>, or <strong>###</strong> for levels 1–3. Add an icon with <strong>[G]</strong> goal, <strong>[W]</strong> watch, <strong>[L]</strong> listen, <strong>[R]</strong> read, <strong>[S]</strong> speak, <strong>[LS]</strong> Let's Sing, <strong>[LC]</strong> Let's Chant, <strong>[ST]</strong> Small Talk, or <strong>[P]</strong> write. Edits apply to every class using this textbook; unchanged items retain their checks.</p><label class="field"><span class="field-label">Textbook Title</span><input id="customTitleInput" type="text" maxlength="200" placeholder="Let's Try! 4 Textbook"></label><label class="field"><span class="field-label">Textbook Sections and Activities</span><textarea id="customItemsInput" placeholder="# Unit 1&#10;## [G] Unit goal&#10;### [L] Listen and repeat"></textarea></label><div class="button-row"><button type="button" id="saveTemplateButton" class="button button-primary">Save Textbook</button><button type="button" id="cancelTemplateButton" class="button">Cancel</button></div></section>
+                    <p id="templateStatus" class="status" role="status"></p>
                 </section>
             </div>
         </section>
@@ -2641,632 +2089,290 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         })();
     </script>
 <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:END -->
-
     <script>
-        (() => {
-            "use strict";
-
-            const STORAGE_KEY = "teacherTools.classroomTimer.state.v1";
-            const BASE_TITLE = "Classroom Timer · Teacher Tools";
-            const MAX_PRESETS = 12;
-            const MAX_SECONDS = (23 * 60 * 60) + (59 * 60) + 59;
-            const { storageGet, storageSet, closeModal } = window.TeacherToolsUI;
-
-            const elements = {
-                appShell: document.querySelector(".app-shell"),
-                presentationButton: document.getElementById("presentationButton"),
-                countdownTab: document.getElementById("countdownTab"),
-                stopwatchTab: document.getElementById("stopwatchTab"),
-                countdownPanel: document.getElementById("countdownPanel"),
-                stopwatchPanel: document.getElementById("stopwatchPanel"),
-                countdownHours: document.getElementById("countdownHours"),
-                countdownMinutes: document.getElementById("countdownMinutes"),
-                countdownSeconds: document.getElementById("countdownSeconds"),
-                countdownFace: document.getElementById("countdownFace"),
-                countdownDisplay: document.getElementById("countdownDisplay"),
-                countdownStatus: document.getElementById("countdownStatus"),
-                countdownAnnouncement: document.getElementById("countdownAnnouncement"),
-                countdownStartButton: document.getElementById("countdownStartButton"),
-                countdownResetButton: document.getElementById("countdownResetButton"),
-                addMinuteButton: document.getElementById("addMinuteButton"),
-                stopwatchFace: document.getElementById("stopwatchFace"),
-                stopwatchDisplay: document.getElementById("stopwatchDisplay"),
-                stopwatchStatus: document.getElementById("stopwatchStatus"),
-                stopwatchStartButton: document.getElementById("stopwatchStartButton"),
-                stopwatchResetButton: document.getElementById("stopwatchResetButton"),
-                savedPresetButtons: document.getElementById("savedPresetButtons"),
-                quickPresetEmpty: document.getElementById("quickPresetEmpty"),
-                soundEnabledInput: document.getElementById("soundEnabledInput"),
-                defaultHours: document.getElementById("defaultHours"),
-                defaultMinutes: document.getElementById("defaultMinutes"),
-                defaultSeconds: document.getElementById("defaultSeconds"),
-                defaultCountdownMessage: document.getElementById("defaultCountdownMessage"),
-                quickPresetSettings: [...document.querySelectorAll("[data-quick-preset-setting]")],
-                presetForm: document.getElementById("presetForm"),
-                presetName: document.getElementById("presetName"),
-                presetHours: document.getElementById("presetHours"),
-                presetMinutes: document.getElementById("presetMinutes"),
-                presetSeconds: document.getElementById("presetSeconds"),
-                presetFormMessage: document.getElementById("presetFormMessage"),
-                savedPresetList: document.getElementById("savedPresetList")
-            };
-
-            let activeMode = "countdown";
-            let state = readState();
-            let presentationMode = false;
-            let presentationUsesFullscreen = false;
-            let audioContext = null;
-            let configuredMs = state.defaultSeconds * 1000;
-            let remainingMs = configuredMs;
-            let countdownEndAt = 0;
-            let countdownRunning = false;
-            let stopwatchElapsedMs = 0;
-            let stopwatchStartedAt = 0;
-            let stopwatchRunning = false;
-            let animationFrame = 0;
-            let lastDocumentTitle = BASE_TITLE;
-
-            function clampInteger(value, minimum, maximum) {
-                const number = Number.parseInt(value, 10);
-                if (!Number.isFinite(number)) return minimum;
-                return Math.min(maximum, Math.max(minimum, number));
+    (() => {
+        "use strict";
+        const TRACKER_KEY = "teacherTools.classTracker.state.v1";
+        const SCHEDULER_KEY = "classAutomatorData_v3";
+        const sampleTemplate = { id:"preset-new-horizon-6-sample", title:"New Horizon 6 Textbook (sample)", source:"preset", items:[
+            {id:"u1",level:1,text:"Unit 1"},{id:"u1p1",level:2,text:"Part 1"},{id:"u1p1a",level:3,text:"Listen and repeat"},{id:"u1p1b",level:3,text:"Practice the dialog"},{id:"u1p2",level:2,text:"Part 2"},{id:"u1p2a",level:3,text:"Read and think"},{id:"u1goal",level:2,text:"Unit goal"}
+        ]};
+        const fallbackSchools = [{id:"school-1",name:"My School",location:"",classes:["Class 6-1"],teachersByClass:{},studentCounts:{},periods:[],irregular:{enabled:false,periods:[]},lunch:{enabled:false,mode:"general",start:"12:00",duration:45,generalTitle:"Lunch"}}];
+        const blankTracker = () => ({version:1,templates:[sampleTemplate],assignments:{},progress:{},points:{},pointAudit:{},expanded:{},preferences:{selectedSchoolId:"",selectedClass:""}});
+        const get = key => { try { return localStorage.getItem(key); } catch(e) { return null; } };
+        const set = (key,value) => { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch(e) { return false; } };
+        const clone = value => JSON.parse(JSON.stringify(value));
+        const makeId = prefix => prefix+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7);
+        function readScheduler() { try { const value=JSON.parse(get(SCHEDULER_KEY)); if(value && value.version===3 && Array.isArray(value.schools)) { value.schools.forEach(school=>{ school.location=school.location||""; school.classes=Array.isArray(school.classes)?school.classes:[]; school.teachersByClass=school.teachersByClass&&typeof school.teachersByClass==="object"?school.teachersByClass:{}; school.studentCounts=school.studentCounts&&typeof school.studentCounts==="object"?school.studentCounts:{}; }); return value; } } catch(e) {} return {version:3,schools:clone(fallbackSchools),schedule:{},preferences:{selectedSchoolId:"school-1",selectedClassBySchool:{},theme:"ocean-blue"}}; }
+        function readTracker() { try { const value=JSON.parse(get(TRACKER_KEY)); if(value && value.version===1 && Array.isArray(value.templates)) { if(!value.templates.some(t=>t.id===sampleTemplate.id)) value.templates.unshift(sampleTemplate); return value; } } catch(e) {} return blankTracker(); }
+        let scheduler=readScheduler(), state=readTracker();
+        if(!state.points || typeof state.points!=="object" || Array.isArray(state.points)) state.points={};
+        if(!state.pointAudit || typeof state.pointAudit!=="object" || Array.isArray(state.pointAudit)) state.pointAudit={};
+        if(!state.expanded || typeof state.expanded!=="object" || Array.isArray(state.expanded)) state.expanded={};
+        const schoolSelect=document.getElementById("schoolSelect"), classSelect=document.getElementById("classSelect"), templateSelect=document.getElementById("templateSelect"), checklist=document.getElementById("checklist");
+        const classKey=()=>schoolSelect.value+"::"+classSelect.value;
+        function saveTracker(){ set(TRACKER_KEY,state); }
+        function renderSchools(){ const previous=schoolSelect.value||state.preferences.selectedSchoolId; schoolSelect.replaceChildren(...scheduler.schools.map(s=>new Option(s.name,s.id))); schoolSelect.value=scheduler.schools.some(s=>s.id===previous)?previous:(scheduler.schools[0]?.id||""); renderClasses(); }
+        function renderClasses(){ const school=scheduler.schools.find(s=>s.id===schoolSelect.value); const previous=classSelect.value||state.preferences.selectedClass; classSelect.replaceChildren(...(school?.classes||[]).map(name=>new Option(name,name))); classSelect.value=(school?.classes||[]).includes(previous)?previous:(school?.classes?.[0]||""); state.preferences.selectedSchoolId=schoolSelect.value; state.preferences.selectedClass=classSelect.value; saveTracker(); renderTemplates(); renderDashboard(); }
+        function renderTemplates(){
+            const assigned=state.assignments[classKey()]||"";
+            const hidden=state.preferences.hiddenPresetIds||[];
+            const visible=state.templates.filter(t=>t.source==="custom"||!hidden.includes(t.id));
+            templateSelect.replaceChildren(new Option("Choose a textbook…",""),...visible.map(t=>new Option((t.source==="custom"?"Custom · ":"")+t.title,t.id)));
+            const current=state.templates.find(t=>t.id===assigned);
+            if(current&&!visible.includes(current)){ const option=new Option(current.title+" (assigned · hidden preset)",current.id); option.disabled=true; templateSelect.append(option); }
+            templateSelect.value=assigned;
+        }
+        function assignedTemplate(){ return state.templates.find(t=>t.id===state.assignments[classKey()]); }
+        function descendants(items,index){
+            const level=items[index].level, result=[];
+            for(let next=index+1;next<items.length&&items[next].level>level;next++) result.push(items[next]);
+            return result;
+        }
+        const CHECKLIST_MARKERS={
+            G:{label:"Goal",svg:'<circle cx="12" cy="12" r="8.5"/><path d="m8 12 2.6 2.6L16.5 9"/>'},
+            W:{label:"Watch",svg:'<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="10.5" r="1.1" fill="currentColor" stroke="none"/>'},
+            L:{label:"Listen",svg:'<path d="M5 13v-2a7 7 0 0 1 14 0v2"/><path d="M5 12.5H4a1.5 1.5 0 0 0-1.5 1.5v3A1.5 1.5 0 0 0 4 18.5h2v-6Zm14 0h1a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-2v-6Z"/>'},
+            R:{label:"Read",svg:'<circle cx="12" cy="4.8" r="2.1"/><path d="M7.3 10.5c.8-2 2.4-3 4.7-3s3.9 1 4.7 3"/><path d="M12 12c-2.6-1.9-5.2-1.6-8-.6v6.8c3-.8 5.6-.4 8 1.6m0-7.8c2.6-1.9 5.2-1.6 8-.6v6.8c-3-.8-5.6-.4-8 1.6Z"/>'},
+            S:{label:"Speak",svg:'<circle cx="8.5" cy="13" r="5.5"/><circle cx="6.7" cy="11.5" r=".65" fill="currentColor" stroke="none"/><circle cx="10.3" cy="11.5" r=".65" fill="currentColor" stroke="none"/><path d="M6.2 14.5c.5 2.2 4.1 2.2 4.6 0Z" fill="currentColor" stroke="none"/><path d="M14 4.5h6a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1.2l-2.7 2v-2H14a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2Z"/>'},
+            LS:{label:"Let’s Sing",svg:'<path d="M16 4.5v11.8"/><path d="m16 5 4-1"/><ellipse cx="12.5" cy="17" rx="3.5" ry="2.5" transform="rotate(-12 12.5 17)" fill="currentColor" stroke="none"/>'},
+            LC:{label:"Let’s Chant",svg:'<path d="M6.2 16.5h11.6l-1.3-1.8V10a4.5 4.5 0 0 0-9 0v4.7Z"/><path d="M10 19a2.2 2.2 0 0 0 4 0M12 4V2.8"/>'},
+            ST:{label:"Small Talk",svg:'<path d="M4 5.5h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H9l-3.5 2.5v-2.5H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2Z"/><path d="M16 9.5h3a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5V20L15 17.5h-3a2 2 0 0 1-2-2"/>'},
+            P:{label:"Write",svg:'<path d="m5 16-.8 3.8L8 19l10.7-10.7-3-3Z"/><path d="m13.8 7.2 3 3M5 16l3 3"/>'}
+        };
+        const CHECKLIST_MARKER_PATTERN=/\[(LS|LC|ST|G|W|L|R|S|P)\]/g;
+        function parseChecklistMarkers(value){ const markers=[]; const text=value.replace(CHECKLIST_MARKER_PATTERN,(_,code)=>{ markers.push(code); return " "; }).replace(/\s+/g," ").trim(); return {markers,text}; }
+        function describeChecklistText(value){ const parsed=parseChecklistMarkers(value); return [...parsed.markers.map(code=>CHECKLIST_MARKERS[code].label),parsed.text].filter(Boolean).join(": "); }
+        function makeChecklistCopy(value){
+            const parsed=parseChecklistMarkers(value), copy=document.createElement("span"); copy.className="check-copy";
+            if(parsed.markers.length){ const icons=document.createElement("span"); icons.className="check-marker-icons"; icons.setAttribute("aria-hidden","true"); parsed.markers.forEach(code=>{ const icon=document.createElementNS("http://www.w3.org/2000/svg","svg"); icon.setAttribute("viewBox","0 0 24 24"); icon.setAttribute("class","check-marker-icon"); icon.setAttribute("title",CHECKLIST_MARKERS[code].label); icon.innerHTML=CHECKLIST_MARKERS[code].svg; icons.append(icon); }); copy.append(icons); }
+            const label=document.createElement("span"); label.className="check-label-text"; label.textContent=parsed.text||value; copy.append(label); return copy;
+        }
+        function syncParentChecks(template,done){
+            for(let index=template.items.length-1;index>=0;index--){
+                const item=template.items[index]; if(item.level>2) continue;
+                const children=descendants(template.items,index);
+                if(children.length) done[item.id]=children.every(child=>!!done[child.id]);
             }
-
-            function durationFromInputs(hoursInput, minutesInput, secondsInput) {
-                const hours = clampInteger(hoursInput.value, 0, 23);
-                const minutes = clampInteger(minutesInput.value, 0, 59);
-                const seconds = clampInteger(secondsInput.value, 0, 59);
-                hoursInput.value = String(hours);
-                minutesInput.value = String(minutes);
-                secondsInput.value = String(seconds);
-                return ((hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
-            }
-
-            function setInputGroupDuration(milliseconds, hoursInput, minutesInput, secondsInput) {
-                const totalSeconds = Math.min(MAX_SECONDS, Math.max(0, Math.round(milliseconds / 1000)));
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                hoursInput.value = String(hours);
-                minutesInput.value = String(minutes);
-                secondsInput.value = String(seconds);
-            }
-
-            function setDurationInputs(milliseconds) {
-                setInputGroupDuration(
-                    milliseconds,
-                    elements.countdownHours,
-                    elements.countdownMinutes,
-                    elements.countdownSeconds
-                );
-            }
-
-            function formatCountdown(milliseconds) {
-                const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-                return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-            }
-
-            function formatStopwatch(milliseconds) {
-                const tenths = Math.floor(Math.max(0, milliseconds) / 100) % 10;
-                const totalSeconds = Math.floor(Math.max(0, milliseconds) / 1000);
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${tenths}`;
-                return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${tenths}`;
-            }
-
-            function validPreset(value) {
-                return value && typeof value.id === "string" && typeof value.name === "string" &&
-                    value.name.trim().length > 0 && value.name.trim().length <= 40 &&
-                    Number.isInteger(value.seconds) && value.seconds >= 1 && value.seconds <= MAX_SECONDS;
-            }
-
-            function readState() {
-                const allQuickPresets = [60, 180, 300, 600, 900];
-                const fallback = {
-                    version: 1,
-                    soundEnabled: true,
-                    defaultSeconds: 300,
-                    quickPresets: allQuickPresets,
-                    presets: []
-                };
-                const raw = storageGet(STORAGE_KEY);
-                if (!raw) return fallback;
-                try {
-                    const saved = JSON.parse(raw);
-                    if (!saved || saved.version !== 1) return fallback;
-                    const quickPresets = Array.isArray(saved.quickPresets)
-                        ? [...new Set(saved.quickPresets.filter(value => allQuickPresets.includes(value)))]
-                        : allQuickPresets;
-                    return {
-                        version: 1,
-                        soundEnabled: saved.soundEnabled !== false,
-                        defaultSeconds: Number.isInteger(saved.defaultSeconds) && saved.defaultSeconds >= 1 && saved.defaultSeconds <= MAX_SECONDS
-                            ? saved.defaultSeconds
-                            : 300,
-                        quickPresets,
-                        presets: Array.isArray(saved.presets) ? saved.presets.filter(validPreset).slice(0, MAX_PRESETS) : []
-                    };
-                } catch (error) {
-                    return fallback;
-                }
-            }
-
-            function persistState() {
-                storageSet(STORAGE_KEY, JSON.stringify(state));
-            }
-
-            function createPresetId() {
-                if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
-                return `preset-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-            }
-
-            function syncDefaultControls() {
-                setInputGroupDuration(
-                    state.defaultSeconds * 1000,
-                    elements.defaultHours,
-                    elements.defaultMinutes,
-                    elements.defaultSeconds
-                );
-                elements.quickPresetSettings.forEach(input => {
-                    input.checked = state.quickPresets.includes(Number(input.dataset.quickPresetSetting));
+        }
+        function renderDashboard(){
+            renderPoints();
+            const school=scheduler.schools.find(s=>s.id===schoolSelect.value);
+            document.getElementById("classHeading").textContent=school&&classSelect.value?school.name+" · "+classSelect.value:"Choose a class";
+            const template=assignedTemplate(); checklist.replaceChildren();
+            document.getElementById("checklistHeading").textContent=template?.title||"Textbook Progress";
+            document.getElementById("clearProgressButton").hidden=!template;
+            if(!template){ const empty=document.createElement("div"); empty.className="empty-state"; empty.innerHTML="<strong>No textbook assigned yet</strong><p class='empty-copy'>Choose a textbook on the left, then assign it to this class.</p>"; checklist.append(empty); updateProgress(null); return; }
+            const key=classKey(), expansionKey=key+"::"+template.id, done=state.progress[key]||{}, expanded=state.expanded[expansionKey]||{};
+            let openLevelOne=false, openLevelTwo=false, hasLevelTwo=false;
+            template.items.forEach((item,index)=>{
+                let visible=true;
+                if(item.level===1){ openLevelOne=!!expanded[item.id]; openLevelTwo=false; hasLevelTwo=false; }
+                else if(item.level===2){ visible=openLevelOne; openLevelTwo=!!expanded[item.id]; hasLevelTwo=true; }
+                else visible=openLevelOne&&(!hasLevelTwo||openLevelTwo);
+                const children=descendants(template.items,index), collapsible=item.level<3&&children.length>0;
+                const row=document.createElement("div"); row.className="check-row level-"+item.level+(collapsible?" collapsible":""); row.hidden=!visible;
+                const readableText=describeChecklistText(item.text); const input=document.createElement("input"); input.type="checkbox"; input.setAttribute("aria-label",readableText);
+                if(children.length){ const selected=children.filter(child=>!!done[child.id]).length; input.checked=selected===children.length; input.indeterminate=selected>0&&selected<children.length; }
+                else input.checked=!!done[item.id];
+                row.classList.toggle("complete",input.checked);
+                input.addEventListener("change",()=>{
+                    state.progress[key] ||= {}; state.progress[key][item.id]=input.checked;
+                    children.forEach(child=>state.progress[key][child.id]=input.checked);
+                    syncParentChecks(template,state.progress[key]); saveTracker(); renderDashboard();
                 });
-            }
-
-            function setMode(mode, moveFocus = false) {
-                activeMode = mode;
-                const isCountdown = mode === "countdown";
-                elements.countdownTab.setAttribute("aria-selected", String(isCountdown));
-                elements.countdownTab.tabIndex = isCountdown ? 0 : -1;
-                elements.stopwatchTab.setAttribute("aria-selected", String(!isCountdown));
-                elements.stopwatchTab.tabIndex = isCountdown ? -1 : 0;
-                elements.countdownPanel.hidden = !isCountdown;
-                elements.stopwatchPanel.hidden = isCountdown;
-                if (moveFocus) (isCountdown ? elements.countdownTab : elements.stopwatchTab).focus();
-                updateDocumentTitle();
-            }
-
-            function setRunButton(button, running, label = running ? "Pause" : "Start") {
-                button.querySelector(".button-symbol").textContent = running ? "❚❚" : "▶";
-                button.querySelector(".button-label").textContent = label;
-            }
-
-            function updatePresentationButton() {
-                elements.presentationButton.setAttribute("aria-pressed", String(presentationMode));
-                elements.presentationButton.setAttribute("aria-label", presentationMode ? "Exit presentation mode" : "Enter presentation mode");
-                elements.presentationButton.title = presentationMode ? "Exit presentation mode" : "Presentation mode";
-            }
-
-            function setPresentationMode(active) {
-                presentationMode = active;
-                elements.appShell.classList.toggle("is-presenting", active);
-                document.body.classList.toggle("presentation-open", active);
-                updatePresentationButton();
-            }
-
-            async function enterPresentationMode() {
-                setPresentationMode(true);
-                presentationUsesFullscreen = false;
-                if (typeof elements.appShell.requestFullscreen !== "function") return;
-                try {
-                    await elements.appShell.requestFullscreen();
-                    presentationUsesFullscreen = document.fullscreenElement === elements.appShell;
-                } catch (error) {
-                    // The fixed presentation layout remains available when fullscreen access is restricted.
-                }
-            }
-
-            async function exitPresentationMode() {
-                if (presentationUsesFullscreen && document.fullscreenElement && typeof document.exitFullscreen === "function") {
-                    try {
-                        await document.exitFullscreen();
-                    } catch (error) {
-                        // Continue by returning to the standard in-page layout.
-                    }
-                }
-                presentationUsesFullscreen = false;
-                setPresentationMode(false);
-            }
-
-            function setCountdownInputsDisabled(disabled) {
-                elements.countdownHours.disabled = disabled;
-                elements.countdownMinutes.disabled = disabled;
-                elements.countdownSeconds.disabled = disabled;
-            }
-
-            function syncCountdownFromInputs() {
-                if (countdownRunning) return;
-                configuredMs = durationFromInputs(elements.countdownHours, elements.countdownMinutes, elements.countdownSeconds);
-                remainingMs = configuredMs;
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
-                renderCountdown();
-            }
-
-            function setCountdown(milliseconds) {
-                pauseCountdown(false);
-                configuredMs = Math.min(MAX_SECONDS * 1000, Math.max(0, milliseconds));
-                remainingMs = configuredMs;
-                setDurationInputs(configuredMs);
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
-                renderCountdown();
-                setMode("countdown");
-            }
-
-            function prepareAudio() {
-                if (!state.soundEnabled) return;
-                try {
-                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                    if (!AudioContextClass) return;
-                    if (!audioContext) audioContext = new AudioContextClass();
-                    if (audioContext.state === "suspended") audioContext.resume();
-                } catch (error) {
-                    audioContext = null;
-                }
-            }
-
-            function playFinishSound() {
-                if (!state.soundEnabled || !audioContext) return;
-                try {
-                    const now = audioContext.currentTime;
-                    [659.25, 783.99, 987.77].forEach((frequency, index) => {
-                        const oscillator = audioContext.createOscillator();
-                        const gain = audioContext.createGain();
-                        const start = now + (index * 0.16);
-                        oscillator.type = "sine";
-                        oscillator.frequency.value = frequency;
-                        gain.gain.setValueAtTime(0.0001, start);
-                        gain.gain.exponentialRampToValueAtTime(0.16, start + 0.02);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
-                        oscillator.connect(gain);
-                        gain.connect(audioContext.destination);
-                        oscillator.start(start);
-                        oscillator.stop(start + 0.3);
-                    });
-                } catch (error) {
-                    // The visual and accessible finish states remain available.
-                }
-            }
-
-            function startCountdown() {
-                if (remainingMs <= 0) syncCountdownFromInputs();
-                if (remainingMs <= 0) {
-                    elements.countdownStatus.textContent = "Choose a time to begin";
-                    elements.countdownHours.focus();
-                    return;
-                }
-                prepareAudio();
-                countdownEndAt = Date.now() + remainingMs;
-                countdownRunning = true;
-                setRunButton(elements.countdownStartButton, true);
-                elements.countdownStatus.textContent = "Counting down";
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                setCountdownInputsDisabled(true);
-                ensureAnimationLoop();
-            }
-
-            function pauseCountdown(updateStatus = true) {
-                if (countdownRunning) remainingMs = Math.max(0, countdownEndAt - Date.now());
-                countdownRunning = false;
-                setRunButton(elements.countdownStartButton, false);
-                setCountdownInputsDisabled(false);
-                if (updateStatus && remainingMs > 0) elements.countdownStatus.textContent = "Paused";
-                renderCountdown();
-            }
-
-            function resetCountdown() {
-                pauseCountdown(false);
-                remainingMs = configuredMs;
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
-                elements.countdownAnnouncement.textContent = "";
-                renderCountdown();
-            }
-
-            function addMinute() {
-                const maximumMs = MAX_SECONDS * 1000;
-                configuredMs = Math.min(maximumMs, configuredMs + 60000);
-                remainingMs = Math.min(maximumMs, remainingMs + 60000);
-                if (countdownRunning) countdownEndAt = Date.now() + remainingMs;
-                setDurationInputs(configuredMs);
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = countdownRunning ? "One minute added" : "One minute added — ready";
-                renderCountdown();
-            }
-
-            function finishCountdown() {
-                countdownRunning = false;
-                remainingMs = 0;
-                setRunButton(elements.countdownStartButton, false, "Start again");
-                setCountdownInputsDisabled(false);
-                elements.countdownFace.classList.add("finished");
-                elements.countdownStatus.classList.add("finished");
-                elements.countdownStatus.textContent = "Time is up!";
-                elements.countdownAnnouncement.textContent = "Time is up.";
-                renderCountdown();
-                playFinishSound();
-            }
-
-            function renderCountdown() {
-                const display = formatCountdown(remainingMs);
-                elements.countdownDisplay.textContent = display;
-                const progress = configuredMs > 0 ? Math.min(1, Math.max(0, remainingMs / configuredMs)) : 0;
-                elements.countdownFace.style.setProperty("--progress", String(progress));
-                updateDocumentTitle();
-            }
-
-            function startStopwatch() {
-                stopwatchStartedAt = Date.now() - stopwatchElapsedMs;
-                stopwatchRunning = true;
-                setRunButton(elements.stopwatchStartButton, true);
-                elements.stopwatchStatus.textContent = "Running";
-                ensureAnimationLoop();
-            }
-
-            function pauseStopwatch() {
-                if (stopwatchRunning) stopwatchElapsedMs = Date.now() - stopwatchStartedAt;
-                stopwatchRunning = false;
-                setRunButton(elements.stopwatchStartButton, false);
-                elements.stopwatchStatus.textContent = stopwatchElapsedMs > 0 ? "Paused" : "Ready";
-                renderStopwatch();
-            }
-
-            function resetStopwatch() {
-                stopwatchRunning = false;
-                stopwatchElapsedMs = 0;
-                setRunButton(elements.stopwatchStartButton, false);
-                elements.stopwatchStatus.textContent = "Ready";
-                renderStopwatch();
-            }
-
-            function renderStopwatch() {
-                elements.stopwatchDisplay.textContent = formatStopwatch(stopwatchElapsedMs);
-                updateDocumentTitle();
-            }
-
-            function updateDocumentTitle() {
-                let title = BASE_TITLE;
-                if (activeMode === "countdown" && countdownRunning) title = `${formatCountdown(remainingMs)} · ${BASE_TITLE}`;
-                if (activeMode === "stopwatch" && stopwatchRunning) title = `${formatStopwatch(stopwatchElapsedMs)} · ${BASE_TITLE}`;
-                if (title !== lastDocumentTitle) {
-                    document.title = title;
-                    lastDocumentTitle = title;
-                }
-            }
-
-            function animationTick() {
-                animationFrame = 0;
-                if (countdownRunning) {
-                    remainingMs = Math.max(0, countdownEndAt - Date.now());
-                    renderCountdown();
-                    if (remainingMs <= 0) finishCountdown();
-                }
-                if (stopwatchRunning) {
-                    stopwatchElapsedMs = Date.now() - stopwatchStartedAt;
-                    renderStopwatch();
-                }
-                if (countdownRunning || stopwatchRunning) animationFrame = window.requestAnimationFrame(animationTick);
-            }
-
-            function ensureAnimationLoop() {
-                if (!animationFrame) animationFrame = window.requestAnimationFrame(animationTick);
-            }
-
-            function renderPresets() {
-                document.querySelectorAll("[data-quick-preset]").forEach(button => {
-                    button.hidden = !state.quickPresets.includes(Number(button.dataset.quickPreset));
-                });
-                elements.savedPresetButtons.replaceChildren();
-                state.presets.forEach(preset => {
-                    const button = document.createElement("button");
-                    button.type = "button";
-                    button.className = "preset-button saved-preset-button";
-                    button.textContent = preset.name;
-                    button.title = `${preset.name}: ${formatCountdown(preset.seconds * 1000)}`;
-                    button.addEventListener("click", () => setCountdown(preset.seconds * 1000));
-                    elements.savedPresetButtons.append(" ", button);
-                });
-                elements.quickPresetEmpty.hidden = state.quickPresets.length > 0 || state.presets.length > 0;
-
-                elements.savedPresetList.replaceChildren();
-                if (state.presets.length === 0) {
-                    const empty = document.createElement("p");
-                    empty.className = "saved-empty";
-                    empty.textContent = "No saved countdowns yet.";
-                    elements.savedPresetList.append(empty);
-                    return;
-                }
-
-                state.presets.forEach(preset => {
-                    const row = document.createElement("div");
-                    row.className = "saved-row";
-                    const name = document.createElement("span");
-                    name.className = "saved-name";
-                    name.textContent = preset.name;
-                    const duration = document.createElement("span");
-                    duration.className = "saved-duration";
-                    duration.textContent = formatCountdown(preset.seconds * 1000);
-                    name.append(duration);
-
-                    const useButton = document.createElement("button");
-                    useButton.type = "button";
-                    useButton.className = "mini-button";
-                    useButton.textContent = "Use";
-                    useButton.addEventListener("click", () => {
-                        setCountdown(preset.seconds * 1000);
-                        closeModal();
-                    });
-
-                    const deleteButton = document.createElement("button");
-                    deleteButton.type = "button";
-                    deleteButton.className = "mini-button danger";
-                    deleteButton.textContent = "Delete";
-                    deleteButton.setAttribute("aria-label", `Delete ${preset.name} preset`);
-                    deleteButton.addEventListener("click", () => {
-                        if (!window.confirm(`Delete the saved countdown “${preset.name}”?`)) return;
-                        state.presets = state.presets.filter(item => item.id !== preset.id);
-                        persistState();
-                        renderPresets();
-                        elements.presetFormMessage.className = "form-message";
-                        elements.presetFormMessage.textContent = "Saved countdown deleted.";
-                    });
-
-                    row.append(name, useButton, deleteButton);
-                    elements.savedPresetList.append(row);
-                });
-            }
-
-            function savePreset(event) {
-                event.preventDefault();
-                const name = elements.presetName.value.trim();
-                const milliseconds = durationFromInputs(elements.presetHours, elements.presetMinutes, elements.presetSeconds);
-                elements.presetFormMessage.className = "form-message";
-
-                if (!name) {
-                    elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Enter a name for this countdown.";
-                    elements.presetName.focus();
-                    return;
-                }
-                if (milliseconds <= 0) {
-                    elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Choose a duration longer than zero seconds.";
-                    elements.presetMinutes.focus();
-                    return;
-                }
-                if (state.presets.length >= MAX_PRESETS) {
-                    elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Delete a saved countdown before adding another.";
-                    return;
-                }
-
-                state.presets.push({ id: createPresetId(), name, seconds: Math.round(milliseconds / 1000) });
-                persistState();
-                renderPresets();
-                elements.presetName.value = "";
-                elements.presetFormMessage.textContent = `Saved “${name}”.`;
-            }
-
-            function saveCountdownDefaults() {
-                const milliseconds = durationFromInputs(
-                    elements.defaultHours,
-                    elements.defaultMinutes,
-                    elements.defaultSeconds
-                );
-                elements.defaultCountdownMessage.className = "form-message";
-
-                if (milliseconds <= 0) {
-                    elements.defaultCountdownMessage.className = "form-message error";
-                    elements.defaultCountdownMessage.textContent = "Choose a default longer than zero seconds.";
-                    elements.defaultMinutes.focus();
-                    return;
-                }
-
-                state.defaultSeconds = Math.round(milliseconds / 1000);
-                state.quickPresets = elements.quickPresetSettings
-                    .filter(input => input.checked)
-                    .map(input => Number(input.dataset.quickPresetSetting));
-                persistState();
-                renderPresets();
-                elements.defaultCountdownMessage.textContent = "Saved automatically. The default time will be used the next time the app opens.";
-            }
-
-            elements.countdownTab.addEventListener("click", () => setMode("countdown"));
-            elements.stopwatchTab.addEventListener("click", () => setMode("stopwatch"));
-            [elements.countdownTab, elements.stopwatchTab].forEach(tab => {
-                tab.addEventListener("keydown", event => {
-                    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-                    event.preventDefault();
-                    setMode(activeMode === "countdown" ? "stopwatch" : "countdown", true);
-                });
+                if(collapsible){
+                    const toggle=document.createElement("button"); toggle.type="button"; toggle.className="collapse-button"; toggle.setAttribute("aria-expanded",String(!!expanded[item.id])); toggle.setAttribute("aria-label",(expanded[item.id]?"Collapse ":"Expand ")+readableText);
+                    const chevron=document.createElement("span"); chevron.className="collapse-chevron"; chevron.textContent="▶"; chevron.setAttribute("aria-hidden","true"); toggle.append(chevron);
+                    toggle.addEventListener("click",event=>{ event.preventDefault(); event.stopPropagation(); state.expanded[expansionKey] ||= {}; state.expanded[expansionKey][item.id]=!state.expanded[expansionKey][item.id]; saveTracker(); renderDashboard(); });
+                    row.append(input,toggle);
+                } else row.append(input);
+                row.append(makeChecklistCopy(item.text)); checklist.append(row);
             });
-
-            document.getElementById("presetList").addEventListener("click", event => {
-                const button = event.target.closest("button[data-seconds]");
-                if (button) setCountdown(Number(button.dataset.seconds) * 1000);
+            updateProgress(template);
+        }
+        function updateProgress(template){ const total=template?.items.length||0, done=template?template.items.filter(i=>state.progress[classKey()]?.[i.id]).length:0; document.getElementById("progressText").textContent=done+" of "+total; document.getElementById("progressFill").style.width=(total?done/total*100:0)+"%"; }
+        function saveSharedSchools(message="Changes saved automatically to this browser.") { const ok=set(SCHEDULER_KEY,scheduler); document.getElementById("schoolStatus").textContent=ok?message:"Could not save in this browser."; renderSchools(); }
+        function renameTrackerClass(schoolId,oldName,newName){
+            if(oldName===newName) return;
+            const oldKey=schoolId+"::"+oldName, newKey=schoolId+"::"+newName;
+            [state.assignments,state.progress,state.points,state.pointAudit].forEach(collection=>{ if(Object.prototype.hasOwnProperty.call(collection,oldKey)){ collection[newKey]=collection[oldKey]; delete collection[oldKey]; } });
+            const oldPrefix=oldKey+"::";
+            Object.keys(state.expanded).filter(key=>key.startsWith(oldPrefix)).forEach(key=>{ state.expanded[newKey+key.slice(oldKey.length)]=state.expanded[key]; delete state.expanded[key]; });
+            if(state.preferences.selectedSchoolId===schoolId&&state.preferences.selectedClass===oldName) state.preferences.selectedClass=newName;
+            saveTracker();
+        }
+        function refreshSettingsSchoolSelect(selectedId) { const select=document.getElementById("settingsSchoolSelect"); const requested=selectedId||select.value||scheduler.schools[0]?.id||""; select.replaceChildren(...scheduler.schools.map(s=>new Option(s.name,s.id))); select.value=scheduler.schools.some(s=>s.id===requested)?requested:(scheduler.schools[0]?.id||""); document.getElementById("deleteSchoolButton").disabled=scheduler.schools.length<=1; renderSchoolEditor(); }
+        function renderSchoolEditor(){
+            const root=document.getElementById("schoolEditor");
+            const school=scheduler.schools.find(s=>s.id===document.getElementById("settingsSchoolSelect").value);
+            root.replaceChildren();
+            if(!school) return;
+            const makeField=(label,value,type="text")=>{ const field=document.createElement("label"); field.className="field"; const caption=document.createElement("span"); caption.className="field-label"; caption.textContent=label; const input=document.createElement("input"); input.type=type; input.value=value; field.append(caption,input); return {field,input}; };
+            const name=makeField("School Name",school.name); name.field.classList.add("school-name-editor"); name.input.addEventListener("change",()=>{ const value=name.input.value.trim(); if(!value){ name.input.value=school.name; return; } school.name=value; saveSharedSchools(); refreshSettingsSchoolSelect(school.id); }); root.append(name.field);
+            const location=makeField("School Location (optional)",school.location||""); location.input.placeholder="Address, school name, or map-searchable location"; location.input.addEventListener("change",()=>{ school.location=location.input.value.trim(); saveSharedSchools(); }); root.append(location.field);
+            const headingRow=document.createElement("div"); headingRow.className="classes-heading-row"; const heading=document.createElement("h3"); heading.textContent="Classes"; const sort=document.createElement("button"); sort.type="button"; sort.className="button class-sort-button"; sort.textContent="Sort A–Z"; sort.disabled=school.classes.length<2; sort.title="Sort classes by name"; sort.addEventListener("click",()=>{ school.classes.sort((a,b)=>a.normalize("NFKC").localeCompare(b.normalize("NFKC"),undefined,{numeric:true,sensitivity:"base"})); saveSharedSchools(); renderSchoolEditor(); }); headingRow.append(heading,sort); root.append(headingRow);
+            const help=document.createElement("p"); help.className="helper-text"; help.textContent="Edit class names directly. Use the arrows to reorder them, or Sort A–Z. Teacher names and student counts are optional."; root.append(help);
+            const list=document.createElement("div"); list.className="class-list";
+            if(!school.classes.length){ const empty=document.createElement("p"); empty.className="empty-copy"; empty.textContent="No classes added yet."; list.append(empty); }
+            school.classes.forEach((className,classIndex)=>{
+                const row=document.createElement("div"); row.className="class-edit-row";
+                const classInput=document.createElement("input"); classInput.type="text"; classInput.className="class-name-input"; classInput.maxLength=80; classInput.value=className; classInput.setAttribute("aria-label","Class name");
+                const commitClassName=()=>{ const newName=classInput.value.trim(); if(!newName){ classInput.value=className; return; } if(newName!==className&&school.classes.some((name,index)=>index!==classIndex&&name===newName)){ alert('A class named "'+newName+'" already exists.'); classInput.value=className; return; } school.classes[classIndex]=newName; if(Object.prototype.hasOwnProperty.call(school.teachersByClass,className)){ school.teachersByClass[newName]=school.teachersByClass[className]; if(newName!==className) delete school.teachersByClass[className]; } if(Object.prototype.hasOwnProperty.call(school.studentCounts,className)){ school.studentCounts[newName]=school.studentCounts[className]; if(newName!==className) delete school.studentCounts[className]; } if(scheduler.preferences?.selectedClassBySchool?.[school.id]===className) scheduler.preferences.selectedClassBySchool[school.id]=newName; renameTrackerClass(school.id,className,newName); saveSharedSchools(); renderSchoolEditor(); };
+                classInput.addEventListener("blur",commitClassName); classInput.addEventListener("keydown",event=>{ if(event.key!=="Enter") return; event.preventDefault(); classInput.blur(); });
+                const teacher=makeField("Teacher",school.teachersByClass[className]||""); teacher.field.classList.add("class-detail-field"); const students=makeField("Students",Object.prototype.hasOwnProperty.call(school.studentCounts,className)?school.studentCounts[className]:"","number"); students.field.classList.add("class-detail-field"); students.input.min="0"; students.input.max="999"; students.input.step="1"; students.input.inputMode="numeric"; teacher.input.maxLength=120; teacher.input.className="class-teacher-input"; students.input.className="class-students-input";
+                teacher.input.addEventListener("change",()=>{ const value=teacher.input.value.trim(); if(value) school.teachersByClass[className]=value; else delete school.teachersByClass[className]; saveSharedSchools(); });
+                students.input.addEventListener("change",()=>{ if(students.input.value==="") delete school.studentCounts[className]; else { const value=Number(students.input.value); if(Number.isInteger(value)&&value>=0&&value<=999) school.studentCounts[className]=value; else students.input.value=school.studentCounts[className]??""; } saveSharedSchools(); });
+                const order=document.createElement("div"); order.className="class-order-controls"; const moveUp=document.createElement("button"), moveDown=document.createElement("button"); [[moveUp,"↑",-1],[moveDown,"↓",1]].forEach(([button,label,direction])=>{ button.type="button"; button.className="class-order-button"; button.textContent=label; button.title="Move "+className+(direction<0?" up":" down"); button.setAttribute("aria-label",button.title); button.disabled=direction<0?classIndex===0:classIndex===school.classes.length-1; button.addEventListener("click",()=>{ const destination=classIndex+direction; if(destination<0||destination>=school.classes.length) return; [school.classes[classIndex],school.classes[destination]]=[school.classes[destination],school.classes[classIndex]]; saveSharedSchools(); renderSchoolEditor(); }); }); order.append(moveUp,moveDown);
+                const remove=document.createElement("button"); remove.type="button"; remove.className="remove-class-button"; remove.textContent="×"; remove.title="Remove class"; remove.setAttribute("aria-label","Remove "+className); remove.addEventListener("click",()=>{ school.classes=school.classes.filter(item=>item!==className); delete school.teachersByClass[className]; delete school.studentCounts[className]; saveSharedSchools(); renderSchoolEditor(); });
+                const details=document.createElement("div"); details.className="class-details"; details.append(teacher.field,students.field); row.append(order,classInput,details,remove); list.append(row);
             });
-
-            [elements.countdownHours, elements.countdownMinutes, elements.countdownSeconds].forEach(input => {
-                input.addEventListener("change", syncCountdownFromInputs);
-            });
-
-            elements.countdownStartButton.addEventListener("click", () => {
-                if (countdownRunning) pauseCountdown();
-                else if (remainingMs <= 0 && configuredMs > 0) {
-                    remainingMs = configuredMs;
-                    startCountdown();
-                } else startCountdown();
-            });
-            elements.countdownResetButton.addEventListener("click", resetCountdown);
-            elements.addMinuteButton.addEventListener("click", addMinute);
-            elements.stopwatchStartButton.addEventListener("click", () => {
-                if (stopwatchRunning) pauseStopwatch(); else startStopwatch();
-            });
-            elements.stopwatchResetButton.addEventListener("click", resetStopwatch);
-            elements.presetForm.addEventListener("submit", savePreset);
-            [elements.defaultHours, elements.defaultMinutes, elements.defaultSeconds, ...elements.quickPresetSettings].forEach(input => {
-                input.addEventListener("change", saveCountdownDefaults);
-            });
-
-            elements.soundEnabledInput.addEventListener("change", () => {
-                state.soundEnabled = elements.soundEnabledInput.checked;
-                persistState();
-                if (state.soundEnabled) prepareAudio();
-            });
-
-            elements.presentationButton.addEventListener("click", () => {
-                if (presentationMode) exitPresentationMode();
-                else enterPresentationMode();
-            });
-
-            document.addEventListener("fullscreenchange", () => {
-                if (presentationUsesFullscreen && document.fullscreenElement !== elements.appShell) {
-                    presentationUsesFullscreen = false;
-                    setPresentationMode(false);
+            root.append(list);
+            const addRow=document.createElement("div"); addRow.className="add-class-row"; const input=document.createElement("input"); input.type="text"; input.placeholder="e.g. ４−１"; input.setAttribute("aria-label","New class name"); const button=document.createElement("button"); button.type="button"; button.className="button"; button.textContent="＋ Add Class"; button.addEventListener("click",()=>{ const value=input.value.trim(); if(value&&!school.classes.includes(value)){ school.classes.push(value); saveSharedSchools(); renderSchoolEditor(); } }); addRow.append(input,button); root.append(addRow);
+        }
+        document.getElementById("assignButton").addEventListener("click",()=>{ if(!classSelect.value||!templateSelect.value) return; state.assignments[classKey()]=templateSelect.value; state.progress[classKey()] ||= {}; saveTracker(); renderDashboard(); });
+        document.getElementById("clearProgressButton").addEventListener("click",()=>{ if(confirm("Clear all checks for this class?")){ state.progress[classKey()]={}; saveTracker(); renderDashboard(); } });
+        schoolSelect.addEventListener("change",renderClasses); classSelect.addEventListener("change",()=>{ state.preferences.selectedClass=classSelect.value; saveTracker(); renderTemplates(); renderDashboard(); });
+        const dashboardTabs=[...document.querySelectorAll("[data-dashboard-tab]")];
+        function showDashboardTab(name){
+            dashboardTabs.forEach(button=>{ const active=button.dataset.dashboardTab===name; button.classList.toggle("active",active); button.setAttribute("aria-selected",String(active)); button.tabIndex=active?0:-1; document.getElementById(button.getAttribute("aria-controls")).hidden=!active; });
+        }
+        dashboardTabs.forEach(button=>button.addEventListener("click",()=>showDashboardTab(button.dataset.dashboardTab)));
+        document.querySelector(".dashboard-tabs").addEventListener("keydown",event=>{
+            const current=dashboardTabs.indexOf(document.activeElement);
+            if(current<0||!["ArrowLeft","ArrowRight","Home","End"].includes(event.key)) return;
+            event.preventDefault(); const next=event.key==="Home"?0:event.key==="End"?dashboardTabs.length-1:(current+(event.key==="ArrowRight"?1:-1)+dashboardTabs.length)%dashboardTabs.length;
+            showDashboardTab(dashboardTabs[next].dataset.dashboardTab); dashboardTabs[next].focus();
+        });
+        const POINT_AUDIT_WINDOW_MS=5*60*1000;
+        function formatPointAudit(record){
+            if(!record||!Number.isInteger(record.delta)||!record.changedAt) return "No changes yet";
+            const date=new Date(record.changedAt); if(Number.isNaN(date.getTime())) return "No changes yet";
+            const pad=value=>String(value).padStart(2,"0"), amount=Math.abs(record.delta), sign=record.delta>0?"+":record.delta<0?"-":"";
+            return sign+amount+" "+(amount===1?"point":"points")+" on "+date.getFullYear()+"/"+pad(date.getMonth()+1)+"/"+pad(date.getDate())+" at "+pad(date.getHours())+":"+pad(date.getMinutes());
+        }
+        function recordPointAudit(key,student,delta){
+            if(!state.pointAudit[key]||typeof state.pointAudit[key]!=="object") state.pointAudit[key]={};
+            const now=new Date(), previous=state.pointAudit[key][student], previousStart=previous?new Date(previous.windowStartedAt||previous.changedAt):null;
+            const elapsed=previousStart?now.getTime()-previousStart.getTime():NaN;
+            const continues=previous&&Number.isInteger(previous.delta)&&Number.isFinite(elapsed)&&elapsed>=0&&elapsed<=POINT_AUDIT_WINDOW_MS;
+            state.pointAudit[key][student]={delta:(continues?previous.delta:0)+delta,changedAt:now.toISOString(),windowStartedAt:continues?(previous.windowStartedAt||previous.changedAt):now.toISOString()};
+            return state.pointAudit[key][student];
+        }
+        function classPointTotal(key,count){ let total=0; for(let student=1;student<=count;student++){ const value=state.points[key]?.[student]; if(Number.isInteger(value)&&value>=0&&value<=999999) total+=value; } return total; }
+        function renderPoints(){
+            const root=document.getElementById("pointsRows"), status=document.getElementById("pointsStatus"), total=document.getElementById("classPointsTotal");
+            root.replaceChildren(); status.textContent="";
+            const school=scheduler.schools.find(s=>s.id===schoolSelect.value);
+            const count=Number(school?.studentCounts?.[classSelect.value]);
+            if(!classSelect.value||!Number.isInteger(count)||count<=0||count>999){
+                const note=document.createElement("p"); note.className="empty-copy"; note.textContent=!classSelect.value?"Select a class to track student points.":"No students to display. Enter a student count for this class in Schools settings.";
+                const button=document.createElement("button"); button.type="button"; button.className="button"; button.textContent="Open Schools settings";
+                button.addEventListener("click",()=>{ showSettingsTab("schools"); refreshSettingsSchoolSelect(schoolSelect.value); window.TeacherToolsUI.openModal("settingsModal",button); });
+                total.textContent="—"; root.append(note,button); return;
+            }
+            const key=classKey();
+            const updateTotal=()=>{ total.textContent=classPointTotal(key,count).toLocaleString(); };
+            updateTotal();
+            const table=document.createElement("table"); table.className="points-table";
+            const caption=document.createElement("caption"); caption.className="helper-text"; caption.textContent=classSelect.value+" · "+count+" students";
+            const head=document.createElement("thead"); const headings=document.createElement("tr");
+            ["#","Audit","Points"].forEach(text=>{ const th=document.createElement("th"); th.scope="col"; th.textContent=text; headings.append(th); }); head.append(headings);
+            const body=document.createElement("tbody");
+            for(let student=1;student<=count;student++){
+                const row=document.createElement("tr"), number=document.createElement("th"); number.scope="row"; number.textContent=student;
+                const audit=document.createElement("td"); audit.className="points-audit"; audit.textContent=formatPointAudit(state.pointAudit[key]?.[student]);
+                const cell=document.createElement("td"), controls=document.createElement("div"); controls.className="points-control";
+                const star=document.createElement("span"); star.className="points-star"; star.textContent="★"; star.setAttribute("aria-hidden","true");
+                const input=document.createElement("input"); input.type="number"; input.className="points-input"; input.min="0"; input.max="999999"; input.step="1"; input.inputMode="numeric"; input.setAttribute("aria-label","Points for student "+student);
+                const saved=state.points[key]?.[student]; let value=Number.isInteger(saved)&&saved>=0&&saved<=999999?saved:0; input.value=value;
+                const minus=document.createElement("button"), plus=document.createElement("button");
+                [minus,plus].forEach(button=>{ button.type="button"; button.className="points-step"; });
+                minus.textContent="−"; plus.textContent="+"; minus.setAttribute("aria-label","Decrease points for student "+student); plus.setAttribute("aria-label","Increase points for student "+student);
+                function sync(){ input.value=value; minus.disabled=value===0; plus.disabled=value===999999; }
+                function commit(next){
+                    if(!Number.isInteger(next)||next<0||next>999999){ sync(); status.textContent="Use a whole number from 0 to 999,999."; return; }
+                    const delta=next-value; if(delta===0){ sync(); return; }
+                    value=next; if(!state.points[key]||typeof state.points[key]!=="object") state.points[key]={}; state.points[key][student]=value;
+                    const auditRecord=recordPointAudit(key,student,delta);
+                    const saved=set(TRACKER_KEY,state); sync(); audit.textContent=formatPointAudit(auditRecord); updateTotal(); status.textContent=saved?"Student "+student+": "+value+" points saved.":"Points could not be saved in this browser. Keep this page open and export a backup.";
                 }
-            });
-
-            document.addEventListener("keydown", event => {
-                if (event.key === "Escape" && presentationMode && !document.fullscreenElement) {
-                    event.preventDefault();
-                    exitPresentationMode();
-                    return;
+                const commitInput=()=>{ if(input.value.trim()===""){ sync(); return; } commit(Number(input.value)); };
+                input.addEventListener("change",commitInput);
+                input.addEventListener("keydown",event=>{ if(event.key!=="Enter") return; event.preventDefault(); commitInput(); input.blur(); });
+                minus.addEventListener("click",()=>commit(value-1)); plus.addEventListener("click",()=>commit(value+1)); sync();
+                controls.append(star,input,minus,plus); cell.append(controls); row.append(number,audit,cell); body.append(row);
+            }
+            table.append(caption,head,body); root.append(table);
+        }
+        const settingsTabs=[...document.querySelectorAll(".settings-tab")];
+        function showSettingsTab(tabName){ settingsTabs.forEach(button=>{ const selected=button.dataset.settingsTab===tabName; button.classList.toggle("active",selected); button.setAttribute("aria-selected",String(selected)); button.tabIndex=selected?0:-1; }); document.querySelectorAll(".settings-panel").forEach(panel=>{ const selected=panel.id==="settingsPanel-"+tabName; panel.classList.toggle("active",selected); panel.hidden=!selected; }); }
+        settingsTabs.forEach(button=>button.addEventListener("click",()=>showSettingsTab(button.dataset.settingsTab)));
+        document.querySelector(".settings-tabs").addEventListener("keydown",event=>{ if(!["ArrowLeft","ArrowRight","Home","End"].includes(event.key)) return; const current=settingsTabs.indexOf(document.activeElement); if(current<0) return; event.preventDefault(); let next=event.key==="Home"?0:event.key==="End"?settingsTabs.length-1:event.key==="ArrowRight"?(current+1)%settingsTabs.length:(current-1+settingsTabs.length)%settingsTabs.length; showSettingsTab(settingsTabs[next].dataset.settingsTab); settingsTabs[next].focus(); });
+        document.getElementById("settingsSchoolSelect").addEventListener("change",renderSchoolEditor);
+        document.getElementById("addSchoolButton").addEventListener("click",()=>{ const id=makeId("school"); scheduler.schools.push({id,name:"New School",location:"",classes:[],teachersByClass:{},studentCounts:{},periods:[],irregular:{enabled:false,periods:[]},lunch:{enabled:false,mode:"general",start:"12:00",duration:45,generalTitle:"Lunch"}}); scheduler.schedule[id]=[]; saveSharedSchools("New school added."); refreshSettingsSchoolSelect(id); });
+        document.getElementById("deleteSchoolButton").addEventListener("click",()=>{ if(scheduler.schools.length<=1) return; const select=document.getElementById("settingsSchoolSelect"), school=scheduler.schools.find(s=>s.id===select.value); if(!school||!confirm("Delete "+school.name+" from both Class Tracker and Scheduler?")) return; scheduler.schools=scheduler.schools.filter(item=>item.id!==school.id); delete scheduler.schedule[school.id]; saveSharedSchools("School deleted."); refreshSettingsSchoolSelect(); });
+        let editingTemplateId=null;
+        const textbookStatus=message=>{ document.getElementById("templateStatus").textContent=message; };
+        function openTextbookEditor(template=null){
+            if(!document.getElementById("textbookEditor").hidden&&!confirm("Discard the current textbook draft?")) return;
+            editingTemplateId=template?.id||null;
+            document.getElementById("textbookEditorTitle").textContent=template?"Edit custom textbook":"Add custom textbook";
+            document.getElementById("customTitleInput").value=template?.title||"";
+            document.getElementById("customItemsInput").value=template?template.items.map(item=>"#".repeat(item.level)+" "+item.text).join("\n"):"";
+            document.getElementById("textbookEditor").hidden=false;
+            textbookStatus(""); document.getElementById("customTitleInput").focus();
+        }
+        function renderTextbookSettings(){
+            const presets=document.getElementById("presetList"), customs=document.getElementById("customTextbookList");
+            presets.replaceChildren(); customs.replaceChildren();
+            state.templates.forEach(template=>{
+                if(template.source!=="custom"){
+                    const label=document.createElement("label"); label.className="preset-choice textbook-entry";
+                    const input=document.createElement("input"); input.type="checkbox"; input.checked=!(state.preferences.hiddenPresetIds||[]).includes(template.id);
+                    const text=document.createElement("span"); text.textContent=template.title;
+                    input.addEventListener("change",()=>{ const ids=new Set(state.preferences.hiddenPresetIds||[]); if(input.checked) ids.delete(template.id); else ids.add(template.id); state.preferences.hiddenPresetIds=[...ids]; saveTracker(); renderTemplates(); textbookStatus("Preset visibility saved."); });
+                    label.append(input,text); presets.append(label); return;
                 }
-                if (event.code !== "Space" || event.defaultPrevented || event.repeat) return;
-                const target = event.target;
-                if (target.closest("input, textarea, select, button, [role='dialog']")) return;
-                event.preventDefault();
-                if (activeMode === "countdown") elements.countdownStartButton.click();
-                else elements.stopwatchStartButton.click();
+                const row=document.createElement("div"); row.className="textbook-entry";
+                const copy=document.createElement("div"); copy.className="book-copy"; const title=document.createElement("strong"); title.textContent=template.title;
+                const uses=Object.values(state.assignments).filter(id=>id===template.id).length;
+                const note=document.createElement("small"); note.textContent=template.items.length+" items · "+uses+" class assignments"; copy.append(title,note);
+                const actions=document.createElement("div"); actions.className="book-actions";
+                const edit=document.createElement("button"); edit.type="button"; edit.className="button"; edit.textContent="Edit"; edit.setAttribute("aria-label","Edit "+template.title); edit.addEventListener("click",()=>openTextbookEditor(template));
+                const remove=document.createElement("button"); remove.type="button"; remove.className="button button-danger"; remove.textContent="Delete"; remove.setAttribute("aria-label","Delete "+template.title);
+                remove.addEventListener("click",()=>{
+                    if(!confirm('Delete "'+template.title+'"?'+(uses?" This removes its assignments and saved checks from "+uses+" classes.":"")+" Export a backup first if you may need it later.")) return;
+                    state.templates=state.templates.filter(item=>item.id!==template.id);
+                    Object.keys(state.assignments).forEach(key=>{ if(state.assignments[key]===template.id){ delete state.assignments[key]; delete state.progress[key]; } });
+                    if(editingTemplateId===template.id){ document.getElementById("textbookEditor").hidden=true; editingTemplateId=null; }
+                    saveTracker(); renderTemplates(); renderDashboard(); renderTextbookSettings(); textbookStatus("Custom textbook deleted.");
+                }); actions.append(edit,remove); row.append(copy,actions); customs.append(row);
             });
-
-            window.addEventListener("storage", event => {
-                if (event.key !== STORAGE_KEY) return;
-                state = readState();
-                elements.soundEnabledInput.checked = state.soundEnabled;
-                syncDefaultControls();
-                renderPresets();
+            if(!customs.children.length){ const empty=document.createElement("p"); empty.className="settings-help"; empty.textContent="No custom textbooks yet. Add your first textbook below."; customs.append(empty); }
+        }
+        document.getElementById("newTemplateButton").addEventListener("click",()=>openTextbookEditor());
+        document.getElementById("cancelTemplateButton").addEventListener("click",()=>{ document.getElementById("textbookEditor").hidden=true; editingTemplateId=null; textbookStatus("Draft cancelled. Saved textbooks are unchanged."); document.getElementById("newTemplateButton").focus(); });
+        document.getElementById("saveTemplateButton").addEventListener("click",()=>{
+            const title=document.getElementById("customTitleInput").value.trim();
+            const lines=document.getElementById("customItemsInput").value.split(/\n/).map(line=>line.trim()).filter(Boolean);
+            if(!title||!lines.length){ textbookStatus("Add a textbook title and at least one section or activity."); return; }
+            if(lines.length>1000){ textbookStatus("Please use no more than 1,000 items per textbook."); return; }
+            const existing=state.templates.find(t=>t.id===editingTemplateId);
+            const available=[...(existing?.items||[])];
+            const items=lines.map(line=>{
+                const match=line.match(/^(#{1,3})\s+(.+)$/); const level=match?match[1].length:3, text=match?match[2]:line;
+                const index=available.findIndex(item=>item.level===level&&item.text===text);
+                return {id:index>=0?available.splice(index,1)[0].id:makeId("item"),level,text};
             });
-
-            elements.soundEnabledInput.checked = state.soundEnabled;
-            syncDefaultControls();
-            renderPresets();
-            setCountdown(state.defaultSeconds * 1000);
-            renderStopwatch();
-            setMode("countdown");
-            updatePresentationButton();
-        })();
+            if(existing&&available.length&&Object.values(state.assignments).includes(existing.id)&&!confirm("Changed or removed items will lose their checks in classes using this textbook. Unchanged items keep their progress. Save changes?")) return;
+            if(existing){ existing.title=title; existing.items=items; const ids=new Set(items.map(item=>item.id)); Object.keys(state.assignments).forEach(key=>{ if(state.assignments[key]===existing.id) Object.keys(state.progress[key]||{}).forEach(id=>{ if(!ids.has(id)) delete state.progress[key][id]; }); }); }
+            else state.templates.push({id:makeId("template"),title,source:"custom",items});
+            saveTracker(); renderTemplates(); renderDashboard(); renderTextbookSettings(); document.getElementById("textbookEditor").hidden=true; editingTemplateId=null; textbookStatus(existing?"Textbook updated. Unchanged items kept their progress.":"Custom textbook saved and ready to assign."); document.getElementById("newTemplateButton").focus();
+        });
+        window.addEventListener("storage",event=>{ if(event.key===SCHEDULER_KEY){ scheduler=readScheduler(); renderSchools(); refreshSettingsSchoolSelect(); } });
+        renderSchools(); renderTemplates(); refreshSettingsSchoolSelect(); renderTextbookSettings();
+    })();
     </script>
 </body>
 </html>

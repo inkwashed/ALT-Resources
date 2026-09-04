@@ -425,7 +425,7 @@ The software is provided "as is" without warranty of any kind.
             padding: 0;
             list-style: none;
         }
-         .site-data-summary-item {
+        .site-data-summary-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -437,6 +437,22 @@ The software is provided "as is" without warranty of any kind.
             border-radius: 7px;
             font-size: 10.5px;
         }
+        .site-data-summary-selection {
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .site-data-checkbox {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 auto;
+            margin: 0;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+        .site-data-checkbox:disabled { cursor: default; opacity: 0.55; }
          .site-data-summary-state {
             flex: 0 0 auto;
             color: var(--muted);
@@ -463,7 +479,15 @@ The software is provided "as is" without warranty of any kind.
             font-weight: 700;
             cursor: pointer;
         }
-         .site-data-action:hover { color: var(--accent); border-color: var(--accent-border); }
+        .site-data-action:hover { color: var(--accent); border-color: var(--accent-border); }
+        .site-data-action:disabled,
+        .site-data-action:disabled:hover {
+            color: var(--muted);
+            background: var(--panel);
+            border-color: var(--line);
+            filter: none;
+            cursor: not-allowed;
+        }
          .site-data-action-primary {
             color: #ffffff;
             background: var(--accent);
@@ -1388,7 +1412,22 @@ The software is provided "as is" without warranty of any kind.
             color: var(--muted);
         }
 
-        #schoolEditor h3 { margin-top: 12px; }
+        #schoolEditor h3,
+        #periodsEditor h3 { margin-top: 12px; }
+
+        #periodsEditor > h3:first-child { margin-top: 0; }
+
+        .settings-subheading {
+            margin-top: 14px !important;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+        }
+
+        .working-hours-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
 
         .settings-buttons {
             display: flex;
@@ -1458,16 +1497,100 @@ The software is provided "as is" without warranty of any kind.
 
         /* Existing JS creates .class-row for class-list entries. Keep it compact inside settings. */
         .settings-scroll .class-row {
-            display: flex;
+            display: grid;
+            grid-template-columns: 24px minmax(72px, 1fr) auto 24px;
             align-items: center;
-            justify-content: space-between;
-            gap: 10px;
+            gap: 6px;
             margin: 0;
             border: 1px solid var(--line);
             background: var(--surface);
             border-radius: 6px;
             padding: 7px 8px;
             font-size: 11px;
+        }
+
+        .classes-heading-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .classes-heading-row h3 { margin-bottom: 0; }
+
+        .class-sort-btn {
+            flex: 0 0 auto;
+            min-width: 0;
+            padding: 5px 8px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .settings-scroll .class-name-input {
+            width: 100%;
+            min-width: 0;
+            padding: 5px 6px;
+            font-size: 10px;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .class-details {
+            display: grid;
+            grid-template-columns: auto auto;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .class-teacher-field,
+        .class-students-field {
+            display: grid;
+            grid-template-columns: auto auto;
+            align-items: center;
+            gap: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 650;
+        }
+
+        .settings-scroll .class-teacher-input,
+        .settings-scroll .class-students-input {
+            padding: 5px;
+            font-size: 10px;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .class-teacher-input { width: 104px; }
+        .class-students-input { width: 52px; }
+
+        .class-order-controls {
+            display: grid;
+            grid-template-rows: repeat(2, 20px);
+            gap: 2px;
+        }
+
+        .class-order-btn {
+            width: 24px;
+            height: 20px;
+            padding: 0;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: 4px;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 10px;
+            line-height: 1;
+        }
+
+        .class-order-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .class-order-btn:disabled {
+            cursor: default;
+            opacity: .3;
         }
 
         .remove-btn {
@@ -1559,6 +1682,11 @@ The software is provided "as is" without warranty of any kind.
             .slot-btn { padding: 8px; }
             .slot-time { font-size: 10px; }
             .settings-tab { font-size: 10px; }
+            .settings-scroll .class-row { grid-template-columns: 24px minmax(0, 1fr) 24px; }
+            .settings-scroll .class-row > .class-order-controls { grid-column: 1; grid-row: 1; }
+            .settings-scroll .class-row > .class-name-input { grid-column: 2; grid-row: 1; }
+            .settings-scroll .class-row > .remove-btn { grid-column: 3; grid-row: 1; }
+            .class-details { grid-column: 1 / -1; grid-row: 2; }
         }
 
         /* True Dark refinements */
@@ -1708,9 +1836,7 @@ The software is provided "as is" without warranty of any kind.
                     <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
-
-                 <div class="site-menu-label">Planned tools</div>
-                 <div class="site-menu-item" aria-disabled="true">
+                 <a class="site-menu-item" href="/tracker/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <rect x="5.5" y="5.5" width="17" height="17" rx="3" />
@@ -1718,8 +1844,21 @@ The software is provided "as is" without warranty of any kind.
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
-                    <span class="site-menu-status">PLANNED</span>
-                </div>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+                 <a class="site-menu-item" href="/tricks/">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <path d="M8 9.5h12l2 13H6Z" />
+                            <path d="M10.5 9.5V7a3.5 3.5 0 0 1 7 0v2.5" />
+                            <path class="icon-fill" d="m14 13 .8 1.8 2 .2-1.5 1.4.4 2-1.7-1-1.7 1 .4-2-1.5-1.4 2-.2Z" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Bag of Tricks</span><span class="site-menu-description">Flip, roll, and draw for classroom games</span></span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+
+                 <div class="site-menu-label">Planned tools</div>
                  <div class="site-menu-item" aria-disabled="true">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1736,7 +1875,7 @@ The software is provided "as is" without warranty of any kind.
                     <h2 id="siteDataTitle" class="site-data-title">Backup & restore</h2>
                     <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore">×</button>
                 </div>
-                <p class="site-data-help">Export one local file containing saved data from every Teacher Tools applet in this browser. Nothing is uploaded.</p>
+                <p class="site-data-help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
                 <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data"></ul>
                 <div class="site-data-actions">
                     <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary">Export all data</button>
@@ -1784,7 +1923,7 @@ The software is provided "as is" without warranty of any kind.
     <header class="app-header">
         <div class="title-wrap">
             <h1 class="app-title">ALT Class Scheduler</h1>
-            <span class="version-badge">v3.5</span>
+            <span class="version-badge">v3.6</span>
         </div>
 
         <div class="app-header-actions">
@@ -1862,7 +2001,7 @@ The software is provided "as is" without warranty of any kind.
     </main>
 
     <footer class="app-footer">
-        <div class="footer-version">ALT Class Scheduler · v3.5</div>
+        <div class="footer-version">ALT Class Scheduler · v3.6</div>
         <div class="footer-copyright">
             © 2026 · All rights reserved. Free for personal, classroom, and non-commercial educational use.
             Redistribution, resale, commercial use, and distribution of modified versions require prior permission.
@@ -1888,8 +2027,8 @@ The software is provided "as is" without warranty of any kind.
                 <li class="tutorial-step">
                     <span class="tutorial-step-number" aria-hidden="true">1</span>
                     <div>
-                        <h3 class="tutorial-step-title">Add your schools and bell schedules</h3>
-                        <p class="tutorial-step-copy">Rename or add schools, enter their classes and locations, and adjust regular, irregular, and lunch times.</p>
+                        <h3 class="tutorial-step-title">Add your schools and classes</h3>
+                        <p class="tutorial-step-copy">Rename or add schools, enter their locations and classes, and optionally save each class's main teacher and student count.</p>
                     </div>
                     <button type="button" class="tutorial-step-action" data-tutorial-tab="schools" data-modal-switch="settingsModal">Open Schools</button>
                 </li>
@@ -1897,14 +2036,23 @@ The software is provided "as is" without warranty of any kind.
                 <li class="tutorial-step">
                     <span class="tutorial-step-number" aria-hidden="true">2</span>
                     <div>
+                        <h3 class="tutorial-step-title">Set your bell times</h3>
+                        <p class="tutorial-step-copy">Adjust regular periods, optional irregular periods, and lunch settings for each school.</p>
+                    </div>
+                    <button type="button" class="tutorial-step-action" data-tutorial-tab="periods" data-modal-switch="settingsModal">Open Periods</button>
+                </li>
+
+                <li class="tutorial-step">
+                    <span class="tutorial-step-number" aria-hidden="true">3</span>
+                    <div>
                         <h3 class="tutorial-step-title">Save your teaching dates</h3>
-                        <p class="tutorial-step-copy">Add dates for each school so the Target Date controls can quickly move between your scheduled school days.</p>
+                        <p class="tutorial-step-copy">Save working hours and teaching dates for each school so the Target Date controls can quickly move between scheduled school days.</p>
                     </div>
                     <button type="button" class="tutorial-step-action" data-tutorial-tab="schedule" data-modal-switch="settingsModal">Open Schedule</button>
                 </li>
 
                 <li class="tutorial-step">
-                    <span class="tutorial-step-number" aria-hidden="true">3</span>
+                    <span class="tutorial-step-number" aria-hidden="true">4</span>
                     <div>
                         <h3 class="tutorial-step-title">Back up or move your data</h3>
                         <p class="tutorial-step-copy">Use the download-arrow button in the Teacher Tools header to export or restore one backup covering all of your saved tools.</p>
@@ -1935,20 +2083,58 @@ The software is provided "as is" without warranty of any kind.
         </div>
 
         <div class="settings-tabs" role="tablist" aria-label="Settings sections">
-            <button type="button" id="settingsTab-schedule" class="settings-tab active" data-settings-tab="schedule" role="tab" aria-selected="true" aria-controls="settingsPanel-schedule">Schedule</button>
-            <button type="button" id="settingsTab-schools" class="settings-tab" data-settings-tab="schools" role="tab" aria-selected="false" aria-controls="settingsPanel-schools" tabindex="-1">Schools</button>
+            <button type="button" id="settingsTab-schools" class="settings-tab active" data-settings-tab="schools" role="tab" aria-selected="true" aria-controls="settingsPanel-schools">Schools</button>
+            <button type="button" id="settingsTab-schedule" class="settings-tab" data-settings-tab="schedule" role="tab" aria-selected="false" aria-controls="settingsPanel-schedule" tabindex="-1">Schedule</button>
+            <button type="button" id="settingsTab-periods" class="settings-tab" data-settings-tab="periods" role="tab" aria-selected="false" aria-controls="settingsPanel-periods" tabindex="-1">Periods</button>
         </div>
 
         <div class="settings-scroll">
-            <section id="settingsPanel-schedule" class="settings-panel active" role="tabpanel" aria-labelledby="settingsTab-schedule">
+            <section id="settingsPanel-schools" class="settings-panel active" role="tabpanel" aria-labelledby="settingsTab-schools">
                 <div class="settings-section">
-                    <h3>Schedule Dates</h3>
+                    <h3>School Information</h3>
+
+                    <div class="form-group">
+                        <label for="settingsSchoolSelect">Edit School</label>
+                        <select id="settingsSchoolSelect"></select>
+                    </div>
+
+                    <div class="settings-buttons">
+                        <button type="button" id="addSchoolBtn" class="settings-btn">＋ Add School</button>
+                        <button type="button" id="deleteSchoolBtn" class="settings-btn danger-btn">− Delete School</button>
+                    </div>
+
+                    <div id="schoolEditor"></div>
+
+                    <div class="settings-buttons">
+                        <button type="button" id="restoreDefaultsBtn" class="settings-btn danger-btn">Restore Factory Defaults</button>
+                    </div>
+                    <div class="backup-note">This resets only the Scheduler. Your site appearance and data saved by other Teacher Tools applets are kept.</div>
+                </div>
+            </section>
+
+            <section id="settingsPanel-schedule" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-schedule" hidden>
+                <div class="settings-section">
+                    <h3>Schedule</h3>
 
                     <div class="form-group">
                         <label for="settingsScheduleSchoolSelect">Edit Schedule For</label>
                         <select id="settingsScheduleSchoolSelect"></select>
                     </div>
 
+                    <h3 class="settings-subheading">Working Hours</h3>
+                    <div class="working-hours-row">
+                        <div class="form-group">
+                            <label for="workingHoursStart">Start</label>
+                            <input type="time" id="workingHoursStart">
+                        </div>
+                        <div class="form-group">
+                            <label for="workingHoursEnd">End</label>
+                            <input type="time" id="workingHoursEnd">
+                        </div>
+                    </div>
+                    <div class="helper-text">Saved for future use. Working hours do not change Scheduler events yet.</div>
+
+                    <h3 class="settings-subheading">Teaching Dates</h3>
                     <div class="form-group">
                         <label for="newScheduleDate">Add Date</label>
                         <input type="date" id="newScheduleDate">
@@ -1971,26 +2157,16 @@ The software is provided "as is" without warranty of any kind.
                 </div>
             </section>
 
-            <section id="settingsPanel-schools" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-schools" hidden>
+            <section id="settingsPanel-periods" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-periods" hidden>
                 <div class="settings-section">
-                    <h3>Schools & Bell Times</h3>
+                    <h3>Periods & Bell Times</h3>
 
                     <div class="form-group">
-                        <label for="settingsSchoolSelect">Edit School</label>
-                        <select id="settingsSchoolSelect"></select>
+                        <label for="settingsPeriodsSchoolSelect">Edit Periods For</label>
+                        <select id="settingsPeriodsSchoolSelect"></select>
                     </div>
 
-                    <div class="settings-buttons">
-                        <button type="button" id="addSchoolBtn" class="settings-btn">＋ Add School</button>
-                        <button type="button" id="deleteSchoolBtn" class="settings-btn danger-btn">− Delete School</button>
-                    </div>
-
-                    <div id="schoolEditor"></div>
-
-                    <div class="settings-buttons">
-                        <button type="button" id="restoreDefaultsBtn" class="settings-btn danger-btn">Restore Factory Defaults</button>
-                    </div>
-                    <div class="backup-note">This resets only the Scheduler. Your site appearance and data saved by other Teacher Tools applets are kept.</div>
+                    <div id="periodsEditor"></div>
                 </div>
             </section>
         </div>
@@ -2061,6 +2237,14 @@ The software is provided "as is" without warranty of any kind.
                         typeof value.soundEnabled === "boolean" &&
                         Number.isInteger(value.defaultSeconds) &&
                         Array.isArray(value.quickPresets) && Array.isArray(value.presets)
+                },
+                {
+                    id: "class-tracker",
+                    label: "Class Tracker",
+                    storageKey: "teacherTools.classTracker.state.v1",
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        Array.isArray(value.templates) && isPlainObject(value.assignments) &&
+                        isPlainObject(value.progress) && isPlainObject(value.preferences)
                 }
             ]);
             let activeModal = null;
@@ -2133,16 +2317,47 @@ The software is provided "as is" without warranty of any kind.
                 summary.replaceChildren(...siteDataSnapshot().map(record => {
                     const item = document.createElement("li");
                     item.className = "site-data-summary-item";
+                    const selection = document.createElement("label");
+                    selection.className = "site-data-summary-selection";
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.className = "site-data-checkbox";
+                    checkbox.dataset.siteDataRecord = record.definition.id;
+                    checkbox.checked = record.state === "saved";
+                    checkbox.disabled = record.state !== "saved";
                     const label = document.createElement("span");
                     label.textContent = record.definition.label;
+                    selection.append(checkbox, label);
                     const state = document.createElement("span");
                     state.className = `site-data-summary-state ${record.state}`;
                     state.textContent = record.state === "saved"
                         ? "Saved"
                         : record.state === "invalid" ? "Needs attention" : "No saved data";
-                    item.append(label, state);
+                    item.append(selection, state);
                     return item;
                 }));
+                updateSiteDataExportButton();
+            }
+
+            function selectedSiteDataIds() {
+                return new Set(
+                    [...document.querySelectorAll("[data-site-data-record]:checked")]
+                        .map(checkbox => checkbox.dataset.siteDataRecord)
+                );
+            }
+
+            function updateSiteDataExportButton() {
+                const exportButton = document.getElementById("siteDataExportButton");
+                if (!exportButton) return;
+
+                const selectable = [...document.querySelectorAll("[data-site-data-record]:not(:disabled)")];
+                const selectedCount = selectable.filter(checkbox => checkbox.checked).length;
+                exportButton.disabled = selectedCount === 0;
+                exportButton.textContent = selectedCount === selectable.length && selectable.length > 0
+                    ? "Export all data"
+                    : selectedCount > 0
+                        ? `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`
+                        : "Select data to export";
             }
 
             function localDateStamp(date = new Date()) {
@@ -2167,18 +2382,12 @@ The software is provided "as is" without warranty of any kind.
 
             function exportSiteDataBackup() {
                 const snapshot = siteDataSnapshot();
-                const invalid = snapshot.filter(record => record.state === "invalid");
-                if (invalid.length) {
-                    setSiteDataStatus(
-                        `Unable to export: ${invalid.map(record => record.definition.label).join(", ")} has unreadable saved data.`,
-                        true
-                    );
-                    return;
-                }
-
-                const saved = snapshot.filter(record => record.state === "saved");
+                const selectedIds = selectedSiteDataIds();
+                const saved = snapshot.filter(record =>
+                    record.state === "saved" && selectedIds.has(record.definition.id)
+                );
                 if (!saved.length) {
-                    setSiteDataStatus("No saved Teacher Tools data was found in this browser yet.", true);
+                    setSiteDataStatus("Select at least one saved item to export.", true);
                     return;
                 }
 
@@ -2378,6 +2587,12 @@ The software is provided "as is" without warranty of any kind.
                 importFile.addEventListener("change", async () => {
                     await importSiteDataBackup(importFile.files[0]);
                     importFile.value = "";
+                });
+                document.getElementById("siteDataSummary")?.addEventListener("change", event => {
+                    if (event.target.matches("[data-site-data-record]")) {
+                        updateSiteDataExportButton();
+                        setSiteDataStatus("");
+                    }
                 });
                 updateSiteDataSummary();
             }
@@ -2934,7 +3149,10 @@ The software is provided "as is" without warranty of any kind.
                 id: "school1",
                 name: "AA Elementary School",
                 location: "",
+                workingHours: { start: "", end: "" },
                 classes: ["４−１", "４−２", "４−３", "６−１", "６−２", "６−３"],
+                teachersByClass: {},
+                studentCounts: {},
                 periods: [
                     { number: 1, start: "08:15", duration: 45 },
                     { number: 2, start: "09:10", duration: 45 },
@@ -2966,7 +3184,10 @@ The software is provided "as is" without warranty of any kind.
                 id: "school2",
                 name: "BB Elementary School",
                 location: "",
+                workingHours: { start: "", end: "" },
                 classes: ["３−１", "３−２", "４−１", "４−２", "５−１", "５−２", "６−１", "６−２"],
+                teachersByClass: {},
+                studentCounts: {},
                 periods: [
                     { number: 1, start: "08:20", duration: 45 },
                     { number: 2, start: "09:15", duration: 45 },
@@ -2998,7 +3219,10 @@ The software is provided "as is" without warranty of any kind.
                 id: "school3",
                 name: "CC Junior High School",
                 location: "",
+                workingHours: { start: "", end: "" },
                 classes: ["1-1", "1-2", "2-1", "2-2", "3-1", "3-2"],
+                teachersByClass: {},
+                studentCounts: {},
                 periods: [
                     { number: 1, start: "08:30", duration: 50 },
                     { number: 2, start: "09:30", duration: 50 },
@@ -3202,13 +3426,60 @@ The software is provided "as is" without warranty of any kind.
                     };
                 });
 
+                const classes = Array.isArray(school.classes)
+                    ? school.classes.map(String).filter(Boolean)
+                    : [];
+
+                const studentCounts = {};
+                const teachersByClass = {};
+                const savedStudentCounts =
+                    school.studentCounts && typeof school.studentCounts === "object"
+                        ? school.studentCounts
+                        : {};
+                const savedTeachers =
+                    school.teachersByClass && typeof school.teachersByClass === "object"
+                        ? school.teachersByClass
+                        : {};
+
+                classes.forEach(className => {
+                    const teacher = typeof savedTeachers[className] === "string"
+                        ? savedTeachers[className].trim().slice(0, 120)
+                        : "";
+
+                    if (teacher) teachersByClass[className] = teacher;
+
+                    const savedCount = savedStudentCounts[className];
+                    const count = Number(savedCount);
+
+                    if (
+                        savedCount !== "" &&
+                        savedCount !== null &&
+                        savedCount !== undefined &&
+                        Number.isInteger(count) &&
+                        count >= 0 &&
+                        count <= 999
+                    ) {
+                        studentCounts[className] = count;
+                    }
+                });
+
                 return {
                     id: String(school.id || makeId("school")),
                     name: String(school.name || "School " + (index + 1)),
                     location: school.location ? String(school.location) : "",
-                    classes: Array.isArray(school.classes)
-                        ? school.classes.map(String).filter(Boolean)
-                        : [],
+                    workingHours: {
+                        start:
+                            school.workingHours && /^\d{2}:\d{2}$/.test(school.workingHours.start)
+                                ? school.workingHours.start
+                                : "",
+                        end:
+                            school.workingHours && /^\d{2}:\d{2}$/.test(school.workingHours.end)
+                                ? school.workingHours.end
+                                : ""
+                    },
+                    classes,
+                    teachersByClass,
+                    studentCounts,
                     periods,
                     irregular: {
                         enabled: !!(school.irregular && school.irregular.enabled),
@@ -3366,8 +3637,15 @@ The software is provided "as is" without warranty of any kind.
     const useIrregularSchedule = document.getElementById("useIrregularSchedule");
     const settingsScheduleSchoolSelect = document.getElementById("settingsScheduleSchoolSelect");
     const settingsSchoolSelect = document.getElementById("settingsSchoolSelect");
+    const settingsPeriodsSchoolSelect = document.getElementById("settingsPeriodsSchoolSelect");
+    const workingHoursStart = document.getElementById("workingHoursStart");
+    const workingHoursEnd = document.getElementById("workingHoursEnd");
 
     let scheduleEditorMonth = monthKeyFromDateString(formatLocalDate(new Date()));
+    let settingsSelectedSchoolId =
+        appState.schools.some(s => s.id === appState.preferences.selectedSchoolId)
+            ? appState.preferences.selectedSchoolId
+            : appState.schools[0].id;
 
     eventDate.value = formatLocalDate(new Date());
     document.getElementById("newScheduleDate").value = formatLocalDate(new Date());
@@ -3393,27 +3671,19 @@ The software is provided "as is" without warranty of any kind.
                 ? appState.preferences.selectedSchoolId
                 : appState.schools[0].id;
 
-        const scheduleSelected =
-            appState.schools.some(s => s.id === settingsScheduleSchoolSelect.value)
-                ? settingsScheduleSchoolSelect.value
-                : mainSelected;
-
-        const editorSelected =
-            appState.schools.some(s => s.id === settingsSchoolSelect.value)
-                ? settingsSchoolSelect.value
+        settingsSelectedSchoolId =
+            appState.schools.some(s => s.id === settingsSelectedSchoolId)
+                ? settingsSelectedSchoolId
                 : mainSelected;
 
         populateSchoolSelect(schoolSelect, mainSelected);
-        populateSchoolSelect(settingsScheduleSchoolSelect, scheduleSelected);
-        populateSchoolSelect(settingsSchoolSelect, editorSelected);
+        populateSchoolSelect(settingsSchoolSelect, settingsSelectedSchoolId);
+        populateSchoolSelect(settingsScheduleSchoolSelect, settingsSelectedSchoolId);
+        populateSchoolSelect(settingsPeriodsSchoolSelect, settingsSelectedSchoolId);
     }
 
-    function handleMainSchoolChange() {
-        const school = currentSchool();
-        if (!school) return;
-
-        appState.preferences.selectedSchoolId = school.id;
-        saveState();
+    function refreshMainClassSelect(school) {
+        if (!school || schoolSelect.value !== school.id) return;
 
         classSelect.replaceChildren();
 
@@ -3433,6 +3703,27 @@ The software is provided "as is" without warranty of any kind.
             appState.preferences.selectedClassBySchool[school.id] = school.classes[0];
             saveState();
         }
+    }
+
+    function syncSettingsSchoolSelection(schoolId) {
+        if (!appState.schools.some(school => school.id === schoolId)) return;
+
+        settingsSelectedSchoolId = schoolId;
+        settingsSchoolSelect.value = schoolId;
+        settingsScheduleSchoolSelect.value = schoolId;
+        settingsPeriodsSchoolSelect.value = schoolId;
+
+        renderSchoolEditor();
+        renderScheduleSettings();
+    }
+
+    function handleMainSchoolChange() {
+        const school = currentSchool();
+        if (!school) return;
+
+        appState.preferences.selectedSchoolId = school.id;
+        saveState();
+        refreshMainClassSelect(school);
 
         useIrregularSchedule.checked = false;
         updateIrregularToggle();
@@ -3628,11 +3919,19 @@ The software is provided "as is" without warranty of any kind.
     }
 
     function renderScheduleSettings() {
-        const schoolId = settingsScheduleSchoolSelect.value;
+        const schoolId = settingsSelectedSchoolId;
+        const school = getSchoolById(schoolId);
         const list = document.getElementById("scheduleDateList");
         const monthLabel = document.getElementById("scheduleMonthLabel");
         const countLabel = document.getElementById("scheduleDateCount");
         list.replaceChildren();
+
+        workingHoursStart.value = school && school.workingHours
+            ? school.workingHours.start
+            : "";
+        workingHoursEnd.value = school && school.workingHours
+            ? school.workingHours.end
+            : "";
 
         const allDates = sortedScheduleDates(schoolId);
         const dates = allDates.filter(date => monthKeyFromDateString(date) === scheduleEditorMonth);
@@ -3681,7 +3980,7 @@ The software is provided "as is" without warranty of any kind.
     }
 
     function addScheduleDate() {
-        const schoolId = settingsScheduleSchoolSelect.value;
+        const schoolId = settingsSelectedSchoolId;
         const input = document.getElementById("newScheduleDate");
         const date = input.value;
 
@@ -3711,10 +4010,12 @@ The software is provided "as is" without warranty of any kind.
     }
 
     function renderSchoolEditor() {
-        const schoolId = settingsSchoolSelect.value;
+        const schoolId = settingsSelectedSchoolId;
         const school = getSchoolById(schoolId);
-        const editor = document.getElementById("schoolEditor");
+        let editor = document.getElementById("schoolEditor");
+        const periodsEditor = document.getElementById("periodsEditor");
         editor.replaceChildren();
+        periodsEditor.replaceChildren();
 
         if (!school) return;
 
@@ -3738,11 +4039,6 @@ The software is provided "as is" without warranty of any kind.
             school.name = trimmed;
             saveState();
             refreshAllSchoolSelects();
-            settingsSchoolSelect.value = school.id;
-            settingsScheduleSchoolSelect.value =
-                appState.schools.some(s => s.id === settingsScheduleSchoolSelect.value)
-                    ? settingsScheduleSchoolSelect.value
-                    : school.id;
         });
 
         nameGroup.appendChild(nameLabel);
@@ -3769,9 +4065,41 @@ The software is provided "as is" without warranty of any kind.
         locationGroup.appendChild(locationInput);
         editor.appendChild(locationGroup);
 
+        const classesHeadingRow = document.createElement("div");
+        classesHeadingRow.className = "classes-heading-row";
+
         const classesHeading = document.createElement("h3");
         classesHeading.textContent = "Classes";
-        editor.appendChild(classesHeading);
+
+        const sortClassesButton = document.createElement("button");
+        sortClassesButton.type = "button";
+        sortClassesButton.className = "settings-btn class-sort-btn";
+        sortClassesButton.textContent = "Sort A–Z";
+        sortClassesButton.disabled = school.classes.length < 2;
+        sortClassesButton.title = "Sort classes by name";
+
+        sortClassesButton.addEventListener("click", () => {
+            school.classes.sort((first, second) =>
+                first.normalize("NFKC").localeCompare(
+                    second.normalize("NFKC"),
+                    undefined,
+                    { numeric: true, sensitivity: "base" }
+                )
+            );
+
+            saveState();
+            renderSchoolEditor();
+            refreshMainClassSelect(school);
+        });
+
+        classesHeadingRow.appendChild(classesHeading);
+        classesHeadingRow.appendChild(sortClassesButton);
+        editor.appendChild(classesHeadingRow);
+
+        const classesHelp = document.createElement("div");
+        classesHelp.className = "helper-text";
+        classesHelp.textContent = "Edit class names directly. Use the arrows to reorder them, or Sort A–Z. Teacher names and student counts are optional.";
+        editor.appendChild(classesHelp);
 
         const classList = document.createElement("div");
         classList.className = "class-list";
@@ -3782,12 +4110,183 @@ The software is provided "as is" without warranty of any kind.
             empty.textContent = "No classes added yet.";
             classList.appendChild(empty);
         } else {
-            school.classes.forEach(className => {
+            school.classes.forEach((className, classIndex) => {
                 const row = document.createElement("div");
                 row.className = "class-row";
 
-                const label = document.createElement("span");
-                label.textContent = className;
+                const classNameInput = document.createElement("input");
+                classNameInput.type = "text";
+                classNameInput.className = "class-name-input";
+                classNameInput.maxLength = 80;
+                classNameInput.value = className;
+                classNameInput.setAttribute("aria-label", "Class name");
+
+                const commitClassName = () => {
+                    const newName = classNameInput.value.trim();
+
+                    if (!newName) {
+                        classNameInput.value = className;
+                        return;
+                    }
+
+                    if (
+                        newName !== className &&
+                        school.classes.some((name, index) =>
+                            index !== classIndex && name === newName
+                        )
+                    ) {
+                        alert('A class named "' + newName + '" already exists.');
+                        classNameInput.value = className;
+                        return;
+                    }
+
+                    school.classes[classIndex] = newName;
+
+                    if (Object.prototype.hasOwnProperty.call(school.teachersByClass, className)) {
+                        school.teachersByClass[newName] = school.teachersByClass[className];
+                        if (newName !== className) delete school.teachersByClass[className];
+                    }
+
+                    if (Object.prototype.hasOwnProperty.call(school.studentCounts, className)) {
+                        school.studentCounts[newName] = school.studentCounts[className];
+                        if (newName !== className) delete school.studentCounts[className];
+                    }
+
+                    if (appState.preferences.selectedClassBySchool[school.id] === className) {
+                        appState.preferences.selectedClassBySchool[school.id] = newName;
+                    }
+
+                    saveState();
+                    renderSchoolEditor();
+                    refreshMainClassSelect(school);
+                };
+
+                classNameInput.addEventListener("blur", commitClassName);
+                classNameInput.addEventListener("keydown", event => {
+                    if (event.key !== "Enter") return;
+                    event.preventDefault();
+                    classNameInput.blur();
+                });
+
+                const classDetails = document.createElement("div");
+                classDetails.className = "class-details";
+
+                const teacherField = document.createElement("label");
+                teacherField.className = "class-teacher-field";
+                teacherField.htmlFor = "classTeacher-" + classIndex;
+
+                const teacherLabel = document.createElement("span");
+                teacherLabel.textContent = "Teacher";
+
+                const teacherInput = document.createElement("input");
+                teacherInput.type = "text";
+                teacherInput.id = teacherField.htmlFor;
+                teacherInput.className = "class-teacher-input";
+                teacherInput.maxLength = 120;
+                teacherInput.value = school.teachersByClass[className] || "";
+
+                teacherInput.addEventListener("change", () => {
+                    const teacher = teacherInput.value.trim();
+
+                    if (teacher) {
+                        school.teachersByClass[className] = teacher;
+                        teacherInput.value = teacher;
+                    } else {
+                        delete school.teachersByClass[className];
+                        teacherInput.value = "";
+                    }
+
+                    saveState();
+                });
+
+                teacherField.appendChild(teacherLabel);
+                teacherField.appendChild(teacherInput);
+
+                const studentField = document.createElement("label");
+                studentField.className = "class-students-field";
+                studentField.htmlFor = "studentCount-" + classIndex;
+
+                const studentLabel = document.createElement("span");
+                studentLabel.textContent = "Students";
+
+                const studentInput = document.createElement("input");
+                studentInput.type = "number";
+                studentInput.id = studentField.htmlFor;
+                studentInput.className = "class-students-input";
+                studentInput.min = "0";
+                studentInput.max = "999";
+                studentInput.step = "1";
+                studentInput.inputMode = "numeric";
+                studentInput.value = Object.prototype.hasOwnProperty.call(
+                    school.studentCounts,
+                    className
+                )
+                    ? school.studentCounts[className]
+                    : "";
+
+                studentInput.addEventListener("change", () => {
+                    if (studentInput.value === "") {
+                        delete school.studentCounts[className];
+                        saveState();
+                        return;
+                    }
+
+                    const count = Number(studentInput.value);
+
+                    if (Number.isInteger(count) && count >= 0 && count <= 999) {
+                        school.studentCounts[className] = count;
+                        saveState();
+                    } else {
+                        studentInput.value = Object.prototype.hasOwnProperty.call(
+                            school.studentCounts,
+                            className
+                        )
+                            ? school.studentCounts[className]
+                            : "";
+                    }
+                });
+
+                studentField.appendChild(studentLabel);
+                studentField.appendChild(studentInput);
+
+                classDetails.appendChild(teacherField);
+                classDetails.appendChild(studentField);
+
+                const orderControls = document.createElement("div");
+                orderControls.className = "class-order-controls";
+
+                const moveUp = document.createElement("button");
+                moveUp.type = "button";
+                moveUp.className = "class-order-btn";
+                moveUp.textContent = "↑";
+                moveUp.title = "Move " + className + " up";
+                moveUp.setAttribute("aria-label", "Move " + className + " up");
+                moveUp.disabled = classIndex === 0;
+
+                const moveDown = document.createElement("button");
+                moveDown.type = "button";
+                moveDown.className = "class-order-btn";
+                moveDown.textContent = "↓";
+                moveDown.title = "Move " + className + " down";
+                moveDown.setAttribute("aria-label", "Move " + className + " down");
+                moveDown.disabled = classIndex === school.classes.length - 1;
+
+                const moveClass = direction => {
+                    const destination = classIndex + direction;
+                    if (destination < 0 || destination >= school.classes.length) return;
+
+                    [school.classes[classIndex], school.classes[destination]] =
+                        [school.classes[destination], school.classes[classIndex]];
+
+                    saveState();
+                    renderSchoolEditor();
+                    refreshMainClassSelect(school);
+                };
+
+                moveUp.addEventListener("click", () => moveClass(-1));
+                moveDown.addEventListener("click", () => moveClass(1));
+                orderControls.appendChild(moveUp);
+                orderControls.appendChild(moveDown);
 
                 const remove = document.createElement("button");
                 remove.type = "button";
@@ -3797,6 +4296,8 @@ The software is provided "as is" without warranty of any kind.
 
                 remove.addEventListener("click", () => {
                     school.classes = school.classes.filter(c => c !== className);
+                    delete school.teachersByClass[className];
+                    delete school.studentCounts[className];
 
                     if (appState.preferences.selectedClassBySchool[school.id] === className) {
                         delete appState.preferences.selectedClassBySchool[school.id];
@@ -3804,13 +4305,12 @@ The software is provided "as is" without warranty of any kind.
 
                     saveState();
                     renderSchoolEditor();
-
-                    if (schoolSelect.value === school.id) {
-                        handleMainSchoolChange();
-                    }
+                    refreshMainClassSelect(school);
                 });
 
-                row.appendChild(label);
+                row.appendChild(orderControls);
+                row.appendChild(classNameInput);
+                row.appendChild(classDetails);
                 row.appendChild(remove);
                 classList.appendChild(row);
             });
@@ -3842,15 +4342,19 @@ The software is provided "as is" without warranty of any kind.
 
             newClassInput.value = "";
             renderSchoolEditor();
-
-            if (schoolSelect.value === school.id) {
-                handleMainSchoolChange();
-            }
+            refreshMainClassSelect(school);
         });
 
         addClassRow.appendChild(newClassInput);
         addClassRow.appendChild(addClassButton);
         editor.appendChild(addClassRow);
+
+        const schoolNote = document.createElement("div");
+        schoolNote.className = "status-note";
+        schoolNote.textContent = "Changes save automatically to this browser.";
+        editor.appendChild(schoolNote);
+
+        editor = periodsEditor;
 
         const periodHeading = document.createElement("h3");
         periodHeading.textContent = "Periods";
@@ -4199,7 +4703,10 @@ The software is provided "as is" without warranty of any kind.
             id,
             name: name.trim(),
             location: "",
+            workingHours: { start: "", end: "" },
             classes: [],
+            teachersByClass: {},
+            studentCounts: {},
             periods: Array.from({ length: 6 }, (_, i) => ({
                 number: i + 1,
                 start: ["08:30", "09:30", "10:30", "11:30", "13:30", "14:30"][i],
@@ -4225,12 +4732,11 @@ The software is provided "as is" without warranty of any kind.
         appState.schools.push(school);
         appState.schedule[id] = [];
         appState.preferences.selectedSchoolId = id;
+        settingsSelectedSchoolId = id;
         saveState();
 
         refreshAllSchoolSelects();
         schoolSelect.value = id;
-        settingsSchoolSelect.value = id;
-        settingsScheduleSchoolSelect.value = id;
 
         handleMainSchoolChange();
         renderSchoolEditor();
@@ -4243,7 +4749,7 @@ The software is provided "as is" without warranty of any kind.
             return;
         }
 
-        const schoolId = settingsSchoolSelect.value;
+        const schoolId = settingsSelectedSchoolId;
         const school = getSchoolById(schoolId);
         if (!school) return;
 
@@ -4260,6 +4766,8 @@ The software is provided "as is" without warranty of any kind.
         if (appState.preferences.selectedSchoolId === schoolId) {
             appState.preferences.selectedSchoolId = appState.schools[0].id;
         }
+
+        settingsSelectedSchoolId = appState.schools[0].id;
 
         saveState();
         refreshAllSchoolSelects();
@@ -4351,13 +4859,14 @@ The software is provided "as is" without warranty of any kind.
 
     function restoreFactoryDefaults() {
         const confirmed = confirm(
-            "Restore Scheduler factory defaults? This will replace all schools, bell times, lunch settings, schedule dates, and Scheduler preferences. Your current Teacher Tools site theme will be kept."
+            "Restore Scheduler factory defaults? This will replace all schools, classes, teacher names, student counts, working hours, bell and lunch times, schedule dates, and Scheduler preferences. Your current Teacher Tools site theme will be kept."
         );
 
         if (!confirmed) return;
 
         appState = deepClone(DEFAULT_STATE);
         appState.preferences.theme = readGlobalTheme() || "ocean-blue";
+        settingsSelectedSchoolId = appState.preferences.selectedSchoolId;
         applyTheme(appState.preferences.theme, false);
         saveState();
 
@@ -4384,13 +4893,34 @@ The software is provided "as is" without warranty of any kind.
         .getElementById("nextSchoolDayBtn")
         .addEventListener("click", jumpToNextScheduledDay);
 
-    settingsScheduleSchoolSelect.addEventListener("change", () => {
-        const inputDate = document.getElementById("newScheduleDate").value;
-        if (inputDate) scheduleEditorMonth = monthKeyFromDateString(inputDate);
-        renderScheduleSettings();
+    [
+        settingsSchoolSelect,
+        settingsScheduleSchoolSelect,
+        settingsPeriodsSchoolSelect
+    ].forEach(select => {
+        select.addEventListener("change", () => {
+            if (select === settingsScheduleSchoolSelect) {
+                const inputDate = document.getElementById("newScheduleDate").value;
+                if (inputDate) scheduleEditorMonth = monthKeyFromDateString(inputDate);
+            }
+
+            syncSettingsSchoolSelection(select.value);
+        });
     });
 
-    settingsSchoolSelect.addEventListener("change", renderSchoolEditor);
+    workingHoursStart.addEventListener("change", () => {
+        const school = getSchoolById(settingsSelectedSchoolId);
+        if (!school) return;
+        school.workingHours.start = workingHoursStart.value;
+        saveState();
+    });
+
+    workingHoursEnd.addEventListener("change", () => {
+        const school = getSchoolById(settingsSelectedSchoolId);
+        if (!school) return;
+        school.workingHours.end = workingHoursEnd.value;
+        saveState();
+    });
 
     document
         .getElementById("previousScheduleMonthBtn")
@@ -4448,9 +4978,6 @@ The software is provided "as is" without warranty of any kind.
         appState.schools.some(s => s.id === appState.preferences.selectedSchoolId)
             ? appState.preferences.selectedSchoolId
             : appState.schools[0].id;
-
-    settingsScheduleSchoolSelect.value = schoolSelect.value;
-    settingsSchoolSelect.value = schoolSelect.value;
 
     handleMainSchoolChange();
     renderScheduleSettings();

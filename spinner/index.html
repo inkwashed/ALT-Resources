@@ -416,7 +416,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             padding: 0;
             list-style: none;
         }
-         .site-data-summary-item {
+        .site-data-summary-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -428,6 +428,22 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             border-radius: 7px;
             font-size: 10.5px;
         }
+        .site-data-summary-selection {
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .site-data-checkbox {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 auto;
+            margin: 0;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+        .site-data-checkbox:disabled { cursor: default; opacity: 0.55; }
          .site-data-summary-state {
             flex: 0 0 auto;
             color: var(--muted);
@@ -454,7 +470,15 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             font-weight: 700;
             cursor: pointer;
         }
-         .site-data-action:hover { color: var(--accent); border-color: var(--accent-border); }
+        .site-data-action:hover { color: var(--accent); border-color: var(--accent-border); }
+        .site-data-action:disabled,
+        .site-data-action:disabled:hover {
+            color: var(--muted);
+            background: var(--panel);
+            border-color: var(--line);
+            filter: none;
+            cursor: not-allowed;
+        }
          .site-data-action-primary {
             color: #ffffff;
             background: var(--accent);
@@ -1436,9 +1460,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
-
-                 <div class="site-menu-label">Planned tools</div>
-                 <div class="site-menu-item" aria-disabled="true">
+                 <a class="site-menu-item" href="/tracker/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <rect x="5.5" y="5.5" width="17" height="17" rx="3" />
@@ -1446,8 +1468,21 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
-                    <span class="site-menu-status">PLANNED</span>
-                </div>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+                 <a class="site-menu-item" href="/tricks/">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <path d="M8 9.5h12l2 13H6Z" />
+                            <path d="M10.5 9.5V7a3.5 3.5 0 0 1 7 0v2.5" />
+                            <path class="icon-fill" d="m14 13 .8 1.8 2 .2-1.5 1.4.4 2-1.7-1-1.7 1 .4-2-1.5-1.4 2-.2Z" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Bag of Tricks</span><span class="site-menu-description">Flip, roll, and draw for classroom games</span></span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+
+                 <div class="site-menu-label">Planned tools</div>
                  <div class="site-menu-item" aria-disabled="true">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1464,7 +1499,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     <h2 id="siteDataTitle" class="site-data-title">Backup & restore</h2>
                     <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore">×</button>
                 </div>
-                <p class="site-data-help">Export one local file containing saved data from every Teacher Tools applet in this browser. Nothing is uploaded.</p>
+                <p class="site-data-help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
                 <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data"></ul>
                 <div class="site-data-actions">
                     <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary">Export all data</button>
@@ -1568,7 +1603,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
             <footer class="app-footer">
                 <div class="footer-version">Spinner Wheel · v1.1</div>
-                <div class="footer-copyright">© 2026 · All rights reserved. Free for personal, classroom, and non-commercial educational use. Choices stay in this browser and are not uploaded.</div>
+                <div class="footer-copyright">Choices stay in this browser and are not uploaded.</div>
             </footer>
         </div>
     </main>
@@ -1776,6 +1811,14 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                         typeof value.soundEnabled === "boolean" &&
                         Number.isInteger(value.defaultSeconds) &&
                         Array.isArray(value.quickPresets) && Array.isArray(value.presets)
+                },
+                {
+                    id: "class-tracker",
+                    label: "Class Tracker",
+                    storageKey: "teacherTools.classTracker.state.v1",
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        Array.isArray(value.templates) && isPlainObject(value.assignments) &&
+                        isPlainObject(value.progress) && isPlainObject(value.preferences)
                 }
             ]);
             let activeModal = null;
@@ -1848,16 +1891,47 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 summary.replaceChildren(...siteDataSnapshot().map(record => {
                     const item = document.createElement("li");
                     item.className = "site-data-summary-item";
+                    const selection = document.createElement("label");
+                    selection.className = "site-data-summary-selection";
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.className = "site-data-checkbox";
+                    checkbox.dataset.siteDataRecord = record.definition.id;
+                    checkbox.checked = record.state === "saved";
+                    checkbox.disabled = record.state !== "saved";
                     const label = document.createElement("span");
                     label.textContent = record.definition.label;
+                    selection.append(checkbox, label);
                     const state = document.createElement("span");
                     state.className = `site-data-summary-state ${record.state}`;
                     state.textContent = record.state === "saved"
                         ? "Saved"
                         : record.state === "invalid" ? "Needs attention" : "No saved data";
-                    item.append(label, state);
+                    item.append(selection, state);
                     return item;
                 }));
+                updateSiteDataExportButton();
+            }
+
+            function selectedSiteDataIds() {
+                return new Set(
+                    [...document.querySelectorAll("[data-site-data-record]:checked")]
+                        .map(checkbox => checkbox.dataset.siteDataRecord)
+                );
+            }
+
+            function updateSiteDataExportButton() {
+                const exportButton = document.getElementById("siteDataExportButton");
+                if (!exportButton) return;
+
+                const selectable = [...document.querySelectorAll("[data-site-data-record]:not(:disabled)")];
+                const selectedCount = selectable.filter(checkbox => checkbox.checked).length;
+                exportButton.disabled = selectedCount === 0;
+                exportButton.textContent = selectedCount === selectable.length && selectable.length > 0
+                    ? "Export all data"
+                    : selectedCount > 0
+                        ? `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`
+                        : "Select data to export";
             }
 
             function localDateStamp(date = new Date()) {
@@ -1882,18 +1956,12 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
             function exportSiteDataBackup() {
                 const snapshot = siteDataSnapshot();
-                const invalid = snapshot.filter(record => record.state === "invalid");
-                if (invalid.length) {
-                    setSiteDataStatus(
-                        `Unable to export: ${invalid.map(record => record.definition.label).join(", ")} has unreadable saved data.`,
-                        true
-                    );
-                    return;
-                }
-
-                const saved = snapshot.filter(record => record.state === "saved");
+                const selectedIds = selectedSiteDataIds();
+                const saved = snapshot.filter(record =>
+                    record.state === "saved" && selectedIds.has(record.definition.id)
+                );
                 if (!saved.length) {
-                    setSiteDataStatus("No saved Teacher Tools data was found in this browser yet.", true);
+                    setSiteDataStatus("Select at least one saved item to export.", true);
                     return;
                 }
 
@@ -2093,6 +2161,12 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 importFile.addEventListener("change", async () => {
                     await importSiteDataBackup(importFile.files[0]);
                     importFile.value = "";
+                });
+                document.getElementById("siteDataSummary")?.addEventListener("change", event => {
+                    if (event.target.matches("[data-site-data-record]")) {
+                        updateSiteDataExportButton();
+                        setSiteDataStatus("");
+                    }
                 });
                 updateSiteDataSummary();
             }
