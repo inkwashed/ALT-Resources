@@ -1248,9 +1248,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     <div class="settings-section"><h3 class="settings-heading">School Information</h3><label class="field"><span class="field-label">Edit School</span><select id="settingsSchoolSelect"></select></label><div class="school-actions"><button type="button" id="addSchoolButton" class="button">＋ Add School</button><button type="button" id="deleteSchoolButton" class="button button-danger">− Delete School</button></div><div id="schoolEditor" class="school-editor"></div><p id="schoolStatus" class="status" role="status">Changes save automatically to this browser.</p></div>
                 </section>
                 <section id="settingsPanel-textbooks" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-textbooks" hidden>
-                    <section class="settings-section"><h3 class="settings-heading">Textbook presets</h3><p class="settings-help">Check the books you want to see in the dashboard dropdown. Unchecking a book does not remove it from classes already using it.</p><div id="presetList" class="textbook-list"></div><p class="settings-help">NEW HORIZON Elementary 6 is included. More textbook presets can be added through the preset source workflow.</p></section>
+                    <section class="settings-section"><h3 class="settings-heading">Textbook presets</h3><p class="settings-help">Check the books you want to see in the dashboard dropdown. Unchecking a book does not remove it from classes already using it.</p><div id="presetList" class="textbook-list"></div><p class="settings-help">Includes Let's Try! 1 and 2, NEW HORIZON Elementary 5 and 6, and NEW HORIZON English Course 1. Beta・ marks presets awaiting final textbook checks.</p></section>
                     <section class="settings-section textbook-section"><h3 class="settings-heading">Custom textbooks</h3><p class="settings-help">Your saved textbooks are available to all your classes. Edit a book below, or add a new one.</p><div id="customTextbookList" class="textbook-list"></div><div class="button-row"><button type="button" id="newTemplateButton" class="button">＋ Add Custom Textbook</button></div></section>
-                    <section id="textbookEditor" class="settings-section textbook-section" hidden aria-labelledby="textbookEditorTitle"><h3 id="textbookEditorTitle" class="settings-heading">Add custom textbook</h3><p class="settings-help">Use one line per item. Start lines with <strong>#</strong>, <strong>##</strong>, or <strong>###</strong> for levels 1–3. Add an icon with <strong>[G]</strong> goal, <strong>[W]</strong> watch, <strong>[L]</strong> listen, <strong>[R]</strong> read, <strong>[S]</strong> speak, <strong>[LS]</strong> Let's Sing, <strong>[LC]</strong> Let's Chant, <strong>[ST]</strong> Small Talk, or <strong>[P]</strong> write. Edits apply to every class using this textbook; unchanged items retain their checks.</p><label class="field"><span class="field-label">Textbook Title</span><input id="customTitleInput" type="text" maxlength="200" placeholder="Let's Try! 4 Textbook"></label><label class="field"><span class="field-label">Textbook Sections and Activities</span><textarea id="customItemsInput" placeholder="# Unit 1&#10;## [G] Unit goal&#10;### [L] Listen and repeat"></textarea></label><div class="button-row"><button type="button" id="saveTemplateButton" class="button button-primary">Save Textbook</button><button type="button" id="cancelTemplateButton" class="button">Cancel</button></div></section>
+                    <section id="textbookEditor" class="settings-section textbook-section" hidden aria-labelledby="textbookEditorTitle"><h3 id="textbookEditorTitle" class="settings-heading">Add custom textbook</h3><p class="settings-help">Use one line per item. Start lines with <strong>#</strong>, <strong>##</strong>, or <strong>###</strong> for levels 1–3. Add an icon with <strong>[G]</strong> goal, <strong>[W]</strong> watch, <strong>[L]</strong> listen, <strong>[R]</strong> read, <strong>[S]</strong> speak, <strong>[LS]</strong> Let's Sing, <strong>[LC]</strong> Let's Chant, <strong>[ST]</strong> Small Talk, <strong>[P]</strong> write, <strong>[ES]</strong> elementary-school language, <strong>[D]</strong> dictionary, or <strong>[KS]</strong> Key Sentences. Edits apply to every class using this textbook; unchanged items retain their checks.</p><label class="field"><span class="field-label">Textbook Title</span><input id="customTitleInput" type="text" maxlength="200" placeholder="Let's Try! 4 Textbook"></label><label class="field"><span class="field-label">Textbook Sections and Activities</span><textarea id="customItemsInput" placeholder="# Unit 1&#10;## [G] Unit goal&#10;### [L] Listen and repeat"></textarea></label><div class="button-row"><button type="button" id="saveTemplateButton" class="button button-primary">Save Textbook</button><button type="button" id="cancelTemplateButton" class="button">Cancel</button></div></section>
                     <p id="templateStatus" class="status" role="status"></p>
                 </section>
             </div>
@@ -2100,8 +2100,2389 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         /* CLASS-TRACKER:TEXTBOOK-PRESETS:START */
         const TEXTBOOK_PRESETS = [
             {
+                "id": "preset-lets-try-1",
+                "title": "Beta・Let's Try! 1",
+                "source": "preset",
+                "items": [
+                    {
+                        "id": "preset-lets-try-1-item-39fda2797970",
+                        "level": 1,
+                        "text": "Unit 1 Hello! — あいさつをして友だちになろう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-1b6a4d0e9a4a",
+                        "level": 2,
+                        "text": "2～5ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-421a2bb54c6a",
+                        "level": 3,
+                        "text": "Let's Watch and Think — 世界のいろいろなあいさつ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-90c96ea5ff76",
+                        "level": 3,
+                        "text": "Let's Chant — Hello!"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-b657927a8806",
+                        "level": 3,
+                        "text": "Let's Listen — あいさつを聞いて国旗と人物を結ぼう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-8e58920cb0d8",
+                        "level": 3,
+                        "text": "Activity — 友だちとあいさつをして名前を伝えよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-b2c1d1c032d0",
+                        "level": 1,
+                        "text": "Unit 2 How are you? — ごきげんいかが？"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-8cd6df990dbf",
+                        "level": 2,
+                        "text": "6～9ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-b557afb67baa",
+                        "level": 3,
+                        "text": "Let's Watch and Think 1 — 気持ちや様子を表す言い方"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-138c1a2a87d8",
+                        "level": 3,
+                        "text": "Let's Listen — 人物と気持ち・様子を結ぼう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-24e710577623",
+                        "level": 3,
+                        "text": "Let's Sing 1 — Hello Song"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-f5b5b242f23f",
+                        "level": 3,
+                        "text": "Activity — How are you? とたずね合おう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-280d60e4e247",
+                        "level": 3,
+                        "text": "Let's Watch and Think 2 — 世界のジェスチャー"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-71d93a72f796",
+                        "level": 3,
+                        "text": "Let's Sing 2 — Goodbye Song"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-cc3ba5cf77cf",
+                        "level": 1,
+                        "text": "Unit 3 How many? — 数えてあそぼう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-64963a37a6d3",
+                        "level": 2,
+                        "text": "10～13ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-033d3a8f6c9e",
+                        "level": 3,
+                        "text": "Let's Sing — Ten Steps"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-99049ff98f2e",
+                        "level": 3,
+                        "text": "Let's Play 1 — おはじきゲーム"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-9b2fc6db25e4",
+                        "level": 3,
+                        "text": "Let's Watch and Think — 世界の数え方"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-776f08fdb6ba",
+                        "level": 3,
+                        "text": "Let's Play 2 — じゃんけんをして数えよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-ee4f17ec75bd",
+                        "level": 3,
+                        "text": "Let's Play 3 — 数を使って遊ぼう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-d05a9716a02f",
+                        "level": 3,
+                        "text": "Let's Chant — How many?"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-5f6a5e713768",
+                        "level": 3,
+                        "text": "Activity 1 — 同じ数のりんごを持つ友だちを見つけよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-f45480b5cf62",
+                        "level": 3,
+                        "text": "Activity 2 — 好きな漢字を紹介しよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-c02a7fc16097",
+                        "level": 1,
+                        "text": "Unit 4 I like blue. — すきなものをつたえよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-2699a918dc26",
+                        "level": 2,
+                        "text": "14～17ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-74d88637cc55",
+                        "level": 3,
+                        "text": "Activity 1 — 自分だけの虹を作ろう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-5282f2168b22",
+                        "level": 3,
+                        "text": "Let's Watch and Think 1 — 世界の友だちが描いた虹"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-ff64c7b55ef9",
+                        "level": 3,
+                        "text": "Let's Sing — The Rainbow Song"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-7cf26fecbc47",
+                        "level": 3,
+                        "text": "Let's Chant — I like blue."
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-60816bd5700d",
+                        "level": 3,
+                        "text": "Let's Listen 1 — 好きな色を聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-d6139e4a1334",
+                        "level": 3,
+                        "text": "Let's Listen 2 — 好きなスポーツ・好きではないスポーツを聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-f3a44bb3a3ab",
+                        "level": 3,
+                        "text": "Let's Listen 3 — 色・スポーツ・食べ物の好みを聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-b5dbb61cdd0c",
+                        "level": 3,
+                        "text": "Let's Watch and Think 2 — Do you like ...?"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-e19ddc38be6e",
+                        "level": 3,
+                        "text": "Let's Play — 友だちの好き・きらいを予想してインタビューしよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-aca6e7bd4f66",
+                        "level": 3,
+                        "text": "Activity 2 — 自分の好きなものを紹介しよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-f631574137b8",
+                        "level": 1,
+                        "text": "Unit 5 What do you like? — 何がすき？"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-e03b96ce6fc6",
+                        "level": 2,
+                        "text": "18～21ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-7bf93ec554b0",
+                        "level": 3,
+                        "text": "Let's Play — おはじきゲーム"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-7c5a31706184",
+                        "level": 3,
+                        "text": "Let's Chant — What do you like?"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-d4f41576c131",
+                        "level": 3,
+                        "text": "Let's Listen — 人物の好きなものを聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-f12ed8624547",
+                        "level": 3,
+                        "text": "Activity 1 — 友だちの好きなものを予想して聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-a6da8d009ee8",
+                        "level": 3,
+                        "text": "Let's Watch and Think — 登場人物の好きなものを予想しよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-907a3bd5c339",
+                        "level": 3,
+                        "text": "Activity 2 — 友だちに好きなものをインタビューしよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-8000ea78985b",
+                        "level": 1,
+                        "text": "Unit 6 ALPHABET — アルファベットとなかよし"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-4ed099da226a",
+                        "level": 2,
+                        "text": "22～25ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-1d645cf1d169",
+                        "level": 3,
+                        "text": "Let's Watch and Think — 身の回りにあるアルファベット"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-b88fece66249",
+                        "level": 3,
+                        "text": "Let's Sing — ABC Song"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-c9c4dc0ccc07",
+                        "level": 3,
+                        "text": "Let's Play — アルファベットを形で仲間分けしよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-0132ebc8fdcf",
+                        "level": 3,
+                        "text": "Activity — 自分の名前のイニシャルカードを作って紹介しよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-cacc39fa12fd",
+                        "level": 1,
+                        "text": "Unit 7 This is for you. — カードをおくろう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-d609537d2c46",
+                        "level": 2,
+                        "text": "26～29ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-84bb7eb085c4",
+                        "level": 3,
+                        "text": "Let's Play 1 — シルエットを見て形を当てよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-cd2471275b84",
+                        "level": 3,
+                        "text": "Let's Play 2 — 形のポインティングゲーム"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-c62922e255d9",
+                        "level": 3,
+                        "text": "Let's Chant — What do you want?"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-fe4d2051bd2e",
+                        "level": 3,
+                        "text": "Let's Watch and Think — 世界のいろいろなグリーティングカード"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-38790dc5e922",
+                        "level": 3,
+                        "text": "Let's Listen — だれがどのカードを作ったか聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-d2312f6228c9",
+                        "level": 3,
+                        "text": "Activity — 欲しい形をたずね合ってグリーティングカードを作ろう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-f212d06bd797",
+                        "level": 3,
+                        "text": "Activity — 作ったカードを紹介して贈ろう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-95fa7def4d09",
+                        "level": 1,
+                        "text": "Unit 8 What's this? — これなあに？"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-8c54620fbe46",
+                        "level": 2,
+                        "text": "30～33ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-9d7de03708f2",
+                        "level": 3,
+                        "text": "Let's Play 1 — 虫めがねの中に何が見えるかな？"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-83b2bb5ed537",
+                        "level": 3,
+                        "text": "Let's Chant — What's this?"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-1b96f371065e",
+                        "level": 3,
+                        "text": "Let's Play 2 — シルエットや断面から何か当てよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-21c50c96dcd7",
+                        "level": 3,
+                        "text": "Activity 1 — Hint Quiz"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-8f550ea610d2",
+                        "level": 3,
+                        "text": "Activity 1 — 自分でヒントクイズを作ろう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-28c53d9db15c",
+                        "level": 3,
+                        "text": "Activity 2 — 漢字クイズ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-ce30473493d4",
+                        "level": 3,
+                        "text": "Activity 3 — 足あとクイズ"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-9e15ab4d4f3a",
+                        "level": 3,
+                        "text": "Activity — クイズ大会をしよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-2c091ff034f3",
+                        "level": 1,
+                        "text": "Unit 9 Who are you? — きみはだれ？"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-4ca0819b39dd",
+                        "level": 2,
+                        "text": "34ページ～"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-33f8c062a60a",
+                        "level": 3,
+                        "text": "Story — Who are you? のお話を聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-604c51ce6ae2",
+                        "level": 3,
+                        "text": "Who am I? Quiz — 動物をヒントから当てよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-691fd30603da",
+                        "level": 3,
+                        "text": "Who am I? Quiz — 体の部分をヒントから当てよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-2c9423b2db70",
+                        "level": 3,
+                        "text": "Song — Head, Shoulders, Knees and Toes"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-a801f546e574",
+                        "level": 3,
+                        "text": "Who are you? 3 Hint Quiz"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-777692264266",
+                        "level": 3,
+                        "text": "Story — お話を繰り返し聞いて内容を考えよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-50b34bb8070c",
+                        "level": 3,
+                        "text": "Story — 登場人物のせりふをまねして言ってみよう"
+                    },
+                    {
+                        "id": "preset-lets-try-1-item-1df93987086c",
+                        "level": 3,
+                        "text": "Story Presentation — ペアやグループでお話の一部を発表しよう"
+                    }
+                ]
+            },
+            {
+                "id": "preset-lets-try-2",
+                "title": "Beta・Let's Try! 2",
+                "source": "preset",
+                "items": [
+                    {
+                        "id": "preset-lets-try-2-item-55a7795025b0",
+                        "level": 1,
+                        "text": "Unit 1 Hello, world! — 世界のいろいろなことばであいさつをしよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-2198fe8d515e",
+                        "level": 2,
+                        "text": "2～5ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-7147b1d00292",
+                        "level": 3,
+                        "text": "Let's Watch and Think 1 — 世界のいろいろなあいさつ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-f5075dde1dfa",
+                        "level": 3,
+                        "text": "Let's Listen 1 — 世界のあいさつを聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-0fff92725ad7",
+                        "level": 3,
+                        "text": "Let's Play — あいさつをして好きなものをたずね合おう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-3825f2eb3f72",
+                        "level": 3,
+                        "text": "Let's Watch and Think 2 — 時間や場面に合ったあいさつ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-2595deaa7447",
+                        "level": 3,
+                        "text": "Let's Listen 2 — 登場人物について聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-7219462458e3",
+                        "level": 3,
+                        "text": "Activity — 友だちとあいさつをして好きなものを伝え合おう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-6bfbba11c1d8",
+                        "level": 1,
+                        "text": "Unit 2 Let's play cards. — すきな遊びをつたえよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-9a05e34fb3a7",
+                        "level": 2,
+                        "text": "6～9ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-c5d13623c8d4",
+                        "level": 3,
+                        "text": "Let's Chant — How's the weather?"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-e169f99bb378",
+                        "level": 3,
+                        "text": "Let's Sing — Rain, Rain, Go Away"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-619efa802f71",
+                        "level": 3,
+                        "text": "Let's Sing — Eeny, Meeny, Miny, Moe"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-449746bfd01e",
+                        "level": 3,
+                        "text": "Let's Sing — One Little Finger"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-996c018fe12a",
+                        "level": 3,
+                        "text": "Let's Watch and Think 1 — 世界の子どもたちの遊び"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-6d56dee4924a",
+                        "level": 3,
+                        "text": "Let's Listen 1 — 天気と遊びを聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-90d90416f4d8",
+                        "level": 3,
+                        "text": "Let's Listen 2 — 天気と服装を聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-7c4ad8a513b2",
+                        "level": 3,
+                        "text": "Let's Listen 3 — 世界の天気を聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-0fef827e1bdf",
+                        "level": 3,
+                        "text": "Let's Watch and Think 2 — 世界のいろいろな天気"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-74cc853b0a41",
+                        "level": 3,
+                        "text": "Activity — 天気に合った好きな遊びに友だちをさそおう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-1c9b385be871",
+                        "level": 1,
+                        "text": "Unit 3 I like Mondays. — すきな曜日は何かな？"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-73941fbb2e01",
+                        "level": 2,
+                        "text": "10～13ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-6dd512115345",
+                        "level": 3,
+                        "text": "Let's Watch and Think 1 — 世界の子どもたちの一週間"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-efd8cd80122f",
+                        "level": 3,
+                        "text": "Let's Chant — What day is it?"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-5b343841ab3d",
+                        "level": 3,
+                        "text": "Let's Listen — 曜日ごとの予定を聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-6b48763f3aef",
+                        "level": 3,
+                        "text": "Let's Play — 曜日クイズをしよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-3cc985e267b2",
+                        "level": 3,
+                        "text": "Let's Watch and Think 2 — 登場人物の好きな曜日"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-21d95bb353ab",
+                        "level": 3,
+                        "text": "Activity — 好きな曜日を友だちに伝えよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-3cd16de1cd98",
+                        "level": 1,
+                        "text": "Unit 4 What time is it? — 今、何時？"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-bdc2fc48e0e5",
+                        "level": 2,
+                        "text": "14～17ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-82a18a00dc03",
+                        "level": 3,
+                        "text": "Let's Watch and Think 1 — 時刻と一日の生活"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-2fc9694a0ba6",
+                        "level": 3,
+                        "text": "Let's Chant — What time is it?"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-25fd3f198062",
+                        "level": 3,
+                        "text": "Let's Watch and Think 2 — 世界の時刻と生活"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-74e094007529",
+                        "level": 3,
+                        "text": "Let's Listen — 時刻を聞いて時計を完成させよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-ae5577e2033f",
+                        "level": 3,
+                        "text": "Activity — 自分の好きな時間とその理由を伝えよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-11095b732ff7",
+                        "level": 1,
+                        "text": "Unit 5 Do you have a pen? — おすすめの文房具セットをつくろう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-5c4b8cf7dde5",
+                        "level": 2,
+                        "text": "18～21ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-d4b186f14cf8",
+                        "level": 3,
+                        "text": "Let's Watch and Think 1 — 文房具の言い方と数"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-4f0044bc36a0",
+                        "level": 3,
+                        "text": "Let's Play 1 — I Spy Game"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-053f9c491c1b",
+                        "level": 3,
+                        "text": "Let's Chant — Do you have a pen?"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-051e138d54f2",
+                        "level": 3,
+                        "text": "Let's Listen — だれの筆箱か当てよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-e2b1b1096e71",
+                        "level": 3,
+                        "text": "Let's Watch and Think 2 — 世界の子どもたちの持ち物"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-68ca619255df",
+                        "level": 3,
+                        "text": "Let's Play 2 — 同じ文房具セットを作ろう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-5ae41272a44a",
+                        "level": 3,
+                        "text": "Activity — おすすめの文房具セットを作って贈ろう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-089d013f6d73",
+                        "level": 1,
+                        "text": "Unit 6 Alphabet — アルファベットで文字遊びをしよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-a607b80fdcc2",
+                        "level": 2,
+                        "text": "22～25ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-bf443aa9ec8a",
+                        "level": 3,
+                        "text": "Let's Watch and Think — 身の回りの小文字"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-5d29dd6044b3",
+                        "level": 3,
+                        "text": "Let's Sing — ABC Song"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-9dab5549e0bb",
+                        "level": 3,
+                        "text": "Let's Chant — Alphabet Chant"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-e91c8d8d9d3d",
+                        "level": 3,
+                        "text": "Let's Play 1 — 町の中から小文字を探そう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-2ead8f7bdfa7",
+                        "level": 3,
+                        "text": "Let's Play 2 — 小文字でおはじきゲーム"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-7b9f7c052d4e",
+                        "level": 3,
+                        "text": "Let's Listen — アルファベットを聞いて看板を当てよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-d17bad6c785c",
+                        "level": 3,
+                        "text": "Activity 1 — 文字をたずねて看板を当てよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-0bc9e989267c",
+                        "level": 3,
+                        "text": "Activity 2 — 文字をたずねて色を当てよう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-d212330dcd0d",
+                        "level": 1,
+                        "text": "Unit 7 What do you want? — ほしいものは何かな？"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-c83b17afc6c7",
+                        "level": 2,
+                        "text": "26～29ページ"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-bd92c4ca9098",
+                        "level": 3,
+                        "text": "Let's Watch and Think — 世界の市場といろいろな食材"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-a811f9e5f613",
+                        "level": 3,
+                        "text": "Let's Chant — What do you want?"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-0cfabdc66211",
+                        "level": 3,
+                        "text": "Activity 1 — 好きなフルーツパフェを作ろう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-efa644ec5c66",
+                        "level": 3,
+                        "text": "Let's Listen 1 — フルーツパフェの中身を聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-faaba5543ca2",
+                        "level": 3,
+                        "text": "Let's Listen 2 — 食材を聞こう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-fcb63ddb2705",
+                        "level": 3,
+                        "text": "Activity 2 — 食材を集めてオリジナルピザを作ろう"
+                    },
+                    {
+                        "id": "preset-lets-try-2-item-90c671b41e5a",
+                        "level": 3,
+                        "text": "Activity 2 — オリジナルピザを紹介しよう"
+                    }
+                ]
+            },
+            {
+                "id": "preset-new-horizon-elementary-5",
+                "title": "Beta・NEW HORIZON Elementary 5",
+                "source": "preset",
+                "items": [
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e5324539e2ed",
+                        "level": 1,
+                        "text": "Unit 1: Hello, friends! | pp.8–17"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-289184f586ec",
+                        "level": 2,
+                        "text": "Starting Out — pp.8–9"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-848795231f16",
+                        "level": 3,
+                        "text": "[G] Our Goal — 名前や好きなもの・ことを伝え合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-07c3d827bc3b",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — Say hello!"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-84691966c4ee",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6aea0c7a0b2d",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物の自己紹介を聞き、名前やそのつづり、好きなもの・ことなどを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-22399b3dd12d",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — How do you spell your name?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e98403ca8b07",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — What subject do you like?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-5d7815d2a9d5",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 自己紹介を見て、自分なら何を伝えたいか考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-522c1ccf750f",
+                        "level": 2,
+                        "text": "Your Turn — pp.10–11"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-05e574a5e4ba",
+                        "level": 3,
+                        "text": "[W] Let's Watch 1 — 名前やそのつづりのたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6214c2686664",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 名前のつづりを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1b5e594961da",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — 名前やそのつづりをたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4b2ab976ed74",
+                        "level": 3,
+                        "text": "[W] Let's Watch 2 — 好きな教科やスポーツなどのたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-5151a6dfc953",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — 好きな教科やスポーツを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ed69148ccb3e",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — 好きなもの・ことをたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2723669b00f8",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ed9923e57a1f",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.12–13"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9466620f9ecd",
+                        "level": 3,
+                        "text": "Step 1 — 自己紹介のモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7876c3e2db06",
+                        "level": 3,
+                        "text": "Step 2 — 名刺カードを作り、伝える内容を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-90c82dd80579",
+                        "level": 3,
+                        "text": "[G] Your Goal — 名刺カードを使って、名前や好きなもの・ことを伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d05fd8a82435",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1c78ed5b0da2",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.14–15"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d657c78a4ce5",
+                        "level": 3,
+                        "text": "[W] 文化探検 — イニシャルや略語について考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e2bb1191da1b",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4e858a6971ef",
+                        "level": 3,
+                        "text": "[W] 日本探検 — 韓国から来て北海道で働くシン・ウォンジさん"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c97375cdeaff",
+                        "level": 3,
+                        "text": "[W] ことば探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ce3cd0a876fc",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-51046d648ebf",
+                        "level": 3,
+                        "text": "Plus! Word Quiz — 教科"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9246cbc6808e",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.16–17"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b5cc7a59d7b8",
+                        "level": 3,
+                        "text": "A～D"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ee3ba0b470ad",
+                        "level": 3,
+                        "text": "E～H"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2782479a38f9",
+                        "level": 3,
+                        "text": "I～L"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2bdc0078f6c2",
+                        "level": 3,
+                        "text": "M～P"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-66d45ca6eea3",
+                        "level": 3,
+                        "text": "Q～T"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3d602f09d880",
+                        "level": 3,
+                        "text": "U～W"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fa4eea44a577",
+                        "level": 3,
+                        "text": "X～Z"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-71960865c3a0",
+                        "level": 1,
+                        "text": "Unit 2: Happy birthday! | pp.18–27"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d2b1331a9a47",
+                        "level": 2,
+                        "text": "Starting Out — pp.18–19"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ec7468066923",
+                        "level": 3,
+                        "text": "[G] Our Goal — 誕生日やほしいものを伝え合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c5a74e3548c6",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — A Birthday Wish"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7500168f7de6",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3e9eea9699a7",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物の誕生日やほしいものなどを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4f21ec4153c5",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — When is your birthday?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-65cfdb524423",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — What do you want?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-101adf747a7f",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 誕生日プレゼントについての話を見て、自分なら何がほしいか考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f93ffad13f6a",
+                        "level": 2,
+                        "text": "Your Turn — pp.20–21"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-58beada90b0b",
+                        "level": 3,
+                        "text": "[W] Let's Watch 1 — 誕生日のたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0c05cfac8631",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 誕生日の日付を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fa0dd92d8c13",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — 誕生日をたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-aad83a8bd6f1",
+                        "level": 3,
+                        "text": "[W] Let's Watch 2 — ほしいもののたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0ab80421c11e",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — ほしいものを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9e22ecdeeddd",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — 誕生日にほしいものをたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-27ecd13ebac1",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9436d10da91f",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.22–23"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-91818af4a28b",
+                        "level": 3,
+                        "text": "Step 1 — 誕生日やほしいものについてのモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2c5bb96694c6",
+                        "level": 3,
+                        "text": "Step 2 — 友達について聞き、プレゼントカードを作ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-abcea3f6d21d",
+                        "level": 3,
+                        "text": "[G] Your Goal — 誕生日やほしいものなどを伝え合い、プレゼントカードを作ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8c90824a9402",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6e26a7f1593a",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.24–25"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-64959174bec8",
+                        "level": 3,
+                        "text": "[W] 文化探検 — 世界の祭りについて考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9ac9a4733d36",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8f6d5109d454",
+                        "level": 3,
+                        "text": "[W] 日本探検 — イギリスから来て宮城県で働くジェームス・オペさん"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0df2c975b16d",
+                        "level": 3,
+                        "text": "[W] ことば探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-31f37e0608e3",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9190400be268",
+                        "level": 3,
+                        "text": "Plus! Word Quiz — 月"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f8e10fd76b6d",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.26–27"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2c3f4de4f952",
+                        "level": 3,
+                        "text": "a～d"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-880a25c2ec37",
+                        "level": 3,
+                        "text": "e～h"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7d4d23a70004",
+                        "level": 3,
+                        "text": "i～l"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f8592a5ec95e",
+                        "level": 3,
+                        "text": "m～p"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d7793df5d188",
+                        "level": 3,
+                        "text": "q～t"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b77d236d4ce3",
+                        "level": 3,
+                        "text": "u～w"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-10a6e41d072d",
+                        "level": 3,
+                        "text": "x～z"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c109c0b659fb",
+                        "level": 1,
+                        "text": "Unit 3: Can you play dodgeball? | pp.28–37"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-582c6a78e1d4",
+                        "level": 2,
+                        "text": "Starting Out — pp.28–29"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e52076ff1ea0",
+                        "level": 3,
+                        "text": "[G] Our Goal — できることを伝え合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fbbb6a54b43e",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — Dodge the ball."
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-08acc1e1bb74",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a1c6b0b0601f",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物のできることやできないことを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-281bbf5c1113",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — I can dance well."
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-784d8e8531bc",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — Can you swim?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2ad116df3f18",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 得意なスポーツについての話を見て、自分なら何を伝えたいか考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-485a7fd396a0",
+                        "level": 2,
+                        "text": "Your Turn — pp.30–31"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9cee2f35a476",
+                        "level": 3,
+                        "text": "[W] Let's Watch — できることのたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1c5250cefcd4",
+                        "level": 3,
+                        "text": "[L] Let's Listen — できることやできないことを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6742d898d35e",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — できることやできないことをたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-05711d1f4729",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8d5215f5da77",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.32–33"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0faf823d3269",
+                        "level": 3,
+                        "text": "Step 1 — できることを伝え合うモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-609e7c758b3e",
+                        "level": 3,
+                        "text": "Step 2 — できることカードを作ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2ca6e60afa9f",
+                        "level": 3,
+                        "text": "[G] Your Goal — できることを友達と伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-60d8078b3d5b",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-43590d0786d9",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.34–35"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-bee50b70859d",
+                        "level": 3,
+                        "text": "[W] 文化探検 — 世界で使われているジェスチャーについて考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b37d5ae11afe",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3f5f9a7e7199",
+                        "level": 3,
+                        "text": "[W] 日本探検 — ネパールから来て奈良県で働くカルマ・ギャルゼン・シェルパさん"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-91d624dc28a2",
+                        "level": 3,
+                        "text": "[W] ことば探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-14f99678bc35",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3fc2264febd1",
+                        "level": 3,
+                        "text": "Plus! Word Quiz — 動作など"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ff7e65153cf4",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.36–37"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-5b587ec98571",
+                        "level": 3,
+                        "text": "形の似ている大文字"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-48111f141d1c",
+                        "level": 3,
+                        "text": "形の似ている小文字"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-42c57c811007",
+                        "level": 3,
+                        "text": "大文字と小文字のペア ①"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1e358e412490",
+                        "level": 3,
+                        "text": "大文字と小文字のペア ②"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9b202eb71fdd",
+                        "level": 3,
+                        "text": "くるりんグループ"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d86b3286e006",
+                        "level": 3,
+                        "text": "トランポリングループ"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7ab46b262517",
+                        "level": 3,
+                        "text": "ダイビンググループ"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ab04086d7e30",
+                        "level": 3,
+                        "text": "とんがりグループ"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a4ee0b21bcce",
+                        "level": 1,
+                        "text": "Check Your Steps 1 | pp.38–39"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7a600b341f39",
+                        "level": 2,
+                        "text": "おたがいの魅力、再発見！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1134e7425ca6",
+                        "level": 3,
+                        "text": "[G] Your Goal — 自分のことについて、内容を整理して発表しよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0d1f1a6b8469",
+                        "level": 3,
+                        "text": "[L] HOP — Unit 1–3 の表現を振り返ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f4f8e9058fe2",
+                        "level": 3,
+                        "text": "STEP — 自分が伝えたい情報を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fc828dc82db8",
+                        "level": 3,
+                        "text": "[S] JUMP — 自分のことについて発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3a1feb4d6cf0",
+                        "level": 3,
+                        "text": "Digital Notebook: Mapping"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6e1a4e6fc987",
+                        "level": 1,
+                        "text": "Unit 4: Who is this? | pp.40–49"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-80c2619ac669",
+                        "level": 2,
+                        "text": "Starting Out — pp.40–41"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-36b3c87667c0",
+                        "level": 3,
+                        "text": "[G] Our Goal — 身近な人について紹介し合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-bb3d03ed7922",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — My Album"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-be5e3b7a655e",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ea653f2f98f1",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物の身近な人について聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0fc63281f2af",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — This is Petra."
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-dda7fa429c9d",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — She is my friend."
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-77716d3aba85",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 身近な人の紹介を見て、自分ならだれを紹介したいか考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c6f9c6e06436",
+                        "level": 2,
+                        "text": "Your Turn — pp.42–43"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-16c5d0dedcbe",
+                        "level": 3,
+                        "text": "[W] Let's Watch 1 — 身近な人の紹介の仕方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-26b208a768bc",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 身近な人のできることなどを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e80fff28a4a7",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — 身近な人のできることを伝えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6e9eeec88c5e",
+                        "level": 3,
+                        "text": "[W] Let's Watch 2 — 性格や得意なことなどの紹介の仕方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-373153fda6f0",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — 身近な人の性格や得意なことを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3f343b1fb36e",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — 身近な人について伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4b859fab457f",
+                        "level": 3,
+                        "text": "[ST] Let's Try 3 — 身近な人についてさらに詳しく紹介し合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-10b6a84e7d5d",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e34b6d7008b8",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.44–45"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b02b88076716",
+                        "level": 3,
+                        "text": "Step 1 — 人物紹介のモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-5e841c3398ae",
+                        "level": 3,
+                        "text": "Step 2 — 人物紹介カードを作ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-eddc3a7eee5b",
+                        "level": 3,
+                        "text": "[G] Your Goal — 身近な人について紹介し合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e83daa998dd7",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-54e563a2520d",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.46–47"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-01b25f71c804",
+                        "level": 3,
+                        "text": "[W] 文化探検 — 日本語と英語の言葉のちがいについて考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3ddee1c8938b",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-68404b58e302",
+                        "level": 3,
+                        "text": "[W] 日本探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c9f6343dbd7b",
+                        "level": 3,
+                        "text": "[W] ことば探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e4921fd0d169",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4cc5cae185f9",
+                        "level": 3,
+                        "text": "Plus! Word Quiz — 性格など"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-26e5aeae6ada",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.48–49"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-de71346f1589",
+                        "level": 3,
+                        "text": "アクセント ①"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-197873292321",
+                        "level": 3,
+                        "text": "複数の文字 ①"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-104801179834",
+                        "level": 3,
+                        "text": "アクセント ②"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1ce8066e8777",
+                        "level": 3,
+                        "text": "複数の文字 ②"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a381bbf882b6",
+                        "level": 3,
+                        "text": "アクセント ③"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-21368b9cdaaf",
+                        "level": 3,
+                        "text": "複数の文字 ③"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1ccf8f98606c",
+                        "level": 3,
+                        "text": "アクセント ④"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1fe2af45b706",
+                        "level": 3,
+                        "text": "複数の文字 ④"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8ae06136bf8d",
+                        "level": 1,
+                        "text": "Unit 5: Let's go to the zoo. | pp.50–61"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-145e62592418",
+                        "level": 2,
+                        "text": "Starting Out — pp.50–51"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-096615ce7775",
+                        "level": 3,
+                        "text": "[G] Our Goal — 場所をたずねたり、案内したりしよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fad95fbb89bb",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — This is our town."
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-92bc9da6adca",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-80a9bf4b3868",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物の町にあるものやその場所について聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-40153b4beb1b",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — Excuse me!"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-58484c1e73f3",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — What do you have in your town?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b8ab7355dc26",
+                        "level": 3,
+                        "text": "[W] Watch and Think — ニューヨークの町の紹介を見て、自分なら何を紹介したいか考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b40576ac6e51",
+                        "level": 2,
+                        "text": "Your Turn — pp.52–53"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-bbb7dc07e1e8",
+                        "level": 3,
+                        "text": "[W] Let's Watch 1 — 場所のたずね方や道案内の仕方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c19c1c1d5330",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 動物園での道案内を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b01491c8b0bb",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — 場所をたずねたり道案内をしたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a798ffe8814a",
+                        "level": 3,
+                        "text": "[W] Let's Watch 2 — 町にあるものについてのたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a6b0380c7a3e",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — 町にあるものを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-849bb3e76c3e",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — 自分の町にあるものをたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fe6cc3ef6806",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-094b455c9ba0",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.54–55"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8a6be7472f0b",
+                        "level": 3,
+                        "text": "Step 1 — 道案内のモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-5206b5a94412",
+                        "level": 3,
+                        "text": "Step 2 — オリジナルタウンの地図を使って案内する内容を考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0530134cee43",
+                        "level": 3,
+                        "text": "[G] Your Goal — オリジナルタウンを道案内しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b72421f33f33",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f47606178362",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.58–59"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-690080b976cb",
+                        "level": 3,
+                        "text": "[W] 文化探検 — 世界の標識や地図記号について考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2f5e3a1bc335",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1b38a97236b1",
+                        "level": 3,
+                        "text": "[W] 日本探検 — グアテマラから来て広島県で働くフェルナンド・ロペズさん"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3bd9d38d61e4",
+                        "level": 3,
+                        "text": "[W] ことば探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a8f960a36dfd",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0b2a1605749c",
+                        "level": 3,
+                        "text": "Plus! Word Quiz — 町"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-857d91bee795",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.60–61"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6a3b5973b700",
+                        "level": 3,
+                        "text": "はじめの音 ①"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d3c3319b2b6c",
+                        "level": 3,
+                        "text": "複数の文字 ⑤"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e4015a2a91db",
+                        "level": 3,
+                        "text": "はじめの音 ②"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d6711f372456",
+                        "level": 3,
+                        "text": "複数の文字 ⑥"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7258add8d8e4",
+                        "level": 3,
+                        "text": "はじめの音 ③"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-60e1392d68ac",
+                        "level": 3,
+                        "text": "複数の文字 ⑦"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e4d0bcfcccde",
+                        "level": 3,
+                        "text": "はじめの音 ④"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fb6d3f7a8013",
+                        "level": 3,
+                        "text": "複数の文字 ⑧"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-313aba90c16b",
+                        "level": 1,
+                        "text": "Unit 6: At a restaurant. | pp.62–71"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-693869a8e9ea",
+                        "level": 2,
+                        "text": "Starting Out — pp.62–63"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-01ec92dc2bbc",
+                        "level": 3,
+                        "text": "[G] Our Goal — ていねいに注文したり、値段をたずねたりしよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-090808340038",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — Welcome to a healthy restaurant."
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f78ec8403a3b",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-607320b170d3",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 何を注文して、いくら支払っているか聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-91f28f8d6e38",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — What would you like?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-01d7fd6af3ce",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — How much is this?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f333a63c5186",
+                        "level": 3,
+                        "text": "[W] Watch and Think — レストランでの注文のやり取りを見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2076e8655f31",
+                        "level": 2,
+                        "text": "Your Turn — pp.64–65"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9bf387e74a60",
+                        "level": 3,
+                        "text": "[W] Let's Watch 1 — ていねいな注文の仕方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e200b4af2a29",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 注文した料理を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c320943ad400",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — 料理を注文しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c90370f79bf3",
+                        "level": 3,
+                        "text": "[W] Let's Watch 2 — 値段のたずね方・答え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fd0319177b4b",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — 値段を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e1e5964937ef",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — 値段をたずねたり答えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1a7ba9dbdd22",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6e4ec680b118",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.66–67"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-48a66422e10d",
+                        "level": 3,
+                        "text": "Step 1 — レストランでのやり取りのモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e213e33c5d7c",
+                        "level": 3,
+                        "text": "Step 2 — おすすめランチセットを考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c43453fbc7e4",
+                        "level": 3,
+                        "text": "日本各地の郷土料理など — 資料"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2789cc775f4b",
+                        "level": 3,
+                        "text": "[G] Your Goal — おすすめランチセットについて伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a7f105b35498",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-45e67ad937b4",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.68–69"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1a9b462c60c2",
+                        "level": 3,
+                        "text": "[W] 文化探検 — 世界の料理や食文化について考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4f33cc12c55b",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3f7f6ccf7288",
+                        "level": 3,
+                        "text": "[W] 日本探検 — スロベニアから来て佐賀県で働く徳永ヴェラさん"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b8a6ad2b9dbd",
+                        "level": 3,
+                        "text": "[W] ことば探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-5f5e2cf46457",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-db7e8b096001",
+                        "level": 3,
+                        "text": "Plus! Word Quiz — 食べ物"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4bb82240f140",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.70–71"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-16543a9efd0f",
+                        "level": 3,
+                        "text": "はじめの音 ⑤"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-08d321b4e712",
+                        "level": 3,
+                        "text": "複数の文字 ⑨"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7ec2b3d5631d",
+                        "level": 3,
+                        "text": "はじめの音 ⑥"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e6e7174f4a22",
+                        "level": 3,
+                        "text": "複数の文字 ⑩"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-16ad5213c793",
+                        "level": 3,
+                        "text": "はじめの音 ⑦"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7a9f286b9548",
+                        "level": 3,
+                        "text": "複数の文字 ⑪"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4184f4b14c54",
+                        "level": 3,
+                        "text": "はじめの音 ⑧"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-99fdc692c38d",
+                        "level": 3,
+                        "text": "複数の文字 ⑫"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-069b62975a5f",
+                        "level": 1,
+                        "text": "Check Your Steps 2 | pp.72–73"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a1d5ec63fc99",
+                        "level": 2,
+                        "text": "聞いて！ わたしの町じまん"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fc9135109173",
+                        "level": 3,
+                        "text": "[G] Your Goal — 自分が暮らす地域のよさについて、内容を整理して発表しよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ac01d19354f7",
+                        "level": 3,
+                        "text": "[L] HOP — Unit 4–6 の表現を振り返ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0b871a1da46d",
+                        "level": 3,
+                        "text": "STEP — 自分が暮らす地域のよさについて整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2c66dcf0c101",
+                        "level": 3,
+                        "text": "[S] JUMP — 自分が暮らす地域のよさを発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-248c02a082a8",
+                        "level": 3,
+                        "text": "Digital Notebook: Chart"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0c6b4bbbcb05",
+                        "level": 1,
+                        "text": "Unit 7: Welcome to Japan! | pp.74–83"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ffbaac5166b2",
+                        "level": 2,
+                        "text": "Starting Out — pp.74–75"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7f8a4cde4abe",
+                        "level": 3,
+                        "text": "[G] Our Goal — 日本の素敵な場所をグループで紹介しよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-aff108f66d2f",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — Yokoso!"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-bdec7d4e21d7",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8d8cb2fa33e6",
+                        "level": 3,
+                        "text": "[L] Listen and Think — どんな場所を紹介しているか聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c6f8b9008749",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — Where do you want to go?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-06431f98bd59",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — I want to go to the onsen."
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-48ccc94a0f71",
+                        "level": 3,
+                        "text": "[W] Watch and Think — 日本の行きたい場所や魅力についての話を見よう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2581c8d66a1c",
+                        "level": 2,
+                        "text": "Your Turn — pp.76–77"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-db71a467bc6e",
+                        "level": 3,
+                        "text": "[W] Let's Watch — 行きたい場所やそこでできることの伝え方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d4e431dbabf4",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — 行きたい場所を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c5beb0a6fd45",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — 行きたい日本の場所を紹介し合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7da7ec7c8ee5",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — そこでできることやしたいことを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b4bd8a44b0ae",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — 行きたい場所とその魅力を伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8d6a3b221aaf",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-67d08954adc3",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.78–79"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-354a4f56634d",
+                        "level": 3,
+                        "text": "Step 1 — 観光案内のモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f754005c158e",
+                        "level": 3,
+                        "text": "Step 2 — 観光案内カードを作り、紹介する内容を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-93a3a87622c9",
+                        "level": 3,
+                        "text": "[G] Your Goal — 日本各地の魅力を伝える観光案内をしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e27635ef34c6",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ab5698f29b99",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.80–81"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d86594fa8243",
+                        "level": 3,
+                        "text": "[W] 文化探検 — 世界に影響を与えている日本文化について考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-adad00247b9b",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2f439c0de661",
+                        "level": 3,
+                        "text": "[W] 日本探検 — インドネシアから来て東京都で働くエリカ・エビサワ・クスワンさん"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8e8b10216c80",
+                        "level": 3,
+                        "text": "[W] ことば探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2cea970454b0",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-23cd819e7240",
+                        "level": 3,
+                        "text": "Plus! Word Quiz — 季節・感想／様子"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d9fe0714e8ef",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.82–83"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-105a85e2b189",
+                        "level": 3,
+                        "text": "終わりの音 ①"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-082ce3f5f974",
+                        "level": 3,
+                        "text": "複数の文字 ⑬"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-00cbc4ab62cf",
+                        "level": 3,
+                        "text": "終わりの音 ②"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-072e53b63b26",
+                        "level": 3,
+                        "text": "複数の文字 ⑭"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-534683624373",
+                        "level": 3,
+                        "text": "終わりの音 ③"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-de6903fd95bc",
+                        "level": 3,
+                        "text": "複数の文字 ⑮"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-56d7d52ec482",
+                        "level": 3,
+                        "text": "終わりの音 ④"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c49ee3860627",
+                        "level": 3,
+                        "text": "複数の文字 ⑯"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6907e5e5139b",
+                        "level": 1,
+                        "text": "Unit 8: Who is your hero? | pp.84–93"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6c603e188d93",
+                        "level": 2,
+                        "text": "Starting Out — pp.84–85"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7ecbe8823e7b",
+                        "level": 3,
+                        "text": "[G] Our Goal — あこがれの人について紹介し合おう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-b2931789d8f9",
+                        "level": 3,
+                        "text": "[LS] Let's Sing — My Hero"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9fc31b8358af",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-364ee055964a",
+                        "level": 3,
+                        "text": "[L] Listen and Think — 登場人物がだれにあこがれているか聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-cb583ba078cc",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — My hero is my father."
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a92fdef2da2d",
+                        "level": 3,
+                        "text": "[LC] Let's Chant — Why is he your hero?"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a4bd7e0b40fd",
+                        "level": 3,
+                        "text": "[W] Watch and Think — あこがれの人の紹介を見て、自分ならだれを紹介したいか考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2e0c8f9ecc95",
+                        "level": 2,
+                        "text": "Your Turn — pp.86–87"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1c4de55e42f8",
+                        "level": 3,
+                        "text": "[W] Let's Watch — あこがれの人の紹介の仕方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f6e5f2bd2af8",
+                        "level": 3,
+                        "text": "[L] Let's Listen 1 — あこがれの人やその人の職業などを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-fec6716afda6",
+                        "level": 3,
+                        "text": "[ST] Let's Try 1 — あこがれの人についてたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-a1015df354c5",
+                        "level": 3,
+                        "text": "[L] Let's Listen 2 — 得意なことや性格などを聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f078fdcde3ef",
+                        "level": 3,
+                        "text": "[ST] Let's Try 2 — あこがれの人について紹介し合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-790238a22c4a",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f8b712f7c1f5",
+                        "level": 2,
+                        "text": "Enjoy Communication — pp.88–89"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8db80b4aecc3",
+                        "level": 3,
+                        "text": "Step 1 — あこがれの人を紹介するモデルを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-6c029624edcd",
+                        "level": 3,
+                        "text": "Step 2 — あこがれの人カードを作り、紹介する内容を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-c947852fb3ad",
+                        "level": 3,
+                        "text": "[G] Your Goal — あこがれの人について紹介しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-005d83c47eb3",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-2506354aaa34",
+                        "level": 2,
+                        "text": "Over the Horizon — pp.90–91"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e42dfd847703",
+                        "level": 3,
+                        "text": "[W] 文化探検 — 日本のヒーローについて考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-99572e030b6b",
+                        "level": 3,
+                        "text": "フカボリ！"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-5e6ca897e20f",
+                        "level": 3,
+                        "text": "[W] 日本探検 — イギリスから来て石川県で働くスザーン・ロスさん"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-1a33c65a505b",
+                        "level": 3,
+                        "text": "[W] ことば探検"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-7c3952c782e4",
+                        "level": 3,
+                        "text": "[ST] Small Talk"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9ac1277c9451",
+                        "level": 3,
+                        "text": "Plus! Word Quiz — 職業"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-ccdefe72d5a1",
+                        "level": 2,
+                        "text": "Sounds and Letters — pp.92–93"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-26985037caa4",
+                        "level": 3,
+                        "text": "終わりの音 ⑤"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9618dd918b79",
+                        "level": 3,
+                        "text": "複数の文字 ⑰"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-cf75ba3c6602",
+                        "level": 3,
+                        "text": "終わりの音 ⑥"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3e9615c808d9",
+                        "level": 3,
+                        "text": "複数の文字 ⑱"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-36b0ad01ffd9",
+                        "level": 3,
+                        "text": "終わりの音 ⑦"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8ac6cddf6887",
+                        "level": 3,
+                        "text": "複数の文字 ⑲"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-da01207a32b2",
+                        "level": 3,
+                        "text": "終わりの音 ⑧"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-81c2a893c0a6",
+                        "level": 3,
+                        "text": "複数の文字 ⑳"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-087d908892df",
+                        "level": 1,
+                        "text": "Check Your Steps 3 | pp.94–95"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-46d78e97abc5",
+                        "level": 2,
+                        "text": "おすすめしたい！ 日本の素敵"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-8544eeeecbd2",
+                        "level": 3,
+                        "text": "[G] Your Goal — 日本の魅力について、内容を整理して発表しよう。"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-081f27d3b80c",
+                        "level": 3,
+                        "text": "[L] HOP — これまでの表現を振り返ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-e294b2217f1b",
+                        "level": 3,
+                        "text": "STEP — 紹介したい日本の魅力について整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-4ed71a4d8f9c",
+                        "level": 3,
+                        "text": "[S] JUMP — 日本のおすすめの場所や魅力について発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-d79dc79b5b0a",
+                        "level": 3,
+                        "text": "Digital Notebook: Chart"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-0206320643cb",
+                        "level": 1,
+                        "text": "Try it! | p.96"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f32e50f1cb28",
+                        "level": 2,
+                        "text": "日本探検 — p.96"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f8c2007779df",
+                        "level": 3,
+                        "text": "日本探検 — 四国地方"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-205e0c48fb6b",
+                        "level": 3,
+                        "text": "日本探検 — 沖縄県"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-eb481445bd64",
+                        "level": 2,
+                        "text": "Special Extra — p.96"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f2aa5a73e191",
+                        "level": 3,
+                        "text": "World Report — 友だちの名前"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-dc989a886c5c",
+                        "level": 3,
+                        "text": "World Report — インド式 指で数える方法"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-f015c0271ca0",
+                        "level": 3,
+                        "text": "World Report — ゾウの特技"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-9495aca25429",
+                        "level": 3,
+                        "text": "World Report — 宝物はどこ？"
+                    },
+                    {
+                        "id": "preset-new-horizon-elementary-5-item-3a5c00233151",
+                        "level": 3,
+                        "text": "World Report — イギリスの国民的ヒーロー"
+                    }
+                ]
+            },
+            {
                 "id": "preset-new-horizon-6-sample",
-                "title": "NEW HORIZON Elementary 6",
+                "title": "Beta・NEW HORIZON Elementary 6",
                 "source": "preset",
                 "items": [
                     {
@@ -3820,6 +6201,1613 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                         "text": "World Report — 将来の夢"
                     }
                 ]
+            },
+            {
+                "id": "preset-new-horizon-english-course-1",
+                "title": "Beta・NEW HORIZON English Course 1",
+                "source": "preset",
+                "items": [
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a7aa887253b9",
+                        "level": 1,
+                        "text": "Unit 0: Nice to Meet You | pp.6–7"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2e2657be7614",
+                        "level": 3,
+                        "text": "[G] Goal — クラスメートとあいさつをしたり、好きなものをたずね合ったりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-270147e1b9ba",
+                        "level": 3,
+                        "text": "[L] それぞれの場面の会話を聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1a642a413d86",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — nice | to | meet | you | good | morning | I | am | hi | my | name | is | hello | do | like | tennis | yes"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-331f728fff3d",
+                        "level": 3,
+                        "text": "[ST] Your Turn  — それぞれの場面の対話しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-57233bdab4fe",
+                        "level": 2,
+                        "text": "Sounds and Letters 0 — 英語の音と文字 | pp.8–9"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e5c4d4fbf3e1",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語  — fan | pen | ten | sun | run | hat | hot | cup | cap | map | mop | cut | TV | milk | box | bag | desk | bed"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f17cbdd214c7",
+                        "level": 2,
+                        "text": "[ST] Grammar for Communication 0 ー 英語の語順 | p.10"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-dd69e9a4b6c9",
+                        "level": 1,
+                        "text": "Unit 1: Hello, Everyone! | pp.11–17"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a17808e29a12",
+                        "level": 3,
+                        "text": "[G] Goal — 自分のことを伝えたり、相手のことをたずねたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-97f7851489fb",
+                        "level": 3,
+                        "text": "[L] Enjoy Listening — ストーリーを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f8f284eb0d9b",
+                        "level": 2,
+                        "text": "Part 1 | pp.12–13"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-84597e4336d6",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-78e807da8ac8",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2389179dbfa2",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — I am .... [I'm ....] | I like ...."
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-36427f592f4c",
+                        "level": 3,
+                        "text": "[D] New Words — call | South Africa | love"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-554456fea785",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — everyone | me | from | Japanese | sweet(s) | and | too | join | the | club"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-766ca3a6f0d3",
+                        "level": 3,
+                        "text": "[S] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c3c14c297dc6",
+                        "level": 2,
+                        "text": "Part 2 | pp.14–15"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9a5a2eb8fe5c",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ede111307d11",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-016e4129af01",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — Do you ...? | do / do not [don't]"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e27ea7f89e9f",
+                        "level": 3,
+                        "text": "[D] New Words — fan | often | with | but"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2ea1e4904dee",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — rugby | watch | friend(s) | great | no | not | oh"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-032ee23e27b7",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d73198ee19bb",
+                        "level": 2,
+                        "text": "Part 3 | pp.16–17"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d92b6fa547a7",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e59809d74022",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-df6a2b9f9e3f",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — Are you ...? | I am .... / I am not .... [I'm not ....]"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b5a8440196db",
+                        "level": 3,
+                        "text": "[D] New Words — draw | an | anime | so | about | lesson(s)"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5a1419895795",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — comic(s) | wow | are | in | art | how | school | now | take | swimming"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2477fc9a7a22",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-767dd3b3b49e",
+                        "level": 2,
+                        "text": "Sounds and Letters 1 — 2字1音・母音字の名前読み | p.18"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-08cf8cc0a9ba",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — fish | lunch | king | math | English | strong | bath | clock | lake | bike | game | shrine | nose"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1148b52ffb25",
+                        "level": 1,
+                        "text": "Unit 2: Our New Teacher | pp.19–25"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-34ac1883e4e2",
+                        "level": 3,
+                        "text": "[G] Goal — 身近な人やものについて紹介したり、たずねたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-dc8fc1f195ce",
+                        "level": 3,
+                        "text": "[L] Enjoy Listening — ストーリーを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-95409cdac14b",
+                        "level": 2,
+                        "text": "Part 1 | pp.20–21"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-73f6f5ca0917",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-64bd01d49bec",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f0c2e26973fb",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — He [She] is .... | Is he [she] ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ce89e7e58974",
+                        "level": 3,
+                        "text": "[D] New Words — class | our | Canada | America"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8750ad39ba27",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — Ms. ⇔ Mr. | he ⇔ she | new | teacher | on | team | at | cool"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-659dd53de5e2",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-06b1a6b534dc",
+                        "level": 2,
+                        "text": "Part 2 | pp.22–23"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-10cdee2cac6f",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a4fb75d1a6f3",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-da8d51e2a546",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — I can .... | Can you ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4b1ef0c8c003",
+                        "level": 3,
+                        "text": "[D] New Words — Chinese | cannot | some | parent(s) | China"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b004da787e54",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — food | father | can | make | very | well | that | read | really | see"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ccfcccfc9335",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-199486e1cf66",
+                        "level": 2,
+                        "text": "Part 3 | pp.24–25"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f7b3f920e69e",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5b8152225226",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b7591169c806",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — This [That] is .... | Is this ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ccf3f80ab071",
+                        "level": 3,
+                        "text": "[D] New Words — excuse | oops | here | welcome | (totem pole) | (thunderbird)"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4c0160583e46",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — your | thank | it | bird"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3ec14c8899ef",
+                        "level": 3,
+                        "text": "[S] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4fa49d0bc799",
+                        "level": 2,
+                        "text": "Sounds and Letters 2 — さまざまな母音① | pp.26–27"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-13a62e854abc",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — train | rain | glue | fruit | beef | sea | season | peach | day | beach | speak | rainy | cheese | room | classroom | swimming pool | cook | cooking | textbook | notebook | today | usually | drink | green tea"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f35282a77c50",
+                        "level": 2,
+                        "text": "[ST] Grammar for Communication 1 — be動詞と一般動詞 | pp.28–29"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a5cb7da4d557",
+                        "level": 1,
+                        "text": "[R] Column — Canada | p.30"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b9f1e57520c1",
+                        "level": 1,
+                        "text": "Unit 3: Our School | pp.31–37"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-fe94abed822c",
+                        "level": 3,
+                        "text": "[G] Goal — 知らないものや人についてたずねたり、いつ・どこなのかをたずねたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5b7b040bf5d0",
+                        "level": 3,
+                        "text": "[L] Enjoy Listening — ストーリーを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b1ae4ac0ca16",
+                        "level": 2,
+                        "text": "Part 1 | pp.32–33"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-811afbf11cfb",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ac3d99f42da7",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f8e607c262e6",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — What is ...? | Who is ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-952ff02da593",
+                        "level": 3,
+                        "text": "[D] New Words — symbol | for | interesting | favorite | character | also"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-379ad0f9f14c",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — what | family | who | why | brave | kind"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-41d0be27ccaf",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3b05f0913f9e",
+                        "level": 2,
+                        "text": "Part 2 | pp.34–35"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b6c1d4d9e42a",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5eeccebb7461",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e19601c1994a",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — How ...? | When ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-946a59a0fa0e",
+                        "level": 3,
+                        "text": "[D] New Words — around | after | online"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f681657d21a0",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — live | come | by | walk | when | study"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8d4459fc87a8",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0a8877916749",
+                        "level": 2,
+                        "text": "Part 3 | pp.36–37"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e914298f2d83",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ef0be7941462",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a6d304b4eedb",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — Where ...? | It is + 前置詞 ...."
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3be41a7223fe",
+                        "level": 3,
+                        "text": "[D] New Words — hallway | win | next | luck | near"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-925a3bc6e6c7",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — where | practice | hard | go | park | station | under"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2f0e70dde690",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a59cd5594ac9",
+                        "level": 2,
+                        "text": "Sounds and Letters 3 — さまざまな母音② | pp.38–39"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-36c855b5c207",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — water | T-shirt | star | round | baseball | summer | winter | house | town | sound | mother | enjoy | fall | party | bake | ball | birthday"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ebabf86d4b9f",
+                        "level": 2,
+                        "text": "[ST] Grammar for Communication 2 — 疑問詞 | pp.40–41"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-efb3093e1a38",
+                        "level": 1,
+                        "text": "[R] 英語の歌１— \"Sing\" / \"Hello, Goodbye\" | p.42"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b496d532f12b",
+                        "level": 1,
+                        "text": "Unit 4: Friends in New Zealand | pp.43–49"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-6936b252ec6a",
+                        "level": 3,
+                        "text": "[G] Goal — 数や時刻、好きなものについてたずねたり、指示や助言をしたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-527122ae601a",
+                        "level": 3,
+                        "text": "[L] Enjoy Listening — ストーリーを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-81a055ab2b2e",
+                        "level": 2,
+                        "text": "Part 1 | pp.44–45"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5daac6cfb264",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-eadba724b54a",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-77e6787a3fa7",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — How many ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c9d07c00bcb0",
+                        "level": 3,
+                        "text": "[D] New Words — New Zealand | puppy, puppies | of | someday | lot | they"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1f6a8d39e0b1",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — animal(s) | visit | Japan | many"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-03d52ce8a9f9",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-cd5872eff5c5",
+                        "level": 2,
+                        "text": "Part 2 | pp.46–47"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9e28d4cdca75",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f6ce821e4ee4",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d414aebc0f6f",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — What time ...? | What + 名詞 ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4368f5703aaa",
+                        "level": 3,
+                        "text": "[D] New Words — noon | last | like | o'clock | (netball)"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-360cb121bcde",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — time | afternoon | sport(s) | a.m. ⇔ p.m. | basketball"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f7113c16a870",
+                        "level": 3,
+                        "text": "[ST] [P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c4ac4d5190a6",
+                        "level": 2,
+                        "text": "Part 3 | pp.48–49"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-22a48aef9e46",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0ac2959739a0",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8efebdc035ec",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — Come .... | Be .... | Don't ...."
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9fe3f190ceba",
+                        "level": 3,
+                        "text": "[D] New Words — front | be | nervous | worry | yourself | sheep | kiwi(s) | right"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b9cd930a1799",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — turn | please | look"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f59e4509eac3",
+                        "level": 3,
+                        "text": "[P] Your Turn"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e39ccf8a79b8",
+                        "level": 2,
+                        "text": "Sounds and Letters 4 — 音と文字のまとめ | pp.50–51"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-7954203933d4",
+                        "level": 3,
+                        "text": "単語を読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-09ec05e473e7",
+                        "level": 3,
+                        "text": "意味の区切りを意識して音読しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-99214a21f40a",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — fun | long | song | fine | pet | stop | eat | sad | eel | gift | man | bench | picture | basket | kitchen | table | all"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f151bc7c61bf",
+                        "level": 2,
+                        "text": "[ST] Grammar for Communication 3 — 名詞 | p.52"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8a9702f5dbe8",
+                        "level": 1,
+                        "text": "[R] Column — New Zealand | p.53"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ce175ff9abc7",
+                        "level": 1,
+                        "text": "Stage Activity 1 — “All about Me” Poster | pp.54–55"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-985b0178eb8c",
+                        "level": 3,
+                        "text": "[G] Goal — 自分の好きなことについて、つながりのある文章を書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-57fddfa48c53",
+                        "level": 3,
+                        "text": "活動の流れを確認しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-833f92706a09",
+                        "level": 3,
+                        "text": "情報を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2f6f313cd6a0",
+                        "level": 3,
+                        "text": "ポスターを書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9424d13c228d",
+                        "level": 3,
+                        "text": "[D] New Words — poster | age | movie | student | much | starter | famous | tell"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-99efe1383fc7",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — elementary school | subject | junior high school | every | big | player"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-973489a45db4",
+                        "level": 1,
+                        "text": "[R] 英語の歌２ | p.56"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-cef710f61cad",
+                        "level": 1,
+                        "text": "[R] [W] [P] Our Summer Vacations | pp.57–60"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-828bdfba806e",
+                        "level": 3,
+                        "text": "夏休みにしたことについてたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-feb643dd955f",
+                        "level": 3,
+                        "text": "夏休みの出来事について読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1ebe4b40bc5b",
+                        "level": 3,
+                        "text": "夏休みの絵日記を書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-77eb633b9e12",
+                        "level": 1,
+                        "text": "Unit 5: My Brother in Hawaii | pp.61–68"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9265635a7e70",
+                        "level": 3,
+                        "text": "[G] Goal — 自分と相手以外の人やものについて、たずねたり伝えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a83e5244180b",
+                        "level": 3,
+                        "text": "[W] Preview アニメ"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d5001c7603d4",
+                        "level": 2,
+                        "text": "Part 1 | pp.62–63"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b9958fc60488",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f9a3d999c2e7",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — I live .... / 名前 + lives .... | 三人称単数現在形（肯定文）"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0ea0afcc8d99",
+                        "level": 3,
+                        "text": "[D] New Words — as | tour | guide | write(s) | blog | local | beautiful | spot(s) | his | (Honolulu) | (Hawaii)"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9c5c4793d1e9",
+                        "level": 3,
+                        "text": "小学校の単語 — brother | year(s) | old | work(s) | nature"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1f09b59a1415",
+                        "level": 3,
+                        "text": "[ST] [P] Activity 1 (Your Turn) — 身近な人が好きなことやふだんすることを紹介しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9d97f78a9d6b",
+                        "level": 2,
+                        "text": "Part 2 | pp.64–65"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-67826fd9c13b",
+                        "level": 3,
+                        "text": "[L] [R] Dialogue"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-145ad6994e5c",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — Does ...? | .... does / doesn't. | 三人称単数現在形（疑問文）"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9be46649d53e",
+                        "level": 3,
+                        "text": "[D] New Words — any | does | has (⇐ have) | there | surf(s) | life"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-004defd218ef",
+                        "level": 3,
+                        "text": "小学校の単語 — question(s) | weekend(s) | swim(s) | sometimes | dolphin(s)"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8bdc81c358a6",
+                        "level": 3,
+                        "text": "[ST] [P] Activity 2 (Your Turn) — 身近な人についてたずねたり答えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c5c644a7a06e",
+                        "level": 2,
+                        "text": "Read and Think | pp.66–67"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2f9daa82bca1",
+                        "level": 3,
+                        "text": "[L] Before You Read"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8b635f51aa70",
+                        "level": 3,
+                        "text": "[R] Life in Hawaii — 人や海外の文化について書かれたブログを読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5dd9aca6dee7",
+                        "level": 3,
+                        "text": "[D] New Words — cafe | website | popular | owner | know(s) | patty | fried | top | wonderful | (Maria) | (loco moco)"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-07764b84f73d",
+                        "level": 3,
+                        "text": "小学校の単語 — restaurant | friendly | dish"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-465eb1ba7905",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — 名前 + speaks ... / does not speak ... | 三人称単数現在形（否定文）"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-efffb6b61fb2",
+                        "level": 2,
+                        "text": "[ST] [S] Unit Activity | p.68"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8694237a1a0b",
+                        "level": 3,
+                        "text": "[ST] Step 1 — Think about how to write a speech about someone you know."
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2962a8720612",
+                        "level": 3,
+                        "text": "[P] Step 2 — 友達について情報を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-31ec78e23279",
+                        "level": 3,
+                        "text": "[G] [S] Step 3 — 友達紹介のスピーチをしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e2838b54ab81",
+                        "level": 1,
+                        "text": "Real Life English 1 — コマーシャル | p.69"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ffd67406884c",
+                        "level": 3,
+                        "text": "[L] コマーシャルを聞き、必要な情報を聞き取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1a2d8c521149",
+                        "level": 3,
+                        "text": "[KS] Key Expressions — Why don't you ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-bc6bcd573d73",
+                        "level": 1,
+                        "text": "[ST] Grammar for Communication 4 — 三人称単数現在形 | p.70"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-13e46ce57e54",
+                        "level": 1,
+                        "text": "Unit 6: A Rakugo Performer from the U.K. | pp.71–78"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b522b7067fa7",
+                        "level": 3,
+                        "text": "[G] Goal — 自分と相手以外の人について話したり、だれのものかをたずねたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-044d3a638ed9",
+                        "level": 3,
+                        "text": "[W] Preview アニメ"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-288637a9af2c",
+                        "level": 2,
+                        "text": "Part 1 | pp.72–73"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-bb9a75c4caa2",
+                        "level": 3,
+                        "text": "[L] [R] Dialogue"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d7fd912edfae",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — 人称代名詞の目的格"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-390a681966d4",
+                        "level": 3,
+                        "text": "[D] New Words — him | say | everything | show | her | performer | the U.K. | together | (Tom) | (Diane Kichijitsu)"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f734dbe44481",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — let's"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-16be540c0024",
+                        "level": 3,
+                        "text": "[S] [P] Activity 1 (Your Turn) — 身近な人や有名人の特徴について伝えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-81f9cb46ccfe",
+                        "level": 2,
+                        "text": "Part 2 | pp.74–75"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a1f4174b2438",
+                        "level": 3,
+                        "text": "[L] [R] Dialogue"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b07d02cb3155",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — Whose ...? | mine | yours"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3025e66bb5a1",
+                        "level": 3,
+                        "text": "[D] New Words — minute(s) | wait | whose | yours | mine | maybe | careful | crowded | history | still | over"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c72a2bd6ddeb",
+                        "level": 3,
+                        "text": "[ES] 小学校の単語 — start(s) | ticket"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5ab62c9414f1",
+                        "level": 3,
+                        "text": "[ST] [P] Activity 2 (Your Turn) — だれのものかたずねたり答えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-bd84a2bdfdf8",
+                        "level": 2,
+                        "text": "Read and Think | pp.76–77"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0a4bb8ec6869",
+                        "level": 3,
+                        "text": "[L] Before You Read"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b1ebced5d437",
+                        "level": 3,
+                        "text": "[R] Questions for Diane Kichijitsu — 外国人落語家へのインタビュー記事を読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e69d381ea9b3",
+                        "level": 3,
+                        "text": "[D] New Words — cushion | different | role(s) | use(s) | only | prop(s) | which | or | casual | large | collection | (comic storytelling)"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3c73a574b71f",
+                        "level": 3,
+                        "text": "小学校の単語 — hand | towel | wear | clothes"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-7d2b719afaf7",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — Which ...? | Which ..., A or B?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1c8aaaf033de",
+                        "level": 2,
+                        "text": "[ST] [P] Unit Activity | p.78"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-6b5037abc307",
+                        "level": 3,
+                        "text": "有名人やキャラクターについて情報を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-09caf919cc83",
+                        "level": 3,
+                        "text": "クイズ形式でたずねたり答えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-bf758793a2df",
+                        "level": 1,
+                        "text": "Real Life English 2: 友達の家で | p.79"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-b9649351fcab",
+                        "level": 3,
+                        "text": "許可を求めたり、依頼したりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-148494a46cf6",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — Can I ...? | Can you ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-cd3cb3269218",
+                        "level": 2,
+                        "text": "[ST] Grammar for Communication 5 | p.80"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-67f4af6fea34",
+                        "level": 3,
+                        "text": "代名詞"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8305e72353af",
+                        "level": 1,
+                        "text": "Unit 7: An Online Tour of the U.K. | pp.81–88"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-6e66b1d85ac2",
+                        "level": 3,
+                        "text": "[G] Goal — 今していることについて説明したり、たずねたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8b51b5f54fab",
+                        "level": 3,
+                        "text": "[L] Enjoy Listening — ストーリーを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-13ef0824a2d6",
+                        "level": 2,
+                        "text": "Part 1 | pp.82–83"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4dc15efd84cf",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-88862e92ca0f",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5eeb4670513a",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — 現在進行形（肯定文）"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-06f56b314127",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-638d5dc0159a",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-03bb4e72d89a",
+                        "level": 3,
+                        "text": "Your Turn — 今していることを説明しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c6db3f52818f",
+                        "level": 2,
+                        "text": "Part 2 | pp.84–85"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8cfeb3c3ef7d",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-40f78a17eb28",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-7e55ccd297d5",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — 現在進行形（疑問文）"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-54af0ed0be25",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-679b91867968",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-84f03e645f7e",
+                        "level": 3,
+                        "text": "Your Turn — 今していることをたずねたり答えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-34e5f249e997",
+                        "level": 2,
+                        "text": "Read and Think | pp.86–87"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d7403a631e71",
+                        "level": 3,
+                        "text": "[R] Read and Think — オンラインツアーのチャットを読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5af202011b94",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — How ...! | What ...!"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0aa994ac7b85",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9139fd405bcc",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2597c989c721",
+                        "level": 2,
+                        "text": "Unit Activity | p.88"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ea1611cdeb0f",
+                        "level": 3,
+                        "text": "写真や動画について情報を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e3570c414c11",
+                        "level": 3,
+                        "text": "学校や町の様子を実況しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-50f9f5fab575",
+                        "level": 1,
+                        "text": "Real Life English 3: 道案内 | p.89"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4d68bf2e9dae",
+                        "level": 3,
+                        "text": "徒歩での道順をたずねたり教えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d2009bfb646d",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — I'm looking for .... | Go along this street. | Turn left at ...."
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-600b69300889",
+                        "level": 2,
+                        "text": "[ST] Grammar for Communication 6 | p.90"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-40ea657b0bd7",
+                        "level": 3,
+                        "text": "現在進行形"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ac7ce5902573",
+                        "level": 1,
+                        "text": "Unit 8: Think Globally, Act Locally | pp.91–98"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5fb8c61e3967",
+                        "level": 3,
+                        "text": "[G] Goal — したいことや、する必要のあることなどについて説明したり、たずねたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a68d8f8eb18b",
+                        "level": 3,
+                        "text": "[L] Enjoy Listening — ストーリーを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-e81d91b44dd5",
+                        "level": 2,
+                        "text": "Part 1 | pp.92–93"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-bc01e30bc158",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8aabb7a49829",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-50fd5f4bee16",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — want to ... | try to ..."
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4c1a9f6086b1",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-19e7cfd70a9b",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-73dd0f9e8d1c",
+                        "level": 3,
+                        "text": "Your Turn — 将来したいことやしようとしていることを伝えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-88a0314a97cf",
+                        "level": 2,
+                        "text": "Part 2 | pp.94–95"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-17b380432881",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-00ddcd04a8fd",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-756fe799952e",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — What do you want to ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-65bbb08d6bb5",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4324c8b0b954",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-afedcf7370b4",
+                        "level": 3,
+                        "text": "Your Turn — したいことや必要なことをたずね合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a006f4874723",
+                        "level": 2,
+                        "text": "Read and Think | pp.96–97"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-323b2f532c15",
+                        "level": 3,
+                        "text": "[R] Read and Think — 世界で起きている問題についてポスターを読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-eefcf79dbfcf",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — look + 形容詞"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3a0809253a75",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-6e62858ece0d",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3c5798871eea",
+                        "level": 2,
+                        "text": "Unit Activity | p.98"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8989a4d249b1",
+                        "level": 3,
+                        "text": "世界や地域の問題について考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3b25f8039029",
+                        "level": 3,
+                        "text": "自分たちがしたいことやする必要があることを伝えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f8772d664f03",
+                        "level": 1,
+                        "text": "Real Life English 4: レストラン | p.99"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d2a930b5c1d9",
+                        "level": 3,
+                        "text": "レストランで注文したり質問に答えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f93e28afa6f1",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — What would you like? | I'd like .... | Would you like ...? | Yes, please. / No, thank you."
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d340c194e234",
+                        "level": 1,
+                        "text": "Stage Activity 2: My Hero | pp.100–101"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d6a03d17423b",
+                        "level": 3,
+                        "text": "[G] Goal — 好きな有名人やあこがれの人についてたずねたり、説明したりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-abaaccf4d84b",
+                        "level": 3,
+                        "text": "人物について情報を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a0c6992b6e83",
+                        "level": 3,
+                        "text": "相手について質問しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-f18648d4eea6",
+                        "level": 3,
+                        "text": "好きな有名人やあこがれの人を説明しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-16bee189e465",
+                        "level": 1,
+                        "text": "Unit 9: Winter Vacation | pp.103–110"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-19dd860ac3c5",
+                        "level": 3,
+                        "text": "[G] Goal — 過去の出来事について説明したり、たずねたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5485fc06bd70",
+                        "level": 3,
+                        "text": "[L] Enjoy Listening — ストーリーを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1b803b253093",
+                        "level": 2,
+                        "text": "Part 1 | pp.104–105"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-965c3793c954",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-72ca70e7186a",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-29e7aead17ed",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — 一般動詞の過去形（肯定文）"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8d3b102588a0",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5c4b80a71b64",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5a526543231d",
+                        "level": 3,
+                        "text": "Your Turn — 冬休みにしたことを説明しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-af83c1825016",
+                        "level": 2,
+                        "text": "Part 2 | pp.106–107"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-fbbf4ce3abe2",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-30beadfa6acd",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-bf69376ed679",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — 一般動詞の過去形（疑問文）"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-86fd257b8593",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a4daec0b9a50",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-ff40306b3060",
+                        "level": 3,
+                        "text": "Your Turn — 冬休みの出来事についてたずねたり答えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-418ced573a43",
+                        "level": 2,
+                        "text": "Read and Think | pp.108–109"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9ac26e114e71",
+                        "level": 3,
+                        "text": "[R] Read and Think — 日本での年越しの思い出についてのレポートを読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c883e171131c",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — 一般動詞の過去形（否定文）"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-89280d2bf234",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-372ad05a31e7",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8da6f19b5216",
+                        "level": 2,
+                        "text": "Unit Activity | p.110"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-27fef11a1485",
+                        "level": 3,
+                        "text": "冬休みの出来事について情報を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-28b1650cd9a4",
+                        "level": 3,
+                        "text": "クラスメートと冬休みの出来事を伝え合おう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-6813113b545b",
+                        "level": 1,
+                        "text": "Real Life English 5: 旅先からの便り | p.111"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-81465544e942",
+                        "level": 3,
+                        "text": "旅先から絵はがきを書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a2ad456243fd",
+                        "level": 2,
+                        "text": "[ST] Grammar for Communication 7 | p.112"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0dcdd416e968",
+                        "level": 3,
+                        "text": "一般動詞の過去形"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5268a7301913",
+                        "level": 1,
+                        "text": "Unit 10: This Year's Memories | pp.113–120"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c1a8d1777338",
+                        "level": 3,
+                        "text": "[G] Goal — 過去の状態や気持ち、過去のある時点でしていたことについて説明しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-8578174e13c0",
+                        "level": 3,
+                        "text": "[L] Enjoy Listening — ストーリーを聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-de5d450d58fc",
+                        "level": 2,
+                        "text": "Part 1 | pp.114–115"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d41fef177cd5",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-08cb01da6d21",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-850ecfe442ed",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — be動詞の過去形"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d7097bee67e5",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-d2461b9d9f58",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-be1ab8daba83",
+                        "level": 3,
+                        "text": "Your Turn — 過去の状態や気持ちについてたずねたり答えたりしよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5eec56634fe1",
+                        "level": 2,
+                        "text": "Part 2 | pp.116–117"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-2a650af63efc",
+                        "level": 3,
+                        "text": "[ES] Enjoy Communication"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-58adb1f6f883",
+                        "level": 3,
+                        "text": "[L] [R] Story"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0e80e763c530",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — 過去進行形"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-5a843b717d19",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1e1ca20d8ad6",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0209e2baecc7",
+                        "level": 3,
+                        "text": "Your Turn — ある時点でしていたことを説明しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-fe98e4aae9be",
+                        "level": 2,
+                        "text": "Read and Think | pp.118–119"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9921c036ba48",
+                        "level": 3,
+                        "text": "[R] Read and Think — 一年の思い出について書かれた文章を読もう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-9390c37cf680",
+                        "level": 3,
+                        "text": "[KS] Key Sentences — There is .... | There are .... | Is there ...?"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-1f7ed2f7e0e6",
+                        "level": 3,
+                        "text": "[D] New Words"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-969f0152a4a8",
+                        "level": 3,
+                        "text": "小学校の単語"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-34038ac99403",
+                        "level": 2,
+                        "text": "Unit Activity | p.120"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c583ffc82fca",
+                        "level": 3,
+                        "text": "最近の出来事について情報を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-126cd89133f8",
+                        "level": 3,
+                        "text": "出来事や感想について日記を書こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-a69837a83356",
+                        "level": 1,
+                        "text": "Learning Literature in English | p.123"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-7e251a735fb6",
+                        "level": 3,
+                        "text": "[L] 英語で書かれた物語を聞こう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-6b7bb84da76d",
+                        "level": 3,
+                        "text": "物語の構成を考えよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-0ff16e550108",
+                        "level": 3,
+                        "text": "Beauty and the Beast"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-dbc29e5b3198",
+                        "level": 1,
+                        "text": "Stage Activity 3: My Favorite Event This Year | pp.124–125"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4a5969784c20",
+                        "level": 3,
+                        "text": "[G] Goal — 思い出に残った出来事について発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-4e62d406d24c",
+                        "level": 3,
+                        "text": "思い出に残った出来事を整理しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-c027b71bae50",
+                        "level": 3,
+                        "text": "発表の原稿を作ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-acbbeaa875a6",
+                        "level": 3,
+                        "text": "思い出に残った出来事について発表しよう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-658a318d4a7e",
+                        "level": 1,
+                        "text": "Let's Read: Gon, the Fox | pp.126–128"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-267edad74948",
+                        "level": 3,
+                        "text": "[R] Gon, the Fox"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-657f0b92a502",
+                        "level": 3,
+                        "text": "場面や登場人物の心情の変化を読み取ろう"
+                    },
+                    {
+                        "id": "preset-new-horizon-english-course-1-item-3f94bc3f59d7",
+                        "level": 3,
+                        "text": "気持ちをこめて音読しよう"
+                    }
+                ]
             }
         ];
         /* CLASS-TRACKER:TEXTBOOK-PRESETS:END */
@@ -3864,9 +7852,12 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             LS:{label:"Let’s Sing",svg:'<path d="M16 4.5v11.8"/><path d="m16 5 4-1"/><ellipse cx="12.5" cy="17" rx="3.5" ry="2.5" transform="rotate(-12 12.5 17)" fill="currentColor" stroke="none"/>'},
             LC:{label:"Let’s Chant",svg:'<path d="M6.2 16.5h11.6l-1.3-1.8V10a4.5 4.5 0 0 0-9 0v4.7Z"/><path d="M10 19a2.2 2.2 0 0 0 4 0M12 4V2.8"/>'},
             ST:{label:"Small Talk",svg:'<path d="M4 5.5h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H9l-3.5 2.5v-2.5H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2Z"/><path d="M16 9.5h3a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5V20L15 17.5h-3a2 2 0 0 1-2-2"/>'},
-            P:{label:"Write",svg:'<path d="m5 16-.8 3.8L8 19l10.7-10.7-3-3Z"/><path d="m13.8 7.2 3 3M5 16l3 3"/>'}
+            P:{label:"Write",svg:'<path d="m5 16-.8 3.8L8 19l10.7-10.7-3-3Z"/><path d="m13.8 7.2 3 3M5 16l3 3"/>'},
+            ES:{label:"Elementary School",svg:'<path d="M11.4 3.3Q12 2.5 12.6 3.3L14.7 6.2Q15.3 7 16.2 7.3L19.6 8.4Q20.6 8.7 20 9.5L17.9 12.4Q17.3 13.2 17.3 14.2L17.3 17.8Q17.3 18.8 16.3 18.5L13 17.4Q12 17.1 11 17.4L7.7 18.5Q6.7 18.8 6.7 17.8L6.7 14.2Q6.7 13.2 6.1 12.4L4 9.5Q3.4 8.7 4.4 8.4L7.8 7.3Q8.7 7 9.3 6.2Z"/><path d="M12 7.5v5.7q0 1-1.3 1.3M10 9.8l-1.4 2m5.4-2 1.4 2"/>'},
+            D:{label:"Dictionary",svg:'<path d="M4 17V6a2 2 0 0 1 2-2h14v13H7c-1.7 0-3 1.2-3 2.1S5.3 20 7 20h13v-3M8 4v13"/>'},
+            KS:{label:"Key Sentences",svg:'<path d="M12 11V8.5a3.5 3.5 0 0 1 7 0V11"/><rect x="10" y="11" width="11" height="9" rx="2"/><circle cx="5.3" cy="15.5" r="2.2"/><path d="M7.5 15.5h8m-3.2 0v2m2.2-2v2"/>'}
         };
-        const CHECKLIST_MARKER_PATTERN=/\[(LS|LC|ST|G|W|L|R|S|P)\]/g;
+        const CHECKLIST_MARKER_PATTERN=/\[(LS|LC|ST|ES|KS|G|W|L|R|S|P|D)\]/g;
         function parseChecklistMarkers(value){ const markers=[]; const text=value.replace(CHECKLIST_MARKER_PATTERN,(_,code)=>{ markers.push(code); return " "; }).replace(/\s+/g," ").trim(); return {markers,text}; }
         function describeChecklistText(value){ const parsed=parseChecklistMarkers(value); return [...parsed.markers.map(code=>CHECKLIST_MARKERS[code].label),parsed.text].filter(Boolean).join(": "); }
         function makeChecklistCopy(value){
