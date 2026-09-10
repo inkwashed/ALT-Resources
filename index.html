@@ -34,7 +34,7 @@ Free for personal, classroom, and non-commercial educational use.
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
          * Teacher Tools canonical theme tokens.
-         * This file is embedded into registered Workbench pages by the shared UI sync.
+         * This file is embedded into registered pages by the shared UI sync.
          * Published applets remain self-contained and never load this file at runtime.
          */
 
@@ -1205,7 +1205,7 @@ Free for personal, classroom, and non-commercial educational use.
                     <span class="site-menu-status">HERE</span>
                 </a>
                  <div class="site-menu-label">Available tools</div>
-                 <a class="site-menu-item" href="/scheduler/">
+                <a class="site-menu-item" href="/scheduler/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <path d="M5.5 7.5h17v15h-17z" />
@@ -1214,6 +1214,16 @@ Free for personal, classroom, and non-commercial educational use.
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+                <a class="site-menu-item" href="/calendar/">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <path d="M5.5 7.5h17v15h-17zM9 4.5v6M19 4.5v6M5.5 12h17M11.2 12v10.5M16.8 12v10.5M5.5 17.25h17" />
+                            <path class="icon-fill" d="M11.2 12h5.6v5.25h-5.6z" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Class Calendar</span><span class="site-menu-description">Plan classes with school bell times</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/spinner/">
@@ -1365,6 +1375,14 @@ Free for personal, classroom, and non-commercial educational use.
                         <a class="tool-link" href="/scheduler/">Open scheduler →</a>
                     </div>
                 </article>
+                <article class="tool-entry available">
+                    <div class="tool-icon" aria-hidden="true"><svg viewBox="0 0 28 28"><path d="M5 7h18v16H5zM9 4v6M19 4v6M5 12h18M10 15v5M18 15v5M8 17h12" /></svg></div>
+                    <div><div class="tool-name-row"><h3 class="tool-name">Class Calendar</h3><span class="tool-status">Available</span></div>
+                        <p class="tool-description">Plan classes with school bell times, colored working hours, and calendar exports.</p>
+                        <a class="tool-link" href="/calendar/">Open Class Calendar →</a>
+                    </div>
+                </article>
+
 
                 <article class="tool-entry available">
                     <div class="tool-icon" aria-hidden="true">
@@ -1465,6 +1483,11 @@ Free for personal, classroom, and non-commercial educational use.
             </div>
 
             <div class="updates-panel">
+                <article class="update-entry">
+                    <div class="update-date"><time datetime="2026-09-10">September 10, 2026</time><span class="update-version">v0.4</span></div>
+                    <div><h3 class="update-title">Class Calendar is available</h3><p class="update-copy">Plan lessons from regular or irregular school periods, group events inside colored working hours, and export your calendar. Schools and classes stay shared with Scheduler and Tracker, with autosaving settings.</p><a class="update-link" href="/calendar/">Open Class Calendar →</a></div>
+                </article>
+
                 <article class="update-entry">
                     <div class="update-date">
                         <time datetime="2026-09-10">September 10, 2026</time>
@@ -1570,6 +1593,35 @@ Free for personal, classroom, and non-commercial educational use.
 
     <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
     <script>
+        // Shared structural contract for Calendar persistence and central backup imports.
+        window.TeacherToolsCalendarValidate = value => {
+            const object = v => v && typeof v === "object" && !Array.isArray(v);
+            const date = d => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) &&
+                !isNaN(Date.parse(d)) && new Date(d + "T12:00:00Z").toISOString().slice(0,10) === d;
+            const time = t => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
+            if (!object(value) || value.version !== 1 || typeof value.timeZone !== "string" ||
+                !Array.isArray(value.events) || !object(value.preferences)) return false;
+            try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }); } catch { return false; }
+            const p = value.preferences;
+            if (!["month","week","agenda","custom"].includes(p.view) ||
+                !Array.isArray(p.days) || !p.days.length || p.days.length > 7 ||
+                new Set(p.days).size !== p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6) ||
+                !["regular","irregular","off"].includes(p.ghostMode) || typeof p.working !== "boolean" ||
+                !["school","category"].every(k => typeof p[k] === "string")) return false;
+            if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
+                p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
+            const ids = new Set();
+            return value.events.every(e => {
+                if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
+                    !e.id || /[\r\n]/.test(e.id) || ids.has(e.id) || !e.title.trim() || !date(e.date) ||
+                    !time(e.start) || !time(e.end) || e.end <= e.start ||
+                    !["regular","irregular","custom"].includes(e.mode) ||
+                    (e.mode === "custom" ? e.period !== null : !Number.isInteger(e.period) || e.period < 0) ||
+                    !["Class","Lunch","Meeting","Other"].includes(e.category) ||
+                    !Number.isFinite(Date.parse(e.created)) || !Number.isFinite(Date.parse(e.modified))) return false;
+                ids.add(e.id); return true;
+            });
+        };
         (() => {
             "use strict";
 
@@ -1579,6 +1631,12 @@ Free for personal, classroom, and non-commercial educational use.
             const SITE_BACKUP_SCHEMA_VERSION = 1;
             const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
             const SITE_DATA_RECORDS = Object.freeze([
+                {
+                    id: "class-calendar",
+                    label: "Class Calendar",
+                    storageKey: "teacherTools.classCalendar.state.v1",
+                    validate: value => window.TeacherToolsCalendarValidate(value)
+                },
                 {
                     id: "appearance",
                     label: "Site appearance",
@@ -2150,7 +2208,7 @@ Free for personal, classroom, and non-commercial educational use.
                 modal.setAttribute("aria-hidden", "false");
                 document.body.classList.add("modal-open");
 
-                const preferredFocus = modal.querySelector("[data-modal-initial-focus], .close-button");
+                const preferredFocus = modal.querySelector("[data-modal-initial-focus]") || modal.querySelector(".close-button");
                 if (preferredFocus) preferredFocus.focus();
             }
 

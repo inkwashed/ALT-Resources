@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <!--
-Classroom Timer · Teacher Tools
+Class Calendar · Teacher Tools
 Copyright © 2026. All rights reserved.
 
-Workbench preview. Review project-wide licensing language before publication.
+Free for personal, classroom, and non-commercial educational use.
+Redistribution, resale, commercial use, and distribution of modified versions require prior permission.
 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
-    <meta name="description" content="A simple classroom countdown and stopwatch with locally saved presets.">
-    <title>Classroom Timer · Teacher Tools</title>
+    <meta name="description" content="A local-first class calendar with school bell-time suggestions.">
+    <title>Class Calendar · Teacher Tools</title>
 
+    <!-- Apply the shared appearance before rendering to prevent a theme flash. -->
     <!-- TEACHER-TOOLS:FAVICON:START -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%232563eb%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cstyle%3E.fill%7Bfill%3A%23bfdbfe%3Bstroke%3A%23fff%7D%3C%2Fstyle%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2218%22%20r%3D%228.5%22%2F%3E%3Cpath%20d%3D%22M13%205h6v3h-6zM16%208v1.5m6.2%201.3%202.1-2.1m-1.1-1.1%201.6%201.6M16%2014v4l3.5%202%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%232563eb%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cstyle%3E.fill%7Bfill%3A%23bfdbfe%3Bstroke%3A%23fff%7D%3C%2Fstyle%3E%3Cpath%20d%3D%22M7%209h18v16H7zM11%205v7M21%205v7M7%2014h18M13%2014v11M19%2014v11M7%2019.5h18%22%2F%3E%3Cpath%20class%3D%22fill%22%20d%3D%22M13%2014h6v5.5h-6z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <!-- TEACHER-TOOLS:FAVICON:END -->
     <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:START -->
     <script>
@@ -831,7 +833,8 @@ Workbench preview. Review project-wide licensing language before publication.
         }
 /* TEACHER-TOOLS:SHARED-STYLES:END */
 
-        /* Classroom Timer styles begin here. */
+        /* Applet-specific styles begin here. */
+        /* Applet shell */
         .page-main { width: 100%; padding: 24px 16px 34px; }
 
         .app-shell {
@@ -851,6 +854,7 @@ Workbench preview. Review project-wide licensing language before publication.
             justify-content: space-between;
             gap: 12px;
             padding: 10px 12px 10px 18px;
+            background: var(--surface);
             border-bottom: 1px solid var(--line);
         }
 
@@ -892,17 +896,6 @@ Workbench preview. Review project-wide licensing language before publication.
         }
 
         .icon-button:hover { color: var(--accent-secondary); background: var(--panel); }
-        .settings-icon { width: 23px; height: 23px; fill: currentColor; }
-
-        .presentation-icon {
-            width: 20px;
-            height: 20px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.9;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
 
         .help-button-mark {
             width: 21px;
@@ -917,97 +910,35 @@ Workbench preview. Review project-wide licensing language before publication.
         }
 
         .app-main { padding: 18px; }
+        .intro { margin-bottom: 17px; }
+        .intro h2 { margin: 0 0 6px; font-size: 17px; line-height: 1.3; }
 
-        .mode-tabs {
+        .intro p,
+        .helper-text { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+        .workflow-panel {
+            padding: 16px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+        }
+
+        .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
-            padding: 4px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 10px;
+            grid-template-columns: minmax(0, 1.35fr) minmax(180px, 0.65fr);
+            gap: 12px;
         }
 
-        .mode-tab {
-            min-height: 42px;
-            padding: 8px 12px;
-            color: var(--muted);
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 7px;
-            font-size: 13px;
-            font-weight: 750;
-            cursor: pointer;
-        }
+        .field { min-width: 0; display: grid; gap: 5px; }
+        .field-label { color: var(--muted); font-size: 12px; font-weight: 700; }
 
-        .mode-tab[aria-selected="true"] {
-            color: var(--accent);
-            background: var(--surface);
-            border-color: var(--accent-border);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-        }
-
-        .timer-panel { padding-top: 16px; }
-        .timer-panel[hidden] { display: none; }
-
-        .countdown-setup {
-            margin-top: 18px;
-            padding-top: 16px;
-            border-top: 1px solid var(--line);
-        }
-
-        .section-label {
-            display: block;
-            margin-bottom: 7px;
-            color: var(--muted);
-            font-size: 11px;
-            font-weight: 750;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-        }
-
-        .preset-list { display: flex; flex-wrap: wrap; gap: 7px; }
-        #savedPresetButtons { display: contents; }
-
-        .preset-button {
-            min-height: 36px;
-            padding: 7px 11px;
-            color: var(--accent);
-            background: var(--accent-soft);
-            border: 1px solid var(--accent-border);
-            border-radius: 999px;
-            font-size: 11.5px;
-            font-weight: 750;
-            cursor: pointer;
-        }
-
-        .preset-button:hover { filter: brightness(0.97); }
-        .saved-preset-button::before { content: "★"; margin-right: 5px; font-size: 9px; }
-
-        .quick-preset-empty {
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 36px;
-        }
-
-        .quick-preset-empty[hidden] { display: none; }
-
-        .time-entry {
-            display: flex;
-            align-items: end;
-            gap: 8px;
-            margin-top: 14px;
-            padding: 13px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 10px;
-        }
-
-        .time-field { min-width: 0; flex: 1 1 0; display: grid; gap: 5px; }
-        .field-label { color: var(--muted); font-size: 11px; font-weight: 700; }
-
+        input[type="date"],
+        input[type="file"],
         input[type="number"],
-        input[type="text"] {
+        input[type="text"],
+        input[type="time"],
+        select,
+        textarea {
             width: 100%;
             min-height: 40px;
             padding: 8px 10px;
@@ -1017,113 +948,61 @@ Workbench preview. Review project-wide licensing language before publication.
             border-radius: 8px;
         }
 
-        input:hover { border-color: var(--accent-border); }
-        input:disabled { opacity: 0.62; cursor: not-allowed; }
+        textarea { min-height: 84px; resize: vertical; }
+        input[type="file"] { padding: 7px 9px; font-size: 11px; }
 
-        .time-separator {
-            align-self: center;
-            margin-top: 18px;
-            color: var(--muted);
-            font-size: 20px;
-            font-weight: 700;
-        }
+        input[type="date"]:hover,
+        input[type="file"]:hover,
+        input[type="number"]:hover,
+        input[type="text"]:hover,
+        input[type="time"]:hover,
+        select:hover,
+        textarea:hover { border-color: var(--accent-border); }
 
-        .timer-stage {
-            display: grid;
-            justify-items: center;
-            gap: 12px;
-            padding: 19px 0 5px;
-        }
-
-        .timer-face {
-            --progress: 1;
-            position: relative;
-            width: min(330px, 76vw);
-            aspect-ratio: 1;
-            display: grid;
-            place-items: center;
-            isolation: isolate;
-            background: conic-gradient(var(--accent) calc(var(--progress) * 1turn), var(--line) 0);
-            border-radius: 50%;
-            transition: background 180ms linear;
-        }
-
-        .timer-face::before {
-            content: "";
-            position: absolute;
-            inset: 12px;
-            z-index: -1;
-            background: var(--surface);
-            border-radius: 50%;
-            box-shadow: inset 0 0 0 1px var(--line);
-        }
-
-        .timer-face.finished {
-            background: conic-gradient(var(--warning-border) 1turn, var(--warning-border) 0);
-            animation: finish-pulse 900ms ease-in-out 2;
-        }
-
-        .time-display {
-            font-size: clamp(48px, 11vw, 82px);
-            font-weight: 800;
-            letter-spacing: -0.055em;
-            line-height: 1;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .stopwatch-display { font-size: clamp(42px, 10vw, 72px); }
-
-        .timer-status {
-            min-height: 21px;
-            margin: 0;
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 650;
-            text-align: center;
-        }
-
-        .timer-status.finished { color: var(--warning-text); }
-
-        .button-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-        }
+        .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 
         .button {
-            min-height: 42px;
+            min-height: 40px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 7px;
-            padding: 9px 17px;
+            padding: 9px 14px;
             border: 1px solid var(--accent);
             border-radius: 8px;
             font-size: 13px;
-            font-weight: 750;
+            font-weight: 700;
             cursor: pointer;
         }
 
-        .button:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
         .button-primary { color: #ffffff; background: var(--accent); }
         .button-secondary { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
-        .button-neutral { color: var(--text); background: var(--surface); border-color: var(--line); }
-        .button-danger { color: var(--danger); background: var(--surface); border-color: currentColor; }
-        .button:hover:not(:disabled) { filter: brightness(0.97); }
-        html[data-theme="true-dark"] .button-primary { color: #07101d; }
+        .button:hover { filter: brightness(0.97); }
 
-        .button-symbol {
-            min-width: 1.1em;
-            display: inline-block;
-            font-size: 1.05em;
-            font-weight: 800;
-            line-height: 1;
-            text-align: center;
+        .result-panel {
+            margin-top: 14px;
+            padding: 12px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--accent-border);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.5;
         }
 
-        .keyboard-hint { margin: 8px 0 0; color: var(--muted); font-size: 10.5px; text-align: center; }
-        .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        .result-panel[hidden] { display: none; }
+
+        .notice {
+            margin-top: 16px;
+            padding: 10px 12px;
+            color: var(--warning-text);
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 8px;
+            font-size: 11.5px;
+            line-height: 1.5;
+        }
 
         .app-footer {
             padding: 11px 16px 13px;
@@ -1134,7 +1013,10 @@ Workbench preview. Review project-wide licensing language before publication.
 
         .footer-version { margin-bottom: 4px; color: var(--muted); font-size: 10.5px; font-weight: 700; }
         .footer-copyright { color: var(--muted); font-size: 9.5px; line-height: 1.4; }
+        body.compact-view .app-main { padding-top: 12px; padding-bottom: 12px; }
+        body.compact-view .intro { margin-bottom: 12px; }
 
+        /* Dialogs and settings */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -1188,7 +1070,7 @@ Workbench preview. Review project-wide licensing language before publication.
             align-items: center;
             justify-content: space-between;
             gap: 14px;
-            padding: 7px 0;
+            padding: 10px 0;
         }
 
         .setting-label { display: block; font-size: 12px; font-weight: 700; }
@@ -1223,84 +1105,6 @@ Workbench preview. Review project-wide licensing language before publication.
         .switch input:checked + .switch-track::after { transform: translateX(18px); }
         .switch input:focus-visible + .switch-track { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-        .preset-form {
-            display: grid;
-            grid-template-columns: minmax(130px, 1.4fr) repeat(3, minmax(62px, 0.55fr)) auto;
-            align-items: end;
-            gap: 7px;
-        }
-
-        .preset-form .button { padding-inline: 12px; }
-
-        .default-time-form {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(62px, 1fr));
-            align-items: end;
-            gap: 7px;
-        }
-
-        .quick-preset-grid {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 7px;
-            margin-top: 12px;
-        }
-
-        .quick-preset-setting-label { display: block; margin-top: 14px; }
-
-        .quick-preset-option {
-            min-height: 38px;
-            justify-content: center;
-            padding: 7px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 8px;
-        }
-
-        .saved-list { display: grid; gap: 7px; margin-top: 12px; }
-        .saved-empty { margin: 0; padding: 10px; color: var(--muted); background: var(--panel); border-radius: 8px; font-size: 11px; }
-
-        .saved-row {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto auto;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 9px;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 8px;
-        }
-
-        .saved-name { min-width: 0; font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
-        .saved-duration { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; font-weight: 500; }
-
-        .mini-button {
-            min-height: 32px;
-            padding: 5px 9px;
-            color: var(--accent);
-            background: var(--surface);
-            border: 1px solid var(--accent-border);
-            border-radius: 7px;
-            font-size: 10.5px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .mini-button.danger { color: var(--danger); border-color: currentColor; }
-        .form-message { min-height: 17px; margin: 7px 0 0; color: var(--muted); font-size: 10.5px; }
-        .form-message.error { color: var(--danger); }
-
-        .notice {
-            margin-top: 12px;
-            padding: 10px 12px;
-            color: var(--warning-text);
-            background: var(--warning-bg);
-            border: 1px solid var(--warning-border);
-            border-radius: 8px;
-            font-size: 11.5px;
-            line-height: 1.5;
-        }
-
         .tutorial-intro { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
         .tutorial-steps { display: grid; gap: 10px; }
 
@@ -1329,6 +1133,18 @@ Workbench preview. Review project-wide licensing language before publication.
         .tutorial-step h3 { margin: 1px 0 3px; font-size: 13px; }
         .tutorial-step p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
 
+        .tutorial-link {
+            display: inline-flex;
+            margin-top: 7px;
+            padding: 0;
+            color: var(--accent);
+            background: transparent;
+            border: 0;
+            font-size: 10.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
         .modal-actions {
             display: flex;
             justify-content: flex-end;
@@ -1337,92 +1153,21 @@ Workbench preview. Review project-wide licensing language before publication.
             border-top: 1px solid var(--line);
         }
 
-        body.presentation-open { overflow: hidden; }
-        body.presentation-open .modal-backdrop { z-index: 700; }
-
-        .app-shell.is-presenting {
-            position: fixed;
-            z-index: 500;
-            inset: 0;
-            width: 100vw;
-            height: 100dvh;
-            max-width: none;
-            display: flex;
-            flex-direction: column;
-            border: 0;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .app-shell.is-presenting .app-header { flex: 0 0 auto; }
-        .app-shell.is-presenting #helpOpenButton,
-        .app-shell.is-presenting #settingsOpenButton { display: none; }
-        .app-shell.is-presenting .app-main {
-            flex: 1 1 auto;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-            padding: clamp(10px, 2vh, 20px);
-        }
-        .app-shell.is-presenting .app-footer,
-        .app-shell.is-presenting .countdown-setup,
-        .app-shell.is-presenting .keyboard-hint { display: none; }
-        .app-shell.is-presenting .mode-tabs { flex: 0 0 auto; width: min(430px, 100%); margin: 0 auto; }
-        .app-shell.is-presenting .timer-panel { flex: 1 1 auto; min-height: 0; padding-top: clamp(8px, 1.5vh, 16px); }
-        .app-shell.is-presenting .timer-stage { height: 100%; grid-template-rows: minmax(0, 1fr) auto auto; padding: 0; }
-        .app-shell.is-presenting .timer-face {
-            --presentation-timer-size: clamp(80px, min(48vw, calc(100dvh - 300px)), 520px);
-            width: var(--presentation-timer-size);
-            height: var(--presentation-timer-size);
-            min-width: 0;
-            min-height: 0;
-            max-width: none;
-            max-height: none;
-            aspect-ratio: 1 / 1;
-            align-self: center;
-            justify-self: center;
-        }
-        .app-shell.is-presenting .time-display { font-size: clamp(16px, calc(var(--presentation-timer-size) * 0.18), 92px); }
-        .app-shell.is-presenting .timer-status { font-size: clamp(15px, 1.6vw, 22px); }
-        .app-shell.is-presenting .button { min-height: clamp(48px, 7vh, 66px); padding-inline: clamp(18px, 2.4vw, 30px); font-size: clamp(15px, 1.7vw, 22px); }
-
-        @keyframes finish-pulse {
-            50% { transform: scale(1.025); }
-        }
-
         @media (max-width: 620px) {
             .page-main { padding: 16px 8px 24px; }
             .app-shell { border-radius: 10px; }
             .app-main { padding: 14px; }
-            .timer-face { width: min(290px, 78vw); }
+            .form-grid { grid-template-columns: 1fr; }
+            .mode-heading-row { align-items: flex-start; }
             .modal-backdrop { align-items: stretch; padding: 6px; }
             .modal-card { max-height: calc(100dvh - 12px); border-radius: 9px; }
-            .preset-form { grid-template-columns: repeat(3, 1fr); }
-            .preset-name-field { grid-column: 1 / -1; }
-            .preset-form .button { grid-column: 1 / -1; }
-            .default-time-form { grid-template-columns: repeat(3, 1fr); }
-            .quick-preset-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        @media (orientation: portrait), (max-width: 720px) {
-            .app-shell.is-presenting .app-main { padding: 8px; }
-            .app-shell.is-presenting .timer-face {
-                --presentation-timer-size: clamp(80px, min(78vw, calc(100dvh - 270px)), 520px);
-                width: var(--presentation-timer-size);
-                height: var(--presentation-timer-size);
-            }
-            .app-shell.is-presenting .button { min-height: 48px; font-size: 15px; }
         }
 
         @media (max-width: 380px) {
             .app-header { padding-left: 12px; }
             .app-title { font-size: 17px; }
-            .time-entry { gap: 5px; padding: 10px; }
-            .time-separator { font-size: 17px; }
-            .button { flex: 1 1 auto; padding-inline: 11px; }
+            .button { flex: 1 1 auto; }
             .tutorial-step { grid-template-columns: 1fr; }
-            .saved-row { grid-template-columns: minmax(0, 1fr) auto; }
-            .saved-row .danger { grid-column: 2; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1433,10 +1178,317 @@ Workbench preview. Review project-wide licensing language before publication.
                 animation-iteration-count: 1 !important;
             }
         }
-    </style>
+    /* A wider working surface is needed for seven readable calendar columns. */
+.app-shell {max-width:1180px}.app-main {padding:16px}.toolbar,.filters,.row {display:flex;align-items:center;gap:8px;flex-wrap:wrap}.toolbar {margin-bottom:12px}.toolbar h2 {font-size:19px;margin:0 auto 0 0}.calendar button,.toolbar button,.filters button,.modal-content button {min-height:40px}.filters {padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;align-items:end}.filters label {flex:1;min-width:110px}.filters .check {display:flex;align-items:center;gap:6px;min-width:140px}.check input {width:auto}.calendar {display:grid;gap:8px;grid-template-columns:repeat(var(--days,7),minmax(0,1fr))}.day-cell {min-width:0;border:1px solid var(--line);border-radius:9px;background:var(--surface);padding:8px;position:relative}.day-cell.today {border:2px solid var(--accent)}.day-head {display:flex;align-items:center;justify-content:space-between;gap:3px;margin-bottom:8px}.day-head button {padding:4px;min-width:30px}.day-head strong {font-size:12px}.day-items {display:grid;gap:7px}.event,.ghost {display:block;width:100%;text-align:left;border-radius:7px;padding:8px;overflow-wrap:anywhere;font-size:12px;line-height:1.5}.event {background:var(--accent-soft);color:var(--text);border:1px solid var(--accent-border);border-left:4px solid var(--accent)}.event strong,.ghost strong {display:block}.event[data-category="Meeting"] {border-left-style:double;border-left-width:6px}.ghost {border:1px dashed var(--muted);background:var(--panel);color:var(--muted)}.ghost:hover,.ghost:focus-visible {background:var(--accent-soft);color:var(--text);border-color:var(--accent)}.ghost .plus {float:right;opacity:.5;font-size:18px}.ghost:hover .plus,.ghost:focus-visible .plus {opacity:1}.working {background:var(--panel);border-left:3px solid var(--line);padding:5px;font-size:11px;color:var(--muted);margin-bottom:7px}.school-day {font-size:11px;color:var(--accent);margin:4px 0 8px}.month .day-cell {min-height:135px}.month .ghost {font-size:11px;padding:4px}.month .ghost .plus {font-size:14px}.month .event {padding:5px}.outside {opacity:.65}.empty {font-size:12px;color:var(--muted);padding:8px 0}.notice {padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:8px;font-size:12px;line-height:1.5}.form-grid {display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid .wide {grid-column:1/-1}label {display:block;font-size:12px;color:var(--muted)}label input,label select,label textarea {display:block;margin-top:4px;width:100%;min-width:0}input,select,textarea {min-height:40px;box-sizing:border-box;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:8px}textarea {min-height:72px}.actions {display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.button {padding:8px 13px;background:var(--accent-soft);color:var(--text);border:1px solid var(--accent-border);border-radius:7px;cursor:pointer}.primary {background:var(--accent);color:var(--surface)}html[data-theme="true-dark"] .primary {color:#07101d}.danger {color:var(--danger)}.error {color:var(--danger);font-size:12px}.weekday-picks {display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}.weekday-picks label {display:flex;align-items:center;gap:4px}.weekday-picks input {width:auto;min-height:20px;margin:0}.status {font-size:12px;min-height:18px;color:var(--muted)}.bell-row {display:grid;grid-template-columns:45px 1fr 1fr;gap:8px;align-items:center;margin-bottom:6px}.bell-row label {min-width:0}.modal-card {width:min(620px,100%)}button:focus-visible {outline:3px solid var(--accent);outline-offset:2px}.calendar.agenda {--days:1!important}.agenda .day-cell {min-height:90px}#customDays[hidden] {display:none}
+@media(max-width:760px){.calendar:not(.month){grid-template-columns:1fr}.calendar.month {grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}.month .day-cell {padding:3px;min-height:85px}.month .day-head {flex-wrap:wrap}.month .day-head strong {font-size:10px}.month .event,.month .ghost {font-size:10px;padding:2px}.month .ghost .detail,.month .event .detail,.month .school-day,.month .working {display:none}.app-main {padding:9px}.toolbar h2 {width:100%;order:-1}.page-main {padding:12px 6px}.day-head button {font-size:12px}.form-grid {grid-template-columns:1fr}.form-grid .wide {grid-column:auto}}
+@media(max-width:420px){.month .ghost {display:none}.month .event strong {font-size:9px}.month .day-head button {min-height:32px}.month .day-head {gap:0}.filters label {min-width:100px}.app-title{font-size:17px}}
+
+[hidden] {display:none !important;}
+.app-shell {width:min(1180px,100%)}
+
+.month .empty {display:none}
+@media(max-width:760px){.month .day-head strong{display:none}.month .day-head button{width:100%;min-height:36px}.month .day-head{margin-bottom:4px}.month .day-cell{min-height:64px}}
+
+.month-weekday {font-size:11px;color:var(--muted);text-align:center;padding:4px 0;font-weight:600}
+.class-filter{flex:1;min-width:140px;position:relative}.class-filter summary{margin-top:4px;padding:10px 8px;min-height:40px;box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:7px;font-size:13px;cursor:pointer}.class-filter-menu{position:absolute;z-index:20;left:0;top:100%;width:280px;max-width:calc(100vw - 40px);max-height:300px;overflow:auto;padding:10px;background:var(--surface);border:1px solid var(--accent-border);border-radius:8px;box-shadow:0 8px 22px #0002}.class-filter-menu label{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:12px;color:var(--text);min-width:0}.class-filter-menu input{width:18px;min-height:18px;flex-shrink:0;margin:0}.class-filter-menu .helper-text{margin:6px 0}.filters{position:relative}
+@media(max-width:620px){.class-filter-menu{width:240px}}
+
+.class-filter-menu{position:fixed;box-sizing:border-box;right:auto}.button:disabled{opacity:.45;cursor:default}
+
+/* Scheduler settings baseline, scoped to Calendar. */
+#settingsModal .storage-warning {
+            margin: 10px 14px 0;
+            padding: 9px 10px;
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 7px;
+            color: var(--warning-text);
+            font-size: 10.5px;
+            line-height: 1.4;
+        }
+#settingsModal .settings-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            padding: 10px 14px 0;
+        }
+#settingsModal .settings-tab {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--muted);
+            border-radius: 7px 7px 0 0;
+            padding: 8px 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 650;
+        }
+#settingsModal .settings-tab.active {
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+        }
+#settingsModal .settings-scroll {
+            overflow-y: auto;
+            padding: 12px 14px 16px;
+        }
+#settingsModal .settings-panel { display: none; }
+#settingsModal .settings-panel.active { display: block; }
+#settingsModal .settings-section {
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 12px;
+            background: var(--panel);
+        }
+#settingsModal .settings-section h3 {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+#settingsModal #schoolEditor h3,
+#settingsModal #periodsEditor h3 { margin-top: 12px; }
+#settingsModal #periodsEditor > h3:first-child { margin-top: 0; }
+#settingsModal .settings-subheading {
+            margin-top: 14px !important;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+        }
+#settingsModal .working-hours-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+#settingsModal .settings-buttons {
+            display: flex;
+            gap: 7px;
+            margin-top: 7px;
+            flex-wrap: wrap;
+        }
+#settingsModal .settings-btn {
+            flex: 1;
+            min-width: 105px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--text);
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+#settingsModal .settings-btn:hover { background: var(--accent-soft); border-color: var(--accent-border); }
+#settingsModal .danger-btn { color: var(--danger); }
+#settingsModal .saved-dates-header {
+            display: grid;
+            grid-template-columns: 36px 1fr 36px;
+            align-items: center;
+            gap: 8px;
+            margin: 11px 0 7px;
+            text-align: center;
+        }
+#settingsModal .saved-dates-title { font-size: 12px; font-weight: 700; color: var(--muted); }
+#settingsModal .schedule-month-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+#settingsModal .month-nav-btn {
+            width: 36px;
+            height: 32px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--muted);
+        }
+#settingsModal .month-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+#settingsModal .schedule-date-list,
+#settingsModal .class-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+#settingsModal .schedule-date-row,
+#settingsModal .class-row-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: 6px;
+            padding: 7px 8px;
+            font-size: 11px;
+        }
+#settingsModal .settings-scroll .class-row {
+            display: grid;
+            grid-template-columns: 24px minmax(72px, 1fr) auto 24px;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: 6px;
+            padding: 7px 8px;
+            font-size: 11px;
+        }
+#settingsModal .classes-heading-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+#settingsModal .classes-heading-row h3 { margin-bottom: 0; }
+#settingsModal .class-sort-btn {
+            flex: 0 0 auto;
+            min-width: 0;
+            padding: 5px 8px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+#settingsModal .settings-scroll .class-name-input {
+            width: 100%;
+            min-width: 0;
+            padding: 5px 6px;
+            font-size: 10px;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+#settingsModal .class-details {
+            display: grid;
+            grid-template-columns: auto auto;
+            align-items: center;
+            gap: 6px;
+        }
+#settingsModal .class-teacher-field,
+#settingsModal .class-students-field {
+            display: grid;
+            grid-template-columns: auto auto;
+            align-items: center;
+            gap: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 650;
+        }
+#settingsModal .settings-scroll .class-teacher-input,
+#settingsModal .settings-scroll .class-students-input {
+            padding: 5px;
+            font-size: 10px;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+#settingsModal .class-teacher-input { width: 104px; }
+#settingsModal .class-students-input { width: 52px; }
+#settingsModal .class-order-controls {
+            display: grid;
+            grid-template-rows: repeat(2, 20px);
+            gap: 2px;
+        }
+#settingsModal .class-order-btn {
+            width: 24px;
+            height: 20px;
+            padding: 0;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: 4px;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 10px;
+            line-height: 1;
+        }
+#settingsModal .class-order-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+#settingsModal .class-order-btn:disabled {
+            cursor: default;
+            opacity: .3;
+        }
+#settingsModal .remove-btn {
+            border: 0;
+            background: transparent;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+#settingsModal .empty-state {
+            color: var(--muted);
+            font-size: 11px;
+            font-style: italic;
+            margin-top: 7px;
+        }
+#settingsModal .row {
+            display: flex;
+            gap: 7px;
+            align-items: end;
+        }
+#settingsModal .row > * { flex: 1; }
+#settingsModal .school-name-editor {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 7px;
+        }
+#settingsModal .period-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 7px;
+            font-size: 11px;
+        }
+#settingsModal .period-table th,
+#settingsModal .period-table td {
+            padding: 4px 3px;
+            text-align: left;
+            vertical-align: middle;
+        }
+#settingsModal .period-table th { color: var(--muted); font-weight: 650; }
+#settingsModal .period-table input[type="time"],
+#settingsModal .period-table input[type="number"] { padding: 6px; font-size: 11px; }
+#settingsModal .switch-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 11px;
+        }
+#settingsModal .switch-row label { margin: 0; color: var(--text); font-weight: 500; }
+
+
+#settingsModal{padding:18px;background:rgba(26,31,36,.48);z-index:1000}
+#settingsModal .modal-card{width:min(680px,100%);max-height:min(780px,calc(100dvh - 36px));border:0;border-radius:13px;box-shadow:0 18px 55px rgba(0,0,0,.25)}
+#settingsModal .modal-header{padding:12px 14px 10px 16px;gap:12px}#settingsModal .close-button{width:34px;height:34px;border-radius:7px;font-size:24px;line-height:1;background:transparent;color:var(--muted)}
+#settingsModal .form-group{margin:0 0 12px}#settingsModal label{display:block;font-weight:600;margin:0 0 5px;font-size:12px;line-height:15px;color:var(--muted)}
+#settingsModal input:not([type="checkbox"]),#settingsModal select{width:100%;min-height:0;margin-top:0;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--text);padding:9px 10px;font-size:14px;font-weight:400;line-height:normal}
+#settingsModal select{border-color:var(--accent-border);background:color-mix(in srgb,var(--accent-soft) 26%,var(--surface))}
+#settingsModal input:focus,#settingsModal select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--focus-ring)}
+#settingsModal .settings-tab,#settingsModal .settings-btn{min-height:0;line-height:normal}#settingsModal .settings-scroll{min-height:0}#settingsModal .settings-section{margin:0}
+#settingsModal .helper-text,#settingsModal .backup-note{font-size:10.5px;line-height:1.4;color:var(--muted);margin:5px 0 0}#settingsModal .class-list{margin-top:7px}#settingsModal .add-class-row{margin-top:7px;flex-wrap:nowrap}
+#settingsModal .class-row .class-name-input{padding:5px 6px;font-size:10px;line-height:1.2}
+#settingsModal .class-row .class-teacher-input{width:104px;padding:5px;font-size:10px;line-height:1.2}#settingsModal .class-row .class-students-input{width:52px;padding:5px;font-size:10px;line-height:1.2}
+#settingsModal .class-row label{display:grid;grid-template-columns:auto auto;align-items:center;gap:4px;margin:0;font-size:9px;font-weight:650;line-height:normal}
+#settingsModal .period-table input{padding:6px;font-size:11px}#settingsModal .switch-row input{width:auto;min-height:0;margin:0}#settingsModal .switch-row label{margin:0;color:var(--text);font-weight:500;font-size:12px}
+#settingsModal .row{flex-wrap:nowrap}#settingsModal .row>*{min-width:0}#settingsModal .lunch-title-field{margin-top:8px}#settingsModal .settings-panel-calendar label{margin-top:8px}
+@media(max-width:620px){#settingsModal{padding:6px;align-items:stretch}#settingsModal .modal-card{max-height:calc(100dvh - 12px);border-radius:9px}#settingsModal .settings-tabs{padding-left:8px;padding-right:8px}#settingsModal .settings-scroll{padding:10px 8px 12px}#settingsModal .storage-warning{margin-left:8px;margin-right:8px}}
+@media(max-width:380px){#settingsModal .settings-tab{font-size:10px}#settingsModal .settings-scroll .class-row{grid-template-columns:24px minmax(0,1fr) 24px}#settingsModal .class-row>.class-order-controls{grid-column:1;grid-row:1}#settingsModal .class-row>.class-name-input{grid-column:2;grid-row:1}#settingsModal .class-row>.remove-btn{grid-column:3;grid-row:1}#settingsModal .class-details{grid-column:1/-1;grid-row:2}}
+#settingsModal .period-table{table-layout:fixed}#settingsModal .period-table th:first-child{width:20%}#settingsModal .period-table th:nth-child(2){width:50%}#settingsModal .period-table th:nth-child(3){width:30%}#settingsModal .period-table input{min-width:0}
+@media(max-width:380px){#settingsModal .class-details{grid-template-columns:minmax(0,1fr) auto}#settingsModal .class-row .class-teacher-field{grid-template-columns:auto minmax(0,1fr)}#settingsModal .class-row .class-teacher-input{width:100%;min-width:0}}
+
+/* Compact event entry: half-width fields and quarter-width clock inputs. */
+#eventModal .form-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#eventModal .form-grid .wide {grid-column:1/-1}
+#eventModal label {min-width:0}
+#eventModal .period-times {display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+#eventModal .notice {margin:0;padding:6px 8px;font-size:11px}
+#eventModal .lesson-note button {border:0;background:transparent;color:var(--accent);padding:0;min-height:28px;font-size:12px;cursor:pointer}
+#eventModal .actions {margin-top:10px}
+#eventModal .error:empty {display:none}
+#settingsModal #sColor {width:64px;height:34px;padding:3px;cursor:pointer}
+.working-block {min-width:0;display:grid;gap:6px;padding:6px;border-radius:7px;border:1px solid var(--school-color);border-left:4px solid var(--school-color);background:color-mix(in srgb,var(--school-color) 16%,var(--surface))}
+.working-heading {font-size:11px;font-weight:650;color:var(--text);overflow-wrap:anywhere}
+.working-block .event,.working-block .ghost {background:var(--surface)}
+@media(max-width:480px){#eventModal .form-grid{grid-template-columns:minmax(0,1fr)}#eventModal .period-times{grid-template-columns:repeat(2,minmax(0,1fr))}#eventModal .period-times>label:first-child{grid-column:1/-1}.month .working-block{padding:2px;border-left-width:2px}.month .working-heading{font-size:9px}}
+.primary {color:#fff}
+.tutorial-card {width:min(560px,100%)}
+
+</style>
 </head>
 <body>
-    <!-- Workbench links are relative. Use production routes only after release approval. -->
+    
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
@@ -1470,12 +1522,6 @@ Workbench preview. Review project-wide licensing language before publication.
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
                     </svg>
                 </button>
-                 <button type="button" id="siteHootieButton" class="site-data-button site-hootie-button" aria-label="Tuck Hootie away" aria-pressed="true" title="Tuck Hootie away" hidden>
-                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M3 7h5l2 2v6l-2 2H3l-2-2V9Zm13 0h5l2 2v6l-2 2h-5l-2-2V9ZM10 11h4" />
-                        <path d="M5 10h2v4H5zm12 0h2v4h-2z" fill="currentColor" stroke="none" />
-                    </svg>
-                </button>
                  <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 7h14M5 12h14M5 17h14" />
@@ -1500,7 +1546,7 @@ Workbench preview. Review project-wide licensing language before publication.
                     <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
-                <a class="site-menu-item" href="/calendar/">
+                <a class="site-menu-item" href="/calendar/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <path d="M5.5 7.5h17v15h-17zM9 4.5v6M19 4.5v6M5.5 12h17M11.2 12v10.5M16.8 12v10.5M5.5 17.25h17" />
@@ -1508,7 +1554,7 @@ Workbench preview. Review project-wide licensing language before publication.
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Class Calendar</span><span class="site-menu-description">Plan classes with school bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span class="site-menu-status">HERE</span>
                 </a>
                 <a class="site-menu-item" href="/spinner/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1521,7 +1567,7 @@ Workbench preview. Review project-wide licensing language before publication.
                     <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
-                 <a class="site-menu-item" href="/timer/" aria-current="page">
+                 <a class="site-menu-item" href="/timer/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <circle cx="14" cy="16" r="7.5" />
@@ -1531,7 +1577,7 @@ Workbench preview. Review project-wide licensing language before publication.
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
-                    <span class="site-menu-status">HERE</span>
+                    <span class="site-menu-status">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/tracker/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1615,216 +1661,21 @@ Workbench preview. Review project-wide licensing language before publication.
     </header>
 <!-- TEACHER-TOOLS:SITE-HEADER:END -->
 
-    <main class="page-main">
-        <div class="app-shell">
-            <header class="app-header">
-                <div class="title-wrap">
-                    <h1 class="app-title">Classroom Timer</h1>
-                    <span class="version-badge">v1.0</span>
-                </div>
-                <div class="app-header-actions">
-                    <button type="button" id="presentationButton" class="icon-button" aria-label="Enter presentation mode" aria-pressed="false" title="Presentation mode">
-                        <svg class="presentation-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M8.5 4.5h-4v4M15.5 4.5h4v4M19.5 15.5v4h-4M8.5 19.5h-4v-4" />
-                        </svg>
-                    </button>
-                    <button type="button" id="helpOpenButton" class="icon-button" data-modal-open="tutorialModal" aria-label="Open getting started help" aria-haspopup="dialog" title="Getting started">
-                        <span class="help-button-mark" aria-hidden="true">?</span>
-                    </button>
-                    <button type="button" id="settingsOpenButton" class="icon-button" data-modal-open="settingsModal" aria-label="Open timer settings" aria-haspopup="dialog" title="Timer settings">
-                        <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
-                        </svg>
-                    </button>
-                </div>
-            </header>
+<main class="page-main"><section class="app-shell"><header class="app-header"><div class="title-wrap"><h1 class="app-title">Class Calendar</h1><span class="version-badge">v0.4</span></div><div class="app-header-actions"><button type="button" id="helpOpenButton" class="icon-button" data-modal-open="helpModal" aria-label="Open Class Calendar help" aria-haspopup="dialog" title="Getting started"><span class="help-button-mark" aria-hidden="true">?</span></button><button type="button" class="icon-button" id="settingsButton" aria-label="Open Class Calendar settings" aria-haspopup="dialog" title="Class Calendar settings"><svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" /></svg></button></div></header><div class="app-main">
+<div class="toolbar"><h2 id="rangeHeading"></h2><button class="button" id="previous" aria-label="Previous period">‹</button><button class="button" id="today">Today</button><button class="button" id="next" aria-label="Next period">›</button><label>Jump to date<input type="date" id="jump"></label><label>View<select id="view"><option value="week">Week</option><option value="month">Month</option><option value="agenda">Day / agenda</option><option value="custom">Custom days</option></select></label><button class="button primary" id="addEvent">＋ Add event</button></div>
+<div class="filters"><label>School<select id="schoolFilter"></select></label><label>Periods<select id="ghostMode"><option value="regular">Regular</option><option value="irregular">Irregular</option><option value="off">Hidden</option></select></label><div class="class-filter"><span class="field-label">Class</span><details id="classFilter"><summary id="classFilterSummary">All classes</summary><div class="class-filter-menu"><button type="button" class="button" id="clearClasses">All classes</button><div id="classChoices"></div></div></details></div><label>Category<select id="categoryFilter"><option value="">All categories</option><option>Class</option><option>Lunch</option><option>Meeting</option><option>Other</option></select></label><label class="check"><input type="checkbox" id="showWorking">Working hours</label><button class="button" id="exportOpen">Export ICS</button></div>
+<div id="customDays" class="weekday-picks" hidden></div><p class="status" id="zoneLabel"></p><div id="onboarding" class="notice" hidden>No schools yet. Add a school and attendance dates in <strong>Settings → Schools</strong> to see suggested periods, or use <strong>Add event</strong> to start with custom times.</div><p class="status" id="status" role="status" aria-live="polite"></p><div id="calendar" class="calendar"></div><p class="status">Dashed slots are suggestions, not saved events. Select ＋ to add a class. Times stay fixed after saving; edit an event to apply different bell times.</p></div><footer class="app-footer"><div class="footer-version">Class Calendar v0.4 · Teacher Tools</div><div class="footer-copyright">Data stays in this browser. Use the header’s Backup & restore to keep a copy.</div></footer></section></main>
+<div id="eventModal" class="modal-backdrop" data-shared-modal aria-hidden="true"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="eventTitle"><header class="modal-header"><h2 id="eventTitle" class="modal-title">Add event</h2><button class="close-button" data-modal-close aria-label="Close event editor">×</button></header><div class="modal-content"><form id="eventForm"><div class="form-grid">
+<label>Title<input id="eTitle" maxlength="200" placeholder="Uses class name if left empty" data-modal-initial-focus></label><label>Date<input type="date" id="eDate" required></label><label>School<select id="eSchool"></select></label><label>Class<select id="eClass"></select></label><label>Time source<select id="eMode"><option value="regular">Regular</option><option value="irregular">Irregular</option><option value="custom">Custom</option></select></label><div class="period-times wide"><label>Period<select id="ePeriod"></select></label><label>Start<input type="time" id="eStart" required></label><label>End<input type="time" id="eEnd" required></label></div><p class="notice wide" id="timeHint"></p><label>Location / classroom<input id="eLocation" maxlength="200"></label><label>Category<select id="eCategory"><option>Class</option><option>Lunch</option><option>Meeting</option><option>Other</option></select></label><div class="wide lesson-note"><button type="button" id="toggleNote" aria-expanded="false" aria-controls="lessonNoteField">＋ Add lesson note</button><label id="lessonNoteField" hidden>Lesson note<textarea id="eNotes" maxlength="5000"></textarea></label></div></div><p id="eventError" class="error" role="alert"></p><div class="actions"><button class="button primary" type="submit">Save event</button><button class="button" type="button" id="duplicate">Duplicate</button><button class="button danger" type="button" id="deleteEvent">Delete</button><button class="button" type="button" id="exportEvent">Export this event</button></div></form></div></section></div>
+<div id="settingsModal" class="modal-backdrop" data-shared-modal aria-hidden="true"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"><header class="modal-header"><h2 id="settingsTitle" class="modal-title">Settings</h2><button class="close-button" data-modal-close aria-label="Close settings">×</button></header><div class="storage-warning">Your data is saved only in this browser. Use Backup & restore in the Teacher Tools header to keep a copy. School settings are shared with Scheduler and Tracker.</div><div class="settings-tabs" role="tablist" aria-label="Settings sections"><button type="button" id="settingsTab-schools" class="settings-tab" role="tab" aria-selected="false" aria-controls="settingsPanel-schools" data-settings-tab="schools" tabindex="-1">Schools</button><button type="button" id="settingsTab-schedule" class="settings-tab" role="tab" aria-selected="false" aria-controls="settingsPanel-schedule" data-settings-tab="schedule" tabindex="-1">Schedule</button><button type="button" id="settingsTab-periods" class="settings-tab" role="tab" aria-selected="false" aria-controls="settingsPanel-periods" data-settings-tab="periods" tabindex="-1">Periods</button><button type="button" id="settingsTab-calendar" class="settings-tab" role="tab" aria-selected="false" aria-controls="settingsPanel-calendar" data-settings-tab="calendar" tabindex="-1">Calendar</button></div><div class="settings-scroll"><form id="schoolForm" novalidate>
+<section id="settingsPanel-schools" class="settings-panel active" role="tabpanel" aria-labelledby="settingsTab-schools"><div class="settings-section"><h3>School Information</h3><div class="form-group"><label for="setupSchool">Edit School</label><select id="setupSchool"></select></div><div class="settings-buttons"><button type="button" class="settings-btn" id="newSchool">＋ Add School</button><button type="button" class="settings-btn danger-btn" id="removeSchool">− Delete School</button></div><div id="schoolEditor"><div class="form-group school-name-editor"><label for="sName">School Name</label><input type="text" id="sName" maxlength="150"></div><div class="form-group"><label for="sLocation">School Location (optional)</label><input type="text" id="sLocation" maxlength="200" placeholder="Address, school name, or map-searchable location"></div><div class="form-group"><label for="sColor">Working location color</label><input type="color" id="sColor" value="#43877d"></div><div class="classes-heading-row"><h3>Classes</h3><button type="button" class="settings-btn class-sort-btn" id="sortClasses">Sort A–Z</button></div><div class="helper-text">Edit class names directly. Use the arrows to reorder them, or Sort A–Z. Teacher names and student counts are optional.</div><div id="classEditor" class="class-list"></div><div class="row add-class-row"><input type="text" id="newClass" aria-label="New class name" maxlength="100" placeholder="e.g. ４−１"><button type="button" class="settings-btn" id="addClass">+ Add Class</button></div></div></div></section>
+<section id="settingsPanel-schedule" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-schedule" hidden><div class="settings-section"><h3>Schedule</h3><div class="form-group"><label for="setupScheduleSchool">Edit Schedule For</label><select id="setupScheduleSchool"></select></div><h3 class="settings-subheading">Working Hours</h3><div class="working-hours-row"><div class="form-group"><label for="sWorkStart">Start</label><input type="time" id="sWorkStart"></div><div class="form-group"><label for="sWorkEnd">End</label><input type="time" id="sWorkEnd"></div></div><div class="helper-text">Working hours appear on this school's teaching dates.</div><h3 class="settings-subheading">Teaching Dates</h3><div class="form-group"><label for="newTeachingDate">Add Date</label><input type="date" id="newTeachingDate"><div class="settings-buttons"><button type="button" class="settings-btn" id="addTeachingDate">+ Add Date</button></div></div><div class="saved-dates-header"><button type="button" class="month-nav-btn" id="previousTeachingMonth" aria-label="Previous saved dates month">←</button><div><div class="saved-dates-title">Saved Dates</div><div id="teachingMonthLabel" class="schedule-month-label"></div></div><button type="button" class="month-nav-btn" id="nextTeachingMonth" aria-label="Next saved dates month">→</button></div><div id="teachingDateList" class="schedule-date-list"></div><div id="teachingDateCount" class="backup-note"></div><textarea id="sDates" hidden aria-label="Teaching date data"></textarea></div></section>
+<section id="settingsPanel-periods" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-periods" hidden><div class="settings-section"><h3>Periods &amp; Bell Times</h3><div class="form-group"><label for="setupPeriodsSchool">Edit Periods For</label><select id="setupPeriodsSchool"></select></div><div id="periodsEditor"><h3>Periods</h3><div id="regularBells"></div><h3>Irregular Schedule</h3><div class="switch-row"><input type="checkbox" id="sIrregular" aria-controls="irregularBells"><label for="sIrregular">Enable alternate period times</label></div><div id="irregularBells"></div><h3>Lunch / 給食</h3><div class="switch-row"><input type="checkbox" id="sLunchEnabled" aria-controls="lunchDetails"><label for="sLunchEnabled">Enable lunch period</label></div><div id="lunchDetails"><div class="form-group"><label for="sLunchMode">Lunch Mode</label><select id="sLunchMode"><option value="class">Use selected class</option><option value="general">General lunch</option></select></div><div class="row"><div><label for="sLunchStart">Start</label><input type="time" id="sLunchStart"></div><div><label for="sLunchDuration">Duration</label><input type="number" id="sLunchDuration" min="1" max="180" step="1" aria-label="Lunch duration in minutes"></div></div><div id="lunchTitleField" class="form-group lunch-title-field"><label for="sLunchTitle">General Lunch Title</label><input type="text" id="sLunchTitle" maxlength="200"></div></div></div></div></section>
+<p class="error" id="schoolError" role="alert"></p><div class="backup-note" id="schoolSaveStatus" role="status">Changes save automatically. Saved Calendar event times stay fixed.</div></form><section id="settingsPanel-calendar" class="settings-panel" role="tabpanel" aria-labelledby="settingsTab-calendar" hidden><div class="settings-section"><h3>Time Zone</h3><form id="settingsForm"><label>Calendar time zone (IANA)<input id="timeZone" list="timeZones" required><datalist id="timeZones"></datalist></label><p id="detectedZone" class="notice"></p><label>If changing time zone, existing events should…<select id="zonePolicy"><option value="wall">Keep their displayed clock times</option><option value="instant">Keep their exact moments</option></select></label><p class="notice">A time-zone change asks for confirmation when timed events exist. Ambiguous or nonexistent daylight-saving times must be adjusted before saving. Backups include this setting.</p><p class="error" id="settingsError" role="alert"></p><p id="calendarSaveStatus" class="helper-text" role="status">Changes save automatically.</p></form><p class="helper-text">Appearance and Backup & restore are in the Teacher Tools header.</p></div></section></div></section></div>
+<div id="exportModal" class="modal-backdrop" data-shared-modal aria-hidden="true"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="exportTitle"><header class="modal-header"><h2 id="exportTitle" class="modal-title">Export calendar</h2><button class="close-button" data-modal-close aria-label="Close export">×</button></header><div class="modal-content"><form id="exportForm"><label>Events<select id="exportScope"><option value="visible">Visible dates and active filters</option><option value="range">Date range and active filters</option><option value="all">Entire calendar</option></select></label><div class="form-grid"><label>From<input type="date" id="exportFrom" required></label><label>Through<input type="date" id="exportTo" required></label></div><label class="check"><input type="checkbox" id="exportClasses"> Classes only</label><label class="check"><input type="checkbox" id="exportWorking"> Include working hours for the selected date range</label><p class="notice">ICS is a one-way snapshot, not synchronization. Repeated imports may create duplicates. Working hours export as transparent events, not Google’s native Working Location type. Unsaved periods are never exported.</p><p class="error" id="exportError" role="alert"></p><button class="button primary">Download .ics</button></form></div></section></div>
+<div id="helpModal" class="modal-backdrop" data-shared-modal data-first-use-storage-key="teacherTools.classCalendar.tutorial.v1" aria-hidden="true"><section class="modal-card tutorial-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle" aria-describedby="helpIntro"><header class="modal-header"><h2 id="helpTitle" class="modal-title">Getting started</h2><button type="button" class="close-button" data-modal-close aria-label="Close Class Calendar help">×</button></header><div class="modal-content"><p id="helpIntro" class="tutorial-intro">Plan classes from your saved school days and bell times, then export the events when you are ready.</p><div class="tutorial-steps"><section class="tutorial-step"><span class="tutorial-number" aria-hidden="true">1</span><div><h3>Confirm your calendar settings</h3><p>Open Settings to confirm your detected time zone and choose what should happen if it changes later.</p></div></section><section class="tutorial-step"><span class="tutorial-number" aria-hidden="true">2</span><div><h3>Set up schools and teaching dates</h3><p>Use existing Scheduler schools, or add schools, attendance dates, classes, and bell times in Settings.</p></div></section><section class="tutorial-step"><span class="tutorial-number" aria-hidden="true">3</span><div><h3>Add classes from suggested periods</h3><p>Choose Regular or Irregular periods, then select a dashed suggestion to add a class. Use Add event for custom times.</p></div></section><section class="tutorial-step"><span class="tutorial-number" aria-hidden="true">4</span><div><h3>Review and export</h3><p>Saved event times stay fixed when school settings change. Export an ICS snapshot when you are ready, and use the header to back up your data.</p></div></section></div><p class="notice">Class Calendar currently supports single-day events. Suggested periods disappear when a saved event uses the same school, date, schedule type, and period.</p></div><div class="modal-actions"><button type="button" class="button primary" data-modal-close>Start using Class Calendar</button></div></section></div>
 
-            <div class="app-main">
-                <div class="mode-tabs" role="tablist" aria-label="Timer mode">
-                    <button type="button" id="countdownTab" class="mode-tab" role="tab" aria-selected="true" aria-controls="countdownPanel">Countdown</button>
-                    <button type="button" id="stopwatchTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="stopwatchPanel" tabindex="-1">Stopwatch</button>
-                </div>
-
-                <section id="countdownPanel" class="timer-panel" role="tabpanel" aria-labelledby="countdownTab">
-                    <div class="timer-stage">
-                        <div id="countdownFace" class="timer-face">
-                            <div id="countdownDisplay" class="time-display" aria-hidden="true">05:00</div>
-                        </div>
-                        <p id="countdownStatus" class="timer-status" role="status" aria-live="polite">Ready</p>
-                        <span id="countdownAnnouncement" class="visually-hidden" aria-live="assertive"></span>
-                        <div class="button-row">
-                            <button type="button" id="countdownStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label">Start</span></button>
-                            <button type="button" id="countdownResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span>Reset</span></button>
-                            <button type="button" id="addMinuteButton" class="button button-neutral">+1 minute</button>
-                        </div>
-                    </div>
-                    <p class="keyboard-hint">Press Space to start or pause while no field or dialog is active.</p>
-
-                    <div class="countdown-setup">
-                        <span class="section-label">Quick presets</span>
-                        <div id="presetList" class="preset-list" role="group" aria-label="Countdown presets">
-                            <button type="button" class="preset-button" data-seconds="60" data-quick-preset="60">1 min</button>
-                            <button type="button" class="preset-button" data-seconds="180" data-quick-preset="180">3 min</button>
-                            <button type="button" class="preset-button" data-seconds="300" data-quick-preset="300">5 min</button>
-                            <button type="button" class="preset-button" data-seconds="600" data-quick-preset="600">10 min</button>
-                            <button type="button" class="preset-button" data-seconds="900" data-quick-preset="900">15 min</button>
-                            <span id="savedPresetButtons"></span>
-                            <span id="quickPresetEmpty" class="quick-preset-empty" hidden>No quick presets selected.</span>
-                        </div>
-
-                        <div class="time-entry" aria-label="Set countdown duration">
-                            <label class="time-field">
-                                <span class="field-label">Hours</span>
-                                <input id="countdownHours" type="number" min="0" max="23" value="0" inputmode="numeric">
-                            </label>
-                            <span class="time-separator" aria-hidden="true">:</span>
-                            <label class="time-field">
-                                <span class="field-label">Minutes</span>
-                                <input id="countdownMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
-                            </label>
-                            <span class="time-separator" aria-hidden="true">:</span>
-                            <label class="time-field">
-                                <span class="field-label">Seconds</span>
-                                <input id="countdownSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
-                            </label>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="stopwatchPanel" class="timer-panel" role="tabpanel" aria-labelledby="stopwatchTab" hidden>
-                    <div class="timer-stage">
-                        <div id="stopwatchFace" class="timer-face">
-                            <div id="stopwatchDisplay" class="time-display stopwatch-display" aria-hidden="true">00:00.0</div>
-                        </div>
-                        <p id="stopwatchStatus" class="timer-status" role="status" aria-live="polite">Ready</p>
-                        <div class="button-row">
-                            <button type="button" id="stopwatchStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label">Start</span></button>
-                            <button type="button" id="stopwatchResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span>Reset</span></button>
-                        </div>
-                    </div>
-                    <p class="keyboard-hint">Press Space to start or pause while no field or dialog is active.</p>
-                </section>
-            </div>
-
-            <footer class="app-footer">
-                <div class="footer-version">Classroom Timer · v1.0</div>
-                <div class="footer-copyright">Teacher Tools · Workbench preview · Timer data stays in this browser.</div>
-            </footer>
-        </div>
-    </main>
-
-    <div id="tutorialModal" class="modal-backdrop" data-shared-modal data-first-use-storage-key="teacherTools.classroomTimer.tutorialSeen.v1" aria-hidden="true">
-        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" aria-describedby="tutorialIntro">
-            <header class="modal-header">
-                <h2 id="tutorialTitle" class="modal-title">Getting started</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close getting started help">×</button>
-            </header>
-            <div class="modal-content">
-                <p id="tutorialIntro" class="tutorial-intro">Use the Classroom Timer for a quick activity countdown or as a stopwatch.</p>
-                <div class="tutorial-steps">
-                    <section class="tutorial-step">
-                        <span class="tutorial-number" aria-hidden="true">1</span>
-                        <div><h3>Choose a time</h3><p>Pick a quick preset or enter hours, minutes, and seconds.</p></div>
-                    </section>
-                    <section class="tutorial-step">
-                        <span class="tutorial-number" aria-hidden="true">2</span>
-                        <div><h3>Start, pause, or add time</h3><p>The countdown remains accurate when the browser tab is in the background. Add one minute at any time.</p></div>
-                    </section>
-                    <section class="tutorial-step">
-                        <span class="tutorial-number" aria-hidden="true">3</span>
-                        <div><h3>Save frequent countdowns</h3><p>Create named presets in Settings. They are stored only in this browser and may be lost if site data is cleared.</p></div>
-                    </section>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="button button-primary" data-modal-close>Start timing</button>
-            </div>
-        </section>
-    </div>
-
-    <div id="settingsModal" class="modal-backdrop" data-shared-modal aria-hidden="true">
-        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-            <header class="modal-header">
-                <h2 id="settingsTitle" class="modal-title">Timer settings</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close timer settings">×</button>
-            </header>
-            <div class="modal-content">
-                <section class="settings-section">
-                    <h3 class="settings-heading">Countdown defaults</h3>
-                    <p class="settings-help">Choose the countdown shown when Classroom Timer first opens and which built-in shortcuts appear below it. Changes save automatically.</p>
-                    <div id="defaultCountdownSettings">
-                        <div class="default-time-form">
-                            <label class="time-field">
-                                <span class="field-label">Hours</span>
-                                <input id="defaultHours" type="number" min="0" max="23" value="0" inputmode="numeric">
-                            </label>
-                            <label class="time-field">
-                                <span class="field-label">Minutes</span>
-                                <input id="defaultMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
-                            </label>
-                            <label class="time-field">
-                                <span class="field-label">Seconds</span>
-                                <input id="defaultSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
-                            </label>
-                        </div>
-
-                        <span class="field-label quick-preset-setting-label">Quick presets to show</span>
-                        <div class="quick-preset-grid" role="group" aria-label="Quick presets to show">
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="60" checked><span>1 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="180" checked><span>3 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="300" checked><span>5 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="600" checked><span>10 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="900" checked><span>15 min</span></label>
-                        </div>
-                    </div>
-                    <p id="defaultCountdownMessage" class="form-message" role="status" aria-live="polite"></p>
-                </section>
-
-                <section class="settings-section">
-                    <h3 class="settings-heading">Sound</h3>
-                    <div class="setting-row">
-                        <span>
-                            <span class="setting-label">Play a finish sound</span>
-                            <span class="setting-description">Uses a short sound generated on this device. Nothing is downloaded.</span>
-                        </span>
-                        <label class="switch">
-                            <input id="soundEnabledInput" type="checkbox" aria-label="Play a sound when the countdown finishes" checked>
-                            <span class="switch-track" aria-hidden="true"></span>
-                        </label>
-                    </div>
-                </section>
-
-                <section class="settings-section">
-                    <h3 class="settings-heading">Saved countdowns</h3>
-                    <p class="settings-help">Save up to 12 named presets on this browser.</p>
-                    <form id="presetForm" class="preset-form">
-                        <label class="time-field preset-name-field">
-                            <span class="field-label">Name</span>
-                            <input id="presetName" type="text" maxlength="40" placeholder="Warm-up" autocomplete="off" required>
-                        </label>
-                        <label class="time-field">
-                            <span class="field-label">Hours</span>
-                            <input id="presetHours" type="number" min="0" max="23" value="0" inputmode="numeric">
-                        </label>
-                        <label class="time-field">
-                            <span class="field-label">Minutes</span>
-                            <input id="presetMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
-                        </label>
-                        <label class="time-field">
-                            <span class="field-label">Seconds</span>
-                            <input id="presetSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
-                        </label>
-                        <button type="submit" class="button button-secondary">Save</button>
-                    </form>
-                    <p id="presetFormMessage" class="form-message" role="status" aria-live="polite"></p>
-                    <div id="savedPresetList" class="saved-list"></div>
-                    <div class="notice" role="note">Saved countdowns are private to this browser. Clearing browser or site data removes them.</div>
-                </section>
-            </div>
-        </section>
-    </div>
-
-    <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
+<!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
     <script>
         // Shared structural contract for Calendar persistence and central backup imports.
         window.TeacherToolsCalendarValidate = value => {
@@ -2695,634 +2546,194 @@ Workbench preview. Review project-wide licensing language before publication.
     </script>
 <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:END -->
 
-    <script>
-        (() => {
-            "use strict";
+<script>
+(() => {
+'use strict';
+const KEY='teacherTools.classCalendar.state.v1', SHARED='classAutomatorData_v3';
+const $=id=>document.getElementById(id), UI=window.TeacherToolsUI;
+const clone=v=>JSON.parse(JSON.stringify(v)), uid=()=>crypto.randomUUID(), weekdays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const detected=Intl.DateTimeFormat().resolvedOptions().timeZone||'Asia/Tokyo';
+const dateOK=d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&!isNaN(Date.parse(d))&&new Date(d+'T12:00:00Z').toISOString().slice(0,10)===d;
+const timeOK=t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t);
+const minutes=t=>Number(t.slice(0,2))*60+Number(t.slice(3));
+const clock=m=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+const addDays=(d,n)=>{const v=new Date(d+'T12:00:00Z');v.setUTCDate(v.getUTCDate()+n);return v.toISOString().slice(0,10);};
+const dayOf=d=>new Date(d+'T12:00:00Z').getUTCDay();
+const validZone=z=>{try{new Intl.DateTimeFormat('en',{timeZone:z});return true;}catch{return false;}};
+function parts(ms,zone){const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ms)).map(x=>[x.type,x.value]));return {date:`${p.year}-${p.month}-${p.day}`,time:`${p.hour}:${p.minute}`};}
+// Find exact matching instants; reject nonexistent and repeated wall-clock minutes.
+function instant(date,time,zone){
+ const wall=Date.parse(date+'T'+time+':00Z'), offsets=new Set();
+ for(let h=-36;h<=36;h+=6){const probe=wall+h*3600000,p=parts(probe,zone);offsets.add(Date.parse(p.date+'T'+p.time+':00Z')-probe);}
+ const matches=[...offsets].map(o=>wall-o).filter(ms=>{const p=parts(ms,zone);return p.date===date&&p.time===time;});
+ if(matches.length!==1)throw Error(matches.length?'This clock time occurs twice during a daylight-saving change. Choose an unambiguous time.':'This clock time does not exist in the selected time zone. Choose another time.');
+ return matches[0];
+}
+function blank(){return {version:1,timeZone:detected,events:[],preferences:{view:'week',days:[1,2,3,4,5],school:'',ghostMode:'regular',working:true,classSelection:[],category:''}};}
+function valid(s){return window.TeacherToolsCalendarValidate(s);}
+let blocked=false, sharedBlocked=false;
+function read(){const raw=UI.storageGet(KEY);if(!raw)return blank();try{const v=JSON.parse(raw);if(!valid(v))throw Error();if(!Array.isArray(v.preferences.classSelection)){const term=(v.preferences.class||'').toLowerCase(),records=[...v.events,...readShared().schools.flatMap(s=>s.classes.map(className=>({schoolId:s.id,className})))];v.preferences.classSelection=term?[...new Set(records.filter(e=>e.className.toLowerCase().includes(term)).map(e=>classKey(e.schoolId,e.className)))]:[];}return v;}catch{blocked=true;return blank();}}
+function readShared(){sharedBlocked=false;const raw=UI.storageGet(SHARED);if(!raw)return {version:3,schools:[],schedule:{},preferences:{}};try{const v=JSON.parse(raw);if(v.version!==3||!Array.isArray(v.schools)||!v.schedule||typeof v.schedule!=='object'||Array.isArray(v.schedule)||!v.preferences)throw Error();for(const s of v.schools){if(!s||typeof s.id!=='string'||typeof s.name!=='string'||!Array.isArray(s.classes)||s.classes.some(c=>typeof c!=='string')||!Array.isArray(s.periods)||(v.schedule[s.id]!==undefined&&(!Array.isArray(v.schedule[s.id])||v.schedule[s.id].some(d=>!dateOK(d))))||(s.irregular?.enabled&&!Array.isArray(s.irregular.periods)))throw Error();for(const p of [...s.periods,...(s.irregular?.periods||[])])if(!p||!Number.isInteger(p.number)||!timeOK(p.start)||!Number.isInteger(p.duration)||p.duration<1)throw Error();}return v;}catch{sharedBlocked=true;return {version:3,schools:[],schedule:{},preferences:{}};}}
+let state=read(), shared=readShared(), anchor=parts(Date.now(),state.timeZone).date, editing=null, editorSnapshot='', schoolSnapshot='', visibleDates=[];
+function status(s){$('status').textContent=s;}
+function persist(next){if(blocked){status('Saved Calendar data needs attention. Restore a valid backup before saving; the original data has not been replaced.');return false;}if(!valid(next)){status('The calendar data could not be validated. Nothing was saved.');return false;}if(!UI.storageSet(KEY,JSON.stringify(next))){status('Could not save in this browser. Changes were not applied.');return false;}state=next;return true;}
+function pref(){const n=clone(state);Object.assign(n.preferences,{view:$('view').value,school:$('schoolFilter').value,ghostMode:$('ghostMode').value,working:$('showWorking').checked,category:$('categoryFilter').value});if(n.preferences.school!==state.preferences.school)n.preferences.classSelection=[];persist(n);renderClassFilter();render();}
+function schools(select,empty){const current=select.value;select.replaceChildren(new Option(empty,''),...shared.schools.map(s=>new Option(s.name,s.id)));select.value=current;}
+function restoreControls(){schools($('schoolFilter'),'All schools');const p=state.preferences;$('view').value=p.view;$('schoolFilter').value=p.school;$('ghostMode').value=p.ghostMode;$('showWorking').checked=p.working;renderClassFilter();$('categoryFilter').value=p.category;renderDays();}
+function renderDays(){const box=$('customDays');box.replaceChildren();[1,2,3,4,5,6,0].forEach(d=>{const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=state.preferences.days.includes(d);input.addEventListener('change',()=>{const days=input.checked?[...state.preferences.days,d]:state.preferences.days.filter(x=>x!==d);if(!days.length){input.checked=true;status('Choose at least one weekday.');return;}const n=clone(state);n.preferences.days=days;persist(n);render();});label.append(input,weekdays[d]);box.append(label);});}
+function periodList(s,mode){if(!s||mode==='custom'||mode==='off')return [];if(mode==='irregular'&&!s.irregular?.enabled)return [];const periods=[...(mode==='irregular'?s.irregular.periods:s.periods)||[]];if(s.lunch?.enabled)periods.push({number:0,start:s.lunch.start,duration:s.lunch.duration,label:'Lunch'});return periods;}
 
-            const STORAGE_KEY = "teacherTools.classroomTimer.state.v1";
-            const BASE_TITLE = "Classroom Timer · Teacher Tools";
-            const MAX_PRESETS = 12;
-            const MAX_SECONDS = (23 * 60 * 60) + (59 * 60) + 59;
-            const { storageGet, storageSet, closeModal } = window.TeacherToolsUI;
+function bell(s,mode,number){return periodList(s,mode).find(p=>String(p.number)===String(number));}
+function dates(){const view=state.preferences.view;if(view==='agenda')return [anchor];const monday=addDays(anchor,-((dayOf(anchor)+6)%7));if(view==='week'||view==='custom')return Array.from({length:7},(_,i)=>addDays(monday,i)).filter(d=>view==='week'||state.preferences.days.includes(dayOf(d)));const first=anchor.slice(0,7)+'-01',start=addDays(first,-((dayOf(first)+6)%7));return Array.from({length:42},(_,i)=>addDays(start,i));}
+function classKey(schoolId,className){return JSON.stringify([schoolId,className]);}
+function matches(e){const p=state.preferences;return (!p.school||e.schoolId===p.school)&&(!p.classSelection.length||p.classSelection.includes(classKey(e.schoolId,e.className)))&&(!p.category||e.category===p.category);}
+function renderClassFilter(){
+ const choices=new Map(),p=state.preferences;
+ for(const school of shared.schools)if(!p.school||p.school===school.id)for(const name of school.classes)choices.set(classKey(school.id,name),`${name} · ${school.name}`);
+ for(const e of state.events)if(e.className&&(!p.school||e.schoolId===p.school))choices.set(classKey(e.schoolId,e.className),`${e.className} · ${shared.schools.find(s=>s.id===e.schoolId)?.name||'Standalone'}`);
+ for(const key of p.classSelection)if(!choices.has(key)){try{choices.set(key,`${JSON.parse(key)[1]} · saved selection`);}catch{}}
+ const root=$('classChoices');root.replaceChildren();for(const [key,text] of choices){const label=node('label'),input=node('input');input.type='checkbox';input.setAttribute('aria-label',text);input.checked=p.classSelection.includes(key);input.onchange=()=>{const n=clone(state);n.preferences.classSelection=input.checked?[...n.preferences.classSelection,key]:n.preferences.classSelection.filter(k=>k!==key);if(persist(n)){updateClassSummary();render();}else input.checked=!input.checked;};label.append(input,document.createTextNode(text));root.append(label);}
+ if(!choices.size)root.append(node('p','Add classes in Settings → Schools, or create a class event.','helper-text'));updateClassSummary();
+}
+function updateClassSummary(){$('classFilterSummary').textContent=state.preferences.classSelection.length?`${state.preferences.classSelection.length} class${state.preferences.classSelection.length===1?'':'es'} selected`:'All classes';}
+$('clearClasses').onclick=()=>{const n=clone(state);n.preferences.classSelection=[];if(persist(n)){renderClassFilter();render();}};
+document.addEventListener('click',e=>{if(!$('classFilter').contains(e.target))$('classFilter').open=false;});
+$('classFilter').addEventListener('keydown',e=>{if(e.key==='Escape'){$('classFilter').open=false;$('classFilterSummary').focus();}});
+function placeClassMenu(){if(!$('classFilter').open)return;const menu=document.querySelector('.class-filter-menu'),rect=$('classFilterSummary').getBoundingClientRect(),width=Math.min(280,innerWidth-24),below=innerHeight-rect.bottom-16,above=rect.top-16,useAbove=below<180&&above>below,height=Math.min(300,Math.max(80,useAbove?above:below));menu.style.width=width+'px';menu.style.left=Math.max(12,Math.min(rect.left,innerWidth-width-12))+'px';menu.style.maxHeight=height+'px';menu.style.top=(useAbove?Math.max(12,rect.top-height-4):rect.bottom+4)+'px';}
+$('classFilter').addEventListener('toggle',placeClassMenu);window.addEventListener('resize',placeClassMenu);window.addEventListener('scroll',placeClassMenu,true);
 
-            const elements = {
-                appShell: document.querySelector(".app-shell"),
-                presentationButton: document.getElementById("presentationButton"),
-                countdownTab: document.getElementById("countdownTab"),
-                stopwatchTab: document.getElementById("stopwatchTab"),
-                countdownPanel: document.getElementById("countdownPanel"),
-                stopwatchPanel: document.getElementById("stopwatchPanel"),
-                countdownHours: document.getElementById("countdownHours"),
-                countdownMinutes: document.getElementById("countdownMinutes"),
-                countdownSeconds: document.getElementById("countdownSeconds"),
-                countdownFace: document.getElementById("countdownFace"),
-                countdownDisplay: document.getElementById("countdownDisplay"),
-                countdownStatus: document.getElementById("countdownStatus"),
-                countdownAnnouncement: document.getElementById("countdownAnnouncement"),
-                countdownStartButton: document.getElementById("countdownStartButton"),
-                countdownResetButton: document.getElementById("countdownResetButton"),
-                addMinuteButton: document.getElementById("addMinuteButton"),
-                stopwatchFace: document.getElementById("stopwatchFace"),
-                stopwatchDisplay: document.getElementById("stopwatchDisplay"),
-                stopwatchStatus: document.getElementById("stopwatchStatus"),
-                stopwatchStartButton: document.getElementById("stopwatchStartButton"),
-                stopwatchResetButton: document.getElementById("stopwatchResetButton"),
-                savedPresetButtons: document.getElementById("savedPresetButtons"),
-                quickPresetEmpty: document.getElementById("quickPresetEmpty"),
-                soundEnabledInput: document.getElementById("soundEnabledInput"),
-                defaultHours: document.getElementById("defaultHours"),
-                defaultMinutes: document.getElementById("defaultMinutes"),
-                defaultSeconds: document.getElementById("defaultSeconds"),
-                defaultCountdownMessage: document.getElementById("defaultCountdownMessage"),
-                quickPresetSettings: [...document.querySelectorAll("[data-quick-preset-setting]")],
-                presetForm: document.getElementById("presetForm"),
-                presetName: document.getElementById("presetName"),
-                presetHours: document.getElementById("presetHours"),
-                presetMinutes: document.getElementById("presetMinutes"),
-                presetSeconds: document.getElementById("presetSeconds"),
-                presetFormMessage: document.getElementById("presetFormMessage"),
-                savedPresetList: document.getElementById("savedPresetList")
-            };
+function node(tag,text,cls){const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;}
+function schoolColor(s){return /^#[0-9a-f]{6}$/i.test(s?.calendarColor||'')?s.calendarColor:'#43877d';}
+function withinWork(entry,work){const schoolId=entry.event?.schoolId||entry.school?.id,end=entry.event?.end||(entry.period?clock(minutes(entry.period.start)+entry.period.duration):'');return schoolId===work.schoolId&&entry.start>=work.start&&end<=work.end;}
+function workItems(date){return shared.schools.filter(s=>(!state.preferences.school||s.id===state.preferences.school)&&(shared.schedule[s.id]||[]).includes(date)&&timeOK(s.workingHours?.start||'')&&timeOK(s.workingHours?.end||'')&&s.workingHours.end>s.workingHours.start).map(s=>({id:`work-${s.id}-${date}`,date,schoolId:s.id,color:schoolColor(s),start:s.workingHours.start,end:s.workingHours.end,title:`Working hours · ${s.name}`,location:s.location||s.name,notes:'',category:'Working hours',transparent:true}));}
+function render(){
+ visibleDates=dates();const view=state.preferences.view,root=$('calendar');root.replaceChildren();root.className='calendar '+view;root.style.setProperty('--days',view==='month'?7:visibleDates.length);$('customDays').hidden=view!=='custom';$('jump').value=anchor;
+ const fmt=d=>new Intl.DateTimeFormat('en',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).format(new Date(d+'T12:00:00Z'));
+ $('rangeHeading').textContent=view==='month'?new Intl.DateTimeFormat('en',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(anchor+'T12:00:00Z')):visibleDates.length===1?fmt(visibleDates[0]):`${fmt(visibleDates[0])} – ${fmt(visibleDates.at(-1))}`;
+ $('zoneLabel').textContent=`Calendar time zone: ${state.timeZone} · ${state.events.filter(matches).length} matching saved events`;$('onboarding').hidden=shared.schools.length>0;
+ const today=parts(Date.now(),state.timeZone).date;
+ if(view==='month')for(const d of [1,2,3,4,5,6,0])root.append(node('div',weekdays[d],'month-weekday'));
+ for(const date of visibleDates){const cell=node('section','',`day-cell${date===today?' today':''}${view==='month'&&date.slice(0,7)!==anchor.slice(0,7)?' outside':''}`);const head=node('div','','day-head');const title=node('strong',`${weekdays[dayOf(date)]} ${Number(date.slice(8))}`);const add=node('button',view==='month'?String(Number(date.slice(8))):'＋','button');add.setAttribute('aria-label',`Add event on ${date}`);add.onclick=()=>openEvent({date});head.append(title,add);cell.append(head);
+ const scheduled=shared.schools.filter(s=>(!state.preferences.school||s.id===state.preferences.school)&&(shared.schedule[s.id]||[]).includes(date));if(scheduled.length)cell.append(node('div',scheduled.map(s=>s.name).join(' · '),'school-day'));
 
-            let activeMode = "countdown";
-            let state = readState();
-            let presentationMode = false;
-            let presentationUsesFullscreen = false;
-            let audioContext = null;
-            let configuredMs = state.defaultSeconds * 1000;
-            let remainingMs = configuredMs;
-            let countdownEndAt = 0;
-            let countdownRunning = false;
-            let stopwatchElapsedMs = 0;
-            let stopwatchStartedAt = 0;
-            let stopwatchRunning = false;
-            let animationFrame = 0;
-            let lastDocumentTitle = BASE_TITLE;
+ const items=node('div','','day-items'),entries=state.events.filter(e=>e.date===date&&matches(e)).map(e=>({start:e.start,event:e}));
+ if(state.preferences.ghostMode!=='off'&&!state.preferences.classSelection.length&&(!state.preferences.category||['Class','Lunch'].includes(state.preferences.category)))for(const s of scheduled)for(const p of periodList(s,state.preferences.ghostMode)){
+ if(state.preferences.category&&state.preferences.category!==(p.number===0?'Lunch':'Class'))continue;
+ if(!timeOK(p.start)||!Number.isFinite(p.duration)||minutes(p.start)+p.duration>=1440)continue;
+ if(!state.events.some(e=>e.date===date&&e.schoolId===s.id&&(p.number===0||e.mode===state.preferences.ghostMode)&&String(e.period)===String(p.number)))entries.push({start:p.start,school:s,period:p});}
+ entries.sort((a,b)=>a.start.localeCompare(b.start));
+ const workGroups=state.preferences.working?workItems(date).map(w=>{const block=node('section','','working-block');block.style.setProperty('--school-color',w.color);block.append(node('div',`${w.start}–${w.end} · ${w.location}`,'working-heading'));return {...w,block};}):[];
+ const outside=[];
+ for(const entry of entries){const e=entry.event,b=node('button','',''+(e?'event':'ghost'));b.type='button';if(e){b.dataset.category=e.category;b.append(node('strong',e.title),node('span',`${e.start}–${e.end} · ${e.category}`,'detail'));const school=shared.schools.find(s=>s.id===e.schoolId);b.append(node('div',[school?.name,e.className,e.location].filter(Boolean).join(' · '),'detail'));b.onclick=()=>openEvent(e);}else{const p=entry.period,s=entry.school;b.append(node('span','＋','plus'),node('strong',`${p.number===0?'Lunch':'P'+p.number} · ${p.start}`),node('span',`${s.name} · ${state.preferences.ghostMode}`,'detail'));b.setAttribute('aria-label',`Add ${s.name}, ${date}, ${state.preferences.ghostMode} ${p.number===0?'lunch':'period '+p.number} at ${p.start}`);b.onclick=()=>openEvent({date,schoolId:s.id,mode:state.preferences.ghostMode,period:p.number,category:p.number===0?'Lunch':'Class',title:p.number===0&&s.lunch?.mode==='general'?s.lunch.generalTitle||'Lunch':''});}const group=workGroups.find(w=>withinWork(entry,w));if(group)group.block.append(b);else outside.push({start:entry.start,block:b});}
+ [...workGroups,...outside].sort((a,b)=>a.start.localeCompare(b.start)).forEach(item=>items.append(item.block));
+ if(!entries.length&&!workGroups.length)items.append(node('div','No events','empty'));cell.append(items);root.append(cell);}
+ if(blocked)status('Saved Calendar data is invalid or from an unsupported version. It has been preserved; restore a valid backup before saving.');else if(sharedBlocked)status('Shared school data needs attention and has been preserved. Custom calendar events still work.');
+}
+function editorSchool(){return shared.schools.find(s=>s.id===$('eSchool').value);}
+function updateTimeControls(apply){const s=editorSchool(),mode=$('eMode').value;const selection=$('ePeriod').value;$('eMode').options[0].disabled=!periodList(s,'regular').length;$('eMode').options[1].disabled=!periodList(s,'irregular').length;const periods=periodList(s,mode);$('ePeriod').replaceChildren(...(mode==='custom'?[]:periods).map(p=>new Option(`${p.number===0?'Lunch':'Period '+p.number} · ${p.start}`,p.number)));if(periods.some(p=>String(p.number)===selection))$('ePeriod').value=selection;$('ePeriod').disabled=mode==='custom';$('eStart').readOnly=$('eEnd').readOnly=mode!=='custom';const p=bell(s,mode,$('ePeriod').value);if(apply&&mode!=='custom'&&p){$('eStart').value=p.start;$('eEnd').value=clock(minutes(p.start)+p.duration);if(p.number===0){$('eCategory').value='Lunch';if(s.lunch?.mode==='general'&&!$('eTitle').value)$('eTitle').value=s.lunch.generalTitle||'Lunch';}else if($('eCategory').value==='Lunch')$('eCategory').value='Class';}$('timeHint').textContent=mode==='custom'?'Enter your own times. Switch to Regular or Irregular to use a school period.':!p?'No bell times are available. Choose a school or switch to Custom.':'Times are copied from the selected period when you select a time source or period. Saved event times stay fixed until you change them here.';}
+function updateEventClasses(selected=''){const names=[...new Set([...(editorSchool()?.classes||[]),...state.events.filter(e=>e.schoolId===$('eSchool').value).map(e=>e.className),selected].filter(Boolean))];$('eClass').replaceChildren(new Option('No class',''),...names.map(name=>new Option(name,name)));$('eClass').value=selected;}
+function setNoteOpen(open){$('lessonNoteField').hidden=!open;$('toggleNote').textContent=open?'− Hide lesson note':'＋ Add lesson note';$('toggleNote').setAttribute('aria-expanded',String(open));}
+$('toggleNote').onclick=()=>{const open=$('lessonNoteField').hidden;setNoteOpen(open);if(open)$('eNotes').focus();};
+function openEvent(seed){editing=seed.id||null;editorSnapshot=UI.storageGet(KEY);$('eventForm').reset();$('eventTitle').textContent=editing?'Edit event':'Add event';schools($('eSchool'),'No school / standalone');$('eSchool').value=seed.schoolId||state.preferences.school||'';updateEventClasses(seed.className||'');for(const [field,key] of Object.entries({Title:'title',Date:'date',Class:'className',Location:'location',Notes:'notes',Category:'category'}))$('e'+field).value=seed[key]||(field==='Date'?anchor:field==='Category'?'Class':'');setNoteOpen(!!seed.notes);$('eMode').value=seed.mode||'custom';updateTimeControls(false);if(seed.period!==undefined)$('ePeriod').value=String(seed.period);$('eStart').value=seed.start||'09:00';$('eEnd').value=seed.end||'09:45';if(!editing&&seed.mode)updateTimeControls(true);if(!seed.location)$('eLocation').value=editorSchool()?.location||'';$('eventError').textContent='';for(const id of ['duplicate','deleteEvent','exportEvent'])$(id).hidden=!editing;UI.openModal('eventModal',document.activeElement);}
+$('eMode').onchange=()=>updateTimeControls(true);$('ePeriod').onchange=()=>updateTimeControls(true);$('eSchool').onchange=()=>{updateEventClasses();if(!periodList(editorSchool(),$('eMode').value).length)$('eMode').value='custom';updateTimeControls(true);};
+$('eventForm').onsubmit=ev=>{ev.preventDefault();try{if(UI.storageGet(KEY)!==editorSnapshot)throw Error('Calendar data changed in another tab. Close this editor and reopen the event before saving.');const old=state.events.find(e=>e.id===editing),stamp=new Date().toISOString(),e={...old,id:editing||uid(),title:$('eTitle').value.trim()||($('eCategory').value==='Lunch'?['Lunch',$('eClass').value.trim()].filter(Boolean).join(' · '):$('eClass').value.trim()||'Class'),date:$('eDate').value,schoolId:$('eSchool').value,className:$('eClass').value.trim(),mode:$('eMode').value,period:$('eMode').value==='custom'?null:Number($('ePeriod').value),start:$('eStart').value,end:$('eEnd').value,location:$('eLocation').value.trim(),category:$('eCategory').value,notes:$('eNotes').value,created:old?.created||stamp,modified:stamp};if(!dateOK(e.date)||!timeOK(e.start)||!timeOK(e.end)||e.end<=e.start)throw Error('Choose a valid date and an end time after the start time. Overnight events are not supported in this version.');if(e.mode!=='custom'&&!bell(editorSchool(),e.mode,e.period))throw Error('Choose an available school period or switch to Custom.');instant(e.date,e.start,state.timeZone);instant(e.date,e.end,state.timeZone);const n=clone(state);n.events=n.events.filter(x=>x.id!==e.id);n.events.push(e);if(persist(n)){UI.closeModal();renderClassFilter();render();$('addEvent').focus();status('Event saved in this browser.');}}catch(e){$('eventError').textContent=e.message;}};
+$('duplicate').onclick=()=>{editing=null;$('eTitle').value=($('eTitle').value||'Class')+' (copy)';$('eventTitle').textContent='Duplicate event';for(const id of ['duplicate','deleteEvent','exportEvent'])$(id).hidden=true;$('eDate').focus();};
+$('deleteEvent').onclick=()=>{if(UI.storageGet(KEY)!==editorSnapshot){$('eventError').textContent='Calendar data changed. Close and reopen this editor.';return;}if(confirm('Delete this saved event? Its suggested period will become available again.')){const n=clone(state);n.events=n.events.filter(e=>e.id!==editing);if(persist(n)){UI.closeModal();renderClassFilter();render();$('addEvent').focus();status('Event deleted.');}}};
+function bellRows(id,periods){const root=$(id);root.replaceChildren();const table=node('table','','period-table'),head=node('thead'),header=node('tr'),body=node('tbody');for(const text of ['Period','Start','Duration']){const th=node('th',text);th.scope='col';header.append(th);}head.append(header);table.append(head,body);(periods.length?periods:Array.from({length:6},(_,i)=>({number:i+1,start:clock(540+i*55),duration:45}))).forEach(p=>{const row=node('tr');row.dataset.number=p.number;row.append(node('td',String(p.number)));for(const [type,value,label] of [['time',p.start,'Start'],['number',p.duration,'Duration in minutes']]){const cell=node('td'),input=node('input');input.type=type;input.value=value;input.setAttribute('aria-label',`${id==='regularBells'?'Regular':'Irregular'} period ${p.number} ${label}`);if(type==='number'){input.min=1;input.max=180;input.step=1;}cell.append(input);row.append(cell);}body.append(row);});root.append(table);}
+let classDraft=[];
+const TRACKER='teacherTools.classTracker.state.v1';
+function showSettingsTab(name){
+ document.querySelectorAll('[data-settings-tab]').forEach(b=>{const active=b.dataset.settingsTab===name;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});
+ document.querySelectorAll('.settings-panel').forEach(p=>{p.hidden=p.id!=='settingsPanel-'+name;p.classList.toggle('active',!p.hidden);});$('schoolForm').hidden=name==='calendar';
+}
+const settingsTabs=[...document.querySelectorAll('[data-settings-tab]')];
+settingsTabs.forEach(b=>b.onclick=()=>showSettingsTab(b.dataset.settingsTab));
+$('settingsTitle').textContent='Class Calendar settings';
+document.querySelector('#settingsModal .close-button').setAttribute('aria-label','Close Class Calendar settings');
+document.querySelectorAll('.modal-header .close-button').forEach(button=>button.type='button');
+showSettingsTab('schools');
+document.querySelector('.settings-tabs').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const i=settingsTabs.indexOf(document.activeElement);if(i<0)return;e.preventDefault();const next=e.key==='Home'?0:e.key==='End'?settingsTabs.length-1:(i+(e.key==='ArrowRight'?1:-1)+settingsTabs.length)%settingsTabs.length;showSettingsTab(settingsTabs[next].dataset.settingsTab);settingsTabs[next].focus();});
+function lunchControls(){$('lunchDetails').hidden=!$('sLunchEnabled').checked;$('lunchTitleField').hidden=$('sLunchMode').value!=='general';}
+$('sLunchEnabled').onchange=lunchControls;$('sLunchMode').onchange=lunchControls;
+function renderClassEditor(){
+ const root=$('classEditor');root.replaceChildren();$('sortClasses').disabled=classDraft.length<2;
+ classDraft.forEach((record,index)=>{const row=node('div','','class-row'),order=node('div','','class-order-controls');
+ for(const [label,delta] of [['↑',-1],['↓',1]]){const b=node('button',label,'class-order-btn');b.type='button';b.disabled=index+delta<0||index+delta>=classDraft.length;b.setAttribute('aria-label',`Move ${record.name} ${delta<0?'up':'down'}`);b.onclick=()=>{[classDraft[index],classDraft[index+delta]]=[classDraft[index+delta],classDraft[index]];renderClassEditor();saveSchool();};order.append(b);}row.append(order);
+ const name=node('input','','class-name-input');name.type='text';name.value=record.name;name.maxLength=100;name.setAttribute('aria-label','Class name');name.oninput=()=>record.name=name.value;row.append(name);
+ const details=node('div','','class-details');for(const [key,label,type] of [['teacher','Teacher','text'],['students','Students','number']]){const field=node('label','',key==='teacher'?'class-teacher-field':'class-students-field'),input=node('input','',key==='teacher'?'class-teacher-input':'class-students-input');input.type=type;input.value=record[key];if(type==='number'){input.min=0;input.max=999;input.step=1;input.inputMode='numeric';}else input.maxLength=120;input.oninput=()=>record[key]=input.value;field.append(node('span',label),input);details.append(field);}row.append(details);
+ const remove=node('button','×','remove-btn');remove.type='button';remove.setAttribute('aria-label',`Remove class ${record.name}`);remove.onclick=()=>{if(confirm(`Remove ${record.name} from the shared class list? Existing lessons and Tracker history will be retained.`)){classDraft.splice(index,1);renderClassEditor();saveSchool();}};row.append(remove);root.append(row);});
+ if(!classDraft.length)root.append(node('div','No classes added yet.','empty-state'));
+}
+$('addClass').onclick=()=>{const name=$('newClass').value.trim();if(!name)return;if(classDraft.some(c=>c.name===name)){$('schoolError').textContent='That class name already exists.';return;}classDraft.push({original:null,name,teacher:'',students:''});$('newClass').value='';renderClassEditor();saveSchool();};
+$('sortClasses').onclick=()=>{classDraft.sort((a,b)=>a.name.normalize('NFKC').localeCompare(b.name.normalize('NFKC'),undefined,{numeric:true,sensitivity:'base'}));renderClassEditor();saveSchool();};
+let teachingMonth=anchor.slice(0,7);
+function renderTeachingDates(){const all=$('sDates').value.split(/[\s,]+/).filter(Boolean).sort(),dates=all.filter(d=>d.startsWith(teachingMonth));$('teachingMonthLabel').textContent=new Intl.DateTimeFormat('en',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(teachingMonth+'-01T12:00:00Z'));$('teachingDateCount').textContent=`${dates.length} ${dates.length===1?'date':'dates'} this month • ${all.length} total saved ${all.length===1?'date':'dates'}`;const root=$('teachingDateList');root.replaceChildren();for(const d of dates){const row=node('div','','schedule-date-row'),remove=node('button','×','remove-btn');remove.type='button';remove.setAttribute('aria-label','Remove teaching date '+d);remove.onclick=()=>{$('sDates').value=all.filter(x=>x!==d).join('\n');renderTeachingDates();saveSchool();};row.append(node('span',new Intl.DateTimeFormat('en',{weekday:'short',year:'numeric',month:'short',day:'numeric',timeZone:'UTC'}).format(new Date(d+'T12:00:00Z'))),remove);root.append(row);}if(!dates.length)root.append(node('div','No saved dates in this month.','empty-state'));}
+function shiftTeachingMonth(amount){const d=new Date(teachingMonth+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+amount);teachingMonth=d.toISOString().slice(0,7);renderTeachingDates();}
+$('previousTeachingMonth').onclick=()=>shiftTeachingMonth(-1);$('nextTeachingMonth').onclick=()=>shiftTeachingMonth(1);
+$('addTeachingDate').onclick=()=>{const d=$('newTeachingDate').value;if(!dateOK(d)){$('schoolError').textContent='Choose a valid teaching date.';return;}const dates=$('sDates').value.split(/[\s,]+/).filter(Boolean);$('sDates').value=[...new Set([...dates,d])].sort().join('\n');teachingMonth=d.slice(0,7);renderTeachingDates();saveSchool();};
+function fillSchool(){
+ schoolSnapshot=UI.storageGet(SHARED);for(const id of ['setupScheduleSchool','setupPeriodsSchool']){schools($(id),'＋ Add new school');$(id).value=$('setupSchool').value;}const s=shared.schools.find(s=>s.id===$('setupSchool').value);
+ $('sColor').value=schoolColor(s);$('sName').value=s?.name||'';$('sLocation').value=s?.location||'';
+ classDraft=(s?.classes||[]).map(name=>({original:name,name,teacher:s?.teachersByClass?.[name]||'',students:s?.studentCounts?.[name]??''}));renderClassEditor();
+ $('sDates').value=(shared.schedule[s?.id]||[]).join('\n');renderTeachingDates();$('sWorkStart').value=s?.workingHours?.start||'';$('sWorkEnd').value=s?.workingHours?.end||'';$('sIrregular').checked=!!s?.irregular?.enabled;
+ bellRows('regularBells',s?.periods||[]);bellRows('irregularBells',s?.irregular?.periods||[]);$('irregularBells').hidden=!$('sIrregular').checked;
+ $('sLunchEnabled').checked=!!s?.lunch?.enabled;$('sLunchMode').value=s?.lunch?.mode||'general';$('sLunchTitle').value=s?.lunch?.generalTitle||'Lunch';$('sLunchStart').value=s?.lunch?.start||'12:00';$('sLunchDuration').value=s?.lunch?.duration||45;lunchControls();$('schoolError').textContent='';$('removeSchool').disabled=!s||shared.schools.length<=1;
+}
+$('setupSchool').onchange=fillSchool;for(const id of ['setupScheduleSchool','setupPeriodsSchool'])$(id).onchange=()=>{$('setupSchool').value=$(id).value;fillSchool();};$('sIrregular').onchange=()=>{$('irregularBells').hidden=!$('sIrregular').checked;};
+$('newSchool').onclick=()=>{$('setupSchool').value='';fillSchool();showSettingsTab('schools');$('sName').focus();};
+$('settingsButton').onclick=()=>{shared=readShared();schools($('setupSchool'),'＋ Add new school');$('setupSchool').value=state.preferences.school||shared.schools[0]?.id||'';fillSchool();$('timeZone').value=state.timeZone;$('zonePolicy').value=state.preferences.zonePolicy||'wall';$('detectedZone').textContent='Device time zone: '+detected;$('settingsError').textContent='';showSettingsTab('schools');UI.openModal('settingsModal',document.activeElement);};
+function checkSharedDraft(){if(sharedBlocked)throw Error('Restore valid shared school data before editing schools.');if(UI.storageGet(SHARED)!==schoolSnapshot)throw Error('School data changed in another tab. Close and reopen Settings before saving.');}
+// Rename references as a batch so swaps do not overwrite another class's history.
+function renameCollection(collection,schoolId,renames,expanded=false){if(!collection||typeof collection!=='object')return;const moves=[];for(const [oldName,newName] of renames){const oldKey=schoolId+'::'+oldName,newKey=schoolId+'::'+newName;for(const key of Object.keys(collection))if(expanded?key.startsWith(oldKey+'::'):key===oldKey)moves.push([key,newKey+key.slice(oldKey.length),collection[key]]);}const from=new Set(moves.map(m=>m[0]));for(const [a,b] of moves)if(a!==b&&Object.hasOwn(collection,b)&&!from.has(b))throw Error('A renamed class would overwrite retained Tracker history. Choose a different class name.');for(const [a] of moves)delete collection[a];for(const [,b,v] of moves)collection[b]=v;}
+function commitShared(next,schoolId,renames=[]){
+ checkSharedDraft();const changes=[[SHARED,JSON.stringify(next)]],previous=new Map(changes.map(([key])=>[key,UI.storageGet(key)]));let calendarNext=null;
+ if(renames.length){
+  const raw=UI.storageGet(KEY);if(raw){const current=JSON.parse(raw);if(!valid(current))throw Error('Calendar data needs attention before renaming shared classes.');calendarNext=clone(read());for(const e of calendarNext.events){const rename=renames.find(([old])=>e.schoolId===schoolId&&e.className===old);if(rename){e.className=rename[1];if(e.title===rename[0])e.title=rename[1];e.modified=new Date().toISOString();}}calendarNext.preferences.classSelection=calendarNext.preferences.classSelection.map(key=>{const pair=JSON.parse(key),rename=renames.find(([old])=>pair[0]===schoolId&&pair[1]===old);return rename?classKey(schoolId,rename[1]):key;});changes.push([KEY,JSON.stringify(calendarNext)]);previous.set(KEY,raw);}
+  const rawTracker=UI.storageGet(TRACKER);if(rawTracker){const tracker=JSON.parse(rawTracker);if(tracker.version!==1||!tracker.preferences)throw Error('Tracker data needs attention before renaming shared classes.');for(const key of ['assignments','progress','points','pointAudit','notes'])renameCollection(tracker[key],schoolId,renames);renameCollection(tracker.expanded,schoolId,renames,true);const rename=renames.find(([old])=>tracker.preferences.selectedSchoolId===schoolId&&tracker.preferences.selectedClass===old);if(rename)tracker.preferences.selectedClass=rename[1];changes.push([TRACKER,JSON.stringify(tracker)]);previous.set(TRACKER,rawTracker);}
+ }
+ for(const [key] of changes)if(UI.storageGet(key)!==previous.get(key))throw Error('Shared data changed during saving. Reopen Settings and try again.');
+ const written=[];try{for(const [key,value] of changes){if(!UI.storageSet(key,value))throw Error('Could not save in this browser.');written.push(key);}}catch(error){for(const key of written){try{const value=previous.get(key);if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value);}catch{error.message+=' Recovery may require a backup restore.';}}throw error;}
+ shared=next;if(calendarNext)state=calendarNext;schoolSnapshot=UI.storageGet(SHARED);restoreControls();render();
+}
+$('removeSchool').onclick=()=>{try{checkSharedDraft();const id=$('setupSchool').value,school=shared.schools.find(s=>s.id===id);if(!school||shared.schools.length<=1)return;if(!confirm(`Delete ${school.name} from shared school settings? Saved Calendar events and Tracker history will remain.`))return;const next=clone(shared);next.schools=next.schools.filter(s=>s.id!==id);delete next.schedule[id];commitShared(next,id);schools($('setupSchool'),'＋ Add new school');$('setupSchool').value=shared.schools[0].id;fillSchool();}catch(e){$('schoolError').textContent=e.message;}};
+function saveSchool(){try{
+ checkSharedDraft();const dates=$('sDates').value.split(/[\s,]+/).filter(Boolean);if(dates.some(d=>!dateOK(d)))throw Error('Use valid teaching dates in YYYY-MM-DD format.');
+ const readBells=id=>[...$(id).querySelectorAll('tbody tr')].map(row=>{const inputs=row.querySelectorAll('input'),start=inputs[0].value,duration=Number(inputs[1].value);if(!timeOK(start)||!Number.isInteger(duration)||duration<1||duration>180||minutes(start)+duration>=1440)throw Error('Each period needs a valid start and duration of 1–180 minutes, ending before midnight.');return {number:Number(row.dataset.number),start,duration};});
+ const start=$('sWorkStart').value,end=$('sWorkEnd').value;if((start||end)&&(!timeOK(start)||!timeOK(end)||end<=start))throw Error('Set both working times, with the end after the start.');
+ const lunch={enabled:$('sLunchEnabled').checked,mode:$('sLunchMode').value,generalTitle:$('sLunchTitle').value.trim()||'Lunch',start:$('sLunchStart').value,duration:Number($('sLunchDuration').value)};
+ if(!timeOK(lunch.start)||!Number.isInteger(lunch.duration)||lunch.duration<1||lunch.duration>180||minutes(lunch.start)+lunch.duration>=1440)throw Error('Lunch needs a valid start and duration of 1–180 minutes, ending before midnight.');
+ const n=clone(shared),old=n.schools.find(s=>s.id===$('setupSchool').value);const school=old||{id:uid(),classes:[],teachersByClass:{},studentCounts:{}};
+ school.name=$('sName').value.trim();if(!school.name)throw Error('Enter a school name on the Schools tab.');school.location=$('sLocation').value.trim();school.calendarColor=$('sColor').value;
+ const rows=classDraft.map(c=>({...c,name:c.name.trim(),teacher:c.teacher.trim()}));if(rows.some(c=>!c.name))throw Error('Every class needs a name.');if(new Set(rows.map(c=>c.name)).size!==rows.length)throw Error('Class names must be unique within a school.');if(rows.some(c=>c.students!==''&&(!Number.isInteger(Number(c.students))||Number(c.students)<0||Number(c.students)>999)))throw Error('Student counts must be whole numbers from 0 to 999, or blank.');
+ const renames=rows.filter(c=>c.original&&c.original!==c.name).map(c=>[c.original,c.name]);school.classes=rows.map(c=>c.name);school.teachersByClass={};school.studentCounts={};for(const c of rows){if(c.teacher)Object.defineProperty(school.teachersByClass,c.name,{value:c.teacher,enumerable:true,writable:true,configurable:true});if(c.students!=='')Object.defineProperty(school.studentCounts,c.name,{value:Number(c.students),enumerable:true,writable:true,configurable:true});}
+ const selected=n.preferences?.selectedClassBySchool?.[school.id],rename=renames.find(([name])=>name===selected);if(rename)n.preferences.selectedClassBySchool[school.id]=rename[1];
+ school.periods=readBells('regularBells');school.irregular={...school.irregular,enabled:$('sIrregular').checked,periods:readBells('irregularBells')};school.workingHours={...school.workingHours,start,end};school.lunch={...school.lunch,...lunch};
+ n.schedule[school.id]=[...new Set(dates)].sort();if(!old)n.schools.push(school);commitShared(n,school.id,renames);for(const c of classDraft){c.name=c.name.trim();c.original=c.name;}for(const id of ['setupSchool','setupScheduleSchool','setupPeriodsSchool']){schools($(id),'＋ Add new school');$(id).value=school.id;}$('removeSchool').disabled=shared.schools.length<=1;$('schoolError').textContent='';$('schoolSaveStatus').textContent='All changes saved.';return true;
+ }catch(e){$('schoolError').textContent=e.message;$('schoolSaveStatus').textContent='Changes could not be saved. Please correct the field above.';return false;}}
+$('schoolForm').onsubmit=e=>{e.preventDefault();saveSchool();};
+$('schoolForm').addEventListener('change',e=>{if(['setupSchool','setupScheduleSchool','setupPeriodsSchool','newClass','newTeachingDate'].includes(e.target.id))return;saveSchool();});
+try{$('timeZones').replaceChildren(...Intl.supportedValuesOf('timeZone').map(z=>new Option(z,z)));}catch{}
+function saveCalendarSettings(){try{const zone=$('timeZone').value.trim();if(!validZone(zone))throw Error('Enter a valid IANA zone, such as Asia/Tokyo.');const n=clone(state);if(zone!==state.timeZone&&n.events.length){for(const e of n.events){if($('zonePolicy').value==='instant'){const start=parts(instant(e.date,e.start,state.timeZone),zone),end=parts(instant(e.date,e.end,state.timeZone),zone);if(start.date!==end.date)throw Error('This change would create an overnight event. Adjust that event before changing time zones.');e.date=start.date;e.start=start.time;e.end=end.time;e.mode='custom';e.period=null;}instant(e.date,e.start,zone);instant(e.date,e.end,zone);e.modified=new Date().toISOString();}if(!confirm(`Change from ${state.timeZone} to ${zone} for ${n.events.length} events? ${$('zonePolicy').selectedOptions[0].text}.`)){$('timeZone').value=state.timeZone;return;}}n.timeZone=zone;if(persist(n)){render();$('settingsError').textContent='';$('calendarSaveStatus').textContent='All changes saved.';}else throw Error('Calendar settings could not be saved in this browser.');}catch(e){$('settingsError').textContent=e.message;}}
+$('settingsForm').onsubmit=e=>{e.preventDefault();saveCalendarSettings();};
+$('timeZone').onchange=saveCalendarSettings;
+$('zonePolicy').onchange=()=>{const n=clone(state);n.preferences.zonePolicy=$('zonePolicy').value;if(persist(n)){$('settingsError').textContent='';$('calendarSaveStatus').textContent='All changes saved.';}else $('settingsError').textContent='Could not save this preference in this browser.';};
+const escapeICS=s=>String(s||'').replace(/\\/g,'\\\\').replace(/\r\n|\r|\n/g,'\\n').replace(/;/g,'\\;').replace(/,/g,'\\,');
+const stampICS=ms=>new Date(ms).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z/,'Z');
+function fold(line){let result='',current='',bytes=0;for(const char of line){const size=new TextEncoder().encode(char).length;if(bytes+size>75){result+=current+'\r\n';current=' ';bytes=1;}current+=char;bytes+=size;}return result+current;}
+function ics(events){const now=new Date().toISOString(),lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Teacher Tools//Class Calendar 0.4//EN','CALSCALE:GREGORIAN','X-WR-CALNAME:Class Calendar',`X-WR-TIMEZONE:${escapeICS(state.timeZone)}`];for(const e of events){lines.push('BEGIN:VEVENT',`UID:${e.id}@teacher-tools.local`,`DTSTAMP:${stampICS(now)}`,`CREATED:${stampICS(e.created||now)}`,`LAST-MODIFIED:${stampICS(e.modified||now)}`,`DTSTART:${stampICS(instant(e.date,e.start,state.timeZone))}`,`DTEND:${stampICS(instant(e.date,e.end,state.timeZone))}`,`SUMMARY:${escapeICS(e.title)}`,`DESCRIPTION:${escapeICS(e.notes)}`,`LOCATION:${escapeICS(e.location)}`,`CATEGORIES:${escapeICS(e.category)}`,`TRANSP:${e.transparent?'TRANSPARENT':'OPAQUE'}`,'END:VEVENT');}lines.push('END:VCALENDAR');return lines.map(fold).join('\r\n')+'\r\n';}
+function download(events){const content=ics(events),url=URL.createObjectURL(new Blob([content],{type:'text/calendar;charset=utf-8'})),a=node('a');a.href=url;a.download='class-calendar.ics';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);status(`Exported ${events.length} events. Unsaved periods were not included.`);}
+$('exportEvent').onclick=()=>{try{download(state.events.filter(e=>e.id===editing));}catch(e){$('eventError').textContent=e.message;}};
+$('exportOpen').onclick=()=>{$('exportFrom').value=visibleDates[0];$('exportTo').value=visibleDates.at(-1);$('exportError').textContent='';UI.openModal('exportModal',document.activeElement);};
+$('exportForm').onsubmit=ev=>{ev.preventDefault();try{const from=$('exportFrom').value,to=$('exportTo').value,scope=$('exportScope').value;if(!dateOK(from)||!dateOK(to)||to<from)throw Error('Choose a valid date range.');let events=state.events.filter(e=>scope==='all'||(matches(e)&&(scope==='visible'?visibleDates.includes(e.date):e.date>=from&&e.date<=to)));if($('exportClasses').checked)events=events.filter(e=>e.category==='Class');if($('exportWorking').checked){if((Date.parse(to)-Date.parse(from))/86400000>3660)throw Error('Limit working-hours exports to ten years or less.');for(let d=from;d<=to;d=addDays(d,1))events.push(...workItems(d));}download(events);UI.closeModal();}catch(e){$('exportError').textContent=e.message;}};
+for(const id of ['view','schoolFilter','ghostMode','showWorking','categoryFilter'])$(id).addEventListener('change',pref);
+$('addEvent').onclick=()=>openEvent({date:anchor});$('jump').onchange=()=>{if(dateOK($('jump').value)){anchor=$('jump').value;render();}};$('today').onclick=()=>{anchor=parts(Date.now(),state.timeZone).date;render();};
+function navigate(n){if(state.preferences.view==='month'){const d=new Date(anchor.slice(0,7)+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+n);anchor=d.toISOString().slice(0,10);}else anchor=addDays(anchor,n*(state.preferences.view==='agenda'?1:7));render();}$('previous').onclick=()=>navigate(-1);$('next').onclick=()=>navigate(1);
+window.addEventListener('storage',ev=>{if(ev.key===KEY||ev.key===SHARED||ev.key===null){blocked=false;state=read();shared=readShared();restoreControls();render();}});
+restoreControls();render();
+// Calendar utilities; no storage mutation API.
+window.ClassCalendarTest=Object.freeze({instant,parts,dateOK,fold,ics,dates,periodList});
+})();
 
-            function clampInteger(value, minimum, maximum) {
-                const number = Number.parseInt(value, 10);
-                if (!Number.isFinite(number)) return minimum;
-                return Math.min(maximum, Math.max(minimum, number));
-            }
+</script>
 
-            function durationFromInputs(hoursInput, minutesInput, secondsInput) {
-                const hours = clampInteger(hoursInput.value, 0, 23);
-                const minutes = clampInteger(minutesInput.value, 0, 59);
-                const seconds = clampInteger(secondsInput.value, 0, 59);
-                hoursInput.value = String(hours);
-                minutesInput.value = String(minutes);
-                secondsInput.value = String(seconds);
-                return ((hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
-            }
-
-            function setInputGroupDuration(milliseconds, hoursInput, minutesInput, secondsInput) {
-                const totalSeconds = Math.min(MAX_SECONDS, Math.max(0, Math.round(milliseconds / 1000)));
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                hoursInput.value = String(hours);
-                minutesInput.value = String(minutes);
-                secondsInput.value = String(seconds);
-            }
-
-            function setDurationInputs(milliseconds) {
-                setInputGroupDuration(
-                    milliseconds,
-                    elements.countdownHours,
-                    elements.countdownMinutes,
-                    elements.countdownSeconds
-                );
-            }
-
-            function formatCountdown(milliseconds) {
-                const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-                return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-            }
-
-            function formatStopwatch(milliseconds) {
-                const tenths = Math.floor(Math.max(0, milliseconds) / 100) % 10;
-                const totalSeconds = Math.floor(Math.max(0, milliseconds) / 1000);
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${tenths}`;
-                return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${tenths}`;
-            }
-
-            function validPreset(value) {
-                return value && typeof value.id === "string" && typeof value.name === "string" &&
-                    value.name.trim().length > 0 && value.name.trim().length <= 40 &&
-                    Number.isInteger(value.seconds) && value.seconds >= 1 && value.seconds <= MAX_SECONDS;
-            }
-
-            function readState() {
-                const allQuickPresets = [60, 180, 300, 600, 900];
-                const fallback = {
-                    version: 1,
-                    soundEnabled: true,
-                    defaultSeconds: 300,
-                    quickPresets: allQuickPresets,
-                    presets: []
-                };
-                const raw = storageGet(STORAGE_KEY);
-                if (!raw) return fallback;
-                try {
-                    const saved = JSON.parse(raw);
-                    if (!saved || saved.version !== 1) return fallback;
-                    const quickPresets = Array.isArray(saved.quickPresets)
-                        ? [...new Set(saved.quickPresets.filter(value => allQuickPresets.includes(value)))]
-                        : allQuickPresets;
-                    return {
-                        version: 1,
-                        soundEnabled: saved.soundEnabled !== false,
-                        defaultSeconds: Number.isInteger(saved.defaultSeconds) && saved.defaultSeconds >= 1 && saved.defaultSeconds <= MAX_SECONDS
-                            ? saved.defaultSeconds
-                            : 300,
-                        quickPresets,
-                        presets: Array.isArray(saved.presets) ? saved.presets.filter(validPreset).slice(0, MAX_PRESETS) : []
-                    };
-                } catch (error) {
-                    return fallback;
-                }
-            }
-
-            function persistState() {
-                storageSet(STORAGE_KEY, JSON.stringify(state));
-            }
-
-            function createPresetId() {
-                if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
-                return `preset-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-            }
-
-            function syncDefaultControls() {
-                setInputGroupDuration(
-                    state.defaultSeconds * 1000,
-                    elements.defaultHours,
-                    elements.defaultMinutes,
-                    elements.defaultSeconds
-                );
-                elements.quickPresetSettings.forEach(input => {
-                    input.checked = state.quickPresets.includes(Number(input.dataset.quickPresetSetting));
-                });
-            }
-
-            function setMode(mode, moveFocus = false) {
-                activeMode = mode;
-                const isCountdown = mode === "countdown";
-                elements.countdownTab.setAttribute("aria-selected", String(isCountdown));
-                elements.countdownTab.tabIndex = isCountdown ? 0 : -1;
-                elements.stopwatchTab.setAttribute("aria-selected", String(!isCountdown));
-                elements.stopwatchTab.tabIndex = isCountdown ? -1 : 0;
-                elements.countdownPanel.hidden = !isCountdown;
-                elements.stopwatchPanel.hidden = isCountdown;
-                if (moveFocus) (isCountdown ? elements.countdownTab : elements.stopwatchTab).focus();
-                updateDocumentTitle();
-            }
-
-            function setRunButton(button, running, label = running ? "Pause" : "Start") {
-                button.querySelector(".button-symbol").textContent = running ? "❚❚" : "▶";
-                button.querySelector(".button-label").textContent = label;
-            }
-
-            function updatePresentationButton() {
-                elements.presentationButton.setAttribute("aria-pressed", String(presentationMode));
-                elements.presentationButton.setAttribute("aria-label", presentationMode ? "Exit presentation mode" : "Enter presentation mode");
-                elements.presentationButton.title = presentationMode ? "Exit presentation mode" : "Presentation mode";
-            }
-
-            function setPresentationMode(active) {
-                presentationMode = active;
-                elements.appShell.classList.toggle("is-presenting", active);
-                document.body.classList.toggle("presentation-open", active);
-                updatePresentationButton();
-            }
-
-            async function enterPresentationMode() {
-                setPresentationMode(true);
-                presentationUsesFullscreen = false;
-                if (typeof elements.appShell.requestFullscreen !== "function") return;
-                try {
-                    await elements.appShell.requestFullscreen();
-                    presentationUsesFullscreen = document.fullscreenElement === elements.appShell;
-                } catch (error) {
-                    // The fixed presentation layout remains available when fullscreen access is restricted.
-                }
-            }
-
-            async function exitPresentationMode() {
-                if (presentationUsesFullscreen && document.fullscreenElement && typeof document.exitFullscreen === "function") {
-                    try {
-                        await document.exitFullscreen();
-                    } catch (error) {
-                        // Continue by returning to the standard in-page layout.
-                    }
-                }
-                presentationUsesFullscreen = false;
-                setPresentationMode(false);
-            }
-
-            function setCountdownInputsDisabled(disabled) {
-                elements.countdownHours.disabled = disabled;
-                elements.countdownMinutes.disabled = disabled;
-                elements.countdownSeconds.disabled = disabled;
-            }
-
-            function syncCountdownFromInputs() {
-                if (countdownRunning) return;
-                configuredMs = durationFromInputs(elements.countdownHours, elements.countdownMinutes, elements.countdownSeconds);
-                remainingMs = configuredMs;
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
-                renderCountdown();
-            }
-
-            function setCountdown(milliseconds) {
-                pauseCountdown(false);
-                configuredMs = Math.min(MAX_SECONDS * 1000, Math.max(0, milliseconds));
-                remainingMs = configuredMs;
-                setDurationInputs(configuredMs);
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
-                renderCountdown();
-                setMode("countdown");
-            }
-
-            function prepareAudio() {
-                if (!state.soundEnabled) return;
-                try {
-                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                    if (!AudioContextClass) return;
-                    if (!audioContext) audioContext = new AudioContextClass();
-                    if (audioContext.state === "suspended") audioContext.resume();
-                } catch (error) {
-                    audioContext = null;
-                }
-            }
-
-            function playFinishSound() {
-                if (!state.soundEnabled || !audioContext) return;
-                try {
-                    const now = audioContext.currentTime;
-                    [659.25, 783.99, 987.77].forEach((frequency, index) => {
-                        const oscillator = audioContext.createOscillator();
-                        const gain = audioContext.createGain();
-                        const start = now + (index * 0.16);
-                        oscillator.type = "sine";
-                        oscillator.frequency.value = frequency;
-                        gain.gain.setValueAtTime(0.0001, start);
-                        gain.gain.exponentialRampToValueAtTime(0.16, start + 0.02);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
-                        oscillator.connect(gain);
-                        gain.connect(audioContext.destination);
-                        oscillator.start(start);
-                        oscillator.stop(start + 0.3);
-                    });
-                } catch (error) {
-                    // The visual and accessible finish states remain available.
-                }
-            }
-
-            function startCountdown() {
-                if (remainingMs <= 0) syncCountdownFromInputs();
-                if (remainingMs <= 0) {
-                    elements.countdownStatus.textContent = "Choose a time to begin";
-                    elements.countdownHours.focus();
-                    return;
-                }
-                prepareAudio();
-                countdownEndAt = Date.now() + remainingMs;
-                countdownRunning = true;
-                setRunButton(elements.countdownStartButton, true);
-                elements.countdownStatus.textContent = "Counting down";
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                setCountdownInputsDisabled(true);
-                ensureAnimationLoop();
-            }
-
-            function pauseCountdown(updateStatus = true) {
-                if (countdownRunning) remainingMs = Math.max(0, countdownEndAt - Date.now());
-                countdownRunning = false;
-                setRunButton(elements.countdownStartButton, false);
-                setCountdownInputsDisabled(false);
-                if (updateStatus && remainingMs > 0) elements.countdownStatus.textContent = "Paused";
-                renderCountdown();
-            }
-
-            function resetCountdown() {
-                pauseCountdown(false);
-                remainingMs = configuredMs;
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
-                elements.countdownAnnouncement.textContent = "";
-                renderCountdown();
-            }
-
-            function addMinute() {
-                const maximumMs = MAX_SECONDS * 1000;
-                configuredMs = Math.min(maximumMs, configuredMs + 60000);
-                remainingMs = Math.min(maximumMs, remainingMs + 60000);
-                if (countdownRunning) countdownEndAt = Date.now() + remainingMs;
-                setDurationInputs(configuredMs);
-                elements.countdownFace.classList.remove("finished");
-                elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = countdownRunning ? "One minute added" : "One minute added — ready";
-                renderCountdown();
-            }
-
-            function finishCountdown() {
-                countdownRunning = false;
-                remainingMs = 0;
-                setRunButton(elements.countdownStartButton, false, "Start again");
-                setCountdownInputsDisabled(false);
-                elements.countdownFace.classList.add("finished");
-                elements.countdownStatus.classList.add("finished");
-                elements.countdownStatus.textContent = "Time is up!";
-                elements.countdownAnnouncement.textContent = "Time is up.";
-                renderCountdown();
-                playFinishSound();
-            }
-
-            function renderCountdown() {
-                const display = formatCountdown(remainingMs);
-                elements.countdownDisplay.textContent = display;
-                const progress = configuredMs > 0 ? Math.min(1, Math.max(0, remainingMs / configuredMs)) : 0;
-                elements.countdownFace.style.setProperty("--progress", String(progress));
-                updateDocumentTitle();
-            }
-
-            function startStopwatch() {
-                stopwatchStartedAt = Date.now() - stopwatchElapsedMs;
-                stopwatchRunning = true;
-                setRunButton(elements.stopwatchStartButton, true);
-                elements.stopwatchStatus.textContent = "Running";
-                ensureAnimationLoop();
-            }
-
-            function pauseStopwatch() {
-                if (stopwatchRunning) stopwatchElapsedMs = Date.now() - stopwatchStartedAt;
-                stopwatchRunning = false;
-                setRunButton(elements.stopwatchStartButton, false);
-                elements.stopwatchStatus.textContent = stopwatchElapsedMs > 0 ? "Paused" : "Ready";
-                renderStopwatch();
-            }
-
-            function resetStopwatch() {
-                stopwatchRunning = false;
-                stopwatchElapsedMs = 0;
-                setRunButton(elements.stopwatchStartButton, false);
-                elements.stopwatchStatus.textContent = "Ready";
-                renderStopwatch();
-            }
-
-            function renderStopwatch() {
-                elements.stopwatchDisplay.textContent = formatStopwatch(stopwatchElapsedMs);
-                updateDocumentTitle();
-            }
-
-            function updateDocumentTitle() {
-                let title = BASE_TITLE;
-                if (activeMode === "countdown" && countdownRunning) title = `${formatCountdown(remainingMs)} · ${BASE_TITLE}`;
-                if (activeMode === "stopwatch" && stopwatchRunning) title = `${formatStopwatch(stopwatchElapsedMs)} · ${BASE_TITLE}`;
-                if (title !== lastDocumentTitle) {
-                    document.title = title;
-                    lastDocumentTitle = title;
-                }
-            }
-
-            function animationTick() {
-                animationFrame = 0;
-                if (countdownRunning) {
-                    remainingMs = Math.max(0, countdownEndAt - Date.now());
-                    renderCountdown();
-                    if (remainingMs <= 0) finishCountdown();
-                }
-                if (stopwatchRunning) {
-                    stopwatchElapsedMs = Date.now() - stopwatchStartedAt;
-                    renderStopwatch();
-                }
-                if (countdownRunning || stopwatchRunning) animationFrame = window.requestAnimationFrame(animationTick);
-            }
-
-            function ensureAnimationLoop() {
-                if (!animationFrame) animationFrame = window.requestAnimationFrame(animationTick);
-            }
-
-            function renderPresets() {
-                document.querySelectorAll("[data-quick-preset]").forEach(button => {
-                    button.hidden = !state.quickPresets.includes(Number(button.dataset.quickPreset));
-                });
-                elements.savedPresetButtons.replaceChildren();
-                state.presets.forEach(preset => {
-                    const button = document.createElement("button");
-                    button.type = "button";
-                    button.className = "preset-button saved-preset-button";
-                    button.textContent = preset.name;
-                    button.title = `${preset.name}: ${formatCountdown(preset.seconds * 1000)}`;
-                    button.addEventListener("click", () => setCountdown(preset.seconds * 1000));
-                    elements.savedPresetButtons.append(" ", button);
-                });
-                elements.quickPresetEmpty.hidden = state.quickPresets.length > 0 || state.presets.length > 0;
-
-                elements.savedPresetList.replaceChildren();
-                if (state.presets.length === 0) {
-                    const empty = document.createElement("p");
-                    empty.className = "saved-empty";
-                    empty.textContent = "No saved countdowns yet.";
-                    elements.savedPresetList.append(empty);
-                    return;
-                }
-
-                state.presets.forEach(preset => {
-                    const row = document.createElement("div");
-                    row.className = "saved-row";
-                    const name = document.createElement("span");
-                    name.className = "saved-name";
-                    name.textContent = preset.name;
-                    const duration = document.createElement("span");
-                    duration.className = "saved-duration";
-                    duration.textContent = formatCountdown(preset.seconds * 1000);
-                    name.append(duration);
-
-                    const useButton = document.createElement("button");
-                    useButton.type = "button";
-                    useButton.className = "mini-button";
-                    useButton.textContent = "Use";
-                    useButton.addEventListener("click", () => {
-                        setCountdown(preset.seconds * 1000);
-                        closeModal();
-                    });
-
-                    const deleteButton = document.createElement("button");
-                    deleteButton.type = "button";
-                    deleteButton.className = "mini-button danger";
-                    deleteButton.textContent = "Delete";
-                    deleteButton.setAttribute("aria-label", `Delete ${preset.name} preset`);
-                    deleteButton.addEventListener("click", () => {
-                        if (!window.confirm(`Delete the saved countdown “${preset.name}”?`)) return;
-                        state.presets = state.presets.filter(item => item.id !== preset.id);
-                        persistState();
-                        renderPresets();
-                        elements.presetFormMessage.className = "form-message";
-                        elements.presetFormMessage.textContent = "Saved countdown deleted.";
-                    });
-
-                    row.append(name, useButton, deleteButton);
-                    elements.savedPresetList.append(row);
-                });
-            }
-
-            function savePreset(event) {
-                event.preventDefault();
-                const name = elements.presetName.value.trim();
-                const milliseconds = durationFromInputs(elements.presetHours, elements.presetMinutes, elements.presetSeconds);
-                elements.presetFormMessage.className = "form-message";
-
-                if (!name) {
-                    elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Enter a name for this countdown.";
-                    elements.presetName.focus();
-                    return;
-                }
-                if (milliseconds <= 0) {
-                    elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Choose a duration longer than zero seconds.";
-                    elements.presetMinutes.focus();
-                    return;
-                }
-                if (state.presets.length >= MAX_PRESETS) {
-                    elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Delete a saved countdown before adding another.";
-                    return;
-                }
-
-                state.presets.push({ id: createPresetId(), name, seconds: Math.round(milliseconds / 1000) });
-                persistState();
-                renderPresets();
-                elements.presetName.value = "";
-                elements.presetFormMessage.textContent = `Saved “${name}”.`;
-            }
-
-            function saveCountdownDefaults() {
-                const milliseconds = durationFromInputs(
-                    elements.defaultHours,
-                    elements.defaultMinutes,
-                    elements.defaultSeconds
-                );
-                elements.defaultCountdownMessage.className = "form-message";
-
-                if (milliseconds <= 0) {
-                    elements.defaultCountdownMessage.className = "form-message error";
-                    elements.defaultCountdownMessage.textContent = "Choose a default longer than zero seconds.";
-                    elements.defaultMinutes.focus();
-                    return;
-                }
-
-                state.defaultSeconds = Math.round(milliseconds / 1000);
-                state.quickPresets = elements.quickPresetSettings
-                    .filter(input => input.checked)
-                    .map(input => Number(input.dataset.quickPresetSetting));
-                persistState();
-                renderPresets();
-                elements.defaultCountdownMessage.textContent = "Saved automatically. The default time will be used the next time the app opens.";
-            }
-
-            elements.countdownTab.addEventListener("click", () => setMode("countdown"));
-            elements.stopwatchTab.addEventListener("click", () => setMode("stopwatch"));
-            [elements.countdownTab, elements.stopwatchTab].forEach(tab => {
-                tab.addEventListener("keydown", event => {
-                    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-                    event.preventDefault();
-                    setMode(activeMode === "countdown" ? "stopwatch" : "countdown", true);
-                });
-            });
-
-            document.getElementById("presetList").addEventListener("click", event => {
-                const button = event.target.closest("button[data-seconds]");
-                if (button) setCountdown(Number(button.dataset.seconds) * 1000);
-            });
-
-            [elements.countdownHours, elements.countdownMinutes, elements.countdownSeconds].forEach(input => {
-                input.addEventListener("change", syncCountdownFromInputs);
-            });
-
-            elements.countdownStartButton.addEventListener("click", () => {
-                if (countdownRunning) pauseCountdown();
-                else if (remainingMs <= 0 && configuredMs > 0) {
-                    remainingMs = configuredMs;
-                    startCountdown();
-                } else startCountdown();
-            });
-            elements.countdownResetButton.addEventListener("click", resetCountdown);
-            elements.addMinuteButton.addEventListener("click", addMinute);
-            elements.stopwatchStartButton.addEventListener("click", () => {
-                if (stopwatchRunning) pauseStopwatch(); else startStopwatch();
-            });
-            elements.stopwatchResetButton.addEventListener("click", resetStopwatch);
-            elements.presetForm.addEventListener("submit", savePreset);
-            [elements.defaultHours, elements.defaultMinutes, elements.defaultSeconds, ...elements.quickPresetSettings].forEach(input => {
-                input.addEventListener("change", saveCountdownDefaults);
-            });
-
-            elements.soundEnabledInput.addEventListener("change", () => {
-                state.soundEnabled = elements.soundEnabledInput.checked;
-                persistState();
-                if (state.soundEnabled) prepareAudio();
-            });
-
-            elements.presentationButton.addEventListener("click", () => {
-                if (presentationMode) exitPresentationMode();
-                else enterPresentationMode();
-            });
-
-            document.addEventListener("fullscreenchange", () => {
-                if (presentationUsesFullscreen && document.fullscreenElement !== elements.appShell) {
-                    presentationUsesFullscreen = false;
-                    setPresentationMode(false);
-                }
-            });
-
-            document.addEventListener("keydown", event => {
-                if (event.key === "Escape" && presentationMode && !document.fullscreenElement) {
-                    event.preventDefault();
-                    exitPresentationMode();
-                    return;
-                }
-                if (event.code !== "Space" || event.defaultPrevented || event.repeat) return;
-                const target = event.target;
-                if (target.closest("input, textarea, select, button, [role='dialog']")) return;
-                event.preventDefault();
-                if (activeMode === "countdown") elements.countdownStartButton.click();
-                else elements.stopwatchStartButton.click();
-            });
-
-            window.addEventListener("storage", event => {
-                if (event.key !== STORAGE_KEY) return;
-                state = readState();
-                elements.soundEnabledInput.checked = state.soundEnabled;
-                syncDefaultControls();
-                renderPresets();
-            });
-
-            elements.soundEnabledInput.checked = state.soundEnabled;
-            syncDefaultControls();
-            renderPresets();
-            setCountdown(state.defaultSeconds * 1000);
-            renderStopwatch();
-            setMode("countdown");
-            updatePresentationButton();
-        })();
-    </script>
-<!-- TEACHER-TOOLS:HOOTIE:START -->
-    <script defer src="/assets/hootie/hootie.v1.js"></script>
-<!-- TEACHER-TOOLS:HOOTIE:END -->
-</body>
-</html>
+</body></html>

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <!--
-Spinner Wheel · Teacher Tools
+Spinner Wheel · Teacher Tools Workbench Preview
 Copyright © 2026. All rights reserved.
+
+This Workbench preview is not intended for direct publication.
+Confirm the final copyright and usage language before release.
 -->
 <html lang="en">
 <head>
@@ -35,7 +38,7 @@ Copyright © 2026. All rights reserved.
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
          * Teacher Tools canonical theme tokens.
-         * This file is embedded into registered Workbench pages by the shared UI sync.
+         * This file is embedded into registered pages by the shared UI sync.
          * Published applets remain self-contained and never load this file at runtime.
          */
 
@@ -1483,6 +1486,7 @@ Copyright © 2026. All rights reserved.
     </style>
 </head>
 <body>
+    <!-- Workbench links are relative. Use /, /scheduler/, and /spinner/ in production. -->
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
@@ -1516,6 +1520,12 @@ Copyright © 2026. All rights reserved.
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
                     </svg>
                 </button>
+                 <button type="button" id="siteHootieButton" class="site-data-button site-hootie-button" aria-label="Tuck Hootie away" aria-pressed="true" title="Tuck Hootie away" hidden>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M3 7h5l2 2v6l-2 2H3l-2-2V9Zm13 0h5l2 2v6l-2 2h-5l-2-2V9ZM10 11h4" />
+                        <path d="M5 10h2v4H5zm12 0h2v4h-2z" fill="currentColor" stroke="none" />
+                    </svg>
+                </button>
                  <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 7h14M5 12h14M5 17h14" />
@@ -1529,7 +1539,7 @@ Copyright © 2026. All rights reserved.
                     <span class="site-menu-status">OPEN</span>
                 </a>
                  <div class="site-menu-label">Available tools</div>
-                 <a class="site-menu-item" href="/scheduler/">
+                <a class="site-menu-item" href="/scheduler/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
                             <path d="M5.5 7.5h17v15h-17z" />
@@ -1538,6 +1548,16 @@ Copyright © 2026. All rights reserved.
                         </svg>
                     </span>
                     <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
+                    <span class="site-menu-status">OPEN</span>
+                </a>
+                <a class="site-menu-item" href="/calendar/">
+                    <span class="site-menu-icon" aria-hidden="true">
+                        <svg viewBox="0 0 28 28">
+                            <path d="M5.5 7.5h17v15h-17zM9 4.5v6M19 4.5v6M5.5 12h17M11.2 12v10.5M16.8 12v10.5M5.5 17.25h17" />
+                            <path class="icon-fill" d="M11.2 12h5.6v5.25h-5.6z" />
+                        </svg>
+                    </span>
+                    <span><span class="site-menu-name">Class Calendar</span><span class="site-menu-description">Plan classes with school bell times</span></span>
                     <span class="site-menu-status">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/spinner/" aria-current="page">
@@ -1706,7 +1726,7 @@ Copyright © 2026. All rights reserved.
 
             <footer class="app-footer">
                 <div class="footer-version">Spinner Wheel · v1.2</div>
-                <div class="footer-copyright">Choices stay in this browser and are not uploaded.</div>
+                <div class="footer-copyright">Workbench preview · Choices stay in this browser and are not uploaded.</div>
             </footer>
         </div>
     </main>
@@ -3781,5 +3801,8 @@ Copyright © 2026. All rights reserved.
             window.setTimeout(resizeCanvas, 0);
         })();
     </script>
+<!-- TEACHER-TOOLS:HOOTIE:START -->
+    <script defer src="/assets/hootie/hootie.v1.js"></script>
+<!-- TEACHER-TOOLS:HOOTIE:END -->
 </body>
 </html>
