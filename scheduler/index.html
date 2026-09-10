@@ -3538,7 +3538,8 @@ The software is provided "as is" without warranty of any kind.
                     periods,
                     irregular: {
                         enabled: !!(school.irregular && school.irregular.enabled),
-                        periods: irregularPeriods
+                        periods: irregularPeriods,
+                        ...(school.irregular?.lunch ? {lunch: school.irregular.lunch} : {})
                     },
                     lunch: {
                         enabled: !!(school.lunch && school.lunch.enabled),
