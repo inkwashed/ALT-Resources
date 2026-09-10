@@ -2,9 +2,6 @@
 <!--
 Spinner Wheel · Teacher Tools
 Copyright © 2026. All rights reserved.
-
-Free for personal, classroom, and non-commercial educational use.
-Redistribution, resale, commercial use, and distribution of modified versions require prior permission.
 -->
 <html lang="en">
 <head>
@@ -946,7 +943,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         }
 
         .mode-badge {
+            max-width: min(220px, 60vw);
             padding: 4px 8px;
+            overflow: hidden;
             color: var(--accent);
             background: var(--accent-soft);
             border: 1px solid var(--accent-border);
@@ -955,6 +954,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             font-weight: 800;
             letter-spacing: 0.035em;
             text-transform: uppercase;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .wheel-stage {
@@ -1059,6 +1060,102 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
         .round-panel[hidden] { display: none; }
         .round-copy { color: var(--muted); font-size: 10.5px; line-height: 1.4; }
+
+        .source-grid,
+        .list-editor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .school-source-note {
+            margin: -2px 0 12px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .school-source-note.warning { color: var(--warning-text); }
+        .source-grid .settings-select { width: 100%; max-width: none; }
+        .number-profile-heading { margin: 0 0 9px; color: var(--text); font-size: 13px; font-weight: 800; }
+
+        .custom-bank {
+            display: grid;
+            grid-template-columns: minmax(150px, 0.42fr) minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+        }
+
+        .custom-list-bank {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: var(--surface);
+        }
+
+        .custom-list-bank-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 9px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .custom-list-bank-header strong { font-size: 12px; }
+        .custom-list-items { display: grid; max-height: 252px; overflow-y: auto; }
+
+        .custom-list-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .custom-list-row:last-child { border-bottom: 0; }
+        .custom-list-row.active { background: var(--accent-soft); }
+
+        .custom-list-select {
+            min-width: 0;
+            padding: 7px 8px;
+            overflow: hidden;
+            color: var(--text);
+            background: transparent;
+            border: 0;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-align: left;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .custom-list-order { display: flex; gap: 2px; }
+
+        .order-button {
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            padding: 0;
+            color: var(--accent);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .order-button:hover:not(:disabled) { background: var(--panel); border-color: var(--line); }
+        .order-button:disabled { opacity: 0.35; cursor: not-allowed; }
+        .custom-list-editor { min-width: 0; }
+        .custom-list-editor textarea { min-height: 150px; }
+        .custom-list-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
 
         body.presentation-open { overflow: hidden; }
         body.presentation-open .modal-backdrop { z-index: 700; }
@@ -1335,6 +1432,10 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             .modal-card { max-height: calc(100dvh - 12px); border-radius: 9px; }
             .settings-grid { grid-template-columns: 1fr; }
             .field-full { grid-column: auto; }
+            .source-grid,
+            .list-editor-grid,
+            .custom-bank { grid-template-columns: 1fr; }
+            .custom-list-items { max-height: 170px; }
         }
 
         @media (orientation: portrait), (max-width: 720px) {
@@ -1382,7 +1483,6 @@ Redistribution, resale, commercial use, and distribution of modified versions re
     </style>
 </head>
 <body>
-    <!-- Workbench links are relative. Use /, /scheduler/, and /spinner/ in production. -->
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
@@ -1550,7 +1650,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             <header class="app-header">
                 <div class="title-wrap">
                     <h1 class="app-title">Spinner Wheel</h1>
-                    <span class="version-badge">v1.1</span>
+                    <span class="version-badge">v1.2</span>
                 </div>
 
                 <div class="app-header-actions">
@@ -1605,7 +1705,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             </div>
 
             <footer class="app-footer">
-                <div class="footer-version">Spinner Wheel · v1.1</div>
+                <div class="footer-version">Spinner Wheel · v1.2</div>
                 <div class="footer-copyright">Choices stay in this browser and are not uploaded.</div>
             </footer>
         </div>
@@ -1619,11 +1719,11 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             </header>
 
             <div class="modal-content">
-                <p id="helpIntro" class="help-intro">The wheel starts with numbers 1–24. Use Settings whenever you want to change how it works.</p>
+                <p id="helpIntro" class="help-intro">Choose a saved class number set or one of your reusable custom lists, then spin.</p>
                 <div class="help-steps">
                     <section class="help-step">
                         <h3>1. Choose the wheel mode</h3>
-                        <p>Use Numbers for an inclusive minimum-to-maximum range, with optional exclusions. Use Custom Choices for names, prompts, or other text entered one item per line.</p>
+                        <p>Use Numbers to choose a school and class from Scheduler. New class ranges use the saved student count when available, and you can still adjust the minimum, maximum, or exclusions. Use Custom Choices to keep a reusable bank of named lists.</p>
                         <button type="button" class="help-link" data-modal-switch="settingsModal">Open Settings</button>
                     </section>
                     <section class="help-step">
@@ -1666,6 +1766,18 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     </div>
 
                     <div id="numbersSettingsPanel" class="mode-settings-panel">
+                        <div class="source-grid">
+                            <label class="field">
+                                <span class="field-label">School</span>
+                                <select id="schoolSelect" class="settings-select"></select>
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Class</span>
+                                <select id="classSelect" class="settings-select"></select>
+                            </label>
+                        </div>
+                        <p id="schoolSourceNote" class="school-source-note">Schools and classes come from ALT Class Scheduler.</p>
+                        <h4 id="numberProfileHeading" class="number-profile-heading">Number set</h4>
                         <div class="settings-grid">
                             <label class="field">
                                 <span class="field-label">Minimum</span>
@@ -1684,22 +1796,42 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                                 <span class="helper-text">The inclusive range may contain up to 100 numbers before exclusions.</span>
                             </div>
                         </div>
+                        <div class="settings-button-row">
+                            <button type="button" id="useClassSizeButton" class="button button-secondary button-small">Use saved class size</button>
+                        </div>
                         <p id="numberValidation" class="validation-message" role="status"></p>
                     </div>
 
                     <div id="customSettingsPanel" class="mode-settings-panel" hidden>
-                        <div class="field">
-                            <span class="field-label-row">
-                                <label class="field-label" for="customChoicesInput">Custom choices</label>
-                                <button type="button" class="tooltip-trigger" data-tooltip="Type or paste one choice per line. Blank lines are ignored, and exact duplicates each receive their own equal slice." aria-label="Help for custom choices">i</button>
-                            </span>
-                            <textarea id="customChoicesInput" placeholder="Akira&#10;Mika&#10;Yuto" autocomplete="off" spellcheck="false"></textarea>
-                            <span id="customCountText" class="helper-text">0 of 100 choices</span>
+                        <div class="custom-bank">
+                            <div class="custom-list-bank">
+                                <div class="custom-list-bank-header">
+                                    <strong>Saved lists</strong>
+                                    <button type="button" id="addCustomListButton" class="button button-secondary button-small">Add</button>
+                                </div>
+                                <div id="customListItems" class="custom-list-items" aria-label="Saved custom lists"></div>
+                            </div>
+                            <div class="custom-list-editor">
+                                <div class="list-editor-grid">
+                                    <label class="field field-full">
+                                        <span class="field-label">List name</span>
+                                        <input id="customListNameInput" type="text" maxlength="60" autocomplete="off" spellcheck="false">
+                                    </label>
+                                </div>
+                                <div class="field">
+                                    <span class="field-label-row">
+                                        <label class="field-label" for="customChoicesInput">Choices</label>
+                                        <button type="button" class="tooltip-trigger" data-tooltip="Type or paste one choice per line. Blank lines are ignored, and exact duplicates each receive their own equal slice." aria-label="Help for custom choices">i</button>
+                                    </span>
+                                    <textarea id="customChoicesInput" placeholder="Vocabulary word&#10;Short phrase&#10;Discussion prompt" autocomplete="off" spellcheck="false"></textarea>
+                                    <span id="customCountText" class="helper-text">0 of 100 choices</span>
+                                </div>
+                                <div class="custom-list-actions">
+                                    <button type="button" id="deleteCustomListButton" class="button button-danger button-small">Delete list</button>
+                                </div>
+                            </div>
                         </div>
                         <p id="customValidation" class="validation-message" role="status"></p>
-                        <div class="settings-button-row">
-                            <button type="button" id="clearCustomButton" class="button button-danger button-small">Clear custom choices</button>
-                        </div>
                     </div>
                 </section>
 
@@ -1772,6 +1904,35 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
     <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
     <script>
+        // Shared structural contract for Calendar persistence and central backup imports.
+        window.TeacherToolsCalendarValidate = value => {
+            const object = v => v && typeof v === "object" && !Array.isArray(v);
+            const date = d => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) &&
+                !isNaN(Date.parse(d)) && new Date(d + "T12:00:00Z").toISOString().slice(0,10) === d;
+            const time = t => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
+            if (!object(value) || value.version !== 1 || typeof value.timeZone !== "string" ||
+                !Array.isArray(value.events) || !object(value.preferences)) return false;
+            try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }); } catch { return false; }
+            const p = value.preferences;
+            if (!["month","week","agenda","custom"].includes(p.view) ||
+                !Array.isArray(p.days) || !p.days.length || p.days.length > 7 ||
+                new Set(p.days).size !== p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6) ||
+                !["regular","irregular","off"].includes(p.ghostMode) || typeof p.working !== "boolean" ||
+                !["school","category"].every(k => typeof p[k] === "string")) return false;
+            if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
+                p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
+            const ids = new Set();
+            return value.events.every(e => {
+                if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
+                    !e.id || /[\r\n]/.test(e.id) || ids.has(e.id) || !e.title.trim() || !date(e.date) ||
+                    !time(e.start) || !time(e.end) || e.end <= e.start ||
+                    !["regular","irregular","custom"].includes(e.mode) ||
+                    (e.mode === "custom" ? e.period !== null : !Number.isInteger(e.period) || e.period < 0) ||
+                    !["Class","Lunch","Meeting","Other"].includes(e.category) ||
+                    !Number.isFinite(Date.parse(e.created)) || !Number.isFinite(Date.parse(e.modified))) return false;
+                ids.add(e.id); return true;
+            });
+        };
         (() => {
             "use strict";
 
@@ -1781,6 +1942,12 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             const SITE_BACKUP_SCHEMA_VERSION = 1;
             const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
             const SITE_DATA_RECORDS = Object.freeze([
+                {
+                    id: "class-calendar",
+                    label: "Class Calendar",
+                    storageKey: "teacherTools.classCalendar.state.v1",
+                    validate: value => window.TeacherToolsCalendarValidate(value)
+                },
                 {
                     id: "appearance",
                     label: "Site appearance",
@@ -2352,7 +2519,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 modal.setAttribute("aria-hidden", "false");
                 document.body.classList.add("modal-open");
 
-                const preferredFocus = modal.querySelector("[data-modal-initial-focus], .close-button");
+                const preferredFocus = modal.querySelector("[data-modal-initial-focus]") || modal.querySelector(".close-button");
                 if (preferredFocus) preferredFocus.focus();
             }
 
@@ -2612,6 +2779,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             "use strict";
 
             const STORAGE_KEY = "teacherTools.spinnerWheel.state.v1";
+            const SCHEDULER_STORAGE_KEY = "classAutomatorData_v3";
             const MAX_CHOICES = 100;
             const TWO_PI = Math.PI * 2;
             const DEFAULT_STATE = Object.freeze({
@@ -2621,6 +2789,12 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 maximum: "24",
                 exclusions: "",
                 customChoices: "",
+                selectedSchoolId: "",
+                selectedClassBySchool: {},
+                numberProfiles: {},
+                legacyNumberProfilePending: false,
+                selectedCustomListId: "default-list",
+                customLists: [{ id: "default-list", name: "My choices", choices: "" }],
                 removeAfterSpin: false,
                 spinLength: "standard",
                 spinSound: false,
@@ -2651,14 +2825,22 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             const customModeLabel = document.getElementById("customModeLabel");
             const numbersSettingsPanel = document.getElementById("numbersSettingsPanel");
             const customSettingsPanel = document.getElementById("customSettingsPanel");
+            const schoolSelect = document.getElementById("schoolSelect");
+            const classSelect = document.getElementById("classSelect");
+            const schoolSourceNote = document.getElementById("schoolSourceNote");
+            const numberProfileHeading = document.getElementById("numberProfileHeading");
+            const useClassSizeButton = document.getElementById("useClassSizeButton");
             const minimumInput = document.getElementById("minimumInput");
             const maximumInput = document.getElementById("maximumInput");
             const exclusionsInput = document.getElementById("exclusionsInput");
+            const customListItems = document.getElementById("customListItems");
+            const addCustomListButton = document.getElementById("addCustomListButton");
+            const deleteCustomListButton = document.getElementById("deleteCustomListButton");
+            const customListNameInput = document.getElementById("customListNameInput");
             const customChoicesInput = document.getElementById("customChoicesInput");
             const customCountText = document.getElementById("customCountText");
             const numberValidation = document.getElementById("numberValidation");
             const customValidation = document.getElementById("customValidation");
-            const clearCustomButton = document.getElementById("clearCustomButton");
             const removeAfterSpinInput = document.getElementById("removeAfterSpinInput");
             const spinLengthInput = document.getElementById("spinLengthInput");
             const spinSoundInput = document.getElementById("spinSoundInput");
@@ -2678,16 +2860,81 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             let spinClickBuffer = null;
             let presentationMode = false;
             let presentationUsesFullscreen = false;
+            let schedulerSchools = [];
+            let schedulerPreferences = {};
+
+            function makeId(prefix) {
+                return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+            }
+
+            function profileKey(schoolId, className) {
+                return JSON.stringify([schoolId || "general", className || "general"]);
+            }
+
+            function normalizeNumberProfile(value, fallback = DEFAULT_STATE) {
+                const source = value && typeof value === "object" ? value : {};
+                return {
+                    minimum: typeof source.minimum === "string" ? source.minimum.slice(0, 18) : fallback.minimum,
+                    maximum: typeof source.maximum === "string" ? source.maximum.slice(0, 18) : fallback.maximum,
+                    exclusions: typeof source.exclusions === "string" ? source.exclusions.slice(0, 1000) : fallback.exclusions
+                };
+            }
+
+            function normalizeCustomLists(value, legacyChoices) {
+                const source = Array.isArray(value) ? value : [];
+                const ids = new Set();
+                const lists = source.slice(0, 50).flatMap((item, index) => {
+                    if (!item || typeof item !== "object") return [];
+                    let id = typeof item.id === "string" && item.id && !ids.has(item.id) ? item.id.slice(0, 100) : `list-${index + 1}`;
+                    while (ids.has(id)) id = makeId("list");
+                    ids.add(id);
+                    const name = typeof item.name === "string" && item.name.trim() ? item.name.trim().slice(0, 60) : `List ${index + 1}`;
+                    const choices = typeof item.choices === "string" ? item.choices.slice(0, 12000) : "";
+                    return [{ id, name, choices }];
+                });
+                if (lists.length) return lists;
+                return [{ id: "default-list", name: "My choices", choices: typeof legacyChoices === "string" ? legacyChoices.slice(0, 12000) : "" }];
+            }
 
             function normalizeState(candidate) {
                 const value = candidate && typeof candidate === "object" ? candidate : {};
+                const legacyProfile = normalizeNumberProfile(value);
+                const numberProfiles = {};
+                const hasSavedProfiles = value.numberProfiles && typeof value.numberProfiles === "object" && !Array.isArray(value.numberProfiles);
+                if (hasSavedProfiles) {
+                    Object.entries(value.numberProfiles).slice(0, 500).forEach(([key, profile]) => {
+                        const safeKey = String(key).slice(0, 300);
+                        if (!["__proto__", "constructor", "prototype"].includes(safeKey)) {
+                            numberProfiles[safeKey] = normalizeNumberProfile(profile, legacyProfile);
+                        }
+                    });
+                }
+                if (!numberProfiles[profileKey("general", "general")]) {
+                    numberProfiles[profileKey("general", "general")] = legacyProfile;
+                }
+                const customLists = normalizeCustomLists(value.customLists, value.customChoices);
+                const selectedCustomListId = customLists.some(list => list.id === value.selectedCustomListId)
+                    ? value.selectedCustomListId
+                    : customLists[0].id;
                 return {
                     version: 1,
                     mode: value.mode === "custom" ? "custom" : "numbers",
-                    minimum: typeof value.minimum === "string" ? value.minimum.slice(0, 18) : DEFAULT_STATE.minimum,
-                    maximum: typeof value.maximum === "string" ? value.maximum.slice(0, 18) : DEFAULT_STATE.maximum,
-                    exclusions: typeof value.exclusions === "string" ? value.exclusions.slice(0, 1000) : "",
-                    customChoices: typeof value.customChoices === "string" ? value.customChoices.slice(0, 12000) : "",
+                    minimum: legacyProfile.minimum,
+                    maximum: legacyProfile.maximum,
+                    exclusions: legacyProfile.exclusions,
+                    customChoices: customLists.find(list => list.id === selectedCustomListId).choices,
+                    selectedSchoolId: typeof value.selectedSchoolId === "string" ? value.selectedSchoolId.slice(0, 100) : "",
+                    selectedClassBySchool: value.selectedClassBySchool && typeof value.selectedClassBySchool === "object" && !Array.isArray(value.selectedClassBySchool)
+                        ? Object.fromEntries(Object.entries(value.selectedClassBySchool).slice(0, 100).map(([key, name]) => [String(key).slice(0, 100), String(name).slice(0, 120)]))
+                        : {},
+                    numberProfiles,
+                    legacyNumberProfilePending: Boolean(value.legacyNumberProfilePending) || (!hasSavedProfiles && (
+                        legacyProfile.minimum !== DEFAULT_STATE.minimum ||
+                        legacyProfile.maximum !== DEFAULT_STATE.maximum ||
+                        Boolean(legacyProfile.exclusions.trim())
+                    )),
+                    selectedCustomListId,
+                    customLists,
                     removeAfterSpin: Boolean(value.removeAfterSpin),
                     spinLength: ["quick", "standard", "dramatic", "suspenseful"].includes(value.spinLength) ? value.spinLength : "standard",
                     spinSound: Boolean(value.spinSound),
@@ -2697,26 +2944,212 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
             function loadState() {
                 const raw = storageGet(STORAGE_KEY);
-                if (!raw) return { ...DEFAULT_STATE };
+                if (!raw) return normalizeState(DEFAULT_STATE);
                 try {
                     const parsed = JSON.parse(raw);
-                    if (parsed.version !== 1) return { ...DEFAULT_STATE };
+                    if (parsed.version !== 1) return normalizeState(DEFAULT_STATE);
                     return normalizeState(parsed);
                 } catch (error) {
-                    return { ...DEFAULT_STATE };
+                    return normalizeState(DEFAULT_STATE);
                 }
             }
 
             function saveState() {
+                const profile = currentNumberProfile();
+                const list = currentCustomList();
+                state.minimum = profile.minimum;
+                state.maximum = profile.maximum;
+                state.exclusions = profile.exclusions;
+                state.customChoices = list ? list.choices : "";
                 storageSet(STORAGE_KEY, JSON.stringify(state));
+            }
+
+            function loadSchedulerSchools() {
+                const raw = storageGet(SCHEDULER_STORAGE_KEY);
+                schedulerPreferences = {};
+                if (!raw) return [];
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (!parsed || parsed.version !== 3 || !Array.isArray(parsed.schools)) return [];
+                    schedulerPreferences = parsed.preferences && typeof parsed.preferences === "object" ? parsed.preferences : {};
+                    return parsed.schools.flatMap((school, index) => {
+                        if (!school || typeof school !== "object") return [];
+                        const id = typeof school.id === "string" && school.id ? school.id.slice(0, 100) : `school-${index + 1}`;
+                        const name = typeof school.name === "string" && school.name.trim() ? school.name.trim().slice(0, 120) : `School ${index + 1}`;
+                        const classes = Array.isArray(school.classes) ? school.classes.map(String).map(value => value.trim()).filter(Boolean).slice(0, 100) : [];
+                        const savedCounts = school.studentCounts && typeof school.studentCounts === "object" ? school.studentCounts : {};
+                        const studentCounts = {};
+                        classes.forEach(className => {
+                            const count = Number(savedCounts[className]);
+                            if (Number.isInteger(count) && count >= 1 && count <= MAX_CHOICES) studentCounts[className] = count;
+                        });
+                        return [{ id, name, classes, studentCounts }];
+                    });
+                } catch (error) {
+                    schedulerPreferences = {};
+                    return [];
+                }
+            }
+
+            function selectedSchool() {
+                return schedulerSchools.find(school => school.id === state.selectedSchoolId) || null;
+            }
+
+            function selectedClassName() {
+                const school = selectedSchool();
+                if (!school) return "";
+                const remembered = state.selectedClassBySchool[school.id] ||
+                    (schedulerPreferences.selectedClassBySchool && schedulerPreferences.selectedClassBySchool[school.id]);
+                return school.classes.includes(remembered) ? remembered : (school.classes[0] || "");
+            }
+
+            function activeProfileKey() {
+                const school = selectedSchool();
+                const className = selectedClassName();
+                return school && className ? profileKey(school.id, className) : profileKey("general", "general");
+            }
+
+            function classSizeFor(school = selectedSchool(), className = selectedClassName()) {
+                return school && className && Number.isInteger(school.studentCounts[className]) ? school.studentCounts[className] : null;
+            }
+
+            function ensureNumberProfile() {
+                const key = activeProfileKey();
+                if (!state.numberProfiles[key]) {
+                    const count = classSizeFor();
+                    const legacy = state.numberProfiles[profileKey("general", "general")];
+                    state.numberProfiles[key] = state.legacyNumberProfilePending && key !== profileKey("general", "general")
+                        ? { ...legacy }
+                        : { minimum: "1", maximum: String(count || 24), exclusions: "" };
+                    if (key !== profileKey("general", "general")) state.legacyNumberProfilePending = false;
+                }
+                return state.numberProfiles[key];
+            }
+
+            function currentNumberProfile() {
+                return ensureNumberProfile();
+            }
+
+            function currentCustomList() {
+                return state.customLists.find(list => list.id === state.selectedCustomListId) || state.customLists[0] || null;
+            }
+
+            function refreshSchoolControls() {
+                schedulerSchools = loadSchedulerSchools();
+                schoolSelect.replaceChildren();
+                classSelect.replaceChildren();
+
+                if (!schedulerSchools.length) {
+                    schoolSelect.add(new Option("No saved schools", ""));
+                    classSelect.add(new Option("General number set", ""));
+                    schoolSelect.disabled = true;
+                    classSelect.disabled = true;
+                    schoolSourceNote.textContent = "No Scheduler schools were found. This general number set will remain available until schools and classes are added in Scheduler.";
+                    schoolSourceNote.classList.add("warning");
+                    numberProfileHeading.textContent = "General number set";
+                    useClassSizeButton.disabled = true;
+                    return;
+                }
+
+                schoolSelect.disabled = false;
+                schedulerSchools.forEach(school => schoolSelect.add(new Option(school.name, school.id)));
+                if (!schedulerSchools.some(school => school.id === state.selectedSchoolId)) {
+                    state.selectedSchoolId = schedulerSchools.some(school => school.id === schedulerPreferences.selectedSchoolId)
+                        ? schedulerPreferences.selectedSchoolId
+                        : schedulerSchools[0].id;
+                }
+                schoolSelect.value = state.selectedSchoolId;
+                const school = selectedSchool();
+                school.classes.forEach(className => classSelect.add(new Option(className, className)));
+                const className = selectedClassName();
+                if (className) state.selectedClassBySchool[school.id] = className;
+                classSelect.disabled = school.classes.length === 0;
+                if (className) classSelect.value = className;
+                else classSelect.add(new Option("No saved classes", ""));
+
+                const count = classSizeFor(school, className);
+                schoolSourceNote.textContent = className
+                    ? count
+                        ? `${school.name} · ${className} has ${count} students saved in Scheduler.`
+                        : `${school.name} · ${className} has no student count saved in Scheduler.`
+                    : `${school.name} has no saved classes.`;
+                schoolSourceNote.classList.toggle("warning", !className || !count);
+                numberProfileHeading.textContent = className ? `Number set for ${className}` : "General number set";
+                useClassSizeButton.disabled = !count;
+                useClassSizeButton.textContent = count ? `Use saved class size (${count})` : "Use saved class size";
+            }
+
+            function syncNumberInputsFromProfile() {
+                const profile = currentNumberProfile();
+                minimumInput.value = profile.minimum;
+                maximumInput.value = profile.maximum;
+                exclusionsInput.value = profile.exclusions;
+            }
+
+            function syncCustomEditor() {
+                const list = currentCustomList();
+                customListNameInput.value = list ? list.name : "";
+                customChoicesInput.value = list ? list.choices : "";
+                customListNameInput.disabled = !list;
+                customChoicesInput.disabled = !list;
+                deleteCustomListButton.disabled = !list;
+            }
+
+            function renderCustomListBank() {
+                customListItems.replaceChildren();
+                state.customLists.forEach((list, index) => {
+                    const row = document.createElement("div");
+                    row.className = "custom-list-row";
+                    row.classList.toggle("active", list.id === state.selectedCustomListId);
+
+                    const selectButton = document.createElement("button");
+                    selectButton.type = "button";
+                    selectButton.className = "custom-list-select";
+                    selectButton.textContent = list.name;
+                    selectButton.setAttribute("aria-pressed", String(list.id === state.selectedCustomListId));
+                    selectButton.addEventListener("click", () => selectCustomList(list.id));
+
+                    const order = document.createElement("span");
+                    order.className = "custom-list-order";
+                    [["↑", -1, "Move up"], ["↓", 1, "Move down"]].forEach(([symbol, offset, label]) => {
+                        const button = document.createElement("button");
+                        button.type = "button";
+                        button.className = "order-button";
+                        button.textContent = symbol;
+                        button.setAttribute("aria-label", `${label}: ${list.name}`);
+                        button.disabled = index + offset < 0 || index + offset >= state.customLists.length;
+                        button.addEventListener("click", () => moveCustomList(list.id, offset));
+                        order.appendChild(button);
+                    });
+                    row.append(selectButton, order);
+                    customListItems.appendChild(row);
+                });
+            }
+
+            function selectCustomList(id) {
+                if (!state.customLists.some(list => list.id === id)) return;
+                state.selectedCustomListId = id;
+                renderCustomListBank();
+                syncCustomEditor();
+                saveState();
+                refreshWheel({ resetRound: true, clearSelection: true });
+            }
+
+            function moveCustomList(id, offset) {
+                const index = state.customLists.findIndex(list => list.id === id);
+                const target = index + offset;
+                if (index < 0 || target < 0 || target >= state.customLists.length) return;
+                [state.customLists[index], state.customLists[target]] = [state.customLists[target], state.customLists[index]];
+                saveState();
+                renderCustomListBank();
             }
 
             function syncControlsFromState() {
                 modeToggle.checked = state.mode === "custom";
-                minimumInput.value = state.minimum;
-                maximumInput.value = state.maximum;
-                exclusionsInput.value = state.exclusions;
-                customChoicesInput.value = state.customChoices;
+                refreshSchoolControls();
+                syncNumberInputsFromProfile();
+                renderCustomListBank();
+                syncCustomEditor();
                 removeAfterSpinInput.checked = state.removeAfterSpin;
                 spinLengthInput.value = state.spinLength;
                 spinSoundInput.checked = state.spinSound;
@@ -2730,7 +3163,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 customSettingsPanel.hidden = !custom;
                 numbersModeLabel.classList.toggle("active", !custom);
                 customModeLabel.classList.toggle("active", custom);
-                modeBadge.textContent = custom ? "Custom Choices" : "Numbers";
+                const list = currentCustomList();
+                const className = selectedClassName();
+                modeBadge.textContent = custom ? (list ? list.name : "Custom Choices") : (className || "Numbers");
             }
 
             function parseInteger(value) {
@@ -2741,8 +3176,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             }
 
             function parseNumberEntries() {
-                const minimum = parseInteger(state.minimum);
-                const maximum = parseInteger(state.maximum);
+                const profile = currentNumberProfile();
+                const minimum = parseInteger(profile.minimum);
+                const maximum = parseInteger(profile.maximum);
                 if (minimum === null || maximum === null) {
                     return { entries: [], error: "Minimum and maximum must both be whole numbers.", warning: "" };
                 }
@@ -2755,7 +3191,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                     return { entries: [], error: `The number range can contain at most ${MAX_CHOICES} values before exclusions.`, warning: "" };
                 }
 
-                const tokens = state.exclusions.trim() ? state.exclusions.trim().split(/[\s,]+/).filter(Boolean) : [];
+                const tokens = profile.exclusions.trim() ? profile.exclusions.trim().split(/[\s,]+/).filter(Boolean) : [];
                 const parsedExclusions = [];
                 const invalidTokens = [];
                 tokens.forEach(token => {
@@ -2782,7 +3218,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             }
 
             function parseCustomEntries() {
-                const choices = state.customChoices
+                const list = currentCustomList();
+                const choices = (list ? list.choices : "")
                     .split(/\r?\n/)
                     .map(choice => choice.trim())
                     .filter(Boolean);
@@ -2854,11 +3291,17 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
             function readEntryControls() {
                 state.mode = modeToggle.checked ? "custom" : "numbers";
-                state.minimum = minimumInput.value;
-                state.maximum = maximumInput.value;
-                state.exclusions = exclusionsInput.value;
-                state.customChoices = customChoicesInput.value;
+                const profile = currentNumberProfile();
+                profile.minimum = minimumInput.value;
+                profile.maximum = maximumInput.value;
+                profile.exclusions = exclusionsInput.value;
+                const list = currentCustomList();
+                if (list) {
+                    list.name = customListNameInput.value.trim().slice(0, 60) || "Untitled list";
+                    list.choices = customChoicesInput.value;
+                }
                 saveState();
+                renderCustomListBank();
                 refreshWheel({ resetRound: true, clearSelection: true });
             }
 
@@ -3172,11 +3615,66 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 animationFrame = requestAnimationFrame(animate);
             }
 
-            [minimumInput, maximumInput, exclusionsInput, customChoicesInput].forEach(input => {
+            [minimumInput, maximumInput, exclusionsInput, customListNameInput, customChoicesInput].forEach(input => {
                 input.addEventListener("input", readEntryControls);
             });
 
             modeToggle.addEventListener("change", readEntryControls);
+            schoolSelect.addEventListener("change", () => {
+                state.selectedSchoolId = schoolSelect.value;
+                refreshSchoolControls();
+                syncNumberInputsFromProfile();
+                saveState();
+                refreshWheel({ resetRound: true, clearSelection: true });
+            });
+            classSelect.addEventListener("change", () => {
+                const school = selectedSchool();
+                if (school) state.selectedClassBySchool[school.id] = classSelect.value;
+                refreshSchoolControls();
+                syncNumberInputsFromProfile();
+                saveState();
+                refreshWheel({ resetRound: true, clearSelection: true });
+            });
+            useClassSizeButton.addEventListener("click", () => {
+                const count = classSizeFor();
+                if (!count) return;
+                const profile = currentNumberProfile();
+                profile.maximum = String(count);
+                syncNumberInputsFromProfile();
+                saveState();
+                refreshWheel({ resetRound: true, clearSelection: true });
+                numberValidation.textContent = `Maximum updated to the saved class size of ${count}.`;
+            });
+            addCustomListButton.addEventListener("click", () => {
+                if (state.customLists.length >= 50) {
+                    setValidation(customValidation, "You can save up to 50 custom lists.", "error");
+                    return;
+                }
+                const list = { id: makeId("list"), name: `List ${state.customLists.length + 1}`, choices: "" };
+                state.customLists.push(list);
+                state.selectedCustomListId = list.id;
+                saveState();
+                renderCustomListBank();
+                syncCustomEditor();
+                refreshWheel({ resetRound: true, clearSelection: true });
+                customListNameInput.focus();
+                customListNameInput.select();
+            });
+            deleteCustomListButton.addEventListener("click", () => {
+                const list = currentCustomList();
+                if (!list) return;
+                if (!window.confirm(`Delete the saved list “${list.name}”?`)) return;
+                const index = state.customLists.findIndex(item => item.id === list.id);
+                state.customLists.splice(index, 1);
+                if (!state.customLists.length) {
+                    state.customLists.push({ id: makeId("list"), name: "My choices", choices: "" });
+                }
+                state.selectedCustomListId = state.customLists[Math.min(index, state.customLists.length - 1)].id;
+                saveState();
+                renderCustomListBank();
+                syncCustomEditor();
+                refreshWheel({ resetRound: true, clearSelection: true });
+            });
             [removeAfterSpinInput, spinLengthInput, spinSoundInput, soundInput].forEach(input => {
                 input.addEventListener("change", readPreferenceControls);
             });
@@ -3246,18 +3744,9 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                 refreshWheel();
             });
 
-            clearCustomButton.addEventListener("click", () => {
-                if (!state.customChoices.trim()) return;
-                if (!window.confirm("Clear every custom choice?")) return;
-                state.customChoices = "";
-                customChoicesInput.value = "";
-                saveState();
-                refreshWheel({ resetRound: true, clearSelection: true });
-            });
-
             resetButton.addEventListener("click", () => {
-                if (!window.confirm("Reset Spinner Wheel to numbers 1–24 and clear all saved custom choices and applet settings?")) return;
-                state = { ...DEFAULT_STATE };
+                if (!window.confirm("Reset Spinner Wheel and delete all saved number overrides, custom lists, and applet settings?")) return;
+                state = normalizeState(DEFAULT_STATE);
                 removedEntryIds.clear();
                 syncControlsFromState();
                 saveState();
@@ -3267,8 +3756,8 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             });
 
             window.addEventListener("storage", event => {
-                if (event.key !== STORAGE_KEY) return;
-                state = loadState();
+                if (![STORAGE_KEY, SCHEDULER_STORAGE_KEY].includes(event.key)) return;
+                if (event.key === STORAGE_KEY) state = loadState();
                 removedEntryIds.clear();
                 syncControlsFromState();
                 refreshWheel({ resetRound: true, clearSelection: true });
@@ -3286,6 +3775,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             }
 
             syncControlsFromState();
+            saveState();
             refreshWheel({ resetRound: true });
             updatePresentationButton();
             window.setTimeout(resizeCanvas, 0);

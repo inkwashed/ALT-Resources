@@ -928,7 +928,14 @@ Redistribution, resale, commercial use, and distribution of modified versions re
 
         /* Schools: match Scheduler's applet-owned field and row patterns. */
         .textbook-section { margin-top: 12px; }
-        .dashboard-tabs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; margin-bottom: 14px; }
+        .dashboard-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; margin-bottom: 14px; }
+        .note-card { border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 76%, var(--accent-soft)); border-radius: 10px; padding: 14px; margin: 12px 0; min-width: 0; }
+        .note-card h3 { margin: 0 0 10px; overflow-wrap: anywhere; }
+        .note-line { white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1.5em; line-height: 1.7; }
+        .note-line.complete { text-decoration: line-through; color: var(--muted); }
+        .note-line .check-marker-icon { display: inline-block; vertical-align: middle; margin: 0 3px; color: var(--accent); }
+        .note-line input { vertical-align: middle; width: 18px; height: 18px; margin: 0 5px; accent-color: var(--accent); }
+        .note-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
         .dashboard-tab { min-height: 40px; padding: 8px; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); background: var(--surface); font-size: 12px; font-weight: 650; cursor: pointer; }
         .dashboard-tab.active { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
         .class-points-summary { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 10px; padding: 11px 13px; color: var(--text); background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 8px; }
@@ -1205,6 +1212,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                         <div class="dashboard-tabs" role="tablist" aria-label="Class tracking views">
                             <button type="button" id="dashboardTab-progress" class="dashboard-tab active" role="tab" aria-selected="true" aria-controls="dashboardPanel-progress" data-dashboard-tab="progress">Progress</button>
                             <button type="button" id="dashboardTab-points" class="dashboard-tab" role="tab" aria-selected="false" aria-controls="dashboardPanel-points" tabindex="-1" data-dashboard-tab="points">Points</button>
+                            <button type="button" id="dashboardTab-notes" class="dashboard-tab" role="tab" aria-selected="false" aria-controls="dashboardPanel-notes" tabindex="-1" data-dashboard-tab="notes">Notes</button>
                         </div>
                         <section id="dashboardPanel-progress" role="tabpanel" aria-labelledby="dashboardTab-progress">
                             <div class="tracker-heading"><h2 id="checklistHeading">Textbook Progress</h2><button type="button" id="clearProgressButton" class="button" hidden>Clear checks</button></div>
@@ -1216,6 +1224,19 @@ Redistribution, resale, commercial use, and distribution of modified versions re
                             <p class="settings-help">Points are saved separately for this class by student number. Audit totals combine adjustments made within a five-minute window. Set the student count in Settings → Schools.</p>
                             <div id="pointsRows"></div>
                             <p id="pointsStatus" class="status" role="status"></p>
+                        </section>
+                        <section id="dashboardPanel-notes" role="tabpanel" aria-labelledby="dashboardTab-notes" hidden>
+                            <div class="tracker-heading"><h2>Class notes</h2><button type="button" id="addNoteButton" class="button">＋ Add Note</button></div>
+                            <p class="settings-help">Quick reminders and to-do lists saved separately for each class.</p>
+                            <div id="notesList"></div>
+                            <form id="noteEditor" hidden>
+                                <h3 id="noteEditorHeading">Add note</h3>
+                                <label class="field"><span class="field-label">Title</span><input id="noteTitle" maxlength="120" required></label>
+                                <label class="field"><span class="field-label">Details</span><textarea id="noteBody" rows="6" maxlength="20000" aria-describedby="noteHelp"></textarea></label>
+                                <p id="noteHelp" class="settings-help">Use [] for a checkbox, [-] for a bullet, and [1], [2], etc. for circled numbers. Activity markers such as [G], [L], [ES], and [KS] work here too. Checked boxes appear as [x] when editing.</p>
+                                <div class="note-actions"><button class="button button-primary" type="submit">Save Note</button><button id="cancelNoteButton" class="button" type="button">Cancel</button></div>
+                            </form>
+                            <p id="notesStatus" class="status" role="status"></p>
                         </section>
                     </section>
                 </div>
@@ -7820,6 +7841,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         function readScheduler() { try { const value=JSON.parse(get(SCHEDULER_KEY)); if(value && value.version===3 && Array.isArray(value.schools)) { value.schools.forEach(school=>{ school.location=school.location||""; school.classes=Array.isArray(school.classes)?school.classes:[]; school.teachersByClass=school.teachersByClass&&typeof school.teachersByClass==="object"?school.teachersByClass:{}; school.studentCounts=school.studentCounts&&typeof school.studentCounts==="object"?school.studentCounts:{}; }); return value; } } catch(e) {} return {version:3,schools:clone(fallbackSchools),schedule:{},preferences:{selectedSchoolId:"school-1",selectedClassBySchool:{},theme:"ocean-blue"}}; }
         function readTracker() { try { const value=JSON.parse(get(TRACKER_KEY)); if(value && value.version===1 && Array.isArray(value.templates)) { const presetIds=new Set(TEXTBOOK_PRESETS.map(preset=>preset.id)); value.templates=[...clone(TEXTBOOK_PRESETS),...value.templates.filter(template=>template.source!=="preset"&&!presetIds.has(template.id))]; return value; } } catch(e) {} return blankTracker(); }
         let scheduler=readScheduler(), state=readTracker();
+        if(!state.notes || typeof state.notes!=="object" || Array.isArray(state.notes)) state.notes={};
         if(!state.points || typeof state.points!=="object" || Array.isArray(state.points)) state.points={};
         if(!state.pointAudit || typeof state.pointAudit!=="object" || Array.isArray(state.pointAudit)) state.pointAudit={};
         if(!state.expanded || typeof state.expanded!=="object" || Array.isArray(state.expanded)) state.expanded={};
@@ -7873,6 +7895,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             }
         }
         function renderDashboard(){
+            renderNotes();
             renderPoints();
             const school=scheduler.schools.find(s=>s.id===schoolSelect.value);
             document.getElementById("classHeading").textContent=school&&classSelect.value?school.name+" · "+classSelect.value:"Choose a class";
@@ -7913,7 +7936,7 @@ Redistribution, resale, commercial use, and distribution of modified versions re
         function renameTrackerClass(schoolId,oldName,newName){
             if(oldName===newName) return;
             const oldKey=schoolId+"::"+oldName, newKey=schoolId+"::"+newName;
-            [state.assignments,state.progress,state.points,state.pointAudit].forEach(collection=>{ if(Object.prototype.hasOwnProperty.call(collection,oldKey)){ collection[newKey]=collection[oldKey]; delete collection[oldKey]; } });
+            [state.assignments,state.progress,state.points,state.pointAudit,state.notes].forEach(collection=>{ if(Object.prototype.hasOwnProperty.call(collection,oldKey)){ collection[newKey]=collection[oldKey]; delete collection[oldKey]; } });
             const oldPrefix=oldKey+"::";
             Object.keys(state.expanded).filter(key=>key.startsWith(oldPrefix)).forEach(key=>{ state.expanded[newKey+key.slice(oldKey.length)]=state.expanded[key]; delete state.expanded[key]; });
             if(state.preferences.selectedSchoolId===schoolId&&state.preferences.selectedClass===oldName) state.preferences.selectedClass=newName;
@@ -7960,6 +7983,98 @@ Redistribution, resale, commercial use, and distribution of modified versions re
             if(current<0||!["ArrowLeft","ArrowRight","Home","End"].includes(event.key)) return;
             event.preventDefault(); const next=event.key==="Home"?0:event.key==="End"?dashboardTabs.length-1:(current+(event.key==="ArrowRight"?1:-1)+dashboardTabs.length)%dashboardTabs.length;
             showDashboardTab(dashboardTabs[next].dataset.dashboardTab); dashboardTabs[next].focus();
+        });
+
+        let noteEditingId=null, noteEditingClass=null;
+        function noteStatus(text){ document.getElementById("notesStatus").textContent=text; }
+        function persistNotes(){
+            const ok=set(TRACKER_KEY,state);
+            noteStatus(ok?"Notes saved.":"Could not save notes in this browser. Please back up your data.");
+            return ok;
+        }
+        function circledNumber(number){
+            if(number===0) return "⓪";
+            if(number<=20) return String.fromCodePoint(0x2460+number-1);
+            if(number<=35) return String.fromCodePoint(0x3251+number-21);
+            if(number<=50) return String.fromCodePoint(0x32b1+number-36);
+            return String(number)+"\u20dd";
+        }
+        function openNoteEditor(note=null){
+            noteEditingId=note?.id||null; noteEditingClass=classKey();
+            document.getElementById("noteEditor").hidden=false;
+            document.getElementById("noteEditorHeading").textContent=note?"Edit note":"Add note";
+            document.getElementById("noteTitle").value=note?.title||"";
+            document.getElementById("noteBody").value=note?.body||"";
+            document.getElementById("noteTitle").focus();
+        }
+        function closeNoteEditor(){
+            document.getElementById("noteEditor").hidden=true;
+            noteEditingId=null; noteEditingClass=null;
+        }
+        function renderNotes(){
+            if(noteEditingClass && noteEditingClass!==classKey()) closeNoteEditor();
+            const root=document.getElementById("notesList"); root.replaceChildren();
+            const key=classKey(), available=!!classSelect.value;
+            document.getElementById("addNoteButton").disabled=!available;
+            const notes=Array.isArray(state.notes[key])?state.notes[key]:[];
+            if(!notes.length){ const empty=document.createElement("p"); empty.className="settings-help"; empty.textContent=available?"No notes yet. Add a reminder or to-do list.":"Choose a class to add notes."; root.append(empty); }
+            notes.forEach((note,index)=>{
+                const card=document.createElement("article"); card.className="note-card";
+                const title=document.createElement("h3"); title.textContent=note.title; card.append(title);
+                let offset=0;
+                String(note.body||"").split("\n").forEach(line=>{
+                    const row=document.createElement("div"); row.className="note-line";
+                    const pattern=/\[(x|X| |-)?\]|\[(\d{1,6})\]|\[(LS|LC|ST|ES|KS|G|W|L|R|S|P|D)\]/g;
+                    let last=0;
+                    for(const match of line.matchAll(pattern)){
+                        row.append(document.createTextNode(line.slice(last,match.index)));
+                        if(match[0]==="[-]") row.append(document.createTextNode("•"));
+                        else if(match[2]!==undefined) row.append(document.createTextNode(circledNumber(Number(match[2]))));
+                        else if(match[3]){
+                            const marker=CHECKLIST_MARKERS[match[3]], icon=document.createElementNS("http://www.w3.org/2000/svg","svg");
+                            icon.setAttribute("viewBox","0 0 24 24"); icon.setAttribute("class","check-marker-icon");
+                            icon.setAttribute("role","img"); icon.setAttribute("aria-label",marker.label);
+                            icon.innerHTML=marker.svg; row.append(icon);
+                        } else {
+                            const input=document.createElement("input"); input.type="checkbox"; input.checked=/x/i.test(match[0]);
+                            input.setAttribute("aria-label",note.title+": "+(line.slice(match.index+match[0].length).trim()||"Checklist item"));
+                            const position=offset+match.index, length=match[0].length;
+                            input.addEventListener("change",()=>{
+                                note.body=note.body.slice(0,position)+(input.checked?"[x]":"[]")+note.body.slice(position+length);
+                                persistNotes(); renderNotes();
+                                const boxes=card.querySelectorAll("input");
+                                const ordinal=[...boxes].indexOf(input);
+                                root.children[index]?.querySelectorAll("input")[ordinal]?.focus();
+                            });
+                            row.append(input);
+                        }
+                        last=match.index+match[0].length;
+                    }
+                    const lineBoxes=[...row.querySelectorAll('input[type="checkbox"]')];
+                    row.classList.toggle("complete",lineBoxes.length>0 && lineBoxes.every(box=>box.checked));
+                    row.append(document.createTextNode(line.slice(last))); card.append(row); offset+=line.length+1;
+                });
+                const actions=document.createElement("div"); actions.className="note-actions";
+                const action=(text,label,fn,disabled=false)=>{ const b=document.createElement("button"); b.type="button"; b.className="button"; b.textContent=text; b.setAttribute("aria-label",label+" "+note.title); b.disabled=disabled; b.addEventListener("click",fn); actions.append(b); };
+                action("↑","Move up",()=>{ [notes[index-1],notes[index]]=[notes[index],notes[index-1]]; persistNotes(); renderNotes(); },index===0);
+                action("↓","Move down",()=>{ [notes[index+1],notes[index]]=[notes[index],notes[index+1]]; persistNotes(); renderNotes(); },index===notes.length-1);
+                action("Edit","Edit",()=>openNoteEditor(note));
+                action("Delete","Delete",()=>{ if(!confirm('Delete note "'+note.title+'"?')) return; notes.splice(index,1); if(noteEditingId===note.id) closeNoteEditor(); persistNotes(); renderNotes(); document.getElementById("addNoteButton").focus(); });
+                card.append(actions); root.append(card);
+            });
+        }
+        document.getElementById("addNoteButton").addEventListener("click",()=>openNoteEditor());
+        document.getElementById("cancelNoteButton").addEventListener("click",()=>{ closeNoteEditor(); document.getElementById("addNoteButton").focus(); });
+        document.getElementById("noteEditor").addEventListener("submit",event=>{
+            event.preventDefault();
+            const title=document.getElementById("noteTitle").value.trim();
+            if(!title){ document.getElementById("noteTitle").focus(); return; }
+            if(noteEditingClass!==classKey()) return;
+            const notes=state.notes[classKey()] ||= [];
+            const note=notes.find(item=>item.id===noteEditingId);
+            const body=document.getElementById("noteBody").value;
+            if(note) Object.assign(note,{title,body}); else notes.push({id:makeId("note"),title,body});
+            if(persistNotes()){ closeNoteEditor(); renderNotes(); document.getElementById("addNoteButton").focus(); }
         });
         const POINT_AUDIT_WINDOW_MS=5*60*1000;
         function formatPointAudit(record){
