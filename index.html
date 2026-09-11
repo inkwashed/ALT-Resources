@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <!--
-Teacher Tools
+Teacher Tools Home
 Copyright © 2026. All rights reserved.
 
-Free for personal, classroom, and non-commercial educational use.
 -->
 <html lang="en">
 <head>
@@ -18,6 +17,7 @@ Free for personal, classroom, and non-commercial educational use.
     <script>
         (() => {
             const key = "teacherTools.sitePreferences.v1";
+            const languageKey = "teacherTools.siteLanguage.v1";
             const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
 
             try {
@@ -27,6 +27,15 @@ Free for personal, classroom, and non-commercial educational use.
             } catch (error) {
                 // Ocean Blue remains the safe default when storage is unavailable.
             }
+
+            try {
+                const saved = JSON.parse(localStorage.getItem(languageKey));
+                document.documentElement.lang = saved && ["en", "ja"].includes(saved.language)
+                    ? saved.language
+                    : "en";
+            } catch (error) {
+                document.documentElement.lang = "en";
+            }
         })();
     </script>
 <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:END -->
@@ -34,7 +43,7 @@ Free for personal, classroom, and non-commercial educational use.
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
          * Teacher Tools canonical theme tokens.
-         * This file is embedded into registered pages by the shared UI sync.
+         * This file is embedded into registered Workbench pages by the shared UI sync.
          * Published applets remain self-contained and never load this file at runtime.
          */
 
@@ -231,6 +240,7 @@ Free for personal, classroom, and non-commercial educational use.
             background: var(--accent-soft);
             border-color: var(--accent-border);
         }
+         .site-language-button,
          .site-data-button,
         .site-settings-button {
             width: 40px;
@@ -247,11 +257,14 @@ Free for personal, classroom, and non-commercial educational use.
             cursor: pointer;
             transition: color 180ms ease;
         }
-         .site-data-button:hover,
+         .site-language-button:hover,
+        .site-language-button[aria-expanded="true"],
+        .site-data-button:hover,
         .site-data-button[aria-expanded="true"],
         .site-settings-button:hover,
         .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
-         .site-data-button svg {
+         .site-language-button svg,
+        .site-data-button svg {
             width: 22px;
             height: 22px;
             fill: none;
@@ -296,6 +309,7 @@ Free for personal, classroom, and non-commercial educational use.
             stroke-linecap: round;
         }
          .site-tools-menu,
+         .site-language-panel,
         .site-data-panel,
         .site-theme-panel {
             position: absolute;
@@ -309,8 +323,9 @@ Free for personal, classroom, and non-commercial educational use.
         }
          .site-tools-menu { width: min(300px, calc(100vw - 32px)); padding: 7px; }
         .site-data-panel { z-index: 121; width: min(380px, calc(100vw - 32px)); padding: 13px; }
+        .site-language-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
         .site-theme-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
-        .site-tools-menu[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
+        .site-tools-menu[hidden], .site-language-panel[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
          .site-menu-label {
             padding: 6px 9px 5px;
             color: var(--muted);
@@ -371,7 +386,8 @@ Free for personal, classroom, and non-commercial educational use.
             line-height: 1.3;
         }
          .site-menu-status { color: var(--muted); font-size: 8.5px; font-weight: 700; }
-         .site-data-header,
+         .site-language-header,
+        .site-data-header,
         .site-theme-header {
             display: flex;
             align-items: center;
@@ -379,9 +395,11 @@ Free for personal, classroom, and non-commercial educational use.
             gap: 12px;
             margin-bottom: 3px;
         }
-         .site-data-title,
+         .site-language-title,
+        .site-data-title,
         .site-theme-title { margin: 0; font-size: 14px; }
-         .site-data-close,
+         .site-language-close,
+        .site-data-close,
         .site-theme-close,
         .close-button {
             width: 34px;
@@ -398,14 +416,40 @@ Free for personal, classroom, and non-commercial educational use.
             line-height: 1;
             cursor: pointer;
         }
-         .site-data-close:hover,
+         .site-language-close:hover,
+        .site-data-close:hover,
         .site-theme-close:hover,
         .close-button:hover { color: var(--text); background: var(--panel); }
-         .site-data-help,
+         .site-language-help,
+        .site-data-help,
         .site-theme-help {
             margin: 0 0 11px;
             color: var(--muted);
             font-size: 10.5px;
+            line-height: 1.45;
+        }
+        .site-language-label {
+            display: block;
+            margin: 0 0 5px;
+            color: var(--text);
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+        .site-language-select {
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 34px 8px 10px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 12px;
+        }
+        .site-language-select:hover { border-color: var(--accent-border); }
+        .site-language-note {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
             line-height: 1.45;
         }
          .site-data-summary {
@@ -814,6 +858,7 @@ Free for personal, classroom, and non-commercial educational use.
             .site-nav { display: none; }
             .site-mobile-toggle { display: inline-flex; }
             .site-tools-menu,
+            .site-language-panel,
             .site-data-panel,
             .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
             .site-menu-home { display: grid; }
@@ -1161,7 +1206,7 @@ Free for personal, classroom, and non-commercial educational use.
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
-            <a class="site-brand" href="/" aria-label="Teacher Tools home" aria-current="page">
+            <a class="site-brand" href="/" aria-label="Teacher Tools home" data-i18n-aria-label="nav.homeAria" aria-current="page">
                 <span class="site-brand-mark" aria-hidden="true">
                     <svg viewBox="0 0 28 28">
                         <path d="M5.5 7.5h17v15h-17z" />
@@ -1175,41 +1220,47 @@ Free for personal, classroom, and non-commercial educational use.
                 </span>
             </a>
              <div class="site-header-actions">
-                <nav class="site-nav" aria-label="Main navigation">
-                    <a class="site-nav-link" href="/" aria-current="page">Home</a>
+                <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="nav.mainAria">
+                    <a class="site-nav-link" href="/" data-i18n="nav.home" aria-current="page">Home</a>
                     <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
-                        Tools <span class="site-menu-chevron" aria-hidden="true"></span>
+                        <span data-i18n="nav.tools">Tools</span> <span class="site-menu-chevron" aria-hidden="true"></span>
                     </button>
                 </nav>
-                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore">
+                 <button type="button" id="siteLanguageButton" class="site-language-button" aria-label="Open language settings" aria-expanded="false" aria-controls="siteLanguagePanel" title="Language" data-i18n-aria-label="language.open" data-i18n-title="language.title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="8.5" />
+                        <path d="M3.8 12h16.4M12 3.5c2.2 2.3 3.3 5.1 3.3 8.5S14.2 18.2 12 20.5M12 3.5C9.8 5.8 8.7 8.6 8.7 12s1.1 6.2 3.3 8.5" />
+                    </svg>
+                </button>
+                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore" data-i18n-aria-label="backup.open" data-i18n-title="backup.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3" />
                     </svg>
                 </button>
-                <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
+                 <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance" data-i18n-aria-label="appearance.open" data-i18n-title="appearance.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
                     </svg>
                 </button>
-                <button type="button" id="siteHootieButton" class="site-data-button site-hootie-button" aria-label="Tuck Hootie away" aria-pressed="true" title="Tuck Hootie away" hidden>
+                 <button type="button" id="siteHootieButton" class="site-data-button site-hootie-button" aria-label="Tuck Hootie away" aria-pressed="true" title="Tuck Hootie away" hidden>
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <path d="M3 7h5l2 2v6l-2 2H3l-2-2V9Zm13 0h5l2 2v6l-2 2h-5l-2-2V9ZM10 11h4" />
                         <path d="M5 10h2v4H5zm12 0h2v4h-2z" fill="currentColor" stroke="none" />
                     </svg>
                 </button>
-                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">
+                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu" data-i18n-aria-label="nav.open">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 7h14M5 12h14M5 17h14" />
                     </svg>
                 </button>
             </div>
-             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
+             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" data-i18n-aria-label="nav.tools" hidden>
                 <a class="site-menu-item site-menu-home" href="/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">⌂</span>
-                    <span><span class="site-menu-name">Home</span><span class="site-menu-description">Teacher Tools overview and updates</span></span>
-                    <span class="site-menu-status">HERE</span>
+                    <span><span class="site-menu-name" data-i18n="nav.home">Home</span><span class="site-menu-description" data-i18n="nav.homeDescription">Teacher Tools overview and updates</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.HERE">HERE</span>
                 </a>
-                 <div class="site-menu-label">Available tools</div>
+                 <div class="site-menu-label" data-i18n="nav.available">Available tools</div>
                 <a class="site-menu-item" href="/scheduler/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1218,8 +1269,8 @@ Free for personal, classroom, and non-commercial educational use.
                             <path d="m10 17 2.2 2.2L18 14.7" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.scheduler">Class Scheduler</span><span class="site-menu-description" data-i18n="tool.schedulerDescription">Create calendar events from bell times</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/calendar/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1228,8 +1279,8 @@ Free for personal, classroom, and non-commercial educational use.
                             <path class="icon-fill" d="M11.2 12h5.6v5.25h-5.6z" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Calendar</span><span class="site-menu-description">Plan classes with school bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.calendar">Class Calendar</span><span class="site-menu-description" data-i18n="tool.calendarDescription">Plan classes with school bell times</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/spinner/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1239,8 +1290,8 @@ Free for personal, classroom, and non-commercial educational use.
                             <path d="M14 5v18M5 14h18M7.64 7.64l12.72 12.72M20.36 7.64 7.64 20.36" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.spinner">Spinner Wheel</span><span class="site-menu-description" data-i18n="tool.spinnerDescription">Choose a random number, name, or custom choice</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/timer/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1251,8 +1302,8 @@ Free for personal, classroom, and non-commercial educational use.
                             <path d="M14 12v4l3 1.8" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.timer">Classroom Timer</span><span class="site-menu-description" data-i18n="tool.timerDescription">Time classroom activities and games</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/tracker/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1261,8 +1312,8 @@ Free for personal, classroom, and non-commercial educational use.
                             <path d="m9.5 14 3 3 6-7" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.tracker">Class Tracker</span><span class="site-menu-description" data-i18n="tool.trackerDescription">Track lesson and textbook progress</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/tricks/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1272,11 +1323,11 @@ Free for personal, classroom, and non-commercial educational use.
                             <path class="icon-fill" d="m14 13 .8 1.8 2 .2-1.5 1.4.4 2-1.7-1-1.7 1 .4-2-1.5-1.4 2-.2Z" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Bag of Tricks</span><span class="site-menu-description">Flip, roll, and draw for classroom games</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.tricks">Bag of Tricks</span><span class="site-menu-description" data-i18n="tool.tricksDescription">Flip, roll, and draw for classroom games</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
 
-                 <div class="site-menu-label">Planned tools</div>
+                 <div class="site-menu-label" data-i18n="nav.planned">Planned tools</div>
                  <div class="site-menu-item" aria-disabled="true">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1284,51 +1335,64 @@ Free for personal, classroom, and non-commercial educational use.
                             <rect x="4.5" y="7.5" width="16" height="15" rx="2" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Google Slides Automator</span><span class="site-menu-description">Build lesson slides from common fields</span></span>
-                    <span class="site-menu-status">PLANNED</span>
+                    <span><span class="site-menu-name" data-i18n="tool.slides">Google Slides Automator</span><span class="site-menu-description" data-i18n="tool.slidesDescription">Build lesson slides from common fields</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.PLANNED">PLANNED</span>
                 </div>
             </nav>
              <section id="siteDataPanel" class="site-data-panel" role="dialog" aria-labelledby="siteDataTitle" hidden>
                 <div class="site-data-header">
-                    <h2 id="siteDataTitle" class="site-data-title">Backup & restore</h2>
-                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore">×</button>
+                    <h2 id="siteDataTitle" class="site-data-title" data-i18n="backup.title">Backup & restore</h2>
+                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore" data-i18n-aria-label="backup.close">×</button>
                 </div>
-                <p class="site-data-help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
-                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data"></ul>
+                <p class="site-data-help" data-i18n="backup.help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
+                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data" data-i18n-aria-label="backup.summaryAria"></ul>
                 <div class="site-data-actions">
-                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary">Export all data</button>
-                    <button type="button" id="siteDataImportButton" class="site-data-action">Import backup</button>
+                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary" data-i18n="backup.exportAll">Export all data</button>
+                    <button type="button" id="siteDataImportButton" class="site-data-action" data-i18n="backup.import">Import backup</button>
                 </div>
                 <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
-                <p class="site-data-note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
+                <p class="site-data-note" data-i18n="backup.note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
                 <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+            </section>
+             <section id="siteLanguagePanel" class="site-language-panel" role="dialog" aria-labelledby="siteLanguageTitle" hidden>
+                <div class="site-language-header">
+                    <h2 id="siteLanguageTitle" class="site-language-title" data-i18n="language.title">Language</h2>
+                    <button type="button" id="siteLanguageCloseButton" class="site-language-close" aria-label="Close language settings" data-i18n-aria-label="language.close">×</button>
+                </div>
+                <p class="site-language-help" data-i18n="language.help">Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.</p>
+                <label class="site-language-label" for="siteLanguageChoice" data-i18n="language.label">Display language</label>
+                <select id="siteLanguageChoice" class="site-language-select">
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
+                </select>
+                <p class="site-language-note" data-i18n="language.progress">English and Japanese are available across all current Teacher Tools pages.</p>
             </section>
              <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
                 <div class="site-theme-header">
-                    <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
-                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings">×</button>
+                    <h2 id="siteThemeTitle" class="site-theme-title" data-i18n="appearance.title">Appearance</h2>
+                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings" data-i18n-aria-label="appearance.close">×</button>
                 </div>
-                <p class="site-theme-help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
-                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme">
+                <p class="site-theme-help" data-i18n="appearance.help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
+                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme" data-i18n-aria-label="appearance.groupAria">
                     <label class="site-theme-option" data-theme-option="ocean-blue">
                         <input type="radio" name="siteThemeChoice" value="ocean-blue">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Ocean Blue</span>
+                        <span class="site-theme-name" data-i18n="theme.oceanBlue">Ocean Blue</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="color-pop">
                         <input type="radio" name="siteThemeChoice" value="color-pop">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Color Pop</span>
+                        <span class="site-theme-name" data-i18n="theme.colorPop">Color Pop</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="pretty-in-pink">
                         <input type="radio" name="siteThemeChoice" value="pretty-in-pink">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Pretty in Pink</span>
+                        <span class="site-theme-name" data-i18n="theme.prettyInPink">Pretty in Pink</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="true-dark">
                         <input type="radio" name="siteThemeChoice" value="true-dark">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">True Dark</span>
+                        <span class="site-theme-name" data-i18n="theme.trueDark">True Dark</span>
                     </label>
                 </div>
             </section>
@@ -1339,17 +1403,17 @@ Free for personal, classroom, and non-commercial educational use.
     <main class="home-main">
         <div class="home-intro">
             <section class="welcome-panel">
-                <p class="welcome-kicker">Welcome to Teacher Tools</p>
-                <h1 class="welcome-title">Practical tools for ALTs and teachers.</h1>
-                <p class="welcome-copy">Simple browser-based utilities designed to make everyday planning and classroom work a little easier.</p>
-                <a class="primary-link" href="/scheduler/">Open Class Scheduler <span aria-hidden="true">→</span></a>
+                <p class="welcome-kicker" data-i18n="home.welcome">Welcome to Teacher Tools</p>
+                <h1 class="welcome-title" data-i18n="home.title">Practical tools for ALTs and teachers.</h1>
+                <p class="welcome-copy" data-i18n="home.intro">Simple browser-based utilities designed to make everyday planning and classroom work a little easier.</p>
+                <a class="primary-link" href="/scheduler/"><span data-i18n="home.openScheduler">Open Class Scheduler</span> <span aria-hidden="true">→</span></a>
             </section>
 
             <aside class="hootie-feature" aria-labelledby="hootieFeatureTitle">
-                <div class="hootie-feature-art" role="img" aria-label="Hootie the owl smiling excitedly"></div>
+                <div class="hootie-feature-art" role="img" aria-label="Hootie the owl smiling excitedly" data-i18n-aria-label="home.hootieAria"></div>
                 <div>
-                    <h2 id="hootieFeatureTitle" class="hootie-feature-title">Meet Hootie</h2>
-                    <p class="hootie-feature-copy">Your cheerful Teacher Tools helper is here with quick guidance, easy navigation, and a little encouragement while you work.</p>
+                    <h2 id="hootieFeatureTitle" class="hootie-feature-title" data-i18n="home.hootieTitle">Meet Hootie</h2>
+                    <p class="hootie-feature-copy" data-i18n="home.hootieCopy">Your cheerful Teacher Tools helper is here with quick guidance, easy navigation, and a little encouragement while you work.</p>
                 </div>
             </aside>
         </div>
@@ -1357,8 +1421,8 @@ Free for personal, classroom, and non-commercial educational use.
         <section class="home-section" aria-labelledby="toolsTitle">
             <div class="section-heading-row">
                 <div>
-                    <h2 id="toolsTitle" class="section-title">Available tools</h2>
-                    <p class="section-description">Open a tool or see what is currently being planned.</p>
+                    <h2 id="toolsTitle" class="section-title" data-i18n="home.toolsTitle">Available tools</h2>
+                    <p class="section-description" data-i18n="home.toolsDescription">Open a tool or see what is currently being planned.</p>
                 </div>
             </div>
 
@@ -1373,11 +1437,11 @@ Free for personal, classroom, and non-commercial educational use.
                     </div>
                     <div>
                         <div class="tool-name-row">
-                            <h3 class="tool-name">ALT Class Scheduler</h3>
-                            <span class="tool-status">Available</span>
+                            <h3 class="tool-name" data-i18n="home.schedulerName">ALT Class Scheduler</h3>
+                            <span class="tool-status" data-i18n="home.available">Available</span>
                         </div>
-                        <p class="tool-description">Create templated Google Calendar events using the real class schedules and bell times for multiple schools.</p>
-                        <a class="tool-link" href="/scheduler/">Open scheduler →</a>
+                        <p class="tool-description" data-i18n="home.schedulerDescription">Create templated Google Calendar events using the real class schedules and bell times for multiple schools.</p>
+                        <a class="tool-link" href="/scheduler/"><span data-i18n="home.schedulerLink">Open scheduler</span> →</a>
                     </div>
                 </article>
                 <article class="tool-entry available">
@@ -1387,9 +1451,9 @@ Free for personal, classroom, and non-commercial educational use.
                             <path class="icon-fill" d="M11.2 12h5.6v5.25h-5.6z" />
                         </svg>
                     </div>
-                    <div><div class="tool-name-row"><h3 class="tool-name">Class Calendar</h3><span class="tool-status">Available</span></div>
-                        <p class="tool-description">Plan classes with school bell times, colored working hours, and calendar exports.</p>
-                        <a class="tool-link" href="/calendar/">Open Class Calendar →</a>
+                    <div><div class="tool-name-row"><h3 class="tool-name" data-i18n="home.calendarName">Class Calendar</h3><span class="tool-status" data-i18n="home.available">Available</span></div>
+                        <p class="tool-description" data-i18n="home.calendarDescription">Plan classes with school bell times, colored working hours, and calendar exports.</p>
+                        <a class="tool-link" href="/calendar/"><span data-i18n="home.calendarLink">Open Class Calendar</span> →</a>
                     </div>
                 </article>
 
@@ -1404,11 +1468,11 @@ Free for personal, classroom, and non-commercial educational use.
                     </div>
                     <div>
                         <div class="tool-name-row">
-                            <h3 class="tool-name">Spinner Wheel</h3>
-                            <span class="tool-status">Available</span>
+                            <h3 class="tool-name" data-i18n="home.spinnerName">Spinner Wheel</h3>
+                            <span class="tool-status" data-i18n="home.available">Available</span>
                         </div>
-                        <p class="tool-description">Choose a random number, student name, or custom classroom choice with a visual wheel.</p>
-                        <a class="tool-link" href="/spinner/">Open Spinner Wheel →</a>
+                        <p class="tool-description" data-i18n="home.spinnerDescription">Choose a random number, student name, or custom classroom choice with a visual wheel.</p>
+                        <a class="tool-link" href="/spinner/"><span data-i18n="home.spinnerLink">Open Spinner Wheel</span> →</a>
                     </div>
                 </article>
 
@@ -1423,11 +1487,11 @@ Free for personal, classroom, and non-commercial educational use.
                     </div>
                     <div>
                         <div class="tool-name-row">
-                            <h3 class="tool-name">Classroom Timer</h3>
-                            <span class="tool-status">Available</span>
+                            <h3 class="tool-name" data-i18n="home.timerName">Classroom Timer</h3>
+                            <span class="tool-status" data-i18n="home.available">Available</span>
                         </div>
-                        <p class="tool-description">Run accurate classroom countdowns and a stopwatch, with quick durations, saved presets, finish alerts, and a presentation view.</p>
-                        <a class="tool-link" href="/timer/">Open Classroom Timer →</a>
+                        <p class="tool-description" data-i18n="home.timerDescription">Run accurate classroom countdowns and a stopwatch, with quick durations, saved presets, finish alerts, and a presentation view.</p>
+                        <a class="tool-link" href="/timer/"><span data-i18n="home.timerLink">Open Classroom Timer</span> →</a>
                     </div>
                 </article>
 
@@ -1440,11 +1504,11 @@ Free for personal, classroom, and non-commercial educational use.
                     </div>
                     <div>
                         <div class="tool-name-row">
-                            <h3 class="tool-name">Class Tracker</h3>
-                            <span class="tool-status">Available</span>
+                            <h3 class="tool-name" data-i18n="home.trackerName">Class Tracker</h3>
+                            <span class="tool-status" data-i18n="home.available">Available</span>
                         </div>
-                        <p class="tool-description">Track each class through reusable lesson and textbook checklists, with shared Scheduler schools and classes.</p>
-                        <a class="tool-link" href="/tracker/">Open Class Tracker →</a>
+                        <p class="tool-description" data-i18n="home.trackerDescription">Track each class through reusable lesson and textbook checklists, with shared Scheduler schools and classes.</p>
+                        <a class="tool-link" href="/tracker/"><span data-i18n="home.trackerLink">Open Class Tracker</span> →</a>
                     </div>
                 </article>
 
@@ -1458,11 +1522,11 @@ Free for personal, classroom, and non-commercial educational use.
                     </div>
                     <div>
                         <div class="tool-name-row">
-                            <h3 class="tool-name">Bag of Tricks</h3>
-                            <span class="tool-status">Available</span>
+                            <h3 class="tool-name" data-i18n="home.tricksName">Bag of Tricks</h3>
+                            <span class="tool-status" data-i18n="home.available">Available</span>
                         </div>
-                        <p class="tool-description">Flip a coin, roll one or two dice, or draw from a shuffled 52-card deck for classroom games and activities.</p>
-                        <a class="tool-link" href="/tricks/">Open Bag of Tricks →</a>
+                        <p class="tool-description" data-i18n="home.tricksDescription">Flip a coin, roll one or two dice, or draw from a shuffled 52-card deck for classroom games and activities.</p>
+                        <a class="tool-link" href="/tricks/"><span data-i18n="home.tricksLink">Open Bag of Tricks</span> →</a>
                     </div>
                 </article>
 
@@ -1475,10 +1539,10 @@ Free for personal, classroom, and non-commercial educational use.
                     </div>
                     <div>
                         <div class="tool-name-row">
-                            <h3 class="tool-name">Google Slides Automator</h3>
-                            <span class="tool-status">Planned</span>
+                            <h3 class="tool-name" data-i18n="home.slidesName">Google Slides Automator</h3>
+                            <span class="tool-status" data-i18n="home.planned">Planned</span>
                         </div>
-                        <p class="tool-description">Enter common lesson fields such as Today’s Goals and Target Language Structure, then generate a starter Google Slides presentation from a reusable template.</p>
+                        <p class="tool-description" data-i18n="home.slidesDescription">Enter common lesson fields such as Today’s Goals and Target Language Structure, then generate a starter Google Slides presentation from a reusable template.</p>
                     </div>
                 </article>
             </div>
@@ -1487,119 +1551,124 @@ Free for personal, classroom, and non-commercial educational use.
         <section class="home-section" aria-labelledby="updatesTitle">
             <div class="section-heading-row">
                 <div>
-                    <h2 id="updatesTitle" class="section-title">Latest updates</h2>
-                    <p class="section-description">Release notes and noteworthy changes, newest first.</p>
+                    <h2 id="updatesTitle" class="section-title" data-i18n="home.updatesTitle">Latest updates</h2>
+                    <p class="section-description" data-i18n="home.updatesDescription">Release notes and noteworthy changes, newest first.</p>
                 </div>
             </div>
 
             <div class="updates-panel">
                 <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-11">September 11, 2026</time><span class="update-version">v0.6</span></div>
-                    <div><h3 class="update-title">A clearer Class Calendar</h3><p class="update-copy">Spot overlapping events with warning icons and see which lessons have notes. Period cards are now more compact, Custom events keep their details, and aligned controls and inline Custom Days leave more room for your calendar.</p><a class="update-link" href="/calendar/">Open Class Calendar →</a></div>
+                    <div class="update-date"><time datetime="2026-09-12" data-i18n="home.dateSep12">September 12, 2026</time><span class="update-version" data-i18n="home.siteVersion">Site</span></div>
+                    <div><h3 class="update-title" data-i18n="home.updateLanguageTitle">Teacher Tools in English or Japanese</h3><p class="update-copy" data-i18n="home.updateLanguageCopy">Use the globe button in the header to switch every current Teacher Tools page between English and Japanese. Your school names, class names, notes, lists, presets, and imported content stay exactly as you entered them.</p></div>
                 </article>
 
                 <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-11">September 11, 2026</time><span class="update-version">v0.5</span></div>
-                    <div><h3 class="update-title">Class Calendar v0.5</h3><p class="update-copy">Added irregular lunch times and exports across all dates matching your filters. Refined working-hour shading, kept event theme colors consistent, and made preset period times clearer.</p><a class="update-link" href="/calendar/">Open Class Calendar →</a></div>
+                    <div class="update-date"><time datetime="2026-09-11" data-i18n="home.dateSep11">September 11, 2026</time><span class="update-version">v0.6</span></div>
+                    <div><h3 class="update-title" data-i18n="home.update06Title">A clearer Class Calendar</h3><p class="update-copy" data-i18n="home.update06Copy">Spot overlapping events with warning icons and see which lessons have notes. Period cards are now more compact, Custom events keep their details, and aligned controls and inline Custom Days leave more room for your calendar.</p><a class="update-link" href="/calendar/"><span data-i18n="home.calendarLink">Open Class Calendar</span> →</a></div>
                 </article>
 
                 <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-10">September 10, 2026</time><span class="update-version">v0.4</span></div>
-                    <div><h3 class="update-title">Class Calendar is available</h3><p class="update-copy">Plan lessons from regular or irregular school periods, group events inside colored working hours, and export your calendar. Schools and classes stay shared with Scheduler and Tracker, with autosaving settings.</p><a class="update-link" href="/calendar/">Open Class Calendar →</a></div>
+                    <div class="update-date"><time datetime="2026-09-11" data-i18n="home.dateSep11">September 11, 2026</time><span class="update-version">v0.5</span></div>
+                    <div><h3 class="update-title" data-i18n="home.update05Title">Class Calendar v0.5</h3><p class="update-copy" data-i18n="home.update05Copy">Added irregular lunch times and exports across all dates matching your filters. Refined working-hour shading, kept event theme colors consistent, and made preset period times clearer.</p><a class="update-link" href="/calendar/"><span data-i18n="home.calendarLink">Open Class Calendar</span> →</a></div>
+                </article>
+
+                <article class="update-entry">
+                    <div class="update-date"><time datetime="2026-09-10" data-i18n="home.dateSep10">September 10, 2026</time><span class="update-version">v0.4</span></div>
+                    <div><h3 class="update-title" data-i18n="home.update04Title">Class Calendar is available</h3><p class="update-copy" data-i18n="home.update04Copy">Plan lessons from regular or irregular school periods, group events inside colored working hours, and export your calendar. Schools and classes stay shared with Scheduler and Tracker, with autosaving settings.</p><a class="update-link" href="/calendar/"><span data-i18n="home.calendarLink">Open Class Calendar</span> →</a></div>
                 </article>
 
                 <article class="update-entry">
                     <div class="update-date">
-                        <time datetime="2026-09-10">September 10, 2026</time>
+                        <time datetime="2026-09-10" data-i18n="home.dateSep10">September 10, 2026</time>
                         <span class="update-version">v1.2</span>
                     </div>
                     <div>
-                        <h3 class="update-title">Spinner Wheel v1.2</h3>
-                        <p class="update-copy">Added saved number sets for each Scheduler school and class, automatic class-size ranges, and a reusable bank of named custom lists.</p>
-                        <a class="update-link" href="/spinner/">Open Spinner Wheel →</a>
+                        <h3 class="update-title" data-i18n="home.updateSpinner12Title">Spinner Wheel v1.2</h3>
+                        <p class="update-copy" data-i18n="home.updateSpinner12Copy">Added saved number sets for each Scheduler school and class, automatic class-size ranges, and a reusable bank of named custom lists.</p>
+                        <a class="update-link" href="/spinner/"><span data-i18n="home.spinnerLink">Open Spinner Wheel</span> →</a>
                     </div>
                 </article>
 
                 <article class="update-entry">
                     <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
+                        <time datetime="2026-09" data-i18n="home.dateSep">September 2026</time>
                         <span class="update-version">v1.0</span>
                     </div>
                     <div>
-                        <h3 class="update-title">Bag of Tricks v1.0</h3>
-                        <p class="update-copy">Added quick Coin, Dice, and Cards modes with smooth result animations, one- or two-die rolls, a resettable 52-card deck, and recent-draw history.</p>
-                        <a class="update-link" href="/tricks/">Open Bag of Tricks →</a>
+                        <h3 class="update-title" data-i18n="home.updateTricks10Title">Bag of Tricks v1.0</h3>
+                        <p class="update-copy" data-i18n="home.updateTricks10Copy">Added quick Coin, Dice, and Cards modes with smooth result animations, one- or two-die rolls, a resettable 52-card deck, and recent-draw history.</p>
+                        <a class="update-link" href="/tricks/"><span data-i18n="home.tricksLink">Open Bag of Tricks</span> →</a>
                     </div>
                 </article>
 
                 <article class="update-entry">
                     <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
+                        <time datetime="2026-09" data-i18n="home.dateSep">September 2026</time>
                         <span class="update-version">v1.0</span>
                     </div>
                     <div>
-                        <h3 class="update-title">Class Tracker v1.0</h3>
-                        <p class="update-copy">Added reusable three-level lesson checklists, shared Scheduler schools and classes, custom textbook lists, progress controls, and locally saved Class Points.</p>
-                        <a class="update-link" href="/tracker/">Open Class Tracker →</a>
+                        <h3 class="update-title" data-i18n="home.updateTracker10Title">Class Tracker v1.0</h3>
+                        <p class="update-copy" data-i18n="home.updateTracker10Copy">Added reusable three-level lesson checklists, shared Scheduler schools and classes, custom textbook lists, progress controls, and locally saved Class Points.</p>
+                        <a class="update-link" href="/tracker/"><span data-i18n="home.trackerLink">Open Class Tracker</span> →</a>
                     </div>
                 </article>
 
                 <article class="update-entry">
                     <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
+                        <time datetime="2026-09" data-i18n="home.dateSep">September 2026</time>
                         <span class="update-version">v3.6</span>
                     </div>
                     <div>
-                        <h3 class="update-title">ALT Class Scheduler v3.6</h3>
-                        <p class="update-copy">Reorganized school, schedule, and period settings; added optional working hours, teacher names, and student counts; and improved class renaming, ordering, and sorting for shared Teacher Tools data.</p>
-                        <a class="update-link" href="/scheduler/">Open Class Scheduler →</a>
+                        <h3 class="update-title" data-i18n="home.updateScheduler36Title">ALT Class Scheduler v3.6</h3>
+                        <p class="update-copy" data-i18n="home.updateScheduler36Copy">Reorganized school, schedule, and period settings; added optional working hours, teacher names, and student counts; and improved class renaming, ordering, and sorting for shared Teacher Tools data.</p>
+                        <a class="update-link" href="/scheduler/"><span data-i18n="home.openScheduler">Open Class Scheduler</span> →</a>
                     </div>
                 </article>
 
                 <article class="update-entry">
                     <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
+                        <time datetime="2026-09" data-i18n="home.dateSep">September 2026</time>
                         <span class="update-version">v1.0</span>
                     </div>
                     <div>
-                        <h3 class="update-title">Classroom Timer v1.0</h3>
-                        <p class="update-copy">Added accurate countdown and stopwatch modes, quick and saved durations, optional finish sound, keyboard controls, and a responsive presentation view for classroom displays.</p>
-                        <a class="update-link" href="/timer/">Open Classroom Timer →</a>
+                        <h3 class="update-title" data-i18n="home.updateTimer10Title">Classroom Timer v1.0</h3>
+                        <p class="update-copy" data-i18n="home.updateTimer10Copy">Added accurate countdown and stopwatch modes, quick and saved durations, optional finish sound, keyboard controls, and a responsive presentation view for classroom displays.</p>
+                        <a class="update-link" href="/timer/"><span data-i18n="home.timerLink">Open Classroom Timer</span> →</a>
                     </div>
                 </article>
 
                 <article class="update-entry">
                     <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
-                        <span class="update-version">Site</span>
+                        <time datetime="2026-09" data-i18n="home.dateSep">September 2026</time>
+                        <span class="update-version" data-i18n="home.siteVersion">Site</span>
                     </div>
                     <div>
-                        <h3 class="update-title">One backup for all Teacher Tools</h3>
-                        <p class="update-copy">Backup and restore now lives in the shared header, making it possible to export recognized data from every Teacher Tools applet together in one local file.</p>
+                        <h3 class="update-title" data-i18n="home.updateBackupTitle">One backup for all Teacher Tools</h3>
+                        <p class="update-copy" data-i18n="home.updateBackupCopy">Backup and restore now lives in the shared header, making it possible to export recognized data from every Teacher Tools applet together in one local file.</p>
                     </div>
                 </article>
 
                 <article class="update-entry">
                     <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
+                        <time datetime="2026-09" data-i18n="home.dateSep">September 2026</time>
                         <span class="update-version">v1.1</span>
                     </div>
                     <div>
-                        <h3 class="update-title">Spinner Wheel v1.1</h3>
-                        <p class="update-copy">Improved wheel-label clarity and spinning sound, added a Suspenseful spin length, and introduced a responsive presentation mode with a larger classroom result display.</p>
-                        <a class="update-link" href="/spinner/">Open Spinner Wheel →</a>
+                        <h3 class="update-title" data-i18n="home.updateSpinner11Title">Spinner Wheel v1.1</h3>
+                        <p class="update-copy" data-i18n="home.updateSpinner11Copy">Improved wheel-label clarity and spinning sound, added a Suspenseful spin length, and introduced a responsive presentation mode with a larger classroom result display.</p>
+                        <a class="update-link" href="/spinner/"><span data-i18n="home.spinnerLink">Open Spinner Wheel</span> →</a>
                     </div>
                 </article>
 
                 <article class="update-entry">
                     <div class="update-date">
-                        <time datetime="2026-09">September 2026</time>
+                        <time datetime="2026-09" data-i18n="home.dateSep">September 2026</time>
                         <span class="update-version">v3.5</span>
                     </div>
                     <div>
-                        <h3 class="update-title">ALT Class Scheduler v3.5</h3>
-                        <p class="update-copy">Updated the Scheduler to the current Teacher Tools interface, streamlined appearance controls, and improved responsive, keyboard, and touch behavior while preserving existing schedules and backups.</p>
-                        <a class="update-link" href="/scheduler/">Open Class Scheduler →</a>
+                        <h3 class="update-title" data-i18n="home.updateScheduler35Title">ALT Class Scheduler v3.5</h3>
+                        <p class="update-copy" data-i18n="home.updateScheduler35Copy">Updated the Scheduler to the current Teacher Tools interface, streamlined appearance controls, and improved responsive, keyboard, and touch behavior while preserving existing schedules and backups.</p>
+                        <a class="update-link" href="/scheduler/"><span data-i18n="home.openScheduler">Open Class Scheduler</span> →</a>
                     </div>
                 </article>
             </div>
@@ -1607,8 +1676,8 @@ Free for personal, classroom, and non-commercial educational use.
     </main>
 
     <footer class="site-footer">
-        Teacher Tools · tools.jacobosinjapan.com<br>
-        Free practical tools for ALTs and teachers.
+        <span>Teacher Tools · tools.jacobosinjapan.com</span><br>
+        <span data-i18n="home.footer">Free practical tools for ALTs and teachers.</span>
     </footer>
 
     <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
@@ -1630,6 +1699,9 @@ Free for personal, classroom, and non-commercial educational use.
                 !["school","category"].every(k => typeof p[k] === "string")) return false;
             if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
                 p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
+            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
+            if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
+            if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
             const ids = new Set();
             return value.events.every(e => {
                 if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
@@ -1646,7 +1718,181 @@ Free for personal, classroom, and non-commercial educational use.
             "use strict";
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
+            const SITE_LANGUAGE_KEY = "teacherTools.siteLanguage.v1";
             const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const ALLOWED_LANGUAGES = ["en", "ja"];
+            const SHARED_TRANSLATIONS = {
+                en: {
+                    "nav.homeAria": "Teacher Tools home",
+                    "nav.mainAria": "Main navigation",
+                    "nav.home": "Home",
+                    "nav.tools": "Tools",
+                    "nav.open": "Open navigation",
+                    "nav.homeDescription": "Teacher Tools overview and updates",
+                    "nav.available": "Available tools",
+                    "nav.planned": "Planned tools",
+                    "nav.status.HERE": "HERE",
+                    "nav.status.OPEN": "OPEN",
+                    "nav.status.PLANNED": "PLANNED",
+                    "tool.scheduler": "Class Scheduler",
+                    "tool.schedulerDescription": "Create calendar events from bell times",
+                    "tool.calendar": "Class Calendar",
+                    "tool.calendarDescription": "Plan classes with school bell times",
+                    "tool.spinner": "Spinner Wheel",
+                    "tool.spinnerDescription": "Choose a random number, name, or custom choice",
+                    "tool.timer": "Classroom Timer",
+                    "tool.timerDescription": "Time classroom activities and games",
+                    "tool.tracker": "Class Tracker",
+                    "tool.trackerDescription": "Track lesson and textbook progress",
+                    "tool.tricks": "Bag of Tricks",
+                    "tool.tricksDescription": "Flip, roll, and draw for classroom games",
+                    "tool.slides": "Google Slides Automator",
+                    "tool.slidesDescription": "Build lesson slides from common fields",
+                    "language.open": "Open language settings",
+                    "language.title": "Language",
+                    "language.close": "Close language settings",
+                    "language.help": "Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.",
+                    "language.label": "Display language",
+                    "language.progress": "English and Japanese are available across all current Teacher Tools pages.",
+                    "backup.open": "Open Teacher Tools backup and restore",
+                    "backup.title": "Backup & restore",
+                    "backup.close": "Close backup and restore",
+                    "backup.help": "Choose which saved data to include in one local backup file. Nothing is uploaded.",
+                    "backup.summaryAria": "Saved Teacher Tools data",
+                    "backup.exportAll": "Export all data",
+                    "backup.import": "Import backup",
+                    "backup.note": "Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.",
+                    "backup.saved": "Saved",
+                    "backup.invalid": "Needs attention",
+                    "backup.missing": "No saved data",
+                    "backup.exportCount": "Export ({count}) {items}",
+                    "backup.item": "item",
+                    "backup.items": "items",
+                    "backup.select": "Select data to export",
+                    "backup.selectError": "Select at least one saved item to export.",
+                    "backup.exported": "Backup exported with {count} saved {areas}.",
+                    "backup.area": "area",
+                    "backup.areas": "areas",
+                    "backup.readError": "The backup file could not be read.",
+                    "backup.siteUnsupported": "This is not a supported Teacher Tools site backup.",
+                    "backup.invalidRecord": "{label} data in this backup is not valid.",
+                    "backup.noSupportedData": "This backup does not contain any supported Teacher Tools data.",
+                    "backup.spinnerInvalid": "The Spinner Wheel data in this backup is not valid.",
+                    "backup.schedulerV1Invalid": "The Version 1 Scheduler data in this backup is not valid.",
+                    "backup.schedulerVersionInvalid": "The Version {version} Scheduler data in this backup is not valid.",
+                    "backup.unsupported": "This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.",
+                    "backup.storageError": "Browser storage is unavailable or full.",
+                    "backup.tooLarge": "That file is too large to be a Teacher Tools backup.",
+                    "backup.confirm": "Import this {kind} backup? It will replace saved data for: {labels}. Other saved tool data will remain unchanged. This page will reload afterward.",
+                    "backup.kindOlder": "older single-tool",
+                    "backup.kindSite": "Teacher Tools",
+                    "backup.cancelled": "Import cancelled.",
+                    "backup.success": "Backup imported successfully. Reloading this page…",
+                    "backup.successAlert": "Teacher Tools backup imported successfully. This page will now reload.",
+                    "backup.importError": "The backup could not be imported.",
+                    "record.calendar": "Class Calendar",
+                    "record.appearance": "Site appearance",
+                    "record.language": "Site language",
+                    "record.scheduler": "ALT Class Scheduler",
+                    "record.spinner": "Spinner Wheel",
+                    "record.timer": "Classroom Timer",
+                    "record.tracker": "Class Tracker",
+                    "appearance.open": "Open site appearance settings",
+                    "appearance.title": "Appearance",
+                    "appearance.close": "Close appearance settings",
+                    "appearance.help": "This theme is shared by Home and every Teacher Tools applet in this browser.",
+                    "appearance.groupAria": "Site color theme",
+                    "theme.oceanBlue": "Ocean Blue",
+                    "theme.colorPop": "Color Pop",
+                    "theme.prettyInPink": "Pretty in Pink",
+                    "theme.trueDark": "True Dark"
+                },
+                ja: {
+                    "nav.homeAria": "Teacher Tools ホーム",
+                    "nav.mainAria": "メインナビゲーション",
+                    "nav.home": "ホーム",
+                    "nav.tools": "ツール",
+                    "nav.open": "ナビゲーションを開く",
+                    "nav.homeDescription": "Teacher Toolsの概要と更新情報",
+                    "nav.available": "利用できるツール",
+                    "nav.planned": "開発予定のツール",
+                    "nav.status.HERE": "表示中",
+                    "nav.status.OPEN": "開く",
+                    "nav.status.PLANNED": "予定",
+                    "tool.scheduler": "クラススケジューラー",
+                    "tool.schedulerDescription": "時間割からカレンダー予定を作成",
+                    "tool.calendar": "クラスカレンダー",
+                    "tool.calendarDescription": "学校の時間割に合わせて授業を計画",
+                    "tool.spinner": "スピナーホイール",
+                    "tool.spinnerDescription": "数字・名前・選択肢からランダムに決定",
+                    "tool.timer": "教室タイマー",
+                    "tool.timerDescription": "授業活動やゲームの時間を計測",
+                    "tool.tracker": "クラストラッカー",
+                    "tool.trackerDescription": "授業や教科書の進捗を記録",
+                    "tool.tricks": "お楽しみツール",
+                    "tool.tricksDescription": "コイン・サイコロ・カードを授業で活用",
+                    "tool.slides": "Googleスライド自動作成",
+                    "tool.slidesDescription": "よく使う項目から授業スライドを作成",
+                    "language.open": "言語設定を開く",
+                    "language.title": "言語",
+                    "language.close": "言語設定を閉じる",
+                    "language.help": "Teacher Toolsの画面に表示する言語を選択します。自分で入力した内容は翻訳も変更もされません。",
+                    "language.label": "表示言語",
+                    "language.progress": "現在のTeacher Tools全ページを英語と日本語で利用できます。",
+                    "backup.open": "Teacher Toolsのバックアップと復元を開く",
+                    "backup.title": "バックアップと復元",
+                    "backup.close": "バックアップと復元を閉じる",
+                    "backup.help": "保存済みデータを選び、1つのローカルバックアップファイルにまとめます。データはアップロードされません。",
+                    "backup.summaryAria": "保存済みのTeacher Toolsデータ",
+                    "backup.exportAll": "すべてのデータを書き出す",
+                    "backup.import": "バックアップを読み込む",
+                    "backup.note": "読み込むと、ファイルに含まれるツールの保存データが置き換わります。その他のツールのデータは変わりません。旧形式のスケジューラーとスピナーホイールのバックアップにも対応しています。",
+                    "backup.saved": "保存済み",
+                    "backup.invalid": "確認が必要",
+                    "backup.missing": "保存データなし",
+                    "backup.exportCount": "{count}件を書き出す",
+                    "backup.item": "件",
+                    "backup.items": "件",
+                    "backup.select": "書き出すデータを選択",
+                    "backup.selectError": "書き出す保存済みデータを1件以上選択してください。",
+                    "backup.exported": "保存済みデータ{count}件をバックアップに書き出しました。",
+                    "backup.area": "件",
+                    "backup.areas": "件",
+                    "backup.readError": "バックアップファイルを読み込めませんでした。",
+                    "backup.siteUnsupported": "対応しているTeacher Toolsのサイトバックアップではありません。",
+                    "backup.invalidRecord": "バックアップ内の「{label}」データが正しくありません。",
+                    "backup.noSupportedData": "対応しているTeacher Toolsのデータがバックアップに含まれていません。",
+                    "backup.spinnerInvalid": "バックアップ内のスピナーホイールデータが正しくありません。",
+                    "backup.schedulerV1Invalid": "バックアップ内のバージョン1のスケジューラーデータが正しくありません。",
+                    "backup.schedulerVersionInvalid": "バックアップ内のバージョン{version}のスケジューラーデータが正しくありません。",
+                    "backup.unsupported": "対応しているTeacher Tools、スケジューラー、またはスピナーホイールのバックアップではありません。",
+                    "backup.storageError": "ブラウザの保存領域を利用できないか、空き容量がありません。",
+                    "backup.tooLarge": "Teacher Toolsのバックアップとしてはファイルサイズが大きすぎます。",
+                    "backup.confirm": "この{kind}バックアップを読み込みますか？ 次の保存データが置き換わります：{labels}。その他のツールのデータは変わりません。完了後、このページを再読み込みします。",
+                    "backup.kindOlder": "旧形式の単一ツール",
+                    "backup.kindSite": "Teacher Tools",
+                    "backup.cancelled": "読み込みをキャンセルしました。",
+                    "backup.success": "バックアップを読み込みました。ページを再読み込みしています…",
+                    "backup.successAlert": "Teacher Toolsのバックアップを読み込みました。このページを再読み込みします。",
+                    "backup.importError": "バックアップを読み込めませんでした。",
+                    "record.calendar": "クラスカレンダー",
+                    "record.appearance": "サイトの外観",
+                    "record.language": "サイトの言語",
+                    "record.scheduler": "ALTクラススケジューラー",
+                    "record.spinner": "スピナーホイール",
+                    "record.timer": "教室タイマー",
+                    "record.tracker": "クラストラッカー",
+                    "appearance.open": "サイトの外観設定を開く",
+                    "appearance.title": "外観",
+                    "appearance.close": "外観設定を閉じる",
+                    "appearance.help": "このテーマは、このブラウザのホームとすべてのTeacher Toolsアプレットで共有されます。",
+                    "appearance.groupAria": "サイトのカラーテーマ",
+                    "theme.oceanBlue": "オーシャンブルー",
+                    "theme.colorPop": "カラーポップ",
+                    "theme.prettyInPink": "プリティ・イン・ピンク",
+                    "theme.trueDark": "トゥルーダーク"
+                }
+            };
             const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
             const SITE_BACKUP_SCHEMA_VERSION = 1;
             const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
@@ -1654,19 +1900,30 @@ Free for personal, classroom, and non-commercial educational use.
                 {
                     id: "class-calendar",
                     label: "Class Calendar",
+                    labelKey: "record.calendar",
                     storageKey: "teacherTools.classCalendar.state.v1",
                     validate: value => window.TeacherToolsCalendarValidate(value)
                 },
                 {
                     id: "appearance",
                     label: "Site appearance",
+                    labelKey: "record.appearance",
                     storageKey: SITE_PREFERENCES_KEY,
                     validate: value => isPlainObject(value) &&
                         value.version === 1 && ALLOWED_THEMES.includes(value.theme)
                 },
                 {
+                    id: "language",
+                    label: "Site language",
+                    labelKey: "record.language",
+                    storageKey: SITE_LANGUAGE_KEY,
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        ALLOWED_LANGUAGES.includes(value.language)
+                },
+                {
                     id: "scheduler",
                     label: "ALT Class Scheduler",
+                    labelKey: "record.scheduler",
                     storageKey: "classAutomatorData_v3",
                     validate: value => isPlainObject(value) && value.version === 3 &&
                         Array.isArray(value.schools) && isPlainObject(value.schedule) &&
@@ -1675,6 +1932,7 @@ Free for personal, classroom, and non-commercial educational use.
                 {
                     id: "spinner",
                     label: "Spinner Wheel",
+                    labelKey: "record.spinner",
                     storageKey: "teacherTools.spinnerWheel.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         ["numbers", "custom"].includes(value.mode) &&
@@ -1685,6 +1943,7 @@ Free for personal, classroom, and non-commercial educational use.
                 {
                     id: "timer",
                     label: "Classroom Timer",
+                    labelKey: "record.timer",
                     storageKey: "teacherTools.classroomTimer.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         typeof value.soundEnabled === "boolean" &&
@@ -1694,6 +1953,7 @@ Free for personal, classroom, and non-commercial educational use.
                 {
                     id: "class-tracker",
                     label: "Class Tracker",
+                    labelKey: "record.tracker",
                     storageKey: "teacherTools.classTracker.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         Array.isArray(value.templates) && isPlainObject(value.assignments) &&
@@ -1707,6 +1967,12 @@ Free for personal, classroom, and non-commercial educational use.
             let tooltipContent = null;
             let tooltipPinned = false;
             let tooltipFrame = 0;
+            let activeLanguage = "en";
+            const translationCatalogs = {
+                en: { ...SHARED_TRANSLATIONS.en },
+                ja: { ...SHARED_TRANSLATIONS.ja }
+            };
+            const translationDefaults = new WeakMap();
 
             function storageGet(key) {
                 try {
@@ -1738,6 +2004,79 @@ Free for personal, classroom, and non-commercial educational use.
                 return Boolean(value) && typeof value === "object" && !Array.isArray(value);
             }
 
+            function normalizeLanguage(value) {
+                return ALLOWED_LANGUAGES.includes(value) ? value : "en";
+            }
+
+            function languageFromStoredValue(value) {
+                if (!value) return null;
+                try {
+                    const saved = JSON.parse(value);
+                    return saved && ALLOWED_LANGUAGES.includes(saved.language) ? saved.language : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function interpolateTranslation(text, replacements = {}) {
+                return Object.entries(replacements).reduce(
+                    (result, [name, value]) => result.replaceAll(`{${name}}`, String(value)),
+                    text
+                );
+            }
+
+            function translate(key, fallback = key, replacements = {}) {
+                const localized = translationCatalogs[activeLanguage]?.[key];
+                const english = translationCatalogs.en?.[key];
+                return interpolateTranslation(localized ?? english ?? fallback, replacements);
+            }
+
+            function translationDefault(element, name, value) {
+                const defaults = translationDefaults.get(element) || {};
+                if (!(name in defaults)) defaults[name] = value;
+                translationDefaults.set(element, defaults);
+                return defaults[name];
+            }
+
+            function applyDocumentTranslations(root = document) {
+                root.querySelectorAll("[data-i18n]").forEach(element => {
+                    const fallback = translationDefault(element, "text", element.textContent);
+                    element.textContent = translate(element.dataset.i18n, fallback);
+                });
+                ["aria-label", "title", "placeholder"].forEach(attribute => {
+                    const dataName = `i18n${attribute.split("-").map(part => part[0].toUpperCase() + part.slice(1)).join("")}`;
+                    root.querySelectorAll(`[data-i18n-${attribute}]`).forEach(element => {
+                        const fallback = translationDefault(element, attribute, element.getAttribute(attribute) || "");
+                        element.setAttribute(attribute, translate(element.dataset[dataName], fallback));
+                    });
+                });
+            }
+
+            function applyGlobalLanguage(requestedLanguage, persist = true) {
+                activeLanguage = normalizeLanguage(requestedLanguage);
+                document.documentElement.lang = activeLanguage;
+                const choice = document.getElementById("siteLanguageChoice");
+                if (choice) choice.value = activeLanguage;
+                applyDocumentTranslations();
+                if (document.getElementById("siteDataSummary")) updateSiteDataSummary();
+                setSiteDataStatus("");
+                if (persist) {
+                    storageSet(SITE_LANGUAGE_KEY, JSON.stringify({ version: 1, language: activeLanguage }));
+                }
+                window.dispatchEvent(new CustomEvent("teacher-tools:languagechange", {
+                    detail: { language: activeLanguage }
+                }));
+            }
+
+            function registerTranslations(catalogs) {
+                for (const language of ALLOWED_LANGUAGES) {
+                    if (isPlainObject(catalogs?.[language])) {
+                        Object.assign(translationCatalogs[language], catalogs[language]);
+                    }
+                }
+                applyDocumentTranslations();
+            }
+
             function readSiteDataRecord(definition) {
                 const raw = storageGet(definition.storageKey);
                 if (raw === null) return { definition, state: "missing", value: null };
@@ -1754,6 +2093,10 @@ Free for personal, classroom, and non-commercial educational use.
 
             function siteDataSnapshot() {
                 return SITE_DATA_RECORDS.map(readSiteDataRecord);
+            }
+
+            function siteDataRecordLabel(definition) {
+                return translate(definition.labelKey, definition.label);
             }
 
             function setSiteDataStatus(message, error = false) {
@@ -1779,13 +2122,15 @@ Free for personal, classroom, and non-commercial educational use.
                     checkbox.checked = record.state === "saved";
                     checkbox.disabled = record.state !== "saved";
                     const label = document.createElement("span");
-                    label.textContent = record.definition.label;
+                    label.textContent = siteDataRecordLabel(record.definition);
                     selection.append(checkbox, label);
                     const state = document.createElement("span");
                     state.className = `site-data-summary-state ${record.state}`;
                     state.textContent = record.state === "saved"
-                        ? "Saved"
-                        : record.state === "invalid" ? "Needs attention" : "No saved data";
+                        ? translate("backup.saved", "Saved")
+                        : record.state === "invalid"
+                            ? translate("backup.invalid", "Needs attention")
+                            : translate("backup.missing", "No saved data");
                     item.append(selection, state);
                     return item;
                 }));
@@ -1807,10 +2152,13 @@ Free for personal, classroom, and non-commercial educational use.
                 const selectedCount = selectable.filter(checkbox => checkbox.checked).length;
                 exportButton.disabled = selectedCount === 0;
                 exportButton.textContent = selectedCount === selectable.length && selectable.length > 0
-                    ? "Export all data"
+                    ? translate("backup.exportAll", "Export all data")
                     : selectedCount > 0
-                        ? `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`
-                        : "Select data to export";
+                        ? translate("backup.exportCount", `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`, {
+                            count: selectedCount,
+                            items: translate(selectedCount === 1 ? "backup.item" : "backup.items", selectedCount === 1 ? "item" : "items")
+                        })
+                        : translate("backup.select", "Select data to export");
             }
 
             function localDateStamp(date = new Date()) {
@@ -1840,7 +2188,7 @@ Free for personal, classroom, and non-commercial educational use.
                     record.state === "saved" && selectedIds.has(record.definition.id)
                 );
                 if (!saved.length) {
-                    setSiteDataStatus("Select at least one saved item to export.", true);
+                    setSiteDataStatus(translate("backup.selectError", "Select at least one saved item to export."), true);
                     return;
                 }
 
@@ -1855,16 +2203,21 @@ Free for personal, classroom, and non-commercial educational use.
                 };
 
                 downloadJsonFile(payload, `teacher-tools-backup-${localDateStamp()}.json`);
-                setSiteDataStatus(
-                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`
-                );
+                setSiteDataStatus(translate(
+                    "backup.exported",
+                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`,
+                    {
+                        count: saved.length,
+                        areas: translate(saved.length === 1 ? "backup.area" : "backup.areas", saved.length === 1 ? "area" : "areas")
+                    }
+                ));
             }
 
             function readFileText(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.addEventListener("load", () => resolve(String(reader.result || "")));
-                    reader.addEventListener("error", () => reject(new Error("The backup file could not be read.")));
+                    reader.addEventListener("error", () => reject(new Error(translate("backup.readError", "The backup file could not be read."))));
                     reader.readAsText(file);
                 });
             }
@@ -1872,7 +2225,7 @@ Free for personal, classroom, and non-commercial educational use.
             function globalBackupPlan(payload) {
                 if (!isPlainObject(payload) || payload.app !== SITE_BACKUP_APP_ID ||
                     payload.schemaVersion !== SITE_BACKUP_SCHEMA_VERSION || !isPlainObject(payload.records)) {
-                    throw new Error("This is not a supported Teacher Tools site backup.");
+                    throw new Error(translate("backup.siteUnsupported", "This is not a supported Teacher Tools site backup."));
                 }
 
                 const changes = [];
@@ -1881,14 +2234,16 @@ Free for personal, classroom, and non-commercial educational use.
                     if (!Object.prototype.hasOwnProperty.call(payload.records, definition.id)) return;
                     const value = payload.records[definition.id];
                     if (!definition.validate(value)) {
-                        throw new Error(`${definition.label} data in this backup is not valid.`);
+                        throw new Error(translate("backup.invalidRecord", `${definition.label} data in this backup is not valid.`, {
+                            label: siteDataRecordLabel(definition)
+                        }));
                     }
                     changes.push({ key: definition.storageKey, value: JSON.stringify(value) });
-                    labels.push(definition.label);
+                    labels.push(siteDataRecordLabel(definition));
                 });
 
                 if (!changes.length) {
-                    throw new Error("This backup does not contain any supported Teacher Tools data.");
+                    throw new Error(translate("backup.noSupportedData", "This backup does not contain any supported Teacher Tools data."));
                 }
                 return { changes, labels, legacy: false };
             }
@@ -1899,11 +2254,11 @@ Free for personal, classroom, and non-commercial educational use.
 
                 const definition = SITE_DATA_RECORDS.find(record => record.id === "spinner");
                 if (!definition.validate(payload.state)) {
-                    throw new Error("The Spinner Wheel data in this backup is not valid.");
+                    throw new Error(translate("backup.spinnerInvalid", "The Spinner Wheel data in this backup is not valid."));
                 }
                 return {
                     changes: [{ key: definition.storageKey, value: JSON.stringify(payload.state) }],
-                    labels: [definition.label],
+                    labels: [siteDataRecordLabel(definition)],
                     legacy: true
                 };
             }
@@ -1913,7 +2268,7 @@ Free for personal, classroom, and non-commercial educational use.
 
                 if (payload.version === 1) {
                     if (!isPlainObject(payload.schedule)) {
-                        throw new Error("The Version 1 Scheduler data in this backup is not valid.");
+                        throw new Error(translate("backup.schedulerV1Invalid", "The Version 1 Scheduler data in this backup is not valid."));
                     }
                     return {
                         changes: [
@@ -1921,14 +2276,14 @@ Free for personal, classroom, and non-commercial educational use.
                             { key: "classAutomatorData_v2", value: null },
                             { key: "classAutomatorSchedule_v1", value: JSON.stringify(payload.schedule) }
                         ],
-                        labels: ["ALT Class Scheduler"],
+                        labels: [translate("record.scheduler", "ALT Class Scheduler")],
                         legacy: true
                     };
                 }
 
                 if (!Array.isArray(payload.schools) || !isPlainObject(payload.schedule) ||
                     (payload.preferences !== undefined && !isPlainObject(payload.preferences))) {
-                    throw new Error(`The Version ${payload.version} Scheduler data in this backup is not valid.`);
+                    throw new Error(translate("backup.schedulerVersionInvalid", `The Version ${payload.version} Scheduler data in this backup is not valid.`, { version: payload.version }));
                 }
 
                 const theme = isPlainObject(payload.preferences) &&
@@ -1938,7 +2293,9 @@ Free for personal, classroom, and non-commercial educational use.
                 const themeChange = theme
                     ? [{ key: SITE_PREFERENCES_KEY, value: JSON.stringify({ version: 1, theme }) }]
                     : [];
-                const labels = theme ? ["ALT Class Scheduler", "Site appearance"] : ["ALT Class Scheduler"];
+                const labels = theme
+                    ? [translate("record.scheduler", "ALT Class Scheduler"), translate("record.appearance", "Site appearance")]
+                    : [translate("record.scheduler", "ALT Class Scheduler")];
 
                 if (payload.version === 2) {
                     return {
@@ -1970,7 +2327,7 @@ Free for personal, classroom, and non-commercial educational use.
                 if (spinnerPlan) return spinnerPlan;
                 const schedulerPlan = schedulerBackupPlan(payload);
                 if (schedulerPlan) return schedulerPlan;
-                throw new Error("This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.");
+                throw new Error(translate("backup.unsupported", "This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup."));
             }
 
             function applyStorageChanges(changes) {
@@ -1984,7 +2341,7 @@ Free for personal, classroom, and non-commercial educational use.
                             ? storageRemove(change.key)
                             : storageSet(change.key, change.value);
                         if (!succeeded) {
-                            throw new Error("Browser storage is unavailable or full.");
+                            throw new Error(translate("backup.storageError", "Browser storage is unavailable or full."));
                         }
                         changed.push(change.key);
                     });
@@ -2001,29 +2358,30 @@ Free for personal, classroom, and non-commercial educational use.
             async function importSiteDataBackup(file) {
                 if (!file) return;
                 if (file.size > SITE_BACKUP_MAX_BYTES) {
-                    setSiteDataStatus("That file is too large to be a Teacher Tools backup.", true);
+                    setSiteDataStatus(translate("backup.tooLarge", "That file is too large to be a Teacher Tools backup."), true);
                     return;
                 }
 
                 try {
                     const plan = buildImportPlan(JSON.parse(await readFileText(file)));
-                    const confirmed = window.confirm(
-                        `Import this ${plan.legacy ? "older single-tool" : "Teacher Tools"} backup? ` +
-                        `It will replace saved data for: ${plan.labels.join(", ")}. ` +
-                        "Other saved tool data will remain unchanged. This page will reload afterward."
-                    );
+                    const kind = translate(plan.legacy ? "backup.kindOlder" : "backup.kindSite", plan.legacy ? "older single-tool" : "Teacher Tools");
+                    const confirmed = window.confirm(translate(
+                        "backup.confirm",
+                        `Import this ${kind} backup? It will replace saved data for: ${plan.labels.join(", ")}. Other saved tool data will remain unchanged. This page will reload afterward.`,
+                        { kind, labels: plan.labels.join(activeLanguage === "ja" ? "、" : ", ") }
+                    ));
                     if (!confirmed) {
-                        setSiteDataStatus("Import cancelled.");
+                        setSiteDataStatus(translate("backup.cancelled", "Import cancelled."));
                         return;
                     }
 
                     applyStorageChanges(plan.changes);
-                    setSiteDataStatus("Backup imported successfully. Reloading this page…");
-                    window.alert("Teacher Tools backup imported successfully. This page will now reload.");
+                    setSiteDataStatus(translate("backup.success", "Backup imported successfully. Reloading this page…"));
+                    window.alert(translate("backup.successAlert", "Teacher Tools backup imported successfully. This page will now reload."));
                     window.location.reload();
                 } catch (error) {
                     setSiteDataStatus(
-                        error instanceof Error ? error.message : "The backup could not be imported.",
+                        error instanceof Error ? error.message : translate("backup.importError", "The backup could not be imported."),
                         true
                     );
                 }
@@ -2234,8 +2592,10 @@ Free for personal, classroom, and non-commercial educational use.
 
             function closeSiteOverlays() {
                 const toolsMenu = document.getElementById("siteToolsMenu");
+                const languagePanel = document.getElementById("siteLanguagePanel");
                 const dataPanel = document.getElementById("siteDataPanel");
                 const themePanel = document.getElementById("siteThemePanel");
+                const languageButton = document.getElementById("siteLanguageButton");
                 const dataButton = document.getElementById("siteDataButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
@@ -2244,8 +2604,10 @@ Free for personal, classroom, and non-commercial educational use.
                 ].filter(Boolean);
 
                 if (toolsMenu) toolsMenu.hidden = true;
+                if (languagePanel) languagePanel.hidden = true;
                 if (dataPanel) dataPanel.hidden = true;
                 if (themePanel) themePanel.hidden = true;
+                if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                 if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                 if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                 menuButtons.forEach(button => button.setAttribute("aria-expanded", "false"));
@@ -2263,6 +2625,10 @@ Free for personal, classroom, and non-commercial educational use.
                 const dataButton = document.getElementById("siteDataButton");
                 const dataPanel = document.getElementById("siteDataPanel");
                 const dataCloseButton = document.getElementById("siteDataCloseButton");
+                const languageButton = document.getElementById("siteLanguageButton");
+                const languagePanel = document.getElementById("siteLanguagePanel");
+                const languageCloseButton = document.getElementById("siteLanguageCloseButton");
+                const languageChoice = document.getElementById("siteLanguageChoice");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const themePanel = document.getElementById("siteThemePanel");
                 const themeCloseButton = document.getElementById("siteThemeCloseButton");
@@ -2270,8 +2636,10 @@ Free for personal, classroom, and non-commercial educational use.
                 function setToolsMenu(open) {
                     if (!toolsMenu) return;
                     if (open) {
+                        if (languagePanel) languagePanel.hidden = true;
                         if (dataPanel) dataPanel.hidden = true;
                         if (themePanel) themePanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                         if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                     }
@@ -2283,7 +2651,9 @@ Free for personal, classroom, and non-commercial educational use.
                     if (!dataPanel || !dataButton) return;
                     if (open) {
                         setToolsMenu(false);
+                        if (languagePanel) languagePanel.hidden = true;
                         if (themePanel) themePanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                     }
                     dataPanel.hidden = !open;
@@ -2297,11 +2667,27 @@ Free for personal, classroom, and non-commercial educational use.
                     }
                 }
 
+                function setLanguagePanel(open) {
+                    if (!languagePanel || !languageButton) return;
+                    if (open) {
+                        setToolsMenu(false);
+                        if (dataPanel) dataPanel.hidden = true;
+                        if (themePanel) themePanel.hidden = true;
+                        if (dataButton) dataButton.setAttribute("aria-expanded", "false");
+                        if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    }
+                    languagePanel.hidden = !open;
+                    languageButton.setAttribute("aria-expanded", String(open));
+                    if (open && languageChoice) languageChoice.focus();
+                }
+
                 function setThemePanel(open) {
                     if (!themePanel || !settingsButton) return;
                     if (open) {
                         setToolsMenu(false);
+                        if (languagePanel) languagePanel.hidden = true;
                         if (dataPanel) dataPanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                     }
                     themePanel.hidden = !open;
@@ -2321,6 +2707,26 @@ Free for personal, classroom, and non-commercial educational use.
                 });
 
                 if (toolsMenu) toolsMenu.addEventListener("click", event => event.stopPropagation());
+
+                if (languageButton) {
+                    languageButton.addEventListener("click", event => {
+                        event.stopPropagation();
+                        setLanguagePanel(languagePanel ? languagePanel.hidden : false);
+                    });
+                }
+
+                if (languageCloseButton) {
+                    languageCloseButton.addEventListener("click", () => {
+                        setLanguagePanel(false);
+                        languageButton.focus();
+                    });
+                }
+
+                if (languageChoice) {
+                    languageChoice.addEventListener("change", () => applyGlobalLanguage(languageChoice.value));
+                }
+
+                if (languagePanel) languagePanel.addEventListener("click", event => event.stopPropagation());
 
                 if (dataButton) {
                     dataButton.addEventListener("click", event => {
@@ -2427,9 +2833,11 @@ Free for personal, classroom, and non-commercial educational use.
                 }
 
                 const dataPanel = document.getElementById("siteDataPanel");
+                const languagePanel = document.getElementById("siteLanguagePanel");
                 const themePanel = document.getElementById("siteThemePanel");
                 const toolsMenu = document.getElementById("siteToolsMenu");
                 const dataButton = document.getElementById("siteDataButton");
+                const languageButton = document.getElementById("siteLanguageButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
                     document.getElementById("siteToolsMenuButton"),
@@ -2439,6 +2847,12 @@ Free for personal, classroom, and non-commercial educational use.
                 if (dataPanel && !dataPanel.hidden) {
                     closeSiteOverlays();
                     if (dataButton) dataButton.focus();
+                    return;
+                }
+
+                if (languagePanel && !languagePanel.hidden) {
+                    closeSiteOverlays();
+                    if (languageButton) languageButton.focus();
                     return;
                 }
 
@@ -2456,22 +2870,35 @@ Free for personal, classroom, and non-commercial educational use.
             });
 
             window.addEventListener("storage", event => {
-                if (event.key !== SITE_PREFERENCES_KEY) return;
-                applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                if (event.key === SITE_PREFERENCES_KEY) {
+                    applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                }
+                if (event.key === SITE_LANGUAGE_KEY) {
+                    applyGlobalLanguage(languageFromStoredValue(event.newValue) || "en", false);
+                }
             });
 
             window.TeacherToolsUI = Object.freeze({
                 applyGlobalTheme,
+                applyGlobalLanguage,
                 closeModal,
                 openModal,
+                registerTranslations,
                 storageGet,
-                storageSet
+                storageSet,
+                translate
             });
 
             applyGlobalTheme(
                 themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY)) ||
                 document.documentElement.getAttribute("data-theme") ||
                 "ocean-blue",
+                false
+            );
+            applyGlobalLanguage(
+                languageFromStoredValue(storageGet(SITE_LANGUAGE_KEY)) ||
+                document.documentElement.lang ||
+                "en",
                 false
             );
             initSiteHeader();
@@ -2481,6 +2908,157 @@ Free for personal, classroom, and non-commercial educational use.
         })();
     </script>
 <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:END -->
+    <script>
+        (() => {
+            const catalogs = {
+                en: {
+                    "home.metaTitle": "Teacher Tools",
+                    "home.metaDescription": "Free browser-based classroom and planning tools for ALTs and teachers.",
+                    "home.welcome": "Welcome to Teacher Tools",
+                    "home.title": "Practical tools for ALTs and teachers.",
+                    "home.intro": "Simple browser-based utilities designed to make everyday planning and classroom work a little easier.",
+                    "home.openScheduler": "Open Class Scheduler",
+                    "home.hootieAria": "Hootie the owl smiling excitedly",
+                    "home.hootieTitle": "Meet Hootie",
+                    "home.hootieCopy": "Your cheerful Teacher Tools helper is here with quick guidance, easy navigation, and a little encouragement while you work.",
+                    "home.toolsTitle": "Available tools",
+                    "home.toolsDescription": "Open a tool or see what is currently being planned.",
+                    "home.available": "Available",
+                    "home.planned": "Planned",
+                    "home.schedulerName": "ALT Class Scheduler",
+                    "home.schedulerDescription": "Create templated Google Calendar events using the real class schedules and bell times for multiple schools.",
+                    "home.schedulerLink": "Open scheduler",
+                    "home.calendarName": "Class Calendar",
+                    "home.calendarDescription": "Plan classes with school bell times, colored working hours, and calendar exports.",
+                    "home.calendarLink": "Open Class Calendar",
+                    "home.spinnerName": "Spinner Wheel",
+                    "home.spinnerDescription": "Choose a random number, student name, or custom classroom choice with a visual wheel.",
+                    "home.spinnerLink": "Open Spinner Wheel",
+                    "home.timerName": "Classroom Timer",
+                    "home.timerDescription": "Run accurate classroom countdowns and a stopwatch, with quick durations, saved presets, finish alerts, and a presentation view.",
+                    "home.timerLink": "Open Classroom Timer",
+                    "home.trackerName": "Class Tracker",
+                    "home.trackerDescription": "Track each class through reusable lesson and textbook checklists, with shared Scheduler schools and classes.",
+                    "home.trackerLink": "Open Class Tracker",
+                    "home.tricksName": "Bag of Tricks",
+                    "home.tricksDescription": "Flip a coin, roll one or two dice, or draw from a shuffled 52-card deck for classroom games and activities.",
+                    "home.tricksLink": "Open Bag of Tricks",
+                    "home.slidesName": "Google Slides Automator",
+                    "home.slidesDescription": "Enter common lesson fields such as Today’s Goals and Target Language Structure, then generate a starter Google Slides presentation from a reusable template.",
+                    "home.updatesTitle": "Latest updates",
+                    "home.updatesDescription": "Release notes and noteworthy changes, newest first.",
+                    "home.dateSep12": "September 12, 2026",
+                    "home.dateSep11": "September 11, 2026",
+                    "home.dateSep10": "September 10, 2026",
+                    "home.dateSep": "September 2026",
+                    "home.siteVersion": "Site",
+                    "home.updateLanguageTitle": "Teacher Tools in English or Japanese",
+                    "home.updateLanguageCopy": "Use the globe button in the header to switch every current Teacher Tools page between English and Japanese. Your school names, class names, notes, lists, presets, and imported content stay exactly as you entered them.",
+                    "home.update06Title": "A clearer Class Calendar",
+                    "home.update06Copy": "Spot overlapping events with warning icons and see which lessons have notes. Period cards are now more compact, Custom events keep their details, and aligned controls and inline Custom Days leave more room for your calendar.",
+                    "home.update05Title": "Class Calendar v0.5",
+                    "home.update05Copy": "Added irregular lunch times and exports across all dates matching your filters. Refined working-hour shading, kept event theme colors consistent, and made preset period times clearer.",
+                    "home.update04Title": "Class Calendar is available",
+                    "home.update04Copy": "Plan lessons from regular or irregular school periods, group events inside colored working hours, and export your calendar. Schools and classes stay shared with Scheduler and Tracker, with autosaving settings.",
+                    "home.updateSpinner12Title": "Spinner Wheel v1.2",
+                    "home.updateSpinner12Copy": "Added saved number sets for each Scheduler school and class, automatic class-size ranges, and a reusable bank of named custom lists.",
+                    "home.updateTricks10Title": "Bag of Tricks v1.0",
+                    "home.updateTricks10Copy": "Added quick Coin, Dice, and Cards modes with smooth result animations, one- or two-die rolls, a resettable 52-card deck, and recent-draw history.",
+                    "home.updateTracker10Title": "Class Tracker v1.0",
+                    "home.updateTracker10Copy": "Added reusable three-level lesson checklists, shared Scheduler schools and classes, custom textbook lists, progress controls, and locally saved Class Points.",
+                    "home.updateScheduler36Title": "ALT Class Scheduler v3.6",
+                    "home.updateScheduler36Copy": "Reorganized school, schedule, and period settings; added optional working hours, teacher names, and student counts; and improved class renaming, ordering, and sorting for shared Teacher Tools data.",
+                    "home.updateTimer10Title": "Classroom Timer v1.0",
+                    "home.updateTimer10Copy": "Added accurate countdown and stopwatch modes, quick and saved durations, optional finish sound, keyboard controls, and a responsive presentation view for classroom displays.",
+                    "home.updateBackupTitle": "One backup for all Teacher Tools",
+                    "home.updateBackupCopy": "Backup and restore now lives in the shared header, making it possible to export recognized data from every Teacher Tools applet together in one local file.",
+                    "home.updateSpinner11Title": "Spinner Wheel v1.1",
+                    "home.updateSpinner11Copy": "Improved wheel-label clarity and spinning sound, added a Suspenseful spin length, and introduced a responsive presentation mode with a larger classroom result display.",
+                    "home.updateScheduler35Title": "ALT Class Scheduler v3.5",
+                    "home.updateScheduler35Copy": "Updated the Scheduler to the current Teacher Tools interface, streamlined appearance controls, and improved responsive, keyboard, and touch behavior while preserving existing schedules and backups.",
+                    "home.footer": "Free practical tools for ALTs and teachers."
+                },
+                ja: {
+                    "home.metaTitle": "Teacher Tools",
+                    "home.metaDescription": "ALTや先生のための、無料で使えるブラウザ版の授業・計画支援ツールです。",
+                    "home.welcome": "Teacher Toolsへようこそ",
+                    "home.title": "ALTと先生のための実用的なツール。",
+                    "home.intro": "日々の授業準備や教室での作業を少し楽にする、シンプルなブラウザツールです。",
+                    "home.openScheduler": "クラススケジューラーを開く",
+                    "home.hootieAria": "楽しそうに笑うフクロウのHootie",
+                    "home.hootieTitle": "Hootieのご紹介",
+                    "home.hootieCopy": "Teacher Toolsの元気なヘルパーです。使い方や移動をさっと手伝い、作業中にちょっとした応援を届けます。",
+                    "home.toolsTitle": "利用できるツール",
+                    "home.toolsDescription": "ツールを開くか、現在の開発予定を確認できます。",
+                    "home.available": "利用可能",
+                    "home.planned": "開発予定",
+                    "home.schedulerName": "ALTクラススケジューラー",
+                    "home.schedulerDescription": "複数の学校の実際の授業日程と時間割を使って、Googleカレンダーの予定をテンプレートから作成します。",
+                    "home.schedulerLink": "スケジューラーを開く",
+                    "home.calendarName": "クラスカレンダー",
+                    "home.calendarDescription": "学校の時間割、色分けした勤務時間、カレンダー書き出しを使って授業を計画します。",
+                    "home.calendarLink": "クラスカレンダーを開く",
+                    "home.spinnerName": "スピナーホイール",
+                    "home.spinnerDescription": "見やすいホイールで、数字・生徒名・自由な選択肢からランダムに選びます。",
+                    "home.spinnerLink": "スピナーホイールを開く",
+                    "home.timerName": "教室タイマー",
+                    "home.timerDescription": "よく使う時間、保存済みプリセット、終了通知、プレゼン表示に対応した正確なカウントダウンとストップウォッチです。",
+                    "home.timerLink": "教室タイマーを開く",
+                    "home.trackerName": "クラストラッカー",
+                    "home.trackerDescription": "スケジューラーと共有する学校・クラスを使い、再利用できる授業や教科書のチェックリストで進捗を記録します。",
+                    "home.trackerLink": "クラストラッカーを開く",
+                    "home.tricksName": "お楽しみツール",
+                    "home.tricksDescription": "授業や活動で、コインを投げたり、1個または2個のサイコロを振ったり、シャッフルした52枚のトランプからカードを引いたりできます。",
+                    "home.tricksLink": "お楽しみツールを開く",
+                    "home.slidesName": "Googleスライド自動作成",
+                    "home.slidesDescription": "「今日の目標」や「ターゲット表現」などの項目を入力し、再利用できるテンプレートからGoogleスライドのたたき台を作成します。",
+                    "home.updatesTitle": "最新情報",
+                    "home.updatesDescription": "リリース情報と主な変更点を新しい順に掲載しています。",
+                    "home.dateSep12": "2026年9月12日",
+                    "home.dateSep11": "2026年9月11日",
+                    "home.dateSep10": "2026年9月10日",
+                    "home.dateSep": "2026年9月",
+                    "home.siteVersion": "サイト",
+                    "home.updateLanguageTitle": "Teacher Toolsを英語・日本語で",
+                    "home.updateLanguageCopy": "ヘッダーの地球儀ボタンから、現在のTeacher Tools全ページを英語と日本語で切り替えられます。学校名、クラス名、メモ、リスト、プリセット、読み込んだ内容は、入力したまま変更されません。",
+                    "home.update06Title": "クラスカレンダーをさらに見やすく",
+                    "home.update06Copy": "重複する予定を警告アイコンで確認でき、授業メモの有無も見分けられるようになりました。時限カードをコンパクトにし、カスタム予定の詳細を保持しながら、操作欄とカスタム日数を整えてカレンダーの表示領域を広げました。",
+                    "home.update05Title": "クラスカレンダー v0.5",
+                    "home.update05Copy": "不規則な昼休み時間と、現在のフィルターに一致する全日程の書き出しに対応しました。勤務時間の背景表示、予定のテーマ色、プリセット時限の表示も改善しました。",
+                    "home.update04Title": "クラスカレンダーを公開",
+                    "home.update04Copy": "通常・不規則な学校時限から授業を計画し、色分けした勤務時間内に予定をまとめてカレンダーを書き出せます。学校とクラスはスケジューラーやトラッカーと共有され、設定は自動保存されます。",
+                    "home.updateSpinner12Title": "スピナーホイール v1.2",
+                    "home.updateSpinner12Copy": "スケジューラーの学校・クラスごとの数字セット、生徒数に基づく自動範囲、名前付きのカスタムリスト集を追加しました。",
+                    "home.updateTricks10Title": "お楽しみツール v1.0",
+                    "home.updateTricks10Copy": "コイン、サイコロ、カードの各モードを追加しました。結果アニメーション、1個・2個のサイコロ、リセット可能な52枚のトランプ、最近引いたカードの履歴に対応しています。",
+                    "home.updateTracker10Title": "クラストラッカー v1.0",
+                    "home.updateTracker10Copy": "再利用できる3階層の授業チェックリスト、スケジューラーと共有する学校・クラス、カスタム教科書リスト、進捗操作、端末内に保存されるクラスポイントを追加しました。",
+                    "home.updateScheduler36Title": "ALTクラススケジューラー v3.6",
+                    "home.updateScheduler36Copy": "学校・時間割・時限の設定を整理し、勤務時間、先生名、生徒数の任意項目を追加しました。Teacher Toolsで共有するクラス名の変更、並べ替え、ソートも改善しました。",
+                    "home.updateTimer10Title": "教室タイマー v1.0",
+                    "home.updateTimer10Copy": "正確なカウントダウンとストップウォッチ、よく使う時間と保存済み時間、任意の終了音、キーボード操作、教室画面向けのレスポンシブなプレゼン表示を追加しました。",
+                    "home.updateBackupTitle": "Teacher Toolsをまとめてバックアップ",
+                    "home.updateBackupCopy": "バックアップと復元を共通ヘッダーにまとめ、対応するすべてのTeacher Toolsアプレットのデータを1つのローカルファイルに書き出せるようにしました。",
+                    "home.updateSpinner11Title": "スピナーホイール v1.1",
+                    "home.updateSpinner11Copy": "ホイール上の文字と回転音を改善し、「じっくり」回転時間と、教室で結果を大きく表示するレスポンシブなプレゼンモードを追加しました。",
+                    "home.updateScheduler35Title": "ALTクラススケジューラー v3.5",
+                    "home.updateScheduler35Copy": "既存の時間割とバックアップを維持したまま、現在のTeacher Tools画面に更新し、外観設定とレスポンシブ・キーボード・タッチ操作を改善しました。",
+                    "home.footer": "ALTと先生のための無料で実用的なツール。"
+                }
+            };
+            window.TeacherToolsUI?.registerTranslations(catalogs);
+            const updateMetadata = () => {
+                document.title = window.TeacherToolsUI?.translate("home.metaTitle", "Teacher Tools") || "Teacher Tools";
+                const description = document.querySelector('meta[name="description"]');
+                if (description) description.content = window.TeacherToolsUI?.translate(
+                    "home.metaDescription",
+                    "Free browser-based classroom and planning tools for ALTs and teachers."
+                );
+            };
+            window.addEventListener("teacher-tools:languagechange", updateMetadata);
+            updateMetadata();
+        })();
+    </script>
 <!-- TEACHER-TOOLS:HOOTIE:START -->
     <script defer src="/assets/hootie/hootie.v1.js"></script>
 <!-- TEACHER-TOOLS:HOOTIE:END -->

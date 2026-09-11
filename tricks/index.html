@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <!--
-Bag of Tricks · Teacher Tools Workbench preview
+Bag of Tricks · Teacher Tools
 Copyright © 2026. All rights reserved.
 
-This preview is for project review and is not approved for publication.
 -->
 <html lang="en">
 <head>
@@ -20,6 +19,7 @@ This preview is for project review and is not approved for publication.
     <script>
         (() => {
             const key = "teacherTools.sitePreferences.v1";
+            const languageKey = "teacherTools.siteLanguage.v1";
             const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
 
             try {
@@ -29,6 +29,15 @@ This preview is for project review and is not approved for publication.
             } catch (error) {
                 // Ocean Blue remains the safe default when storage is unavailable.
             }
+
+            try {
+                const saved = JSON.parse(localStorage.getItem(languageKey));
+                document.documentElement.lang = saved && ["en", "ja"].includes(saved.language)
+                    ? saved.language
+                    : "en";
+            } catch (error) {
+                document.documentElement.lang = "en";
+            }
         })();
     </script>
 <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:END -->
@@ -37,7 +46,7 @@ This preview is for project review and is not approved for publication.
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
          * Teacher Tools canonical theme tokens.
-         * This file is embedded into registered pages by the shared UI sync.
+         * This file is embedded into registered Workbench pages by the shared UI sync.
          * Published applets remain self-contained and never load this file at runtime.
          */
 
@@ -234,6 +243,7 @@ This preview is for project review and is not approved for publication.
             background: var(--accent-soft);
             border-color: var(--accent-border);
         }
+         .site-language-button,
          .site-data-button,
         .site-settings-button {
             width: 40px;
@@ -250,11 +260,14 @@ This preview is for project review and is not approved for publication.
             cursor: pointer;
             transition: color 180ms ease;
         }
-         .site-data-button:hover,
+         .site-language-button:hover,
+        .site-language-button[aria-expanded="true"],
+        .site-data-button:hover,
         .site-data-button[aria-expanded="true"],
         .site-settings-button:hover,
         .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
-         .site-data-button svg {
+         .site-language-button svg,
+        .site-data-button svg {
             width: 22px;
             height: 22px;
             fill: none;
@@ -299,6 +312,7 @@ This preview is for project review and is not approved for publication.
             stroke-linecap: round;
         }
          .site-tools-menu,
+         .site-language-panel,
         .site-data-panel,
         .site-theme-panel {
             position: absolute;
@@ -312,8 +326,9 @@ This preview is for project review and is not approved for publication.
         }
          .site-tools-menu { width: min(300px, calc(100vw - 32px)); padding: 7px; }
         .site-data-panel { z-index: 121; width: min(380px, calc(100vw - 32px)); padding: 13px; }
+        .site-language-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
         .site-theme-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
-        .site-tools-menu[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
+        .site-tools-menu[hidden], .site-language-panel[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
          .site-menu-label {
             padding: 6px 9px 5px;
             color: var(--muted);
@@ -374,7 +389,8 @@ This preview is for project review and is not approved for publication.
             line-height: 1.3;
         }
          .site-menu-status { color: var(--muted); font-size: 8.5px; font-weight: 700; }
-         .site-data-header,
+         .site-language-header,
+        .site-data-header,
         .site-theme-header {
             display: flex;
             align-items: center;
@@ -382,9 +398,11 @@ This preview is for project review and is not approved for publication.
             gap: 12px;
             margin-bottom: 3px;
         }
-         .site-data-title,
+         .site-language-title,
+        .site-data-title,
         .site-theme-title { margin: 0; font-size: 14px; }
-         .site-data-close,
+         .site-language-close,
+        .site-data-close,
         .site-theme-close,
         .close-button {
             width: 34px;
@@ -401,14 +419,40 @@ This preview is for project review and is not approved for publication.
             line-height: 1;
             cursor: pointer;
         }
-         .site-data-close:hover,
+         .site-language-close:hover,
+        .site-data-close:hover,
         .site-theme-close:hover,
         .close-button:hover { color: var(--text); background: var(--panel); }
-         .site-data-help,
+         .site-language-help,
+        .site-data-help,
         .site-theme-help {
             margin: 0 0 11px;
             color: var(--muted);
             font-size: 10.5px;
+            line-height: 1.45;
+        }
+        .site-language-label {
+            display: block;
+            margin: 0 0 5px;
+            color: var(--text);
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+        .site-language-select {
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 34px 8px 10px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 12px;
+        }
+        .site-language-select:hover { border-color: var(--accent-border); }
+        .site-language-note {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
             line-height: 1.45;
         }
          .site-data-summary {
@@ -817,6 +861,7 @@ This preview is for project review and is not approved for publication.
             .site-nav { display: none; }
             .site-mobile-toggle { display: inline-flex; }
             .site-tools-menu,
+            .site-language-panel,
             .site-data-panel,
             .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
             .site-menu-home { display: grid; }
@@ -1212,7 +1257,7 @@ This preview is for project review and is not approved for publication.
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
-            <a class="site-brand" href="/" aria-label="Teacher Tools home">
+            <a class="site-brand" href="/" aria-label="Teacher Tools home" data-i18n-aria-label="nav.homeAria">
                 <span class="site-brand-mark" aria-hidden="true">
                     <svg viewBox="0 0 28 28">
                         <path d="M5.5 7.5h17v15h-17z" />
@@ -1226,18 +1271,24 @@ This preview is for project review and is not approved for publication.
                 </span>
             </a>
              <div class="site-header-actions">
-                <nav class="site-nav" aria-label="Main navigation">
-                    <a class="site-nav-link" href="/">Home</a>
+                <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="nav.mainAria">
+                    <a class="site-nav-link" href="/" data-i18n="nav.home">Home</a>
                     <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
-                        Tools <span class="site-menu-chevron" aria-hidden="true"></span>
+                        <span data-i18n="nav.tools">Tools</span> <span class="site-menu-chevron" aria-hidden="true"></span>
                     </button>
                 </nav>
-                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore">
+                 <button type="button" id="siteLanguageButton" class="site-language-button" aria-label="Open language settings" aria-expanded="false" aria-controls="siteLanguagePanel" title="Language" data-i18n-aria-label="language.open" data-i18n-title="language.title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="8.5" />
+                        <path d="M3.8 12h16.4M12 3.5c2.2 2.3 3.3 5.1 3.3 8.5S14.2 18.2 12 20.5M12 3.5C9.8 5.8 8.7 8.6 8.7 12s1.1 6.2 3.3 8.5" />
+                    </svg>
+                </button>
+                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore" data-i18n-aria-label="backup.open" data-i18n-title="backup.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3" />
                     </svg>
                 </button>
-                 <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
+                 <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance" data-i18n-aria-label="appearance.open" data-i18n-title="appearance.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
                     </svg>
@@ -1248,19 +1299,19 @@ This preview is for project review and is not approved for publication.
                         <path d="M5 10h2v4H5zm12 0h2v4h-2z" fill="currentColor" stroke="none" />
                     </svg>
                 </button>
-                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">
+                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu" data-i18n-aria-label="nav.open">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 7h14M5 12h14M5 17h14" />
                     </svg>
                 </button>
             </div>
-             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
+             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" data-i18n-aria-label="nav.tools" hidden>
                 <a class="site-menu-item site-menu-home" href="/">
                     <span class="site-menu-icon" aria-hidden="true">⌂</span>
-                    <span><span class="site-menu-name">Home</span><span class="site-menu-description">Teacher Tools overview and updates</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="nav.home">Home</span><span class="site-menu-description" data-i18n="nav.homeDescription">Teacher Tools overview and updates</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
-                 <div class="site-menu-label">Available tools</div>
+                 <div class="site-menu-label" data-i18n="nav.available">Available tools</div>
                 <a class="site-menu-item" href="/scheduler/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1269,8 +1320,8 @@ This preview is for project review and is not approved for publication.
                             <path d="m10 17 2.2 2.2L18 14.7" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.scheduler">Class Scheduler</span><span class="site-menu-description" data-i18n="tool.schedulerDescription">Create calendar events from bell times</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/calendar/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1279,8 +1330,8 @@ This preview is for project review and is not approved for publication.
                             <path class="icon-fill" d="M11.2 12h5.6v5.25h-5.6z" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Calendar</span><span class="site-menu-description">Plan classes with school bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.calendar">Class Calendar</span><span class="site-menu-description" data-i18n="tool.calendarDescription">Plan classes with school bell times</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/spinner/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1290,8 +1341,8 @@ This preview is for project review and is not approved for publication.
                             <path d="M14 5v18M5 14h18M7.64 7.64l12.72 12.72M20.36 7.64 7.64 20.36" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.spinner">Spinner Wheel</span><span class="site-menu-description" data-i18n="tool.spinnerDescription">Choose a random number, name, or custom choice</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/timer/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1302,8 +1353,8 @@ This preview is for project review and is not approved for publication.
                             <path d="M14 12v4l3 1.8" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.timer">Classroom Timer</span><span class="site-menu-description" data-i18n="tool.timerDescription">Time classroom activities and games</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/tracker/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1312,8 +1363,8 @@ This preview is for project review and is not approved for publication.
                             <path d="m9.5 14 3 3 6-7" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.tracker">Class Tracker</span><span class="site-menu-description" data-i18n="tool.trackerDescription">Track lesson and textbook progress</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/tricks/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1323,11 +1374,11 @@ This preview is for project review and is not approved for publication.
                             <path class="icon-fill" d="m14 13 .8 1.8 2 .2-1.5 1.4.4 2-1.7-1-1.7 1 .4-2-1.5-1.4 2-.2Z" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Bag of Tricks</span><span class="site-menu-description">Flip, roll, and draw for classroom games</span></span>
-                    <span class="site-menu-status">HERE</span>
+                    <span><span class="site-menu-name" data-i18n="tool.tricks">Bag of Tricks</span><span class="site-menu-description" data-i18n="tool.tricksDescription">Flip, roll, and draw for classroom games</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.HERE">HERE</span>
                 </a>
 
-                 <div class="site-menu-label">Planned tools</div>
+                 <div class="site-menu-label" data-i18n="nav.planned">Planned tools</div>
                  <div class="site-menu-item" aria-disabled="true">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1335,51 +1386,64 @@ This preview is for project review and is not approved for publication.
                             <rect x="4.5" y="7.5" width="16" height="15" rx="2" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Google Slides Automator</span><span class="site-menu-description">Build lesson slides from common fields</span></span>
-                    <span class="site-menu-status">PLANNED</span>
+                    <span><span class="site-menu-name" data-i18n="tool.slides">Google Slides Automator</span><span class="site-menu-description" data-i18n="tool.slidesDescription">Build lesson slides from common fields</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.PLANNED">PLANNED</span>
                 </div>
             </nav>
              <section id="siteDataPanel" class="site-data-panel" role="dialog" aria-labelledby="siteDataTitle" hidden>
                 <div class="site-data-header">
-                    <h2 id="siteDataTitle" class="site-data-title">Backup & restore</h2>
-                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore">×</button>
+                    <h2 id="siteDataTitle" class="site-data-title" data-i18n="backup.title">Backup & restore</h2>
+                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore" data-i18n-aria-label="backup.close">×</button>
                 </div>
-                <p class="site-data-help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
-                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data"></ul>
+                <p class="site-data-help" data-i18n="backup.help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
+                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data" data-i18n-aria-label="backup.summaryAria"></ul>
                 <div class="site-data-actions">
-                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary">Export all data</button>
-                    <button type="button" id="siteDataImportButton" class="site-data-action">Import backup</button>
+                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary" data-i18n="backup.exportAll">Export all data</button>
+                    <button type="button" id="siteDataImportButton" class="site-data-action" data-i18n="backup.import">Import backup</button>
                 </div>
                 <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
-                <p class="site-data-note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
+                <p class="site-data-note" data-i18n="backup.note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
                 <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+            </section>
+             <section id="siteLanguagePanel" class="site-language-panel" role="dialog" aria-labelledby="siteLanguageTitle" hidden>
+                <div class="site-language-header">
+                    <h2 id="siteLanguageTitle" class="site-language-title" data-i18n="language.title">Language</h2>
+                    <button type="button" id="siteLanguageCloseButton" class="site-language-close" aria-label="Close language settings" data-i18n-aria-label="language.close">×</button>
+                </div>
+                <p class="site-language-help" data-i18n="language.help">Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.</p>
+                <label class="site-language-label" for="siteLanguageChoice" data-i18n="language.label">Display language</label>
+                <select id="siteLanguageChoice" class="site-language-select">
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
+                </select>
+                <p class="site-language-note" data-i18n="language.progress">English and Japanese are available across all current Teacher Tools pages.</p>
             </section>
              <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
                 <div class="site-theme-header">
-                    <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
-                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings">×</button>
+                    <h2 id="siteThemeTitle" class="site-theme-title" data-i18n="appearance.title">Appearance</h2>
+                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings" data-i18n-aria-label="appearance.close">×</button>
                 </div>
-                <p class="site-theme-help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
-                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme">
+                <p class="site-theme-help" data-i18n="appearance.help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
+                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme" data-i18n-aria-label="appearance.groupAria">
                     <label class="site-theme-option" data-theme-option="ocean-blue">
                         <input type="radio" name="siteThemeChoice" value="ocean-blue">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Ocean Blue</span>
+                        <span class="site-theme-name" data-i18n="theme.oceanBlue">Ocean Blue</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="color-pop">
                         <input type="radio" name="siteThemeChoice" value="color-pop">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Color Pop</span>
+                        <span class="site-theme-name" data-i18n="theme.colorPop">Color Pop</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="pretty-in-pink">
                         <input type="radio" name="siteThemeChoice" value="pretty-in-pink">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Pretty in Pink</span>
+                        <span class="site-theme-name" data-i18n="theme.prettyInPink">Pretty in Pink</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="true-dark">
                         <input type="radio" name="siteThemeChoice" value="true-dark">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">True Dark</span>
+                        <span class="site-theme-name" data-i18n="theme.trueDark">True Dark</span>
                     </label>
                 </div>
             </section>
@@ -1391,63 +1455,63 @@ This preview is for project review and is not approved for publication.
         <div class="app-shell">
             <header class="app-header">
                 <div class="title-wrap">
-                    <h1 class="app-title">Bag of Tricks</h1>
+                    <h1 class="app-title" data-i18n="tricks.title">Bag of Tricks</h1>
                     <span class="version-badge">v1.0</span>
                 </div>
                 <div class="app-header-actions">
-                    <button type="button" class="icon-button" data-modal-open="helpModal" aria-label="Open getting started help" aria-haspopup="dialog" title="Getting started">?</button>
+                    <button type="button" class="icon-button" data-modal-open="helpModal" aria-label="Open getting started help" aria-haspopup="dialog" title="Getting started" data-i18n-aria-label="tricks.help.open" data-i18n-title="tricks.help.title">?</button>
                 </div>
             </header>
 
             <div class="app-main">
                 <section class="intro" aria-labelledby="introTitle">
-                    <h2 id="introTitle">A little randomness, right when you need it</h2>
-                    <p>Choose a mode, then flip, roll, or draw for a quick classroom result.</p>
+                    <h2 id="introTitle" data-i18n="tricks.intro.title">A little randomness, right when you need it</h2>
+                    <p data-i18n="tricks.intro.body">Choose a mode, then flip, roll, or draw for a quick classroom result.</p>
                 </section>
 
-                <div class="mode-tabs" role="tablist" aria-label="Bag of Tricks modes">
-                    <button type="button" id="coinTab" class="mode-tab" role="tab" aria-selected="true" aria-controls="coinPanel" tabindex="0">Coin</button>
-                    <button type="button" id="diceTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="dicePanel" tabindex="-1">Dice</button>
-                    <button type="button" id="cardsTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="cardsPanel" tabindex="-1">Cards</button>
+                <div class="mode-tabs" role="tablist" aria-label="Bag of Tricks modes" data-i18n-aria-label="tricks.mode.aria">
+                    <button type="button" id="coinTab" class="mode-tab" role="tab" aria-selected="true" aria-controls="coinPanel" tabindex="0" data-i18n="tricks.mode.coin">Coin</button>
+                    <button type="button" id="diceTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="dicePanel" tabindex="-1" data-i18n="tricks.mode.dice">Dice</button>
+                    <button type="button" id="cardsTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="cardsPanel" tabindex="-1" data-i18n="tricks.mode.cards">Cards</button>
                 </div>
 
                 <section id="coinPanel" class="mode-panel-content" role="tabpanel" aria-labelledby="coinTab">
-                    <h2 class="mode-heading">Flip a coin</h2>
-                    <p class="mode-copy">Make a quick two-way choice with an equal chance of Heads or Tails.</p>
+                    <h2 class="mode-heading" data-i18n="tricks.coin.title">Flip a coin</h2>
+                    <p class="mode-copy" data-i18n="tricks.coin.body">Make a quick two-way choice with an equal chance of Heads or Tails.</p>
                     <div class="result-stage">
                         <div id="coin" class="coin" aria-hidden="true">
-                            <div class="coin-face"><span class="coin-symbol">H</span><span class="coin-word">Heads</span></div>
-                            <div class="coin-face"><span class="coin-symbol">T</span><span class="coin-word">Tails</span></div>
+                            <div class="coin-face"><span class="coin-symbol" data-i18n="tricks.coin.headsSymbol">H</span><span class="coin-word" data-i18n="tricks.coin.heads">Heads</span></div>
+                            <div class="coin-face"><span class="coin-symbol" data-i18n="tricks.coin.tailsSymbol">T</span><span class="coin-word" data-i18n="tricks.coin.tails">Tails</span></div>
                         </div>
                     </div>
-                    <p id="coinResult" class="result-label">Ready to flip</p>
-                    <div class="button-row"><button type="button" id="flipButton" class="button button-primary">Flip coin</button></div>
+                    <p id="coinResult" class="result-label" data-i18n="tricks.coin.ready">Ready to flip</p>
+                    <div class="button-row"><button type="button" id="flipButton" class="button button-primary" data-i18n="tricks.coin.flip">Flip coin</button></div>
                 </section>
 
                 <section id="dicePanel" class="mode-panel-content" role="tabpanel" aria-labelledby="diceTab" hidden>
-                    <h2 class="mode-heading">Roll the dice</h2>
-                    <p class="mode-copy">Use one die for 1–6, or two dice for a total from 2–12.</p>
-                    <div class="dice-choice" role="radiogroup" aria-label="Number of dice">
-                        <label><input type="radio" name="diceCount" value="1" checked><span>One die</span></label>
-                        <label><input type="radio" name="diceCount" value="2"><span>Two dice</span></label>
+                    <h2 class="mode-heading" data-i18n="tricks.dice.title">Roll the dice</h2>
+                    <p class="mode-copy" data-i18n="tricks.dice.body">Use one die for 1–6, or two dice for a total from 2–12.</p>
+                    <div class="dice-choice" role="radiogroup" aria-label="Number of dice" data-i18n-aria-label="tricks.dice.countAria">
+                        <label><input type="radio" name="diceCount" value="1" checked><span data-i18n="tricks.dice.one">One die</span></label>
+                        <label><input type="radio" name="diceCount" value="2"><span data-i18n="tricks.dice.two">Two dice</span></label>
                     </div>
                     <div id="diceStage" class="result-stage dice-stage" aria-hidden="true"></div>
-                    <p id="diceResult" class="result-label">Ready to roll</p>
+                    <p id="diceResult" class="result-label" data-i18n="tricks.dice.ready">Ready to roll</p>
                     <div class="button-row"><button type="button" id="rollButton" class="button button-primary">Roll one die</button></div>
                 </section>
 
                 <section id="cardsPanel" class="mode-panel-content" role="tabpanel" aria-labelledby="cardsTab" hidden>
-                    <h2 class="mode-heading">Draw a card</h2>
-                    <p class="mode-copy">Draw from a standard 52-card deck without replacement.</p>
+                    <h2 class="mode-heading" data-i18n="tricks.cards.title">Draw a card</h2>
+                    <p class="mode-copy" data-i18n="tricks.cards.body">Draw from a standard 52-card deck without replacement.</p>
                     <div class="deck-status">
-                        <span>Most recent three draws</span>
+                        <span data-i18n="tricks.cards.recent">Most recent three draws</span>
                         <span id="deckCount" class="deck-count">52 cards remaining</span>
                     </div>
-                    <div id="cardsStage" class="result-stage cards-stage" aria-label="Recent card draws"></div>
-                    <p id="cardResult" class="result-label">Ready to draw</p>
+                    <div id="cardsStage" class="result-stage cards-stage" aria-label="Recent card draws" data-i18n-aria-label="tricks.cards.recentAria"></div>
+                    <p id="cardResult" class="result-label" data-i18n="tricks.cards.ready">Ready to draw</p>
                     <div class="button-row">
-                        <button type="button" id="drawButton" class="button button-primary">Draw card</button>
-                        <button type="button" id="shuffleButton" class="button button-secondary">Shuffle deck</button>
+                        <button type="button" id="drawButton" class="button button-primary" data-i18n="tricks.cards.draw">Draw card</button>
+                        <button type="button" id="shuffleButton" class="button button-secondary" data-i18n="tricks.cards.shuffle">Shuffle deck</button>
                     </div>
                 </section>
 
@@ -1455,8 +1519,8 @@ This preview is for project review and is not approved for publication.
             </div>
 
             <footer class="app-footer">
-                <div class="footer-version">Bag of Tricks · v1.0</div>
-                <div>Workbench preview · Random results stay on this device and disappear when the page is closed.</div>
+                <div class="footer-version" data-i18n="tricks.footer.version">Bag of Tricks · v1.0</div>
+                <div data-i18n="tricks.footer.note">Random results stay on this device and disappear when the page is closed.</div>
             </footer>
         </div>
     </main>
@@ -1464,18 +1528,18 @@ This preview is for project review and is not approved for publication.
     <div id="helpModal" class="modal-backdrop" data-shared-modal data-first-use-storage-key="teacherTools.bagOfTricks.tutorialSeen.v1" aria-hidden="true">
         <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle" aria-describedby="helpIntro">
             <header class="modal-header">
-                <h2 id="helpTitle" class="modal-title">Getting started</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close getting started help">×</button>
+                <h2 id="helpTitle" class="modal-title" data-i18n="tricks.help.title">Getting started</h2>
+                <button type="button" class="close-button" data-modal-close aria-label="Close getting started help" data-i18n-aria-label="tricks.help.close">×</button>
             </header>
             <div class="modal-content">
-                <p id="helpIntro" class="modal-intro">Bag of Tricks keeps quick random classroom tools together in one place.</p>
+                <p id="helpIntro" class="modal-intro" data-i18n="tricks.help.intro">Bag of Tricks keeps quick random classroom tools together in one place.</p>
                 <ol class="help-list">
-                    <li><span class="help-number" aria-hidden="true">1</span><div><strong>Choose a mode</strong><p>Switch between Coin, Dice, and Cards using the tabs at the top.</p></div></li>
-                    <li><span class="help-number" aria-hidden="true">2</span><div><strong>Run the randomizer</strong><p>Flip the coin, choose one or two dice and roll, or draw a card from the deck.</p></div></li>
-                    <li><span class="help-number" aria-hidden="true">3</span><div><strong>Reset the cards</strong><p>Cards are not returned after a draw. Shuffle the deck to restore all 52 cards and clear the recent draws.</p></div></li>
+                    <li><span class="help-number" aria-hidden="true">1</span><div><strong data-i18n="tricks.help.step1Title">Choose a mode</strong><p data-i18n="tricks.help.step1Body">Switch between Coin, Dice, and Cards using the tabs at the top.</p></div></li>
+                    <li><span class="help-number" aria-hidden="true">2</span><div><strong data-i18n="tricks.help.step2Title">Run the randomizer</strong><p data-i18n="tricks.help.step2Body">Flip the coin, choose one or two dice and roll, or draw a card from the deck.</p></div></li>
+                    <li><span class="help-number" aria-hidden="true">3</span><div><strong data-i18n="tricks.help.step3Title">Reset the cards</strong><p data-i18n="tricks.help.step3Body">Cards are not returned after a draw. Shuffle the deck to restore all 52 cards and clear the recent draws.</p></div></li>
                 </ol>
             </div>
-            <div class="modal-actions"><button type="button" class="button button-primary" data-modal-close>Start using Bag of Tricks</button></div>
+            <div class="modal-actions"><button type="button" class="button button-primary" data-modal-close data-i18n="tricks.help.start">Start using Bag of Tricks</button></div>
         </section>
     </div>
 
@@ -1498,6 +1562,9 @@ This preview is for project review and is not approved for publication.
                 !["school","category"].every(k => typeof p[k] === "string")) return false;
             if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
                 p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
+            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
+            if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
+            if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
             const ids = new Set();
             return value.events.every(e => {
                 if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
@@ -1514,7 +1581,181 @@ This preview is for project review and is not approved for publication.
             "use strict";
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
+            const SITE_LANGUAGE_KEY = "teacherTools.siteLanguage.v1";
             const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const ALLOWED_LANGUAGES = ["en", "ja"];
+            const SHARED_TRANSLATIONS = {
+                en: {
+                    "nav.homeAria": "Teacher Tools home",
+                    "nav.mainAria": "Main navigation",
+                    "nav.home": "Home",
+                    "nav.tools": "Tools",
+                    "nav.open": "Open navigation",
+                    "nav.homeDescription": "Teacher Tools overview and updates",
+                    "nav.available": "Available tools",
+                    "nav.planned": "Planned tools",
+                    "nav.status.HERE": "HERE",
+                    "nav.status.OPEN": "OPEN",
+                    "nav.status.PLANNED": "PLANNED",
+                    "tool.scheduler": "Class Scheduler",
+                    "tool.schedulerDescription": "Create calendar events from bell times",
+                    "tool.calendar": "Class Calendar",
+                    "tool.calendarDescription": "Plan classes with school bell times",
+                    "tool.spinner": "Spinner Wheel",
+                    "tool.spinnerDescription": "Choose a random number, name, or custom choice",
+                    "tool.timer": "Classroom Timer",
+                    "tool.timerDescription": "Time classroom activities and games",
+                    "tool.tracker": "Class Tracker",
+                    "tool.trackerDescription": "Track lesson and textbook progress",
+                    "tool.tricks": "Bag of Tricks",
+                    "tool.tricksDescription": "Flip, roll, and draw for classroom games",
+                    "tool.slides": "Google Slides Automator",
+                    "tool.slidesDescription": "Build lesson slides from common fields",
+                    "language.open": "Open language settings",
+                    "language.title": "Language",
+                    "language.close": "Close language settings",
+                    "language.help": "Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.",
+                    "language.label": "Display language",
+                    "language.progress": "English and Japanese are available across all current Teacher Tools pages.",
+                    "backup.open": "Open Teacher Tools backup and restore",
+                    "backup.title": "Backup & restore",
+                    "backup.close": "Close backup and restore",
+                    "backup.help": "Choose which saved data to include in one local backup file. Nothing is uploaded.",
+                    "backup.summaryAria": "Saved Teacher Tools data",
+                    "backup.exportAll": "Export all data",
+                    "backup.import": "Import backup",
+                    "backup.note": "Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.",
+                    "backup.saved": "Saved",
+                    "backup.invalid": "Needs attention",
+                    "backup.missing": "No saved data",
+                    "backup.exportCount": "Export ({count}) {items}",
+                    "backup.item": "item",
+                    "backup.items": "items",
+                    "backup.select": "Select data to export",
+                    "backup.selectError": "Select at least one saved item to export.",
+                    "backup.exported": "Backup exported with {count} saved {areas}.",
+                    "backup.area": "area",
+                    "backup.areas": "areas",
+                    "backup.readError": "The backup file could not be read.",
+                    "backup.siteUnsupported": "This is not a supported Teacher Tools site backup.",
+                    "backup.invalidRecord": "{label} data in this backup is not valid.",
+                    "backup.noSupportedData": "This backup does not contain any supported Teacher Tools data.",
+                    "backup.spinnerInvalid": "The Spinner Wheel data in this backup is not valid.",
+                    "backup.schedulerV1Invalid": "The Version 1 Scheduler data in this backup is not valid.",
+                    "backup.schedulerVersionInvalid": "The Version {version} Scheduler data in this backup is not valid.",
+                    "backup.unsupported": "This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.",
+                    "backup.storageError": "Browser storage is unavailable or full.",
+                    "backup.tooLarge": "That file is too large to be a Teacher Tools backup.",
+                    "backup.confirm": "Import this {kind} backup? It will replace saved data for: {labels}. Other saved tool data will remain unchanged. This page will reload afterward.",
+                    "backup.kindOlder": "older single-tool",
+                    "backup.kindSite": "Teacher Tools",
+                    "backup.cancelled": "Import cancelled.",
+                    "backup.success": "Backup imported successfully. Reloading this page…",
+                    "backup.successAlert": "Teacher Tools backup imported successfully. This page will now reload.",
+                    "backup.importError": "The backup could not be imported.",
+                    "record.calendar": "Class Calendar",
+                    "record.appearance": "Site appearance",
+                    "record.language": "Site language",
+                    "record.scheduler": "ALT Class Scheduler",
+                    "record.spinner": "Spinner Wheel",
+                    "record.timer": "Classroom Timer",
+                    "record.tracker": "Class Tracker",
+                    "appearance.open": "Open site appearance settings",
+                    "appearance.title": "Appearance",
+                    "appearance.close": "Close appearance settings",
+                    "appearance.help": "This theme is shared by Home and every Teacher Tools applet in this browser.",
+                    "appearance.groupAria": "Site color theme",
+                    "theme.oceanBlue": "Ocean Blue",
+                    "theme.colorPop": "Color Pop",
+                    "theme.prettyInPink": "Pretty in Pink",
+                    "theme.trueDark": "True Dark"
+                },
+                ja: {
+                    "nav.homeAria": "Teacher Tools ホーム",
+                    "nav.mainAria": "メインナビゲーション",
+                    "nav.home": "ホーム",
+                    "nav.tools": "ツール",
+                    "nav.open": "ナビゲーションを開く",
+                    "nav.homeDescription": "Teacher Toolsの概要と更新情報",
+                    "nav.available": "利用できるツール",
+                    "nav.planned": "開発予定のツール",
+                    "nav.status.HERE": "表示中",
+                    "nav.status.OPEN": "開く",
+                    "nav.status.PLANNED": "予定",
+                    "tool.scheduler": "クラススケジューラー",
+                    "tool.schedulerDescription": "時間割からカレンダー予定を作成",
+                    "tool.calendar": "クラスカレンダー",
+                    "tool.calendarDescription": "学校の時間割に合わせて授業を計画",
+                    "tool.spinner": "スピナーホイール",
+                    "tool.spinnerDescription": "数字・名前・選択肢からランダムに決定",
+                    "tool.timer": "教室タイマー",
+                    "tool.timerDescription": "授業活動やゲームの時間を計測",
+                    "tool.tracker": "クラストラッカー",
+                    "tool.trackerDescription": "授業や教科書の進捗を記録",
+                    "tool.tricks": "お楽しみツール",
+                    "tool.tricksDescription": "コイン・サイコロ・カードを授業で活用",
+                    "tool.slides": "Googleスライド自動作成",
+                    "tool.slidesDescription": "よく使う項目から授業スライドを作成",
+                    "language.open": "言語設定を開く",
+                    "language.title": "言語",
+                    "language.close": "言語設定を閉じる",
+                    "language.help": "Teacher Toolsの画面に表示する言語を選択します。自分で入力した内容は翻訳も変更もされません。",
+                    "language.label": "表示言語",
+                    "language.progress": "現在のTeacher Tools全ページを英語と日本語で利用できます。",
+                    "backup.open": "Teacher Toolsのバックアップと復元を開く",
+                    "backup.title": "バックアップと復元",
+                    "backup.close": "バックアップと復元を閉じる",
+                    "backup.help": "保存済みデータを選び、1つのローカルバックアップファイルにまとめます。データはアップロードされません。",
+                    "backup.summaryAria": "保存済みのTeacher Toolsデータ",
+                    "backup.exportAll": "すべてのデータを書き出す",
+                    "backup.import": "バックアップを読み込む",
+                    "backup.note": "読み込むと、ファイルに含まれるツールの保存データが置き換わります。その他のツールのデータは変わりません。旧形式のスケジューラーとスピナーホイールのバックアップにも対応しています。",
+                    "backup.saved": "保存済み",
+                    "backup.invalid": "確認が必要",
+                    "backup.missing": "保存データなし",
+                    "backup.exportCount": "{count}件を書き出す",
+                    "backup.item": "件",
+                    "backup.items": "件",
+                    "backup.select": "書き出すデータを選択",
+                    "backup.selectError": "書き出す保存済みデータを1件以上選択してください。",
+                    "backup.exported": "保存済みデータ{count}件をバックアップに書き出しました。",
+                    "backup.area": "件",
+                    "backup.areas": "件",
+                    "backup.readError": "バックアップファイルを読み込めませんでした。",
+                    "backup.siteUnsupported": "対応しているTeacher Toolsのサイトバックアップではありません。",
+                    "backup.invalidRecord": "バックアップ内の「{label}」データが正しくありません。",
+                    "backup.noSupportedData": "対応しているTeacher Toolsのデータがバックアップに含まれていません。",
+                    "backup.spinnerInvalid": "バックアップ内のスピナーホイールデータが正しくありません。",
+                    "backup.schedulerV1Invalid": "バックアップ内のバージョン1のスケジューラーデータが正しくありません。",
+                    "backup.schedulerVersionInvalid": "バックアップ内のバージョン{version}のスケジューラーデータが正しくありません。",
+                    "backup.unsupported": "対応しているTeacher Tools、スケジューラー、またはスピナーホイールのバックアップではありません。",
+                    "backup.storageError": "ブラウザの保存領域を利用できないか、空き容量がありません。",
+                    "backup.tooLarge": "Teacher Toolsのバックアップとしてはファイルサイズが大きすぎます。",
+                    "backup.confirm": "この{kind}バックアップを読み込みますか？ 次の保存データが置き換わります：{labels}。その他のツールのデータは変わりません。完了後、このページを再読み込みします。",
+                    "backup.kindOlder": "旧形式の単一ツール",
+                    "backup.kindSite": "Teacher Tools",
+                    "backup.cancelled": "読み込みをキャンセルしました。",
+                    "backup.success": "バックアップを読み込みました。ページを再読み込みしています…",
+                    "backup.successAlert": "Teacher Toolsのバックアップを読み込みました。このページを再読み込みします。",
+                    "backup.importError": "バックアップを読み込めませんでした。",
+                    "record.calendar": "クラスカレンダー",
+                    "record.appearance": "サイトの外観",
+                    "record.language": "サイトの言語",
+                    "record.scheduler": "ALTクラススケジューラー",
+                    "record.spinner": "スピナーホイール",
+                    "record.timer": "教室タイマー",
+                    "record.tracker": "クラストラッカー",
+                    "appearance.open": "サイトの外観設定を開く",
+                    "appearance.title": "外観",
+                    "appearance.close": "外観設定を閉じる",
+                    "appearance.help": "このテーマは、このブラウザのホームとすべてのTeacher Toolsアプレットで共有されます。",
+                    "appearance.groupAria": "サイトのカラーテーマ",
+                    "theme.oceanBlue": "オーシャンブルー",
+                    "theme.colorPop": "カラーポップ",
+                    "theme.prettyInPink": "プリティ・イン・ピンク",
+                    "theme.trueDark": "トゥルーダーク"
+                }
+            };
             const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
             const SITE_BACKUP_SCHEMA_VERSION = 1;
             const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
@@ -1522,19 +1763,30 @@ This preview is for project review and is not approved for publication.
                 {
                     id: "class-calendar",
                     label: "Class Calendar",
+                    labelKey: "record.calendar",
                     storageKey: "teacherTools.classCalendar.state.v1",
                     validate: value => window.TeacherToolsCalendarValidate(value)
                 },
                 {
                     id: "appearance",
                     label: "Site appearance",
+                    labelKey: "record.appearance",
                     storageKey: SITE_PREFERENCES_KEY,
                     validate: value => isPlainObject(value) &&
                         value.version === 1 && ALLOWED_THEMES.includes(value.theme)
                 },
                 {
+                    id: "language",
+                    label: "Site language",
+                    labelKey: "record.language",
+                    storageKey: SITE_LANGUAGE_KEY,
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        ALLOWED_LANGUAGES.includes(value.language)
+                },
+                {
                     id: "scheduler",
                     label: "ALT Class Scheduler",
+                    labelKey: "record.scheduler",
                     storageKey: "classAutomatorData_v3",
                     validate: value => isPlainObject(value) && value.version === 3 &&
                         Array.isArray(value.schools) && isPlainObject(value.schedule) &&
@@ -1543,6 +1795,7 @@ This preview is for project review and is not approved for publication.
                 {
                     id: "spinner",
                     label: "Spinner Wheel",
+                    labelKey: "record.spinner",
                     storageKey: "teacherTools.spinnerWheel.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         ["numbers", "custom"].includes(value.mode) &&
@@ -1553,6 +1806,7 @@ This preview is for project review and is not approved for publication.
                 {
                     id: "timer",
                     label: "Classroom Timer",
+                    labelKey: "record.timer",
                     storageKey: "teacherTools.classroomTimer.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         typeof value.soundEnabled === "boolean" &&
@@ -1562,6 +1816,7 @@ This preview is for project review and is not approved for publication.
                 {
                     id: "class-tracker",
                     label: "Class Tracker",
+                    labelKey: "record.tracker",
                     storageKey: "teacherTools.classTracker.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         Array.isArray(value.templates) && isPlainObject(value.assignments) &&
@@ -1575,6 +1830,12 @@ This preview is for project review and is not approved for publication.
             let tooltipContent = null;
             let tooltipPinned = false;
             let tooltipFrame = 0;
+            let activeLanguage = "en";
+            const translationCatalogs = {
+                en: { ...SHARED_TRANSLATIONS.en },
+                ja: { ...SHARED_TRANSLATIONS.ja }
+            };
+            const translationDefaults = new WeakMap();
 
             function storageGet(key) {
                 try {
@@ -1606,6 +1867,79 @@ This preview is for project review and is not approved for publication.
                 return Boolean(value) && typeof value === "object" && !Array.isArray(value);
             }
 
+            function normalizeLanguage(value) {
+                return ALLOWED_LANGUAGES.includes(value) ? value : "en";
+            }
+
+            function languageFromStoredValue(value) {
+                if (!value) return null;
+                try {
+                    const saved = JSON.parse(value);
+                    return saved && ALLOWED_LANGUAGES.includes(saved.language) ? saved.language : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function interpolateTranslation(text, replacements = {}) {
+                return Object.entries(replacements).reduce(
+                    (result, [name, value]) => result.replaceAll(`{${name}}`, String(value)),
+                    text
+                );
+            }
+
+            function translate(key, fallback = key, replacements = {}) {
+                const localized = translationCatalogs[activeLanguage]?.[key];
+                const english = translationCatalogs.en?.[key];
+                return interpolateTranslation(localized ?? english ?? fallback, replacements);
+            }
+
+            function translationDefault(element, name, value) {
+                const defaults = translationDefaults.get(element) || {};
+                if (!(name in defaults)) defaults[name] = value;
+                translationDefaults.set(element, defaults);
+                return defaults[name];
+            }
+
+            function applyDocumentTranslations(root = document) {
+                root.querySelectorAll("[data-i18n]").forEach(element => {
+                    const fallback = translationDefault(element, "text", element.textContent);
+                    element.textContent = translate(element.dataset.i18n, fallback);
+                });
+                ["aria-label", "title", "placeholder"].forEach(attribute => {
+                    const dataName = `i18n${attribute.split("-").map(part => part[0].toUpperCase() + part.slice(1)).join("")}`;
+                    root.querySelectorAll(`[data-i18n-${attribute}]`).forEach(element => {
+                        const fallback = translationDefault(element, attribute, element.getAttribute(attribute) || "");
+                        element.setAttribute(attribute, translate(element.dataset[dataName], fallback));
+                    });
+                });
+            }
+
+            function applyGlobalLanguage(requestedLanguage, persist = true) {
+                activeLanguage = normalizeLanguage(requestedLanguage);
+                document.documentElement.lang = activeLanguage;
+                const choice = document.getElementById("siteLanguageChoice");
+                if (choice) choice.value = activeLanguage;
+                applyDocumentTranslations();
+                if (document.getElementById("siteDataSummary")) updateSiteDataSummary();
+                setSiteDataStatus("");
+                if (persist) {
+                    storageSet(SITE_LANGUAGE_KEY, JSON.stringify({ version: 1, language: activeLanguage }));
+                }
+                window.dispatchEvent(new CustomEvent("teacher-tools:languagechange", {
+                    detail: { language: activeLanguage }
+                }));
+            }
+
+            function registerTranslations(catalogs) {
+                for (const language of ALLOWED_LANGUAGES) {
+                    if (isPlainObject(catalogs?.[language])) {
+                        Object.assign(translationCatalogs[language], catalogs[language]);
+                    }
+                }
+                applyDocumentTranslations();
+            }
+
             function readSiteDataRecord(definition) {
                 const raw = storageGet(definition.storageKey);
                 if (raw === null) return { definition, state: "missing", value: null };
@@ -1622,6 +1956,10 @@ This preview is for project review and is not approved for publication.
 
             function siteDataSnapshot() {
                 return SITE_DATA_RECORDS.map(readSiteDataRecord);
+            }
+
+            function siteDataRecordLabel(definition) {
+                return translate(definition.labelKey, definition.label);
             }
 
             function setSiteDataStatus(message, error = false) {
@@ -1647,13 +1985,15 @@ This preview is for project review and is not approved for publication.
                     checkbox.checked = record.state === "saved";
                     checkbox.disabled = record.state !== "saved";
                     const label = document.createElement("span");
-                    label.textContent = record.definition.label;
+                    label.textContent = siteDataRecordLabel(record.definition);
                     selection.append(checkbox, label);
                     const state = document.createElement("span");
                     state.className = `site-data-summary-state ${record.state}`;
                     state.textContent = record.state === "saved"
-                        ? "Saved"
-                        : record.state === "invalid" ? "Needs attention" : "No saved data";
+                        ? translate("backup.saved", "Saved")
+                        : record.state === "invalid"
+                            ? translate("backup.invalid", "Needs attention")
+                            : translate("backup.missing", "No saved data");
                     item.append(selection, state);
                     return item;
                 }));
@@ -1675,10 +2015,13 @@ This preview is for project review and is not approved for publication.
                 const selectedCount = selectable.filter(checkbox => checkbox.checked).length;
                 exportButton.disabled = selectedCount === 0;
                 exportButton.textContent = selectedCount === selectable.length && selectable.length > 0
-                    ? "Export all data"
+                    ? translate("backup.exportAll", "Export all data")
                     : selectedCount > 0
-                        ? `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`
-                        : "Select data to export";
+                        ? translate("backup.exportCount", `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`, {
+                            count: selectedCount,
+                            items: translate(selectedCount === 1 ? "backup.item" : "backup.items", selectedCount === 1 ? "item" : "items")
+                        })
+                        : translate("backup.select", "Select data to export");
             }
 
             function localDateStamp(date = new Date()) {
@@ -1708,7 +2051,7 @@ This preview is for project review and is not approved for publication.
                     record.state === "saved" && selectedIds.has(record.definition.id)
                 );
                 if (!saved.length) {
-                    setSiteDataStatus("Select at least one saved item to export.", true);
+                    setSiteDataStatus(translate("backup.selectError", "Select at least one saved item to export."), true);
                     return;
                 }
 
@@ -1723,16 +2066,21 @@ This preview is for project review and is not approved for publication.
                 };
 
                 downloadJsonFile(payload, `teacher-tools-backup-${localDateStamp()}.json`);
-                setSiteDataStatus(
-                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`
-                );
+                setSiteDataStatus(translate(
+                    "backup.exported",
+                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`,
+                    {
+                        count: saved.length,
+                        areas: translate(saved.length === 1 ? "backup.area" : "backup.areas", saved.length === 1 ? "area" : "areas")
+                    }
+                ));
             }
 
             function readFileText(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.addEventListener("load", () => resolve(String(reader.result || "")));
-                    reader.addEventListener("error", () => reject(new Error("The backup file could not be read.")));
+                    reader.addEventListener("error", () => reject(new Error(translate("backup.readError", "The backup file could not be read."))));
                     reader.readAsText(file);
                 });
             }
@@ -1740,7 +2088,7 @@ This preview is for project review and is not approved for publication.
             function globalBackupPlan(payload) {
                 if (!isPlainObject(payload) || payload.app !== SITE_BACKUP_APP_ID ||
                     payload.schemaVersion !== SITE_BACKUP_SCHEMA_VERSION || !isPlainObject(payload.records)) {
-                    throw new Error("This is not a supported Teacher Tools site backup.");
+                    throw new Error(translate("backup.siteUnsupported", "This is not a supported Teacher Tools site backup."));
                 }
 
                 const changes = [];
@@ -1749,14 +2097,16 @@ This preview is for project review and is not approved for publication.
                     if (!Object.prototype.hasOwnProperty.call(payload.records, definition.id)) return;
                     const value = payload.records[definition.id];
                     if (!definition.validate(value)) {
-                        throw new Error(`${definition.label} data in this backup is not valid.`);
+                        throw new Error(translate("backup.invalidRecord", `${definition.label} data in this backup is not valid.`, {
+                            label: siteDataRecordLabel(definition)
+                        }));
                     }
                     changes.push({ key: definition.storageKey, value: JSON.stringify(value) });
-                    labels.push(definition.label);
+                    labels.push(siteDataRecordLabel(definition));
                 });
 
                 if (!changes.length) {
-                    throw new Error("This backup does not contain any supported Teacher Tools data.");
+                    throw new Error(translate("backup.noSupportedData", "This backup does not contain any supported Teacher Tools data."));
                 }
                 return { changes, labels, legacy: false };
             }
@@ -1767,11 +2117,11 @@ This preview is for project review and is not approved for publication.
 
                 const definition = SITE_DATA_RECORDS.find(record => record.id === "spinner");
                 if (!definition.validate(payload.state)) {
-                    throw new Error("The Spinner Wheel data in this backup is not valid.");
+                    throw new Error(translate("backup.spinnerInvalid", "The Spinner Wheel data in this backup is not valid."));
                 }
                 return {
                     changes: [{ key: definition.storageKey, value: JSON.stringify(payload.state) }],
-                    labels: [definition.label],
+                    labels: [siteDataRecordLabel(definition)],
                     legacy: true
                 };
             }
@@ -1781,7 +2131,7 @@ This preview is for project review and is not approved for publication.
 
                 if (payload.version === 1) {
                     if (!isPlainObject(payload.schedule)) {
-                        throw new Error("The Version 1 Scheduler data in this backup is not valid.");
+                        throw new Error(translate("backup.schedulerV1Invalid", "The Version 1 Scheduler data in this backup is not valid."));
                     }
                     return {
                         changes: [
@@ -1789,14 +2139,14 @@ This preview is for project review and is not approved for publication.
                             { key: "classAutomatorData_v2", value: null },
                             { key: "classAutomatorSchedule_v1", value: JSON.stringify(payload.schedule) }
                         ],
-                        labels: ["ALT Class Scheduler"],
+                        labels: [translate("record.scheduler", "ALT Class Scheduler")],
                         legacy: true
                     };
                 }
 
                 if (!Array.isArray(payload.schools) || !isPlainObject(payload.schedule) ||
                     (payload.preferences !== undefined && !isPlainObject(payload.preferences))) {
-                    throw new Error(`The Version ${payload.version} Scheduler data in this backup is not valid.`);
+                    throw new Error(translate("backup.schedulerVersionInvalid", `The Version ${payload.version} Scheduler data in this backup is not valid.`, { version: payload.version }));
                 }
 
                 const theme = isPlainObject(payload.preferences) &&
@@ -1806,7 +2156,9 @@ This preview is for project review and is not approved for publication.
                 const themeChange = theme
                     ? [{ key: SITE_PREFERENCES_KEY, value: JSON.stringify({ version: 1, theme }) }]
                     : [];
-                const labels = theme ? ["ALT Class Scheduler", "Site appearance"] : ["ALT Class Scheduler"];
+                const labels = theme
+                    ? [translate("record.scheduler", "ALT Class Scheduler"), translate("record.appearance", "Site appearance")]
+                    : [translate("record.scheduler", "ALT Class Scheduler")];
 
                 if (payload.version === 2) {
                     return {
@@ -1838,7 +2190,7 @@ This preview is for project review and is not approved for publication.
                 if (spinnerPlan) return spinnerPlan;
                 const schedulerPlan = schedulerBackupPlan(payload);
                 if (schedulerPlan) return schedulerPlan;
-                throw new Error("This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.");
+                throw new Error(translate("backup.unsupported", "This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup."));
             }
 
             function applyStorageChanges(changes) {
@@ -1852,7 +2204,7 @@ This preview is for project review and is not approved for publication.
                             ? storageRemove(change.key)
                             : storageSet(change.key, change.value);
                         if (!succeeded) {
-                            throw new Error("Browser storage is unavailable or full.");
+                            throw new Error(translate("backup.storageError", "Browser storage is unavailable or full."));
                         }
                         changed.push(change.key);
                     });
@@ -1869,29 +2221,30 @@ This preview is for project review and is not approved for publication.
             async function importSiteDataBackup(file) {
                 if (!file) return;
                 if (file.size > SITE_BACKUP_MAX_BYTES) {
-                    setSiteDataStatus("That file is too large to be a Teacher Tools backup.", true);
+                    setSiteDataStatus(translate("backup.tooLarge", "That file is too large to be a Teacher Tools backup."), true);
                     return;
                 }
 
                 try {
                     const plan = buildImportPlan(JSON.parse(await readFileText(file)));
-                    const confirmed = window.confirm(
-                        `Import this ${plan.legacy ? "older single-tool" : "Teacher Tools"} backup? ` +
-                        `It will replace saved data for: ${plan.labels.join(", ")}. ` +
-                        "Other saved tool data will remain unchanged. This page will reload afterward."
-                    );
+                    const kind = translate(plan.legacy ? "backup.kindOlder" : "backup.kindSite", plan.legacy ? "older single-tool" : "Teacher Tools");
+                    const confirmed = window.confirm(translate(
+                        "backup.confirm",
+                        `Import this ${kind} backup? It will replace saved data for: ${plan.labels.join(", ")}. Other saved tool data will remain unchanged. This page will reload afterward.`,
+                        { kind, labels: plan.labels.join(activeLanguage === "ja" ? "、" : ", ") }
+                    ));
                     if (!confirmed) {
-                        setSiteDataStatus("Import cancelled.");
+                        setSiteDataStatus(translate("backup.cancelled", "Import cancelled."));
                         return;
                     }
 
                     applyStorageChanges(plan.changes);
-                    setSiteDataStatus("Backup imported successfully. Reloading this page…");
-                    window.alert("Teacher Tools backup imported successfully. This page will now reload.");
+                    setSiteDataStatus(translate("backup.success", "Backup imported successfully. Reloading this page…"));
+                    window.alert(translate("backup.successAlert", "Teacher Tools backup imported successfully. This page will now reload."));
                     window.location.reload();
                 } catch (error) {
                     setSiteDataStatus(
-                        error instanceof Error ? error.message : "The backup could not be imported.",
+                        error instanceof Error ? error.message : translate("backup.importError", "The backup could not be imported."),
                         true
                     );
                 }
@@ -2102,8 +2455,10 @@ This preview is for project review and is not approved for publication.
 
             function closeSiteOverlays() {
                 const toolsMenu = document.getElementById("siteToolsMenu");
+                const languagePanel = document.getElementById("siteLanguagePanel");
                 const dataPanel = document.getElementById("siteDataPanel");
                 const themePanel = document.getElementById("siteThemePanel");
+                const languageButton = document.getElementById("siteLanguageButton");
                 const dataButton = document.getElementById("siteDataButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
@@ -2112,8 +2467,10 @@ This preview is for project review and is not approved for publication.
                 ].filter(Boolean);
 
                 if (toolsMenu) toolsMenu.hidden = true;
+                if (languagePanel) languagePanel.hidden = true;
                 if (dataPanel) dataPanel.hidden = true;
                 if (themePanel) themePanel.hidden = true;
+                if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                 if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                 if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                 menuButtons.forEach(button => button.setAttribute("aria-expanded", "false"));
@@ -2131,6 +2488,10 @@ This preview is for project review and is not approved for publication.
                 const dataButton = document.getElementById("siteDataButton");
                 const dataPanel = document.getElementById("siteDataPanel");
                 const dataCloseButton = document.getElementById("siteDataCloseButton");
+                const languageButton = document.getElementById("siteLanguageButton");
+                const languagePanel = document.getElementById("siteLanguagePanel");
+                const languageCloseButton = document.getElementById("siteLanguageCloseButton");
+                const languageChoice = document.getElementById("siteLanguageChoice");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const themePanel = document.getElementById("siteThemePanel");
                 const themeCloseButton = document.getElementById("siteThemeCloseButton");
@@ -2138,8 +2499,10 @@ This preview is for project review and is not approved for publication.
                 function setToolsMenu(open) {
                     if (!toolsMenu) return;
                     if (open) {
+                        if (languagePanel) languagePanel.hidden = true;
                         if (dataPanel) dataPanel.hidden = true;
                         if (themePanel) themePanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                         if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                     }
@@ -2151,7 +2514,9 @@ This preview is for project review and is not approved for publication.
                     if (!dataPanel || !dataButton) return;
                     if (open) {
                         setToolsMenu(false);
+                        if (languagePanel) languagePanel.hidden = true;
                         if (themePanel) themePanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                     }
                     dataPanel.hidden = !open;
@@ -2165,11 +2530,27 @@ This preview is for project review and is not approved for publication.
                     }
                 }
 
+                function setLanguagePanel(open) {
+                    if (!languagePanel || !languageButton) return;
+                    if (open) {
+                        setToolsMenu(false);
+                        if (dataPanel) dataPanel.hidden = true;
+                        if (themePanel) themePanel.hidden = true;
+                        if (dataButton) dataButton.setAttribute("aria-expanded", "false");
+                        if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    }
+                    languagePanel.hidden = !open;
+                    languageButton.setAttribute("aria-expanded", String(open));
+                    if (open && languageChoice) languageChoice.focus();
+                }
+
                 function setThemePanel(open) {
                     if (!themePanel || !settingsButton) return;
                     if (open) {
                         setToolsMenu(false);
+                        if (languagePanel) languagePanel.hidden = true;
                         if (dataPanel) dataPanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                     }
                     themePanel.hidden = !open;
@@ -2189,6 +2570,26 @@ This preview is for project review and is not approved for publication.
                 });
 
                 if (toolsMenu) toolsMenu.addEventListener("click", event => event.stopPropagation());
+
+                if (languageButton) {
+                    languageButton.addEventListener("click", event => {
+                        event.stopPropagation();
+                        setLanguagePanel(languagePanel ? languagePanel.hidden : false);
+                    });
+                }
+
+                if (languageCloseButton) {
+                    languageCloseButton.addEventListener("click", () => {
+                        setLanguagePanel(false);
+                        languageButton.focus();
+                    });
+                }
+
+                if (languageChoice) {
+                    languageChoice.addEventListener("change", () => applyGlobalLanguage(languageChoice.value));
+                }
+
+                if (languagePanel) languagePanel.addEventListener("click", event => event.stopPropagation());
 
                 if (dataButton) {
                     dataButton.addEventListener("click", event => {
@@ -2295,9 +2696,11 @@ This preview is for project review and is not approved for publication.
                 }
 
                 const dataPanel = document.getElementById("siteDataPanel");
+                const languagePanel = document.getElementById("siteLanguagePanel");
                 const themePanel = document.getElementById("siteThemePanel");
                 const toolsMenu = document.getElementById("siteToolsMenu");
                 const dataButton = document.getElementById("siteDataButton");
+                const languageButton = document.getElementById("siteLanguageButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
                     document.getElementById("siteToolsMenuButton"),
@@ -2307,6 +2710,12 @@ This preview is for project review and is not approved for publication.
                 if (dataPanel && !dataPanel.hidden) {
                     closeSiteOverlays();
                     if (dataButton) dataButton.focus();
+                    return;
+                }
+
+                if (languagePanel && !languagePanel.hidden) {
+                    closeSiteOverlays();
+                    if (languageButton) languageButton.focus();
                     return;
                 }
 
@@ -2324,22 +2733,35 @@ This preview is for project review and is not approved for publication.
             });
 
             window.addEventListener("storage", event => {
-                if (event.key !== SITE_PREFERENCES_KEY) return;
-                applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                if (event.key === SITE_PREFERENCES_KEY) {
+                    applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                }
+                if (event.key === SITE_LANGUAGE_KEY) {
+                    applyGlobalLanguage(languageFromStoredValue(event.newValue) || "en", false);
+                }
             });
 
             window.TeacherToolsUI = Object.freeze({
                 applyGlobalTheme,
+                applyGlobalLanguage,
                 closeModal,
                 openModal,
+                registerTranslations,
                 storageGet,
-                storageSet
+                storageSet,
+                translate
             });
 
             applyGlobalTheme(
                 themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY)) ||
                 document.documentElement.getAttribute("data-theme") ||
                 "ocean-blue",
+                false
+            );
+            applyGlobalLanguage(
+                languageFromStoredValue(storageGet(SITE_LANGUAGE_KEY)) ||
+                document.documentElement.lang ||
+                "en",
                 false
             );
             initSiteHeader();
@@ -2353,6 +2775,152 @@ This preview is for project review and is not approved for publication.
     <script>
         (() => {
             "use strict";
+
+            const translations = {
+                en: {
+                    "tricks.meta.title": "Bag of Tricks · Teacher Tools",
+                    "tricks.meta.description": "Quick classroom coin, dice, and card randomizers.",
+                    "tricks.title": "Bag of Tricks",
+                    "tricks.help.open": "Open getting started help",
+                    "tricks.help.title": "Getting started",
+                    "tricks.help.close": "Close getting started help",
+                    "tricks.intro.title": "A little randomness, right when you need it",
+                    "tricks.intro.body": "Choose a mode, then flip, roll, or draw for a quick classroom result.",
+                    "tricks.mode.aria": "Bag of Tricks modes",
+                    "tricks.mode.coin": "Coin",
+                    "tricks.mode.dice": "Dice",
+                    "tricks.mode.cards": "Cards",
+                    "tricks.coin.title": "Flip a coin",
+                    "tricks.coin.body": "Make a quick two-way choice with an equal chance of Heads or Tails.",
+                    "tricks.coin.heads": "Heads",
+                    "tricks.coin.tails": "Tails",
+                    "tricks.coin.headsSymbol": "H",
+                    "tricks.coin.tailsSymbol": "T",
+                    "tricks.coin.ready": "Ready to flip",
+                    "tricks.coin.flipping": "Flipping…",
+                    "tricks.coin.flip": "Flip coin",
+                    "tricks.coin.announcement": "Coin result: {result}.",
+                    "tricks.dice.title": "Roll the dice",
+                    "tricks.dice.body": "Use one die for 1–6, or two dice for a total from 2–12.",
+                    "tricks.dice.countAria": "Number of dice",
+                    "tricks.dice.one": "One die",
+                    "tricks.dice.two": "Two dice",
+                    "tricks.dice.ready": "Ready to roll",
+                    "tricks.dice.rollOne": "Roll one die",
+                    "tricks.dice.rollTwo": "Roll two dice",
+                    "tricks.dice.total": "Total: {total}",
+                    "tricks.dice.showing": "Die showing {value}",
+                    "tricks.dice.announcementOne": "Dice result: {total}.",
+                    "tricks.dice.announcementTwo": "Dice result: {first} and {second}, total {total}.",
+                    "tricks.cards.title": "Draw a card",
+                    "tricks.cards.body": "Draw from a standard 52-card deck without replacement.",
+                    "tricks.cards.recent": "Most recent three draws",
+                    "tricks.cards.recentAria": "Recent card draws",
+                    "tricks.cards.ready": "Ready to draw",
+                    "tricks.cards.draw": "Draw card",
+                    "tricks.cards.shuffle": "Shuffle deck",
+                    "tricks.cards.latest": "Latest",
+                    "tricks.cards.earlier": "Earlier",
+                    "tricks.cards.waiting": "Waiting",
+                    "tricks.cards.none": "No card yet",
+                    "tricks.cards.remainingOne": "{count} card remaining",
+                    "tricks.cards.remainingMany": "{count} cards remaining",
+                    "tricks.cards.shuffled": "The deck was shuffled. All 52 cards are available.",
+                    "tricks.cards.drew": "Drew the {card}. {count} cards remain.",
+                    "tricks.card.of": "{rank} of {suit}",
+                    "tricks.card.ace": "Ace",
+                    "tricks.card.jack": "Jack",
+                    "tricks.card.queen": "Queen",
+                    "tricks.card.king": "King",
+                    "tricks.card.clubs": "Clubs",
+                    "tricks.card.diamonds": "Diamonds",
+                    "tricks.card.hearts": "Hearts",
+                    "tricks.card.spades": "Spades",
+                    "tricks.footer.version": "Bag of Tricks · v1.0",
+                    "tricks.footer.note": "Random results stay on this device and disappear when the page is closed.",
+                    "tricks.help.intro": "Bag of Tricks keeps quick random classroom tools together in one place.",
+                    "tricks.help.step1Title": "Choose a mode",
+                    "tricks.help.step1Body": "Switch between Coin, Dice, and Cards using the tabs at the top.",
+                    "tricks.help.step2Title": "Run the randomizer",
+                    "tricks.help.step2Body": "Flip the coin, choose one or two dice and roll, or draw a card from the deck.",
+                    "tricks.help.step3Title": "Reset the cards",
+                    "tricks.help.step3Body": "Cards are not returned after a draw. Shuffle the deck to restore all 52 cards and clear the recent draws.",
+                    "tricks.help.start": "Start using Bag of Tricks"
+                },
+                ja: {
+                    "tricks.meta.title": "お楽しみツール · Teacher Tools",
+                    "tricks.meta.description": "授業ですぐ使えるコイン、サイコロ、カードのランダムツールです。",
+                    "tricks.title": "お楽しみツール",
+                    "tricks.help.open": "使い方を開く",
+                    "tricks.help.title": "はじめに",
+                    "tricks.help.close": "使い方を閉じる",
+                    "tricks.intro.title": "ちょっとしたランダム選びを、必要なときに",
+                    "tricks.intro.body": "モードを選び、コインを投げる、サイコロを振る、またはカードを引いて、授業ですぐに結果を出せます。",
+                    "tricks.mode.aria": "お楽しみツールのモード",
+                    "tricks.mode.coin": "コイン",
+                    "tricks.mode.dice": "サイコロ",
+                    "tricks.mode.cards": "カード",
+                    "tricks.coin.title": "コインを投げる",
+                    "tricks.coin.body": "表と裏が同じ確率の、2択をすばやく決められます。",
+                    "tricks.coin.heads": "表",
+                    "tricks.coin.tails": "裏",
+                    "tricks.coin.headsSymbol": "表",
+                    "tricks.coin.tailsSymbol": "裏",
+                    "tricks.coin.ready": "投げる準備完了",
+                    "tricks.coin.flipping": "投げています…",
+                    "tricks.coin.flip": "コインを投げる",
+                    "tricks.coin.announcement": "コインの結果：{result}。",
+                    "tricks.dice.title": "サイコロを振る",
+                    "tricks.dice.body": "1個なら1〜6、2個なら合計2〜12の結果が出ます。",
+                    "tricks.dice.countAria": "サイコロの数",
+                    "tricks.dice.one": "1個",
+                    "tricks.dice.two": "2個",
+                    "tricks.dice.ready": "振る準備完了",
+                    "tricks.dice.rollOne": "サイコロを1個振る",
+                    "tricks.dice.rollTwo": "サイコロを2個振る",
+                    "tricks.dice.total": "合計：{total}",
+                    "tricks.dice.showing": "サイコロの目は{value}",
+                    "tricks.dice.announcementOne": "サイコロの結果：{total}。",
+                    "tricks.dice.announcementTwo": "サイコロの結果：{first}と{second}、合計{total}。",
+                    "tricks.cards.title": "カードを引く",
+                    "tricks.cards.body": "標準の52枚のトランプから、同じカードを戻さずに引きます。",
+                    "tricks.cards.recent": "最近引いた3枚",
+                    "tricks.cards.recentAria": "最近引いたカード",
+                    "tricks.cards.ready": "引く準備完了",
+                    "tricks.cards.draw": "カードを引く",
+                    "tricks.cards.shuffle": "山札をシャッフル",
+                    "tricks.cards.latest": "最新",
+                    "tricks.cards.earlier": "前のカード",
+                    "tricks.cards.waiting": "待機中",
+                    "tricks.cards.none": "まだカードはありません",
+                    "tricks.cards.remainingOne": "残り{count}枚",
+                    "tricks.cards.remainingMany": "残り{count}枚",
+                    "tricks.cards.shuffled": "山札をシャッフルしました。52枚すべてを引けます。",
+                    "tricks.cards.drew": "{card}を引きました。残り{count}枚です。",
+                    "tricks.card.of": "{suit}の{rank}",
+                    "tricks.card.ace": "エース",
+                    "tricks.card.jack": "ジャック",
+                    "tricks.card.queen": "クイーン",
+                    "tricks.card.king": "キング",
+                    "tricks.card.clubs": "クラブ",
+                    "tricks.card.diamonds": "ダイヤ",
+                    "tricks.card.hearts": "ハート",
+                    "tricks.card.spades": "スペード",
+                    "tricks.footer.version": "お楽しみツール · v1.0",
+                    "tricks.footer.note": "ランダム結果はこの端末だけに残り、ページを閉じると消去されます。",
+                    "tricks.help.intro": "お楽しみツールには、授業ですぐ使えるランダム機能が1か所にまとまっています。",
+                    "tricks.help.step1Title": "モードを選ぶ",
+                    "tricks.help.step1Body": "上部のタブでコイン、サイコロ、カードを切り替えます。",
+                    "tricks.help.step2Title": "ランダムに決める",
+                    "tricks.help.step2Body": "コインを投げる、1個または2個のサイコロを振る、山札からカードを引く、のいずれかを使います。",
+                    "tricks.help.step3Title": "カードをリセットする",
+                    "tricks.help.step3Body": "引いたカードは山札に戻りません。シャッフルすると52枚に戻り、最近引いたカードも消去されます。",
+                    "tricks.help.start": "お楽しみツールを使う"
+                }
+            };
+            const { registerTranslations, translate } = window.TeacherToolsUI;
+            registerTranslations(translations);
+            const t = (key, fallback, replacements) => translate(key, fallback, replacements);
 
             const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
             const panels = tabs.map(tab => document.getElementById(tab.getAttribute("aria-controls")));
@@ -2371,13 +2939,13 @@ This preview is for project review and is not approved for publication.
             const drawButton = document.getElementById("drawButton");
             const shuffleButton = document.getElementById("shuffleButton");
             const suits = [
-                { name: "Clubs", symbol: "♣", red: false },
-                { name: "Diamonds", symbol: "♦", red: true },
-                { name: "Hearts", symbol: "♥", red: true },
-                { name: "Spades", symbol: "♠", red: false }
+                { key: "tricks.card.clubs", symbol: "♣", red: false },
+                { key: "tricks.card.diamonds", symbol: "♦", red: true },
+                { key: "tricks.card.hearts", symbol: "♥", red: true },
+                { key: "tricks.card.spades", symbol: "♠", red: false }
             ];
             const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-            const rankNames = { A: "Ace", J: "Jack", Q: "Queen", K: "King" };
+            const rankKeys = { A: "tricks.card.ace", J: "tricks.card.jack", Q: "tricks.card.queen", K: "tricks.card.king" };
             const pipIndexes = {
                 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8],
                 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8]
@@ -2387,6 +2955,8 @@ This preview is for project review and is not approved for publication.
             let busy = false;
             let coinRotation = 0;
             let currentCoinSide = 0;
+            let coinResultKey = "tricks.coin.ready";
+            let diceValues = null;
 
             function randomInt(max) {
                 if (!Number.isInteger(max) || max <= 0) throw new RangeError("max must be a positive integer");
@@ -2432,16 +3002,19 @@ This preview is for project review and is not approved for publication.
                 if (busy) return;
                 busy = true;
                 flipButton.disabled = true;
-                const result = randomInt(2) === 0 ? "Heads" : "Tails";
-                const selectedSide = result === "Heads" ? 0 : 1;
+                const selectedSide = randomInt(2);
+                const resultKey = selectedSide === 0 ? "tricks.coin.heads" : "tricks.coin.tails";
                 const halfTurns = 6 + ((selectedSide - currentCoinSide + 2) % 2);
                 coinRotation += halfTurns * 180;
                 currentCoinSide = selectedSide;
-                coinResult.textContent = "Flipping…";
+                coinResultKey = "tricks.coin.flipping";
+                coinResult.textContent = t(coinResultKey, "Flipping…");
                 coin.style.transform = `rotateY(${coinRotation}deg)`;
                 const finish = () => {
+                    coinResultKey = resultKey;
+                    const result = t(resultKey, translations.en[resultKey]);
                     coinResult.textContent = result;
-                    announce(`Coin result: ${result}.`);
+                    announce(t("tricks.coin.announcement", "Coin result: {result}.", { result }));
                     flipButton.disabled = false;
                     busy = false;
                 };
@@ -2451,7 +3024,7 @@ This preview is for project review and is not approved for publication.
             function createDie(value) {
                 const die = document.createElement("div");
                 die.className = "die";
-                die.setAttribute("aria-label", `Die showing ${value}`);
+                die.setAttribute("aria-label", t("tricks.dice.showing", "Die showing {value}", { value }));
                 const visible = new Set(pipIndexes[value]);
                 for (let index = 0; index < 9; index += 1) {
                     const pip = document.createElement("span");
@@ -2475,8 +3048,11 @@ This preview is for project review and is not approved for publication.
 
             function updateDiceChoice() {
                 const count = selectedDiceCount();
-                rollButton.textContent = count === 1 ? "Roll one die" : "Roll two dice";
-                diceResult.textContent = "Ready to roll";
+                rollButton.textContent = count === 1
+                    ? t("tricks.dice.rollOne", "Roll one die")
+                    : t("tricks.dice.rollTwo", "Roll two dice");
+                diceValues = null;
+                diceResult.textContent = t("tricks.dice.ready", "Ready to roll");
                 renderDice(Array(count).fill(1));
             }
 
@@ -2484,20 +3060,31 @@ This preview is for project review and is not approved for publication.
             rollButton.addEventListener("click", () => {
                 const count = selectedDiceCount();
                 const values = Array.from({ length: count }, () => randomInt(6) + 1);
+                diceValues = values;
                 renderDice(values, true);
                 const total = values.reduce((sum, value) => sum + value, 0);
-                diceResult.textContent = count === 1 ? String(total) : `Total: ${total}`;
-                const details = count === 1 ? `${total}` : `${values.join(" and ")}, total ${total}`;
-                announce(`Dice result: ${details}.`);
+                diceResult.textContent = count === 1
+                    ? String(total)
+                    : t("tricks.dice.total", "Total: {total}", { total });
+                announce(count === 1
+                    ? t("tricks.dice.announcementOne", "Dice result: {total}.", { total })
+                    : t("tricks.dice.announcementTwo", "Dice result: {first} and {second}, total {total}.", {
+                        first: values[0], second: values[1], total
+                    }));
             });
 
             function buildDeck() {
                 return suits.flatMap(suit => ranks.map(rank => ({
                     rank,
-                    rankName: rankNames[rank] || rank,
-                    ...suit,
-                    label: `${rankNames[rank] || rank} of ${suit.name}`
+                    rankKey: rankKeys[rank] || null,
+                    ...suit
                 })));
+            }
+
+            function cardLabel(card) {
+                const rank = card.rankKey ? t(card.rankKey, translations.en[card.rankKey]) : card.rank;
+                const suit = t(card.key, translations.en[card.key]);
+                return t("tricks.card.of", "{rank} of {suit}", { rank, suit });
             }
 
             function shuffle(items) {
@@ -2513,14 +3100,16 @@ This preview is for project review and is not approved for publication.
                 slot.className = "draw-slot";
                 const label = document.createElement("span");
                 label.className = "draw-slot-label";
-                label.textContent = newest ? "Latest" : "Earlier";
+                label.textContent = newest
+                    ? t("tricks.cards.latest", "Latest")
+                    : t("tricks.cards.earlier", "Earlier");
                 const cardView = document.createElement("div");
                 cardView.className = `playing-card${card.red ? " red" : ""}${newest ? " new-draw" : ""}`;
-                cardView.setAttribute("aria-label", card.label);
+                cardView.setAttribute("aria-label", cardLabel(card));
                 cardView.innerHTML = `<span class="card-corner"><span>${card.rank}</span><span>${card.symbol}</span></span><span class="card-center" aria-hidden="true">${card.symbol}</span><span class="card-corner card-corner-bottom" aria-hidden="true"><span>${card.rank}</span><span>${card.symbol}</span></span>`;
                 const name = document.createElement("p");
                 name.className = "card-name";
-                name.textContent = card.label;
+                name.textContent = cardLabel(card);
                 slot.append(label, cardView, name);
                 return slot;
             }
@@ -2530,14 +3119,14 @@ This preview is for project review and is not approved for publication.
                 slot.className = "draw-slot";
                 const label = document.createElement("span");
                 label.className = "draw-slot-label";
-                label.textContent = "Waiting";
+                label.textContent = t("tricks.cards.waiting", "Waiting");
                 const cardView = document.createElement("div");
                 cardView.className = "playing-card empty";
                 cardView.setAttribute("aria-hidden", "true");
                 cardView.innerHTML = '<span class="card-center">?</span>';
                 const name = document.createElement("p");
                 name.className = "card-name";
-                name.textContent = "No card yet";
+                name.textContent = t("tricks.cards.none", "No card yet");
                 slot.append(label, cardView, name);
                 return slot;
             }
@@ -2546,16 +3135,43 @@ This preview is for project review and is not approved for publication.
                 const slots = recentCards.map((card, index) => cardElement(card, index === 0));
                 while (slots.length < 3) slots.push(emptyCardElement());
                 cardsStage.replaceChildren(...slots);
-                deckCount.textContent = `${deck.length} ${deck.length === 1 ? "card" : "cards"} remaining`;
+                const remainingKey = deck.length === 1 ? "tricks.cards.remainingOne" : "tricks.cards.remainingMany";
+                deckCount.textContent = t(remainingKey, translations.en[remainingKey], { count: deck.length });
                 drawButton.disabled = deck.length === 0;
             }
 
             function resetDeck(announceReset = false) {
                 deck = shuffle(buildDeck());
                 recentCards = [];
-                cardResult.textContent = "Ready to draw";
+                cardResult.textContent = t("tricks.cards.ready", "Ready to draw");
                 renderCards();
-                if (announceReset) announce("The deck was shuffled. All 52 cards are available.");
+                if (announceReset) announce(t("tricks.cards.shuffled", "The deck was shuffled. All 52 cards are available."));
+            }
+
+            function applyTricksLanguage() {
+                document.title = t("tricks.meta.title", "Bag of Tricks · Teacher Tools");
+                const description = document.querySelector('meta[name="description"]');
+                if (description) description.content = t("tricks.meta.description", "Quick classroom coin, dice, and card randomizers.");
+
+                coinResult.textContent = t(coinResultKey, translations.en[coinResultKey]);
+                const count = selectedDiceCount();
+                rollButton.textContent = count === 1
+                    ? t("tricks.dice.rollOne", "Roll one die")
+                    : t("tricks.dice.rollTwo", "Roll two dice");
+                if (diceValues) {
+                    const total = diceValues.reduce((sum, value) => sum + value, 0);
+                    diceResult.textContent = diceValues.length === 1
+                        ? String(total)
+                        : t("tricks.dice.total", "Total: {total}", { total });
+                    renderDice(diceValues);
+                } else {
+                    diceResult.textContent = t("tricks.dice.ready", "Ready to roll");
+                    renderDice(Array(count).fill(1));
+                }
+                cardResult.textContent = recentCards.length > 0
+                    ? cardLabel(recentCards[0])
+                    : t("tricks.cards.ready", "Ready to draw");
+                renderCards();
             }
 
             drawButton.addEventListener("click", () => {
@@ -2563,15 +3179,18 @@ This preview is for project review and is not approved for publication.
                 const card = deck.pop();
                 recentCards.unshift(card);
                 recentCards = recentCards.slice(0, 3);
-                cardResult.textContent = card.label;
+                const label = cardLabel(card);
+                cardResult.textContent = label;
                 renderCards();
-                announce(`Drew the ${card.label}. ${deck.length} cards remain.`);
+                announce(t("tricks.cards.drew", "Drew the {card}. {count} cards remain.", { card: label, count: deck.length }));
             });
 
             shuffleButton.addEventListener("click", () => resetDeck(true));
+            window.addEventListener("teacher-tools:languagechange", applyTricksLanguage);
 
             renderDice([1]);
             resetDeck(false);
+            applyTricksLanguage();
         })();
     </script>
 <!-- TEACHER-TOOLS:HOOTIE:START -->

@@ -3,7 +3,6 @@
 Classroom Timer · Teacher Tools
 Copyright © 2026. All rights reserved.
 
-Workbench preview. Review project-wide licensing language before publication.
 -->
 <html lang="en">
 <head>
@@ -20,6 +19,7 @@ Workbench preview. Review project-wide licensing language before publication.
     <script>
         (() => {
             const key = "teacherTools.sitePreferences.v1";
+            const languageKey = "teacherTools.siteLanguage.v1";
             const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
 
             try {
@@ -29,6 +29,15 @@ Workbench preview. Review project-wide licensing language before publication.
             } catch (error) {
                 // Ocean Blue remains the safe default when storage is unavailable.
             }
+
+            try {
+                const saved = JSON.parse(localStorage.getItem(languageKey));
+                document.documentElement.lang = saved && ["en", "ja"].includes(saved.language)
+                    ? saved.language
+                    : "en";
+            } catch (error) {
+                document.documentElement.lang = "en";
+            }
         })();
     </script>
 <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:END -->
@@ -37,7 +46,7 @@ Workbench preview. Review project-wide licensing language before publication.
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
          * Teacher Tools canonical theme tokens.
-         * This file is embedded into registered pages by the shared UI sync.
+         * This file is embedded into registered Workbench pages by the shared UI sync.
          * Published applets remain self-contained and never load this file at runtime.
          */
 
@@ -234,6 +243,7 @@ Workbench preview. Review project-wide licensing language before publication.
             background: var(--accent-soft);
             border-color: var(--accent-border);
         }
+         .site-language-button,
          .site-data-button,
         .site-settings-button {
             width: 40px;
@@ -250,11 +260,14 @@ Workbench preview. Review project-wide licensing language before publication.
             cursor: pointer;
             transition: color 180ms ease;
         }
-         .site-data-button:hover,
+         .site-language-button:hover,
+        .site-language-button[aria-expanded="true"],
+        .site-data-button:hover,
         .site-data-button[aria-expanded="true"],
         .site-settings-button:hover,
         .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
-         .site-data-button svg {
+         .site-language-button svg,
+        .site-data-button svg {
             width: 22px;
             height: 22px;
             fill: none;
@@ -299,6 +312,7 @@ Workbench preview. Review project-wide licensing language before publication.
             stroke-linecap: round;
         }
          .site-tools-menu,
+         .site-language-panel,
         .site-data-panel,
         .site-theme-panel {
             position: absolute;
@@ -312,8 +326,9 @@ Workbench preview. Review project-wide licensing language before publication.
         }
          .site-tools-menu { width: min(300px, calc(100vw - 32px)); padding: 7px; }
         .site-data-panel { z-index: 121; width: min(380px, calc(100vw - 32px)); padding: 13px; }
+        .site-language-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
         .site-theme-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
-        .site-tools-menu[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
+        .site-tools-menu[hidden], .site-language-panel[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
          .site-menu-label {
             padding: 6px 9px 5px;
             color: var(--muted);
@@ -374,7 +389,8 @@ Workbench preview. Review project-wide licensing language before publication.
             line-height: 1.3;
         }
          .site-menu-status { color: var(--muted); font-size: 8.5px; font-weight: 700; }
-         .site-data-header,
+         .site-language-header,
+        .site-data-header,
         .site-theme-header {
             display: flex;
             align-items: center;
@@ -382,9 +398,11 @@ Workbench preview. Review project-wide licensing language before publication.
             gap: 12px;
             margin-bottom: 3px;
         }
-         .site-data-title,
+         .site-language-title,
+        .site-data-title,
         .site-theme-title { margin: 0; font-size: 14px; }
-         .site-data-close,
+         .site-language-close,
+        .site-data-close,
         .site-theme-close,
         .close-button {
             width: 34px;
@@ -401,14 +419,40 @@ Workbench preview. Review project-wide licensing language before publication.
             line-height: 1;
             cursor: pointer;
         }
-         .site-data-close:hover,
+         .site-language-close:hover,
+        .site-data-close:hover,
         .site-theme-close:hover,
         .close-button:hover { color: var(--text); background: var(--panel); }
-         .site-data-help,
+         .site-language-help,
+        .site-data-help,
         .site-theme-help {
             margin: 0 0 11px;
             color: var(--muted);
             font-size: 10.5px;
+            line-height: 1.45;
+        }
+        .site-language-label {
+            display: block;
+            margin: 0 0 5px;
+            color: var(--text);
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+        .site-language-select {
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 34px 8px 10px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 12px;
+        }
+        .site-language-select:hover { border-color: var(--accent-border); }
+        .site-language-note {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
             line-height: 1.45;
         }
          .site-data-summary {
@@ -817,6 +861,7 @@ Workbench preview. Review project-wide licensing language before publication.
             .site-nav { display: none; }
             .site-mobile-toggle { display: inline-flex; }
             .site-tools-menu,
+            .site-language-panel,
             .site-data-panel,
             .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
             .site-menu-home { display: grid; }
@@ -1436,11 +1481,10 @@ Workbench preview. Review project-wide licensing language before publication.
     </style>
 </head>
 <body>
-    <!-- Workbench links are relative. Use production routes only after release approval. -->
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
-            <a class="site-brand" href="/" aria-label="Teacher Tools home">
+            <a class="site-brand" href="/" aria-label="Teacher Tools home" data-i18n-aria-label="nav.homeAria">
                 <span class="site-brand-mark" aria-hidden="true">
                     <svg viewBox="0 0 28 28">
                         <path d="M5.5 7.5h17v15h-17z" />
@@ -1454,18 +1498,24 @@ Workbench preview. Review project-wide licensing language before publication.
                 </span>
             </a>
              <div class="site-header-actions">
-                <nav class="site-nav" aria-label="Main navigation">
-                    <a class="site-nav-link" href="/">Home</a>
+                <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="nav.mainAria">
+                    <a class="site-nav-link" href="/" data-i18n="nav.home">Home</a>
                     <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
-                        Tools <span class="site-menu-chevron" aria-hidden="true"></span>
+                        <span data-i18n="nav.tools">Tools</span> <span class="site-menu-chevron" aria-hidden="true"></span>
                     </button>
                 </nav>
-                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore">
+                 <button type="button" id="siteLanguageButton" class="site-language-button" aria-label="Open language settings" aria-expanded="false" aria-controls="siteLanguagePanel" title="Language" data-i18n-aria-label="language.open" data-i18n-title="language.title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="8.5" />
+                        <path d="M3.8 12h16.4M12 3.5c2.2 2.3 3.3 5.1 3.3 8.5S14.2 18.2 12 20.5M12 3.5C9.8 5.8 8.7 8.6 8.7 12s1.1 6.2 3.3 8.5" />
+                    </svg>
+                </button>
+                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore" data-i18n-aria-label="backup.open" data-i18n-title="backup.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3" />
                     </svg>
                 </button>
-                 <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
+                 <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance" data-i18n-aria-label="appearance.open" data-i18n-title="appearance.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
                     </svg>
@@ -1476,19 +1526,19 @@ Workbench preview. Review project-wide licensing language before publication.
                         <path d="M5 10h2v4H5zm12 0h2v4h-2z" fill="currentColor" stroke="none" />
                     </svg>
                 </button>
-                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">
+                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu" data-i18n-aria-label="nav.open">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 7h14M5 12h14M5 17h14" />
                     </svg>
                 </button>
             </div>
-             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
+             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" data-i18n-aria-label="nav.tools" hidden>
                 <a class="site-menu-item site-menu-home" href="/">
                     <span class="site-menu-icon" aria-hidden="true">⌂</span>
-                    <span><span class="site-menu-name">Home</span><span class="site-menu-description">Teacher Tools overview and updates</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="nav.home">Home</span><span class="site-menu-description" data-i18n="nav.homeDescription">Teacher Tools overview and updates</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
-                 <div class="site-menu-label">Available tools</div>
+                 <div class="site-menu-label" data-i18n="nav.available">Available tools</div>
                 <a class="site-menu-item" href="/scheduler/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1497,8 +1547,8 @@ Workbench preview. Review project-wide licensing language before publication.
                             <path d="m10 17 2.2 2.2L18 14.7" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.scheduler">Class Scheduler</span><span class="site-menu-description" data-i18n="tool.schedulerDescription">Create calendar events from bell times</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/calendar/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1507,8 +1557,8 @@ Workbench preview. Review project-wide licensing language before publication.
                             <path class="icon-fill" d="M11.2 12h5.6v5.25h-5.6z" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Calendar</span><span class="site-menu-description">Plan classes with school bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.calendar">Class Calendar</span><span class="site-menu-description" data-i18n="tool.calendarDescription">Plan classes with school bell times</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/spinner/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1518,8 +1568,8 @@ Workbench preview. Review project-wide licensing language before publication.
                             <path d="M14 5v18M5 14h18M7.64 7.64l12.72 12.72M20.36 7.64 7.64 20.36" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.spinner">Spinner Wheel</span><span class="site-menu-description" data-i18n="tool.spinnerDescription">Choose a random number, name, or custom choice</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/timer/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1530,8 +1580,8 @@ Workbench preview. Review project-wide licensing language before publication.
                             <path d="M14 12v4l3 1.8" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
-                    <span class="site-menu-status">HERE</span>
+                    <span><span class="site-menu-name" data-i18n="tool.timer">Classroom Timer</span><span class="site-menu-description" data-i18n="tool.timerDescription">Time classroom activities and games</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.HERE">HERE</span>
                 </a>
                  <a class="site-menu-item" href="/tracker/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1540,8 +1590,8 @@ Workbench preview. Review project-wide licensing language before publication.
                             <path d="m9.5 14 3 3 6-7" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.tracker">Class Tracker</span><span class="site-menu-description" data-i18n="tool.trackerDescription">Track lesson and textbook progress</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/tricks/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1551,11 +1601,11 @@ Workbench preview. Review project-wide licensing language before publication.
                             <path class="icon-fill" d="m14 13 .8 1.8 2 .2-1.5 1.4.4 2-1.7-1-1.7 1 .4-2-1.5-1.4 2-.2Z" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Bag of Tricks</span><span class="site-menu-description">Flip, roll, and draw for classroom games</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.tricks">Bag of Tricks</span><span class="site-menu-description" data-i18n="tool.tricksDescription">Flip, roll, and draw for classroom games</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
 
-                 <div class="site-menu-label">Planned tools</div>
+                 <div class="site-menu-label" data-i18n="nav.planned">Planned tools</div>
                  <div class="site-menu-item" aria-disabled="true">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1563,51 +1613,64 @@ Workbench preview. Review project-wide licensing language before publication.
                             <rect x="4.5" y="7.5" width="16" height="15" rx="2" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Google Slides Automator</span><span class="site-menu-description">Build lesson slides from common fields</span></span>
-                    <span class="site-menu-status">PLANNED</span>
+                    <span><span class="site-menu-name" data-i18n="tool.slides">Google Slides Automator</span><span class="site-menu-description" data-i18n="tool.slidesDescription">Build lesson slides from common fields</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.PLANNED">PLANNED</span>
                 </div>
             </nav>
              <section id="siteDataPanel" class="site-data-panel" role="dialog" aria-labelledby="siteDataTitle" hidden>
                 <div class="site-data-header">
-                    <h2 id="siteDataTitle" class="site-data-title">Backup & restore</h2>
-                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore">×</button>
+                    <h2 id="siteDataTitle" class="site-data-title" data-i18n="backup.title">Backup & restore</h2>
+                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore" data-i18n-aria-label="backup.close">×</button>
                 </div>
-                <p class="site-data-help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
-                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data"></ul>
+                <p class="site-data-help" data-i18n="backup.help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
+                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data" data-i18n-aria-label="backup.summaryAria"></ul>
                 <div class="site-data-actions">
-                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary">Export all data</button>
-                    <button type="button" id="siteDataImportButton" class="site-data-action">Import backup</button>
+                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary" data-i18n="backup.exportAll">Export all data</button>
+                    <button type="button" id="siteDataImportButton" class="site-data-action" data-i18n="backup.import">Import backup</button>
                 </div>
                 <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
-                <p class="site-data-note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
+                <p class="site-data-note" data-i18n="backup.note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
                 <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+            </section>
+             <section id="siteLanguagePanel" class="site-language-panel" role="dialog" aria-labelledby="siteLanguageTitle" hidden>
+                <div class="site-language-header">
+                    <h2 id="siteLanguageTitle" class="site-language-title" data-i18n="language.title">Language</h2>
+                    <button type="button" id="siteLanguageCloseButton" class="site-language-close" aria-label="Close language settings" data-i18n-aria-label="language.close">×</button>
+                </div>
+                <p class="site-language-help" data-i18n="language.help">Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.</p>
+                <label class="site-language-label" for="siteLanguageChoice" data-i18n="language.label">Display language</label>
+                <select id="siteLanguageChoice" class="site-language-select">
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
+                </select>
+                <p class="site-language-note" data-i18n="language.progress">English and Japanese are available across all current Teacher Tools pages.</p>
             </section>
              <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
                 <div class="site-theme-header">
-                    <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
-                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings">×</button>
+                    <h2 id="siteThemeTitle" class="site-theme-title" data-i18n="appearance.title">Appearance</h2>
+                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings" data-i18n-aria-label="appearance.close">×</button>
                 </div>
-                <p class="site-theme-help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
-                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme">
+                <p class="site-theme-help" data-i18n="appearance.help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
+                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme" data-i18n-aria-label="appearance.groupAria">
                     <label class="site-theme-option" data-theme-option="ocean-blue">
                         <input type="radio" name="siteThemeChoice" value="ocean-blue">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Ocean Blue</span>
+                        <span class="site-theme-name" data-i18n="theme.oceanBlue">Ocean Blue</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="color-pop">
                         <input type="radio" name="siteThemeChoice" value="color-pop">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Color Pop</span>
+                        <span class="site-theme-name" data-i18n="theme.colorPop">Color Pop</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="pretty-in-pink">
                         <input type="radio" name="siteThemeChoice" value="pretty-in-pink">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Pretty in Pink</span>
+                        <span class="site-theme-name" data-i18n="theme.prettyInPink">Pretty in Pink</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="true-dark">
                         <input type="radio" name="siteThemeChoice" value="true-dark">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">True Dark</span>
+                        <span class="site-theme-name" data-i18n="theme.trueDark">True Dark</span>
                     </label>
                 </div>
             </section>
@@ -1619,19 +1682,19 @@ Workbench preview. Review project-wide licensing language before publication.
         <div class="app-shell">
             <header class="app-header">
                 <div class="title-wrap">
-                    <h1 class="app-title">Classroom Timer</h1>
+                    <h1 class="app-title" data-i18n="timer.title">Classroom Timer</h1>
                     <span class="version-badge">v1.0</span>
                 </div>
                 <div class="app-header-actions">
-                    <button type="button" id="presentationButton" class="icon-button" aria-label="Enter presentation mode" aria-pressed="false" title="Presentation mode">
+                    <button type="button" id="presentationButton" class="icon-button" aria-label="Enter presentation mode" aria-pressed="false" title="Presentation mode" data-i18n-aria-label="timer.presentation.enter" data-i18n-title="timer.presentation.title">
                         <svg class="presentation-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M8.5 4.5h-4v4M15.5 4.5h4v4M19.5 15.5v4h-4M8.5 19.5h-4v-4" />
                         </svg>
                     </button>
-                    <button type="button" id="helpOpenButton" class="icon-button" data-modal-open="tutorialModal" aria-label="Open getting started help" aria-haspopup="dialog" title="Getting started">
+                    <button type="button" id="helpOpenButton" class="icon-button" data-modal-open="tutorialModal" aria-label="Open getting started help" aria-haspopup="dialog" title="Getting started" data-i18n-aria-label="timer.help.open" data-i18n-title="timer.help.title">
                         <span class="help-button-mark" aria-hidden="true">?</span>
                     </button>
-                    <button type="button" id="settingsOpenButton" class="icon-button" data-modal-open="settingsModal" aria-label="Open timer settings" aria-haspopup="dialog" title="Timer settings">
+                    <button type="button" id="settingsOpenButton" class="icon-button" data-modal-open="settingsModal" aria-label="Open timer settings" aria-haspopup="dialog" title="Timer settings" data-i18n-aria-label="timer.settings.open" data-i18n-title="timer.settings.title">
                         <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
                         </svg>
@@ -1640,9 +1703,9 @@ Workbench preview. Review project-wide licensing language before publication.
             </header>
 
             <div class="app-main">
-                <div class="mode-tabs" role="tablist" aria-label="Timer mode">
-                    <button type="button" id="countdownTab" class="mode-tab" role="tab" aria-selected="true" aria-controls="countdownPanel">Countdown</button>
-                    <button type="button" id="stopwatchTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="stopwatchPanel" tabindex="-1">Stopwatch</button>
+                <div class="mode-tabs" role="tablist" aria-label="Timer mode" data-i18n-aria-label="timer.mode.aria">
+                    <button type="button" id="countdownTab" class="mode-tab" role="tab" aria-selected="true" aria-controls="countdownPanel" data-i18n="timer.mode.countdown">Countdown</button>
+                    <button type="button" id="stopwatchTab" class="mode-tab" role="tab" aria-selected="false" aria-controls="stopwatchPanel" tabindex="-1" data-i18n="timer.mode.stopwatch">Stopwatch</button>
                 </div>
 
                 <section id="countdownPanel" class="timer-panel" role="tabpanel" aria-labelledby="countdownTab">
@@ -1650,41 +1713,41 @@ Workbench preview. Review project-wide licensing language before publication.
                         <div id="countdownFace" class="timer-face">
                             <div id="countdownDisplay" class="time-display" aria-hidden="true">05:00</div>
                         </div>
-                        <p id="countdownStatus" class="timer-status" role="status" aria-live="polite">Ready</p>
+                        <p id="countdownStatus" class="timer-status" role="status" aria-live="polite" data-i18n="timer.status.ready">Ready</p>
                         <span id="countdownAnnouncement" class="visually-hidden" aria-live="assertive"></span>
                         <div class="button-row">
-                            <button type="button" id="countdownStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label">Start</span></button>
-                            <button type="button" id="countdownResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span>Reset</span></button>
-                            <button type="button" id="addMinuteButton" class="button button-neutral">+1 minute</button>
+                            <button type="button" id="countdownStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label" data-i18n="timer.action.start">Start</span></button>
+                            <button type="button" id="countdownResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span data-i18n="timer.action.reset">Reset</span></button>
+                            <button type="button" id="addMinuteButton" class="button button-neutral" data-i18n="timer.action.addMinute">+1 minute</button>
                         </div>
                     </div>
-                    <p class="keyboard-hint">Press Space to start or pause while no field or dialog is active.</p>
+                    <p class="keyboard-hint" data-i18n="timer.keyboardHint">Press Space to start or pause while no field or dialog is active.</p>
 
                     <div class="countdown-setup">
-                        <span class="section-label">Quick presets</span>
-                        <div id="presetList" class="preset-list" role="group" aria-label="Countdown presets">
-                            <button type="button" class="preset-button" data-seconds="60" data-quick-preset="60">1 min</button>
-                            <button type="button" class="preset-button" data-seconds="180" data-quick-preset="180">3 min</button>
-                            <button type="button" class="preset-button" data-seconds="300" data-quick-preset="300">5 min</button>
-                            <button type="button" class="preset-button" data-seconds="600" data-quick-preset="600">10 min</button>
-                            <button type="button" class="preset-button" data-seconds="900" data-quick-preset="900">15 min</button>
+                        <span class="section-label" data-i18n="timer.quickPresets">Quick presets</span>
+                        <div id="presetList" class="preset-list" role="group" aria-label="Countdown presets" data-i18n-aria-label="timer.presets.aria">
+                            <button type="button" class="preset-button" data-seconds="60" data-quick-preset="60" data-i18n="timer.minutes.1">1 min</button>
+                            <button type="button" class="preset-button" data-seconds="180" data-quick-preset="180" data-i18n="timer.minutes.3">3 min</button>
+                            <button type="button" class="preset-button" data-seconds="300" data-quick-preset="300" data-i18n="timer.minutes.5">5 min</button>
+                            <button type="button" class="preset-button" data-seconds="600" data-quick-preset="600" data-i18n="timer.minutes.10">10 min</button>
+                            <button type="button" class="preset-button" data-seconds="900" data-quick-preset="900" data-i18n="timer.minutes.15">15 min</button>
                             <span id="savedPresetButtons"></span>
-                            <span id="quickPresetEmpty" class="quick-preset-empty" hidden>No quick presets selected.</span>
+                            <span id="quickPresetEmpty" class="quick-preset-empty" hidden data-i18n="timer.presets.noneSelected">No quick presets selected.</span>
                         </div>
 
-                        <div class="time-entry" aria-label="Set countdown duration">
+                        <div class="time-entry" aria-label="Set countdown duration" data-i18n-aria-label="timer.duration.aria">
                             <label class="time-field">
-                                <span class="field-label">Hours</span>
+                                <span class="field-label" data-i18n="timer.hours">Hours</span>
                                 <input id="countdownHours" type="number" min="0" max="23" value="0" inputmode="numeric">
                             </label>
                             <span class="time-separator" aria-hidden="true">:</span>
                             <label class="time-field">
-                                <span class="field-label">Minutes</span>
+                                <span class="field-label" data-i18n="timer.minutes">Minutes</span>
                                 <input id="countdownMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
                             </label>
                             <span class="time-separator" aria-hidden="true">:</span>
                             <label class="time-field">
-                                <span class="field-label">Seconds</span>
+                                <span class="field-label" data-i18n="timer.seconds">Seconds</span>
                                 <input id="countdownSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
                             </label>
                         </div>
@@ -1696,19 +1759,19 @@ Workbench preview. Review project-wide licensing language before publication.
                         <div id="stopwatchFace" class="timer-face">
                             <div id="stopwatchDisplay" class="time-display stopwatch-display" aria-hidden="true">00:00.0</div>
                         </div>
-                        <p id="stopwatchStatus" class="timer-status" role="status" aria-live="polite">Ready</p>
+                        <p id="stopwatchStatus" class="timer-status" role="status" aria-live="polite" data-i18n="timer.status.ready">Ready</p>
                         <div class="button-row">
-                            <button type="button" id="stopwatchStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label">Start</span></button>
-                            <button type="button" id="stopwatchResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span>Reset</span></button>
+                            <button type="button" id="stopwatchStartButton" class="button button-primary"><span class="button-symbol" aria-hidden="true">▶</span><span class="button-label" data-i18n="timer.action.start">Start</span></button>
+                            <button type="button" id="stopwatchResetButton" class="button button-secondary"><span class="button-symbol" aria-hidden="true">↻</span><span data-i18n="timer.action.reset">Reset</span></button>
                         </div>
                     </div>
-                    <p class="keyboard-hint">Press Space to start or pause while no field or dialog is active.</p>
+                    <p class="keyboard-hint" data-i18n="timer.keyboardHint">Press Space to start or pause while no field or dialog is active.</p>
                 </section>
             </div>
 
             <footer class="app-footer">
-                <div class="footer-version">Classroom Timer · v1.0</div>
-                <div class="footer-copyright">Teacher Tools · Workbench preview · Timer data stays in this browser.</div>
+                <div class="footer-version" data-i18n="timer.footer.version">Classroom Timer · v1.0</div>
+                <div class="footer-copyright" data-i18n="timer.footer.note">Teacher Tools · Timer data stays in this browser.</div>
             </footer>
         </div>
     </main>
@@ -1716,28 +1779,28 @@ Workbench preview. Review project-wide licensing language before publication.
     <div id="tutorialModal" class="modal-backdrop" data-shared-modal data-first-use-storage-key="teacherTools.classroomTimer.tutorialSeen.v1" aria-hidden="true">
         <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" aria-describedby="tutorialIntro">
             <header class="modal-header">
-                <h2 id="tutorialTitle" class="modal-title">Getting started</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close getting started help">×</button>
+                <h2 id="tutorialTitle" class="modal-title" data-i18n="timer.help.title">Getting started</h2>
+                <button type="button" class="close-button" data-modal-close aria-label="Close getting started help" data-i18n-aria-label="timer.help.close">×</button>
             </header>
             <div class="modal-content">
-                <p id="tutorialIntro" class="tutorial-intro">Use the Classroom Timer for a quick activity countdown or as a stopwatch.</p>
+                <p id="tutorialIntro" class="tutorial-intro" data-i18n="timer.help.intro">Use the Classroom Timer for a quick activity countdown or as a stopwatch.</p>
                 <div class="tutorial-steps">
                     <section class="tutorial-step">
                         <span class="tutorial-number" aria-hidden="true">1</span>
-                        <div><h3>Choose a time</h3><p>Pick a quick preset or enter hours, minutes, and seconds.</p></div>
+                        <div><h3 data-i18n="timer.help.step1Title">Choose a time</h3><p data-i18n="timer.help.step1Body">Pick a quick preset or enter hours, minutes, and seconds.</p></div>
                     </section>
                     <section class="tutorial-step">
                         <span class="tutorial-number" aria-hidden="true">2</span>
-                        <div><h3>Start, pause, or add time</h3><p>The countdown remains accurate when the browser tab is in the background. Add one minute at any time.</p></div>
+                        <div><h3 data-i18n="timer.help.step2Title">Start, pause, or add time</h3><p data-i18n="timer.help.step2Body">The countdown remains accurate when the browser tab is in the background. Add one minute at any time.</p></div>
                     </section>
                     <section class="tutorial-step">
                         <span class="tutorial-number" aria-hidden="true">3</span>
-                        <div><h3>Save frequent countdowns</h3><p>Create named presets in Settings. They are stored only in this browser and may be lost if site data is cleared.</p></div>
+                        <div><h3 data-i18n="timer.help.step3Title">Save frequent countdowns</h3><p data-i18n="timer.help.step3Body">Create named presets in Settings. They are stored only in this browser and may be lost if site data is cleared.</p></div>
                     </section>
                 </div>
             </div>
             <div class="modal-actions">
-                <button type="button" class="button button-primary" data-modal-close>Start timing</button>
+                <button type="button" class="button button-primary" data-modal-close data-i18n="timer.help.start">Start timing</button>
             </div>
         </section>
     </div>
@@ -1745,80 +1808,80 @@ Workbench preview. Review project-wide licensing language before publication.
     <div id="settingsModal" class="modal-backdrop" data-shared-modal aria-hidden="true">
         <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
             <header class="modal-header">
-                <h2 id="settingsTitle" class="modal-title">Timer settings</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close timer settings">×</button>
+                <h2 id="settingsTitle" class="modal-title" data-i18n="timer.settings.title">Timer settings</h2>
+                <button type="button" class="close-button" data-modal-close aria-label="Close timer settings" data-i18n-aria-label="timer.settings.close">×</button>
             </header>
             <div class="modal-content">
                 <section class="settings-section">
-                    <h3 class="settings-heading">Countdown defaults</h3>
-                    <p class="settings-help">Choose the countdown shown when Classroom Timer first opens and which built-in shortcuts appear below it. Changes save automatically.</p>
+                    <h3 class="settings-heading" data-i18n="timer.settings.defaultsTitle">Countdown defaults</h3>
+                    <p class="settings-help" data-i18n="timer.settings.defaultsHelp">Choose the countdown shown when Classroom Timer first opens and which built-in shortcuts appear below it. Changes save automatically.</p>
                     <div id="defaultCountdownSettings">
                         <div class="default-time-form">
                             <label class="time-field">
-                                <span class="field-label">Hours</span>
+                                <span class="field-label" data-i18n="timer.hours">Hours</span>
                                 <input id="defaultHours" type="number" min="0" max="23" value="0" inputmode="numeric">
                             </label>
                             <label class="time-field">
-                                <span class="field-label">Minutes</span>
+                                <span class="field-label" data-i18n="timer.minutes">Minutes</span>
                                 <input id="defaultMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
                             </label>
                             <label class="time-field">
-                                <span class="field-label">Seconds</span>
+                                <span class="field-label" data-i18n="timer.seconds">Seconds</span>
                                 <input id="defaultSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
                             </label>
                         </div>
 
-                        <span class="field-label quick-preset-setting-label">Quick presets to show</span>
-                        <div class="quick-preset-grid" role="group" aria-label="Quick presets to show">
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="60" checked><span>1 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="180" checked><span>3 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="300" checked><span>5 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="600" checked><span>10 min</span></label>
-                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="900" checked><span>15 min</span></label>
+                        <span class="field-label quick-preset-setting-label" data-i18n="timer.settings.quickPresets">Quick presets to show</span>
+                        <div class="quick-preset-grid" role="group" aria-label="Quick presets to show" data-i18n-aria-label="timer.settings.quickPresets">
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="60" checked><span data-i18n="timer.minutes.1">1 min</span></label>
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="180" checked><span data-i18n="timer.minutes.3">3 min</span></label>
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="300" checked><span data-i18n="timer.minutes.5">5 min</span></label>
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="600" checked><span data-i18n="timer.minutes.10">10 min</span></label>
+                            <label class="checkbox-control quick-preset-option"><input type="checkbox" data-quick-preset-setting="900" checked><span data-i18n="timer.minutes.15">15 min</span></label>
                         </div>
                     </div>
                     <p id="defaultCountdownMessage" class="form-message" role="status" aria-live="polite"></p>
                 </section>
 
                 <section class="settings-section">
-                    <h3 class="settings-heading">Sound</h3>
+                    <h3 class="settings-heading" data-i18n="timer.settings.soundTitle">Sound</h3>
                     <div class="setting-row">
                         <span>
-                            <span class="setting-label">Play a finish sound</span>
-                            <span class="setting-description">Uses a short sound generated on this device. Nothing is downloaded.</span>
+                            <span class="setting-label" data-i18n="timer.settings.soundLabel">Play a finish sound</span>
+                            <span class="setting-description" data-i18n="timer.settings.soundHelp">Uses a short sound generated on this device. Nothing is downloaded.</span>
                         </span>
                         <label class="switch">
-                            <input id="soundEnabledInput" type="checkbox" aria-label="Play a sound when the countdown finishes" checked>
+                            <input id="soundEnabledInput" type="checkbox" aria-label="Play a sound when the countdown finishes" checked data-i18n-aria-label="timer.settings.soundAria">
                             <span class="switch-track" aria-hidden="true"></span>
                         </label>
                     </div>
                 </section>
 
                 <section class="settings-section">
-                    <h3 class="settings-heading">Saved countdowns</h3>
-                    <p class="settings-help">Save up to 12 named presets on this browser.</p>
+                    <h3 class="settings-heading" data-i18n="timer.settings.savedTitle">Saved countdowns</h3>
+                    <p class="settings-help" data-i18n="timer.settings.savedHelp">Save up to 12 named presets on this browser.</p>
                     <form id="presetForm" class="preset-form">
                         <label class="time-field preset-name-field">
-                            <span class="field-label">Name</span>
-                            <input id="presetName" type="text" maxlength="40" placeholder="Warm-up" autocomplete="off" required>
+                            <span class="field-label" data-i18n="timer.name">Name</span>
+                            <input id="presetName" type="text" maxlength="40" placeholder="Warm-up" autocomplete="off" required data-i18n-placeholder="timer.namePlaceholder">
                         </label>
                         <label class="time-field">
-                            <span class="field-label">Hours</span>
+                            <span class="field-label" data-i18n="timer.hours">Hours</span>
                             <input id="presetHours" type="number" min="0" max="23" value="0" inputmode="numeric">
                         </label>
                         <label class="time-field">
-                            <span class="field-label">Minutes</span>
+                            <span class="field-label" data-i18n="timer.minutes">Minutes</span>
                             <input id="presetMinutes" type="number" min="0" max="59" value="5" inputmode="numeric">
                         </label>
                         <label class="time-field">
-                            <span class="field-label">Seconds</span>
+                            <span class="field-label" data-i18n="timer.seconds">Seconds</span>
                             <input id="presetSeconds" type="number" min="0" max="59" value="0" inputmode="numeric">
                         </label>
-                        <button type="submit" class="button button-secondary">Save</button>
+                        <button type="submit" class="button button-secondary" data-i18n="timer.action.save">Save</button>
                     </form>
                     <p id="presetFormMessage" class="form-message" role="status" aria-live="polite"></p>
                     <div id="savedPresetList" class="saved-list"></div>
-                    <div class="notice" role="note">Saved countdowns are private to this browser. Clearing browser or site data removes them.</div>
+                    <div class="notice" role="note" data-i18n="timer.settings.savedNotice">Saved countdowns are private to this browser. Clearing browser or site data removes them.</div>
                 </section>
             </div>
         </section>
@@ -1843,6 +1906,9 @@ Workbench preview. Review project-wide licensing language before publication.
                 !["school","category"].every(k => typeof p[k] === "string")) return false;
             if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
                 p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
+            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
+            if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
+            if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
             const ids = new Set();
             return value.events.every(e => {
                 if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
@@ -1859,7 +1925,181 @@ Workbench preview. Review project-wide licensing language before publication.
             "use strict";
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
+            const SITE_LANGUAGE_KEY = "teacherTools.siteLanguage.v1";
             const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const ALLOWED_LANGUAGES = ["en", "ja"];
+            const SHARED_TRANSLATIONS = {
+                en: {
+                    "nav.homeAria": "Teacher Tools home",
+                    "nav.mainAria": "Main navigation",
+                    "nav.home": "Home",
+                    "nav.tools": "Tools",
+                    "nav.open": "Open navigation",
+                    "nav.homeDescription": "Teacher Tools overview and updates",
+                    "nav.available": "Available tools",
+                    "nav.planned": "Planned tools",
+                    "nav.status.HERE": "HERE",
+                    "nav.status.OPEN": "OPEN",
+                    "nav.status.PLANNED": "PLANNED",
+                    "tool.scheduler": "Class Scheduler",
+                    "tool.schedulerDescription": "Create calendar events from bell times",
+                    "tool.calendar": "Class Calendar",
+                    "tool.calendarDescription": "Plan classes with school bell times",
+                    "tool.spinner": "Spinner Wheel",
+                    "tool.spinnerDescription": "Choose a random number, name, or custom choice",
+                    "tool.timer": "Classroom Timer",
+                    "tool.timerDescription": "Time classroom activities and games",
+                    "tool.tracker": "Class Tracker",
+                    "tool.trackerDescription": "Track lesson and textbook progress",
+                    "tool.tricks": "Bag of Tricks",
+                    "tool.tricksDescription": "Flip, roll, and draw for classroom games",
+                    "tool.slides": "Google Slides Automator",
+                    "tool.slidesDescription": "Build lesson slides from common fields",
+                    "language.open": "Open language settings",
+                    "language.title": "Language",
+                    "language.close": "Close language settings",
+                    "language.help": "Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.",
+                    "language.label": "Display language",
+                    "language.progress": "English and Japanese are available across all current Teacher Tools pages.",
+                    "backup.open": "Open Teacher Tools backup and restore",
+                    "backup.title": "Backup & restore",
+                    "backup.close": "Close backup and restore",
+                    "backup.help": "Choose which saved data to include in one local backup file. Nothing is uploaded.",
+                    "backup.summaryAria": "Saved Teacher Tools data",
+                    "backup.exportAll": "Export all data",
+                    "backup.import": "Import backup",
+                    "backup.note": "Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.",
+                    "backup.saved": "Saved",
+                    "backup.invalid": "Needs attention",
+                    "backup.missing": "No saved data",
+                    "backup.exportCount": "Export ({count}) {items}",
+                    "backup.item": "item",
+                    "backup.items": "items",
+                    "backup.select": "Select data to export",
+                    "backup.selectError": "Select at least one saved item to export.",
+                    "backup.exported": "Backup exported with {count} saved {areas}.",
+                    "backup.area": "area",
+                    "backup.areas": "areas",
+                    "backup.readError": "The backup file could not be read.",
+                    "backup.siteUnsupported": "This is not a supported Teacher Tools site backup.",
+                    "backup.invalidRecord": "{label} data in this backup is not valid.",
+                    "backup.noSupportedData": "This backup does not contain any supported Teacher Tools data.",
+                    "backup.spinnerInvalid": "The Spinner Wheel data in this backup is not valid.",
+                    "backup.schedulerV1Invalid": "The Version 1 Scheduler data in this backup is not valid.",
+                    "backup.schedulerVersionInvalid": "The Version {version} Scheduler data in this backup is not valid.",
+                    "backup.unsupported": "This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.",
+                    "backup.storageError": "Browser storage is unavailable or full.",
+                    "backup.tooLarge": "That file is too large to be a Teacher Tools backup.",
+                    "backup.confirm": "Import this {kind} backup? It will replace saved data for: {labels}. Other saved tool data will remain unchanged. This page will reload afterward.",
+                    "backup.kindOlder": "older single-tool",
+                    "backup.kindSite": "Teacher Tools",
+                    "backup.cancelled": "Import cancelled.",
+                    "backup.success": "Backup imported successfully. Reloading this page…",
+                    "backup.successAlert": "Teacher Tools backup imported successfully. This page will now reload.",
+                    "backup.importError": "The backup could not be imported.",
+                    "record.calendar": "Class Calendar",
+                    "record.appearance": "Site appearance",
+                    "record.language": "Site language",
+                    "record.scheduler": "ALT Class Scheduler",
+                    "record.spinner": "Spinner Wheel",
+                    "record.timer": "Classroom Timer",
+                    "record.tracker": "Class Tracker",
+                    "appearance.open": "Open site appearance settings",
+                    "appearance.title": "Appearance",
+                    "appearance.close": "Close appearance settings",
+                    "appearance.help": "This theme is shared by Home and every Teacher Tools applet in this browser.",
+                    "appearance.groupAria": "Site color theme",
+                    "theme.oceanBlue": "Ocean Blue",
+                    "theme.colorPop": "Color Pop",
+                    "theme.prettyInPink": "Pretty in Pink",
+                    "theme.trueDark": "True Dark"
+                },
+                ja: {
+                    "nav.homeAria": "Teacher Tools ホーム",
+                    "nav.mainAria": "メインナビゲーション",
+                    "nav.home": "ホーム",
+                    "nav.tools": "ツール",
+                    "nav.open": "ナビゲーションを開く",
+                    "nav.homeDescription": "Teacher Toolsの概要と更新情報",
+                    "nav.available": "利用できるツール",
+                    "nav.planned": "開発予定のツール",
+                    "nav.status.HERE": "表示中",
+                    "nav.status.OPEN": "開く",
+                    "nav.status.PLANNED": "予定",
+                    "tool.scheduler": "クラススケジューラー",
+                    "tool.schedulerDescription": "時間割からカレンダー予定を作成",
+                    "tool.calendar": "クラスカレンダー",
+                    "tool.calendarDescription": "学校の時間割に合わせて授業を計画",
+                    "tool.spinner": "スピナーホイール",
+                    "tool.spinnerDescription": "数字・名前・選択肢からランダムに決定",
+                    "tool.timer": "教室タイマー",
+                    "tool.timerDescription": "授業活動やゲームの時間を計測",
+                    "tool.tracker": "クラストラッカー",
+                    "tool.trackerDescription": "授業や教科書の進捗を記録",
+                    "tool.tricks": "お楽しみツール",
+                    "tool.tricksDescription": "コイン・サイコロ・カードを授業で活用",
+                    "tool.slides": "Googleスライド自動作成",
+                    "tool.slidesDescription": "よく使う項目から授業スライドを作成",
+                    "language.open": "言語設定を開く",
+                    "language.title": "言語",
+                    "language.close": "言語設定を閉じる",
+                    "language.help": "Teacher Toolsの画面に表示する言語を選択します。自分で入力した内容は翻訳も変更もされません。",
+                    "language.label": "表示言語",
+                    "language.progress": "現在のTeacher Tools全ページを英語と日本語で利用できます。",
+                    "backup.open": "Teacher Toolsのバックアップと復元を開く",
+                    "backup.title": "バックアップと復元",
+                    "backup.close": "バックアップと復元を閉じる",
+                    "backup.help": "保存済みデータを選び、1つのローカルバックアップファイルにまとめます。データはアップロードされません。",
+                    "backup.summaryAria": "保存済みのTeacher Toolsデータ",
+                    "backup.exportAll": "すべてのデータを書き出す",
+                    "backup.import": "バックアップを読み込む",
+                    "backup.note": "読み込むと、ファイルに含まれるツールの保存データが置き換わります。その他のツールのデータは変わりません。旧形式のスケジューラーとスピナーホイールのバックアップにも対応しています。",
+                    "backup.saved": "保存済み",
+                    "backup.invalid": "確認が必要",
+                    "backup.missing": "保存データなし",
+                    "backup.exportCount": "{count}件を書き出す",
+                    "backup.item": "件",
+                    "backup.items": "件",
+                    "backup.select": "書き出すデータを選択",
+                    "backup.selectError": "書き出す保存済みデータを1件以上選択してください。",
+                    "backup.exported": "保存済みデータ{count}件をバックアップに書き出しました。",
+                    "backup.area": "件",
+                    "backup.areas": "件",
+                    "backup.readError": "バックアップファイルを読み込めませんでした。",
+                    "backup.siteUnsupported": "対応しているTeacher Toolsのサイトバックアップではありません。",
+                    "backup.invalidRecord": "バックアップ内の「{label}」データが正しくありません。",
+                    "backup.noSupportedData": "対応しているTeacher Toolsのデータがバックアップに含まれていません。",
+                    "backup.spinnerInvalid": "バックアップ内のスピナーホイールデータが正しくありません。",
+                    "backup.schedulerV1Invalid": "バックアップ内のバージョン1のスケジューラーデータが正しくありません。",
+                    "backup.schedulerVersionInvalid": "バックアップ内のバージョン{version}のスケジューラーデータが正しくありません。",
+                    "backup.unsupported": "対応しているTeacher Tools、スケジューラー、またはスピナーホイールのバックアップではありません。",
+                    "backup.storageError": "ブラウザの保存領域を利用できないか、空き容量がありません。",
+                    "backup.tooLarge": "Teacher Toolsのバックアップとしてはファイルサイズが大きすぎます。",
+                    "backup.confirm": "この{kind}バックアップを読み込みますか？ 次の保存データが置き換わります：{labels}。その他のツールのデータは変わりません。完了後、このページを再読み込みします。",
+                    "backup.kindOlder": "旧形式の単一ツール",
+                    "backup.kindSite": "Teacher Tools",
+                    "backup.cancelled": "読み込みをキャンセルしました。",
+                    "backup.success": "バックアップを読み込みました。ページを再読み込みしています…",
+                    "backup.successAlert": "Teacher Toolsのバックアップを読み込みました。このページを再読み込みします。",
+                    "backup.importError": "バックアップを読み込めませんでした。",
+                    "record.calendar": "クラスカレンダー",
+                    "record.appearance": "サイトの外観",
+                    "record.language": "サイトの言語",
+                    "record.scheduler": "ALTクラススケジューラー",
+                    "record.spinner": "スピナーホイール",
+                    "record.timer": "教室タイマー",
+                    "record.tracker": "クラストラッカー",
+                    "appearance.open": "サイトの外観設定を開く",
+                    "appearance.title": "外観",
+                    "appearance.close": "外観設定を閉じる",
+                    "appearance.help": "このテーマは、このブラウザのホームとすべてのTeacher Toolsアプレットで共有されます。",
+                    "appearance.groupAria": "サイトのカラーテーマ",
+                    "theme.oceanBlue": "オーシャンブルー",
+                    "theme.colorPop": "カラーポップ",
+                    "theme.prettyInPink": "プリティ・イン・ピンク",
+                    "theme.trueDark": "トゥルーダーク"
+                }
+            };
             const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
             const SITE_BACKUP_SCHEMA_VERSION = 1;
             const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
@@ -1867,19 +2107,30 @@ Workbench preview. Review project-wide licensing language before publication.
                 {
                     id: "class-calendar",
                     label: "Class Calendar",
+                    labelKey: "record.calendar",
                     storageKey: "teacherTools.classCalendar.state.v1",
                     validate: value => window.TeacherToolsCalendarValidate(value)
                 },
                 {
                     id: "appearance",
                     label: "Site appearance",
+                    labelKey: "record.appearance",
                     storageKey: SITE_PREFERENCES_KEY,
                     validate: value => isPlainObject(value) &&
                         value.version === 1 && ALLOWED_THEMES.includes(value.theme)
                 },
                 {
+                    id: "language",
+                    label: "Site language",
+                    labelKey: "record.language",
+                    storageKey: SITE_LANGUAGE_KEY,
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        ALLOWED_LANGUAGES.includes(value.language)
+                },
+                {
                     id: "scheduler",
                     label: "ALT Class Scheduler",
+                    labelKey: "record.scheduler",
                     storageKey: "classAutomatorData_v3",
                     validate: value => isPlainObject(value) && value.version === 3 &&
                         Array.isArray(value.schools) && isPlainObject(value.schedule) &&
@@ -1888,6 +2139,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 {
                     id: "spinner",
                     label: "Spinner Wheel",
+                    labelKey: "record.spinner",
                     storageKey: "teacherTools.spinnerWheel.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         ["numbers", "custom"].includes(value.mode) &&
@@ -1898,6 +2150,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 {
                     id: "timer",
                     label: "Classroom Timer",
+                    labelKey: "record.timer",
                     storageKey: "teacherTools.classroomTimer.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         typeof value.soundEnabled === "boolean" &&
@@ -1907,6 +2160,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 {
                     id: "class-tracker",
                     label: "Class Tracker",
+                    labelKey: "record.tracker",
                     storageKey: "teacherTools.classTracker.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         Array.isArray(value.templates) && isPlainObject(value.assignments) &&
@@ -1920,6 +2174,12 @@ Workbench preview. Review project-wide licensing language before publication.
             let tooltipContent = null;
             let tooltipPinned = false;
             let tooltipFrame = 0;
+            let activeLanguage = "en";
+            const translationCatalogs = {
+                en: { ...SHARED_TRANSLATIONS.en },
+                ja: { ...SHARED_TRANSLATIONS.ja }
+            };
+            const translationDefaults = new WeakMap();
 
             function storageGet(key) {
                 try {
@@ -1951,6 +2211,79 @@ Workbench preview. Review project-wide licensing language before publication.
                 return Boolean(value) && typeof value === "object" && !Array.isArray(value);
             }
 
+            function normalizeLanguage(value) {
+                return ALLOWED_LANGUAGES.includes(value) ? value : "en";
+            }
+
+            function languageFromStoredValue(value) {
+                if (!value) return null;
+                try {
+                    const saved = JSON.parse(value);
+                    return saved && ALLOWED_LANGUAGES.includes(saved.language) ? saved.language : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function interpolateTranslation(text, replacements = {}) {
+                return Object.entries(replacements).reduce(
+                    (result, [name, value]) => result.replaceAll(`{${name}}`, String(value)),
+                    text
+                );
+            }
+
+            function translate(key, fallback = key, replacements = {}) {
+                const localized = translationCatalogs[activeLanguage]?.[key];
+                const english = translationCatalogs.en?.[key];
+                return interpolateTranslation(localized ?? english ?? fallback, replacements);
+            }
+
+            function translationDefault(element, name, value) {
+                const defaults = translationDefaults.get(element) || {};
+                if (!(name in defaults)) defaults[name] = value;
+                translationDefaults.set(element, defaults);
+                return defaults[name];
+            }
+
+            function applyDocumentTranslations(root = document) {
+                root.querySelectorAll("[data-i18n]").forEach(element => {
+                    const fallback = translationDefault(element, "text", element.textContent);
+                    element.textContent = translate(element.dataset.i18n, fallback);
+                });
+                ["aria-label", "title", "placeholder"].forEach(attribute => {
+                    const dataName = `i18n${attribute.split("-").map(part => part[0].toUpperCase() + part.slice(1)).join("")}`;
+                    root.querySelectorAll(`[data-i18n-${attribute}]`).forEach(element => {
+                        const fallback = translationDefault(element, attribute, element.getAttribute(attribute) || "");
+                        element.setAttribute(attribute, translate(element.dataset[dataName], fallback));
+                    });
+                });
+            }
+
+            function applyGlobalLanguage(requestedLanguage, persist = true) {
+                activeLanguage = normalizeLanguage(requestedLanguage);
+                document.documentElement.lang = activeLanguage;
+                const choice = document.getElementById("siteLanguageChoice");
+                if (choice) choice.value = activeLanguage;
+                applyDocumentTranslations();
+                if (document.getElementById("siteDataSummary")) updateSiteDataSummary();
+                setSiteDataStatus("");
+                if (persist) {
+                    storageSet(SITE_LANGUAGE_KEY, JSON.stringify({ version: 1, language: activeLanguage }));
+                }
+                window.dispatchEvent(new CustomEvent("teacher-tools:languagechange", {
+                    detail: { language: activeLanguage }
+                }));
+            }
+
+            function registerTranslations(catalogs) {
+                for (const language of ALLOWED_LANGUAGES) {
+                    if (isPlainObject(catalogs?.[language])) {
+                        Object.assign(translationCatalogs[language], catalogs[language]);
+                    }
+                }
+                applyDocumentTranslations();
+            }
+
             function readSiteDataRecord(definition) {
                 const raw = storageGet(definition.storageKey);
                 if (raw === null) return { definition, state: "missing", value: null };
@@ -1967,6 +2300,10 @@ Workbench preview. Review project-wide licensing language before publication.
 
             function siteDataSnapshot() {
                 return SITE_DATA_RECORDS.map(readSiteDataRecord);
+            }
+
+            function siteDataRecordLabel(definition) {
+                return translate(definition.labelKey, definition.label);
             }
 
             function setSiteDataStatus(message, error = false) {
@@ -1992,13 +2329,15 @@ Workbench preview. Review project-wide licensing language before publication.
                     checkbox.checked = record.state === "saved";
                     checkbox.disabled = record.state !== "saved";
                     const label = document.createElement("span");
-                    label.textContent = record.definition.label;
+                    label.textContent = siteDataRecordLabel(record.definition);
                     selection.append(checkbox, label);
                     const state = document.createElement("span");
                     state.className = `site-data-summary-state ${record.state}`;
                     state.textContent = record.state === "saved"
-                        ? "Saved"
-                        : record.state === "invalid" ? "Needs attention" : "No saved data";
+                        ? translate("backup.saved", "Saved")
+                        : record.state === "invalid"
+                            ? translate("backup.invalid", "Needs attention")
+                            : translate("backup.missing", "No saved data");
                     item.append(selection, state);
                     return item;
                 }));
@@ -2020,10 +2359,13 @@ Workbench preview. Review project-wide licensing language before publication.
                 const selectedCount = selectable.filter(checkbox => checkbox.checked).length;
                 exportButton.disabled = selectedCount === 0;
                 exportButton.textContent = selectedCount === selectable.length && selectable.length > 0
-                    ? "Export all data"
+                    ? translate("backup.exportAll", "Export all data")
                     : selectedCount > 0
-                        ? `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`
-                        : "Select data to export";
+                        ? translate("backup.exportCount", `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`, {
+                            count: selectedCount,
+                            items: translate(selectedCount === 1 ? "backup.item" : "backup.items", selectedCount === 1 ? "item" : "items")
+                        })
+                        : translate("backup.select", "Select data to export");
             }
 
             function localDateStamp(date = new Date()) {
@@ -2053,7 +2395,7 @@ Workbench preview. Review project-wide licensing language before publication.
                     record.state === "saved" && selectedIds.has(record.definition.id)
                 );
                 if (!saved.length) {
-                    setSiteDataStatus("Select at least one saved item to export.", true);
+                    setSiteDataStatus(translate("backup.selectError", "Select at least one saved item to export."), true);
                     return;
                 }
 
@@ -2068,16 +2410,21 @@ Workbench preview. Review project-wide licensing language before publication.
                 };
 
                 downloadJsonFile(payload, `teacher-tools-backup-${localDateStamp()}.json`);
-                setSiteDataStatus(
-                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`
-                );
+                setSiteDataStatus(translate(
+                    "backup.exported",
+                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`,
+                    {
+                        count: saved.length,
+                        areas: translate(saved.length === 1 ? "backup.area" : "backup.areas", saved.length === 1 ? "area" : "areas")
+                    }
+                ));
             }
 
             function readFileText(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.addEventListener("load", () => resolve(String(reader.result || "")));
-                    reader.addEventListener("error", () => reject(new Error("The backup file could not be read.")));
+                    reader.addEventListener("error", () => reject(new Error(translate("backup.readError", "The backup file could not be read."))));
                     reader.readAsText(file);
                 });
             }
@@ -2085,7 +2432,7 @@ Workbench preview. Review project-wide licensing language before publication.
             function globalBackupPlan(payload) {
                 if (!isPlainObject(payload) || payload.app !== SITE_BACKUP_APP_ID ||
                     payload.schemaVersion !== SITE_BACKUP_SCHEMA_VERSION || !isPlainObject(payload.records)) {
-                    throw new Error("This is not a supported Teacher Tools site backup.");
+                    throw new Error(translate("backup.siteUnsupported", "This is not a supported Teacher Tools site backup."));
                 }
 
                 const changes = [];
@@ -2094,14 +2441,16 @@ Workbench preview. Review project-wide licensing language before publication.
                     if (!Object.prototype.hasOwnProperty.call(payload.records, definition.id)) return;
                     const value = payload.records[definition.id];
                     if (!definition.validate(value)) {
-                        throw new Error(`${definition.label} data in this backup is not valid.`);
+                        throw new Error(translate("backup.invalidRecord", `${definition.label} data in this backup is not valid.`, {
+                            label: siteDataRecordLabel(definition)
+                        }));
                     }
                     changes.push({ key: definition.storageKey, value: JSON.stringify(value) });
-                    labels.push(definition.label);
+                    labels.push(siteDataRecordLabel(definition));
                 });
 
                 if (!changes.length) {
-                    throw new Error("This backup does not contain any supported Teacher Tools data.");
+                    throw new Error(translate("backup.noSupportedData", "This backup does not contain any supported Teacher Tools data."));
                 }
                 return { changes, labels, legacy: false };
             }
@@ -2112,11 +2461,11 @@ Workbench preview. Review project-wide licensing language before publication.
 
                 const definition = SITE_DATA_RECORDS.find(record => record.id === "spinner");
                 if (!definition.validate(payload.state)) {
-                    throw new Error("The Spinner Wheel data in this backup is not valid.");
+                    throw new Error(translate("backup.spinnerInvalid", "The Spinner Wheel data in this backup is not valid."));
                 }
                 return {
                     changes: [{ key: definition.storageKey, value: JSON.stringify(payload.state) }],
-                    labels: [definition.label],
+                    labels: [siteDataRecordLabel(definition)],
                     legacy: true
                 };
             }
@@ -2126,7 +2475,7 @@ Workbench preview. Review project-wide licensing language before publication.
 
                 if (payload.version === 1) {
                     if (!isPlainObject(payload.schedule)) {
-                        throw new Error("The Version 1 Scheduler data in this backup is not valid.");
+                        throw new Error(translate("backup.schedulerV1Invalid", "The Version 1 Scheduler data in this backup is not valid."));
                     }
                     return {
                         changes: [
@@ -2134,14 +2483,14 @@ Workbench preview. Review project-wide licensing language before publication.
                             { key: "classAutomatorData_v2", value: null },
                             { key: "classAutomatorSchedule_v1", value: JSON.stringify(payload.schedule) }
                         ],
-                        labels: ["ALT Class Scheduler"],
+                        labels: [translate("record.scheduler", "ALT Class Scheduler")],
                         legacy: true
                     };
                 }
 
                 if (!Array.isArray(payload.schools) || !isPlainObject(payload.schedule) ||
                     (payload.preferences !== undefined && !isPlainObject(payload.preferences))) {
-                    throw new Error(`The Version ${payload.version} Scheduler data in this backup is not valid.`);
+                    throw new Error(translate("backup.schedulerVersionInvalid", `The Version ${payload.version} Scheduler data in this backup is not valid.`, { version: payload.version }));
                 }
 
                 const theme = isPlainObject(payload.preferences) &&
@@ -2151,7 +2500,9 @@ Workbench preview. Review project-wide licensing language before publication.
                 const themeChange = theme
                     ? [{ key: SITE_PREFERENCES_KEY, value: JSON.stringify({ version: 1, theme }) }]
                     : [];
-                const labels = theme ? ["ALT Class Scheduler", "Site appearance"] : ["ALT Class Scheduler"];
+                const labels = theme
+                    ? [translate("record.scheduler", "ALT Class Scheduler"), translate("record.appearance", "Site appearance")]
+                    : [translate("record.scheduler", "ALT Class Scheduler")];
 
                 if (payload.version === 2) {
                     return {
@@ -2183,7 +2534,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 if (spinnerPlan) return spinnerPlan;
                 const schedulerPlan = schedulerBackupPlan(payload);
                 if (schedulerPlan) return schedulerPlan;
-                throw new Error("This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.");
+                throw new Error(translate("backup.unsupported", "This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup."));
             }
 
             function applyStorageChanges(changes) {
@@ -2197,7 +2548,7 @@ Workbench preview. Review project-wide licensing language before publication.
                             ? storageRemove(change.key)
                             : storageSet(change.key, change.value);
                         if (!succeeded) {
-                            throw new Error("Browser storage is unavailable or full.");
+                            throw new Error(translate("backup.storageError", "Browser storage is unavailable or full."));
                         }
                         changed.push(change.key);
                     });
@@ -2214,29 +2565,30 @@ Workbench preview. Review project-wide licensing language before publication.
             async function importSiteDataBackup(file) {
                 if (!file) return;
                 if (file.size > SITE_BACKUP_MAX_BYTES) {
-                    setSiteDataStatus("That file is too large to be a Teacher Tools backup.", true);
+                    setSiteDataStatus(translate("backup.tooLarge", "That file is too large to be a Teacher Tools backup."), true);
                     return;
                 }
 
                 try {
                     const plan = buildImportPlan(JSON.parse(await readFileText(file)));
-                    const confirmed = window.confirm(
-                        `Import this ${plan.legacy ? "older single-tool" : "Teacher Tools"} backup? ` +
-                        `It will replace saved data for: ${plan.labels.join(", ")}. ` +
-                        "Other saved tool data will remain unchanged. This page will reload afterward."
-                    );
+                    const kind = translate(plan.legacy ? "backup.kindOlder" : "backup.kindSite", plan.legacy ? "older single-tool" : "Teacher Tools");
+                    const confirmed = window.confirm(translate(
+                        "backup.confirm",
+                        `Import this ${kind} backup? It will replace saved data for: ${plan.labels.join(", ")}. Other saved tool data will remain unchanged. This page will reload afterward.`,
+                        { kind, labels: plan.labels.join(activeLanguage === "ja" ? "、" : ", ") }
+                    ));
                     if (!confirmed) {
-                        setSiteDataStatus("Import cancelled.");
+                        setSiteDataStatus(translate("backup.cancelled", "Import cancelled."));
                         return;
                     }
 
                     applyStorageChanges(plan.changes);
-                    setSiteDataStatus("Backup imported successfully. Reloading this page…");
-                    window.alert("Teacher Tools backup imported successfully. This page will now reload.");
+                    setSiteDataStatus(translate("backup.success", "Backup imported successfully. Reloading this page…"));
+                    window.alert(translate("backup.successAlert", "Teacher Tools backup imported successfully. This page will now reload."));
                     window.location.reload();
                 } catch (error) {
                     setSiteDataStatus(
-                        error instanceof Error ? error.message : "The backup could not be imported.",
+                        error instanceof Error ? error.message : translate("backup.importError", "The backup could not be imported."),
                         true
                     );
                 }
@@ -2447,8 +2799,10 @@ Workbench preview. Review project-wide licensing language before publication.
 
             function closeSiteOverlays() {
                 const toolsMenu = document.getElementById("siteToolsMenu");
+                const languagePanel = document.getElementById("siteLanguagePanel");
                 const dataPanel = document.getElementById("siteDataPanel");
                 const themePanel = document.getElementById("siteThemePanel");
+                const languageButton = document.getElementById("siteLanguageButton");
                 const dataButton = document.getElementById("siteDataButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
@@ -2457,8 +2811,10 @@ Workbench preview. Review project-wide licensing language before publication.
                 ].filter(Boolean);
 
                 if (toolsMenu) toolsMenu.hidden = true;
+                if (languagePanel) languagePanel.hidden = true;
                 if (dataPanel) dataPanel.hidden = true;
                 if (themePanel) themePanel.hidden = true;
+                if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                 if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                 if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                 menuButtons.forEach(button => button.setAttribute("aria-expanded", "false"));
@@ -2476,6 +2832,10 @@ Workbench preview. Review project-wide licensing language before publication.
                 const dataButton = document.getElementById("siteDataButton");
                 const dataPanel = document.getElementById("siteDataPanel");
                 const dataCloseButton = document.getElementById("siteDataCloseButton");
+                const languageButton = document.getElementById("siteLanguageButton");
+                const languagePanel = document.getElementById("siteLanguagePanel");
+                const languageCloseButton = document.getElementById("siteLanguageCloseButton");
+                const languageChoice = document.getElementById("siteLanguageChoice");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const themePanel = document.getElementById("siteThemePanel");
                 const themeCloseButton = document.getElementById("siteThemeCloseButton");
@@ -2483,8 +2843,10 @@ Workbench preview. Review project-wide licensing language before publication.
                 function setToolsMenu(open) {
                     if (!toolsMenu) return;
                     if (open) {
+                        if (languagePanel) languagePanel.hidden = true;
                         if (dataPanel) dataPanel.hidden = true;
                         if (themePanel) themePanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                         if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                     }
@@ -2496,7 +2858,9 @@ Workbench preview. Review project-wide licensing language before publication.
                     if (!dataPanel || !dataButton) return;
                     if (open) {
                         setToolsMenu(false);
+                        if (languagePanel) languagePanel.hidden = true;
                         if (themePanel) themePanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                     }
                     dataPanel.hidden = !open;
@@ -2510,11 +2874,27 @@ Workbench preview. Review project-wide licensing language before publication.
                     }
                 }
 
+                function setLanguagePanel(open) {
+                    if (!languagePanel || !languageButton) return;
+                    if (open) {
+                        setToolsMenu(false);
+                        if (dataPanel) dataPanel.hidden = true;
+                        if (themePanel) themePanel.hidden = true;
+                        if (dataButton) dataButton.setAttribute("aria-expanded", "false");
+                        if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    }
+                    languagePanel.hidden = !open;
+                    languageButton.setAttribute("aria-expanded", String(open));
+                    if (open && languageChoice) languageChoice.focus();
+                }
+
                 function setThemePanel(open) {
                     if (!themePanel || !settingsButton) return;
                     if (open) {
                         setToolsMenu(false);
+                        if (languagePanel) languagePanel.hidden = true;
                         if (dataPanel) dataPanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                     }
                     themePanel.hidden = !open;
@@ -2534,6 +2914,26 @@ Workbench preview. Review project-wide licensing language before publication.
                 });
 
                 if (toolsMenu) toolsMenu.addEventListener("click", event => event.stopPropagation());
+
+                if (languageButton) {
+                    languageButton.addEventListener("click", event => {
+                        event.stopPropagation();
+                        setLanguagePanel(languagePanel ? languagePanel.hidden : false);
+                    });
+                }
+
+                if (languageCloseButton) {
+                    languageCloseButton.addEventListener("click", () => {
+                        setLanguagePanel(false);
+                        languageButton.focus();
+                    });
+                }
+
+                if (languageChoice) {
+                    languageChoice.addEventListener("change", () => applyGlobalLanguage(languageChoice.value));
+                }
+
+                if (languagePanel) languagePanel.addEventListener("click", event => event.stopPropagation());
 
                 if (dataButton) {
                     dataButton.addEventListener("click", event => {
@@ -2640,9 +3040,11 @@ Workbench preview. Review project-wide licensing language before publication.
                 }
 
                 const dataPanel = document.getElementById("siteDataPanel");
+                const languagePanel = document.getElementById("siteLanguagePanel");
                 const themePanel = document.getElementById("siteThemePanel");
                 const toolsMenu = document.getElementById("siteToolsMenu");
                 const dataButton = document.getElementById("siteDataButton");
+                const languageButton = document.getElementById("siteLanguageButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
                     document.getElementById("siteToolsMenuButton"),
@@ -2652,6 +3054,12 @@ Workbench preview. Review project-wide licensing language before publication.
                 if (dataPanel && !dataPanel.hidden) {
                     closeSiteOverlays();
                     if (dataButton) dataButton.focus();
+                    return;
+                }
+
+                if (languagePanel && !languagePanel.hidden) {
+                    closeSiteOverlays();
+                    if (languageButton) languageButton.focus();
                     return;
                 }
 
@@ -2669,22 +3077,35 @@ Workbench preview. Review project-wide licensing language before publication.
             });
 
             window.addEventListener("storage", event => {
-                if (event.key !== SITE_PREFERENCES_KEY) return;
-                applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                if (event.key === SITE_PREFERENCES_KEY) {
+                    applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                }
+                if (event.key === SITE_LANGUAGE_KEY) {
+                    applyGlobalLanguage(languageFromStoredValue(event.newValue) || "en", false);
+                }
             });
 
             window.TeacherToolsUI = Object.freeze({
                 applyGlobalTheme,
+                applyGlobalLanguage,
                 closeModal,
                 openModal,
+                registerTranslations,
                 storageGet,
-                storageSet
+                storageSet,
+                translate
             });
 
             applyGlobalTheme(
                 themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY)) ||
                 document.documentElement.getAttribute("data-theme") ||
                 "ocean-blue",
+                false
+            );
+            applyGlobalLanguage(
+                languageFromStoredValue(storageGet(SITE_LANGUAGE_KEY)) ||
+                document.documentElement.lang ||
+                "en",
                 false
             );
             initSiteHeader();
@@ -2700,10 +3121,171 @@ Workbench preview. Review project-wide licensing language before publication.
             "use strict";
 
             const STORAGE_KEY = "teacherTools.classroomTimer.state.v1";
-            const BASE_TITLE = "Classroom Timer · Teacher Tools";
             const MAX_PRESETS = 12;
             const MAX_SECONDS = (23 * 60 * 60) + (59 * 60) + 59;
-            const { storageGet, storageSet, closeModal } = window.TeacherToolsUI;
+            const translations = {
+                en: {
+                    "timer.meta.title": "Classroom Timer · Teacher Tools",
+                    "timer.meta.description": "A simple classroom countdown and stopwatch with locally saved presets.",
+                    "timer.title": "Classroom Timer",
+                    "timer.presentation.enter": "Enter presentation mode",
+                    "timer.presentation.exit": "Exit presentation mode",
+                    "timer.presentation.title": "Presentation mode",
+                    "timer.help.open": "Open getting started help",
+                    "timer.help.title": "Getting started",
+                    "timer.help.close": "Close getting started help",
+                    "timer.settings.open": "Open timer settings",
+                    "timer.settings.title": "Timer settings",
+                    "timer.settings.close": "Close timer settings",
+                    "timer.mode.aria": "Timer mode",
+                    "timer.mode.countdown": "Countdown",
+                    "timer.mode.stopwatch": "Stopwatch",
+                    "timer.status.ready": "Ready",
+                    "timer.status.chooseTime": "Choose a time to begin",
+                    "timer.status.countingDown": "Counting down",
+                    "timer.status.paused": "Paused",
+                    "timer.status.minuteAdded": "One minute added",
+                    "timer.status.minuteAddedReady": "One minute added — ready",
+                    "timer.status.finished": "Time is up!",
+                    "timer.status.finishedAnnouncement": "Time is up.",
+                    "timer.status.running": "Running",
+                    "timer.action.start": "Start",
+                    "timer.action.pause": "Pause",
+                    "timer.action.startAgain": "Start again",
+                    "timer.action.reset": "Reset",
+                    "timer.action.addMinute": "+1 minute",
+                    "timer.action.save": "Save",
+                    "timer.action.use": "Use",
+                    "timer.action.delete": "Delete",
+                    "timer.keyboardHint": "Press Space to start or pause while no field or dialog is active.",
+                    "timer.quickPresets": "Quick presets",
+                    "timer.presets.aria": "Countdown presets",
+                    "timer.presets.noneSelected": "No quick presets selected.",
+                    "timer.presets.noneSaved": "No saved countdowns yet.",
+                    "timer.presets.deleteAria": "Delete {name} preset",
+                    "timer.presets.deleteConfirm": "Delete the saved countdown “{name}”?",
+                    "timer.presets.deleted": "Saved countdown deleted.",
+                    "timer.presets.nameRequired": "Enter a name for this countdown.",
+                    "timer.presets.durationRequired": "Choose a duration longer than zero seconds.",
+                    "timer.presets.limitReached": "Delete a saved countdown before adding another.",
+                    "timer.presets.saved": "Saved “{name}”.",
+                    "timer.duration.aria": "Set countdown duration",
+                    "timer.hours": "Hours",
+                    "timer.minutes": "Minutes",
+                    "timer.seconds": "Seconds",
+                    "timer.minutes.1": "1 min",
+                    "timer.minutes.3": "3 min",
+                    "timer.minutes.5": "5 min",
+                    "timer.minutes.10": "10 min",
+                    "timer.minutes.15": "15 min",
+                    "timer.footer.version": "Classroom Timer · v1.0",
+                    "timer.footer.note": "Teacher Tools · Timer data stays in this browser.",
+                    "timer.help.intro": "Use the Classroom Timer for a quick activity countdown or as a stopwatch.",
+                    "timer.help.step1Title": "Choose a time",
+                    "timer.help.step1Body": "Pick a quick preset or enter hours, minutes, and seconds.",
+                    "timer.help.step2Title": "Start, pause, or add time",
+                    "timer.help.step2Body": "The countdown remains accurate when the browser tab is in the background. Add one minute at any time.",
+                    "timer.help.step3Title": "Save frequent countdowns",
+                    "timer.help.step3Body": "Create named presets in Settings. They are stored only in this browser and may be lost if site data is cleared.",
+                    "timer.help.start": "Start timing",
+                    "timer.settings.defaultsTitle": "Countdown defaults",
+                    "timer.settings.defaultsHelp": "Choose the countdown shown when Classroom Timer first opens and which built-in shortcuts appear below it. Changes save automatically.",
+                    "timer.settings.quickPresets": "Quick presets to show",
+                    "timer.settings.soundTitle": "Sound",
+                    "timer.settings.soundLabel": "Play a finish sound",
+                    "timer.settings.soundHelp": "Uses a short sound generated on this device. Nothing is downloaded.",
+                    "timer.settings.soundAria": "Play a sound when the countdown finishes",
+                    "timer.settings.savedTitle": "Saved countdowns",
+                    "timer.settings.savedHelp": "Save up to 12 named presets on this browser.",
+                    "timer.name": "Name",
+                    "timer.namePlaceholder": "Warm-up",
+                    "timer.settings.savedNotice": "Saved countdowns are private to this browser. Clearing browser or site data removes them.",
+                    "timer.defaults.invalid": "Choose a default longer than zero seconds.",
+                    "timer.defaults.saved": "Saved automatically. The default time will be used the next time the app opens."
+                },
+                ja: {
+                    "timer.meta.title": "教室タイマー · Teacher Tools",
+                    "timer.meta.description": "端末内にプリセットを保存できる、授業向けのシンプルなカウントダウンとストップウォッチです。",
+                    "timer.title": "教室タイマー",
+                    "timer.presentation.enter": "プレゼンテーション表示にする",
+                    "timer.presentation.exit": "プレゼンテーション表示を終了",
+                    "timer.presentation.title": "プレゼンテーション表示",
+                    "timer.help.open": "使い方を開く",
+                    "timer.help.title": "はじめに",
+                    "timer.help.close": "使い方を閉じる",
+                    "timer.settings.open": "タイマー設定を開く",
+                    "timer.settings.title": "タイマー設定",
+                    "timer.settings.close": "タイマー設定を閉じる",
+                    "timer.mode.aria": "タイマーの種類",
+                    "timer.mode.countdown": "カウントダウン",
+                    "timer.mode.stopwatch": "ストップウォッチ",
+                    "timer.status.ready": "準備完了",
+                    "timer.status.chooseTime": "時間を設定してください",
+                    "timer.status.countingDown": "カウントダウン中",
+                    "timer.status.paused": "一時停止中",
+                    "timer.status.minuteAdded": "1分追加しました",
+                    "timer.status.minuteAddedReady": "1分追加しました — 準備完了",
+                    "timer.status.finished": "時間です！",
+                    "timer.status.finishedAnnouncement": "時間になりました。",
+                    "timer.status.running": "計測中",
+                    "timer.action.start": "スタート",
+                    "timer.action.pause": "一時停止",
+                    "timer.action.startAgain": "もう一度スタート",
+                    "timer.action.reset": "リセット",
+                    "timer.action.addMinute": "+1分",
+                    "timer.action.save": "保存",
+                    "timer.action.use": "使う",
+                    "timer.action.delete": "削除",
+                    "timer.keyboardHint": "入力欄やダイアログを操作していないときは、スペースキーで開始または一時停止できます。",
+                    "timer.quickPresets": "クイックプリセット",
+                    "timer.presets.aria": "カウントダウンのプリセット",
+                    "timer.presets.noneSelected": "表示するクイックプリセットがありません。",
+                    "timer.presets.noneSaved": "保存済みのカウントダウンはありません。",
+                    "timer.presets.deleteAria": "プリセット「{name}」を削除",
+                    "timer.presets.deleteConfirm": "保存済みのカウントダウン「{name}」を削除しますか？",
+                    "timer.presets.deleted": "保存済みのカウントダウンを削除しました。",
+                    "timer.presets.nameRequired": "カウントダウンの名前を入力してください。",
+                    "timer.presets.durationRequired": "1秒以上の時間を設定してください。",
+                    "timer.presets.limitReached": "新しく追加する前に、保存済みのカウントダウンを1つ削除してください。",
+                    "timer.presets.saved": "「{name}」を保存しました。",
+                    "timer.duration.aria": "カウントダウン時間を設定",
+                    "timer.hours": "時間",
+                    "timer.minutes": "分",
+                    "timer.seconds": "秒",
+                    "timer.minutes.1": "1分",
+                    "timer.minutes.3": "3分",
+                    "timer.minutes.5": "5分",
+                    "timer.minutes.10": "10分",
+                    "timer.minutes.15": "15分",
+                    "timer.footer.version": "教室タイマー · v1.0",
+                    "timer.footer.note": "Teacher Tools · タイマーのデータはこのブラウザに保存されます。",
+                    "timer.help.intro": "教室タイマーは、短い活動のカウントダウンにもストップウォッチにも使えます。",
+                    "timer.help.step1Title": "時間を選ぶ",
+                    "timer.help.step1Body": "クイックプリセットを選ぶか、時間・分・秒を入力します。",
+                    "timer.help.step2Title": "開始・一時停止・時間追加",
+                    "timer.help.step2Body": "別のタブを表示していても、カウントダウンは正確に進みます。いつでも1分追加できます。",
+                    "timer.help.step3Title": "よく使う時間を保存",
+                    "timer.help.step3Body": "設定で名前付きプリセットを作成できます。このブラウザだけに保存され、サイトデータを消去すると失われる場合があります。",
+                    "timer.help.start": "タイマーを使う",
+                    "timer.settings.defaultsTitle": "カウントダウンの初期設定",
+                    "timer.settings.defaultsHelp": "教室タイマーを開いたときの時間と、その下に表示する標準ショートカットを選びます。変更は自動保存されます。",
+                    "timer.settings.quickPresets": "表示するクイックプリセット",
+                    "timer.settings.soundTitle": "サウンド",
+                    "timer.settings.soundLabel": "終了音を鳴らす",
+                    "timer.settings.soundHelp": "この端末で生成した短い音を使います。ダウンロードは行いません。",
+                    "timer.settings.soundAria": "カウントダウン終了時に音を鳴らす",
+                    "timer.settings.savedTitle": "保存済みカウントダウン",
+                    "timer.settings.savedHelp": "このブラウザに名前付きプリセットを最大12件保存できます。",
+                    "timer.name": "名前",
+                    "timer.namePlaceholder": "ウォームアップ",
+                    "timer.settings.savedNotice": "保存済みカウントダウンはこのブラウザ内だけに保存されます。ブラウザまたはサイトのデータを消去すると削除されます。",
+                    "timer.defaults.invalid": "1秒以上の初期時間を設定してください。",
+                    "timer.defaults.saved": "自動保存しました。次回アプリを開いたときに、この時間が表示されます。"
+                }
+            };
+            const { storageGet, storageSet, closeModal, registerTranslations, translate } = window.TeacherToolsUI;
+            registerTranslations(translations);
+            const t = (key, fallback, replacements) => translate(key, fallback, replacements);
 
             const elements = {
                 appShell: document.querySelector(".app-shell"),
@@ -2757,7 +3339,11 @@ Workbench preview. Review project-wide licensing language before publication.
             let stopwatchStartedAt = 0;
             let stopwatchRunning = false;
             let animationFrame = 0;
-            let lastDocumentTitle = BASE_TITLE;
+            let countdownStatusKey = "timer.status.ready";
+            let stopwatchStatusKey = "timer.status.ready";
+            let presetMessage = null;
+            let defaultMessage = null;
+            let lastDocumentTitle = "";
 
             function clampInteger(value, minimum, maximum) {
                 const number = Number.parseInt(value, 10);
@@ -2884,15 +3470,35 @@ Workbench preview. Review project-wide licensing language before publication.
                 updateDocumentTitle();
             }
 
-            function setRunButton(button, running, label = running ? "Pause" : "Start") {
+            function setRunButton(button, running, labelKey = running ? "timer.action.pause" : "timer.action.start") {
                 button.querySelector(".button-symbol").textContent = running ? "❚❚" : "▶";
-                button.querySelector(".button-label").textContent = label;
+                button.querySelector(".button-label").textContent = t(labelKey, translations.en[labelKey]);
+            }
+
+            function setCountdownStatus(key) {
+                countdownStatusKey = key;
+                elements.countdownStatus.textContent = t(key, translations.en[key]);
+            }
+
+            function setStopwatchStatus(key) {
+                stopwatchStatusKey = key;
+                elements.stopwatchStatus.textContent = t(key, translations.en[key]);
+            }
+
+            function setFormMessage(element, messageState) {
+                element.textContent = messageState
+                    ? t(messageState.key, translations.en[messageState.key], messageState.replacements)
+                    : "";
             }
 
             function updatePresentationButton() {
                 elements.presentationButton.setAttribute("aria-pressed", String(presentationMode));
-                elements.presentationButton.setAttribute("aria-label", presentationMode ? "Exit presentation mode" : "Enter presentation mode");
-                elements.presentationButton.title = presentationMode ? "Exit presentation mode" : "Presentation mode";
+                elements.presentationButton.setAttribute("aria-label", presentationMode
+                    ? t("timer.presentation.exit", "Exit presentation mode")
+                    : t("timer.presentation.enter", "Enter presentation mode"));
+                elements.presentationButton.title = presentationMode
+                    ? t("timer.presentation.exit", "Exit presentation mode")
+                    : t("timer.presentation.title", "Presentation mode");
             }
 
             function setPresentationMode(active) {
@@ -2938,7 +3544,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 remainingMs = configuredMs;
                 elements.countdownFace.classList.remove("finished");
                 elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
+                setCountdownStatus(configuredMs > 0 ? "timer.status.ready" : "timer.status.chooseTime");
                 renderCountdown();
             }
 
@@ -2949,7 +3555,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 setDurationInputs(configuredMs);
                 elements.countdownFace.classList.remove("finished");
                 elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
+                setCountdownStatus(configuredMs > 0 ? "timer.status.ready" : "timer.status.chooseTime");
                 renderCountdown();
                 setMode("countdown");
             }
@@ -2992,7 +3598,7 @@ Workbench preview. Review project-wide licensing language before publication.
             function startCountdown() {
                 if (remainingMs <= 0) syncCountdownFromInputs();
                 if (remainingMs <= 0) {
-                    elements.countdownStatus.textContent = "Choose a time to begin";
+                    setCountdownStatus("timer.status.chooseTime");
                     elements.countdownHours.focus();
                     return;
                 }
@@ -3000,7 +3606,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 countdownEndAt = Date.now() + remainingMs;
                 countdownRunning = true;
                 setRunButton(elements.countdownStartButton, true);
-                elements.countdownStatus.textContent = "Counting down";
+                setCountdownStatus("timer.status.countingDown");
                 elements.countdownFace.classList.remove("finished");
                 elements.countdownStatus.classList.remove("finished");
                 setCountdownInputsDisabled(true);
@@ -3012,7 +3618,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 countdownRunning = false;
                 setRunButton(elements.countdownStartButton, false);
                 setCountdownInputsDisabled(false);
-                if (updateStatus && remainingMs > 0) elements.countdownStatus.textContent = "Paused";
+                if (updateStatus && remainingMs > 0) setCountdownStatus("timer.status.paused");
                 renderCountdown();
             }
 
@@ -3021,7 +3627,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 remainingMs = configuredMs;
                 elements.countdownFace.classList.remove("finished");
                 elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = configuredMs > 0 ? "Ready" : "Choose a time to begin";
+                setCountdownStatus(configuredMs > 0 ? "timer.status.ready" : "timer.status.chooseTime");
                 elements.countdownAnnouncement.textContent = "";
                 renderCountdown();
             }
@@ -3034,19 +3640,19 @@ Workbench preview. Review project-wide licensing language before publication.
                 setDurationInputs(configuredMs);
                 elements.countdownFace.classList.remove("finished");
                 elements.countdownStatus.classList.remove("finished");
-                elements.countdownStatus.textContent = countdownRunning ? "One minute added" : "One minute added — ready";
+                setCountdownStatus(countdownRunning ? "timer.status.minuteAdded" : "timer.status.minuteAddedReady");
                 renderCountdown();
             }
 
             function finishCountdown() {
                 countdownRunning = false;
                 remainingMs = 0;
-                setRunButton(elements.countdownStartButton, false, "Start again");
+                setRunButton(elements.countdownStartButton, false, "timer.action.startAgain");
                 setCountdownInputsDisabled(false);
                 elements.countdownFace.classList.add("finished");
                 elements.countdownStatus.classList.add("finished");
-                elements.countdownStatus.textContent = "Time is up!";
-                elements.countdownAnnouncement.textContent = "Time is up.";
+                setCountdownStatus("timer.status.finished");
+                elements.countdownAnnouncement.textContent = t("timer.status.finishedAnnouncement", "Time is up.");
                 renderCountdown();
                 playFinishSound();
             }
@@ -3063,7 +3669,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 stopwatchStartedAt = Date.now() - stopwatchElapsedMs;
                 stopwatchRunning = true;
                 setRunButton(elements.stopwatchStartButton, true);
-                elements.stopwatchStatus.textContent = "Running";
+                setStopwatchStatus("timer.status.running");
                 ensureAnimationLoop();
             }
 
@@ -3071,7 +3677,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 if (stopwatchRunning) stopwatchElapsedMs = Date.now() - stopwatchStartedAt;
                 stopwatchRunning = false;
                 setRunButton(elements.stopwatchStartButton, false);
-                elements.stopwatchStatus.textContent = stopwatchElapsedMs > 0 ? "Paused" : "Ready";
+                setStopwatchStatus(stopwatchElapsedMs > 0 ? "timer.status.paused" : "timer.status.ready");
                 renderStopwatch();
             }
 
@@ -3079,7 +3685,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 stopwatchRunning = false;
                 stopwatchElapsedMs = 0;
                 setRunButton(elements.stopwatchStartButton, false);
-                elements.stopwatchStatus.textContent = "Ready";
+                setStopwatchStatus("timer.status.ready");
                 renderStopwatch();
             }
 
@@ -3089,9 +3695,10 @@ Workbench preview. Review project-wide licensing language before publication.
             }
 
             function updateDocumentTitle() {
-                let title = BASE_TITLE;
-                if (activeMode === "countdown" && countdownRunning) title = `${formatCountdown(remainingMs)} · ${BASE_TITLE}`;
-                if (activeMode === "stopwatch" && stopwatchRunning) title = `${formatStopwatch(stopwatchElapsedMs)} · ${BASE_TITLE}`;
+                const baseTitle = t("timer.meta.title", "Classroom Timer · Teacher Tools");
+                let title = baseTitle;
+                if (activeMode === "countdown" && countdownRunning) title = `${formatCountdown(remainingMs)} · ${baseTitle}`;
+                if (activeMode === "stopwatch" && stopwatchRunning) title = `${formatStopwatch(stopwatchElapsedMs)} · ${baseTitle}`;
                 if (title !== lastDocumentTitle) {
                     document.title = title;
                     lastDocumentTitle = title;
@@ -3136,7 +3743,7 @@ Workbench preview. Review project-wide licensing language before publication.
                 if (state.presets.length === 0) {
                     const empty = document.createElement("p");
                     empty.className = "saved-empty";
-                    empty.textContent = "No saved countdowns yet.";
+                    empty.textContent = t("timer.presets.noneSaved", "No saved countdowns yet.");
                     elements.savedPresetList.append(empty);
                     return;
                 }
@@ -3155,7 +3762,7 @@ Workbench preview. Review project-wide licensing language before publication.
                     const useButton = document.createElement("button");
                     useButton.type = "button";
                     useButton.className = "mini-button";
-                    useButton.textContent = "Use";
+                    useButton.textContent = t("timer.action.use", "Use");
                     useButton.addEventListener("click", () => {
                         setCountdown(preset.seconds * 1000);
                         closeModal();
@@ -3164,15 +3771,16 @@ Workbench preview. Review project-wide licensing language before publication.
                     const deleteButton = document.createElement("button");
                     deleteButton.type = "button";
                     deleteButton.className = "mini-button danger";
-                    deleteButton.textContent = "Delete";
-                    deleteButton.setAttribute("aria-label", `Delete ${preset.name} preset`);
+                    deleteButton.textContent = t("timer.action.delete", "Delete");
+                    deleteButton.setAttribute("aria-label", t("timer.presets.deleteAria", "Delete {name} preset", { name: preset.name }));
                     deleteButton.addEventListener("click", () => {
-                        if (!window.confirm(`Delete the saved countdown “${preset.name}”?`)) return;
+                        if (!window.confirm(t("timer.presets.deleteConfirm", "Delete the saved countdown “{name}”?", { name: preset.name }))) return;
                         state.presets = state.presets.filter(item => item.id !== preset.id);
                         persistState();
                         renderPresets();
                         elements.presetFormMessage.className = "form-message";
-                        elements.presetFormMessage.textContent = "Saved countdown deleted.";
+                        presetMessage = { key: "timer.presets.deleted" };
+                        setFormMessage(elements.presetFormMessage, presetMessage);
                     });
 
                     row.append(name, useButton, deleteButton);
@@ -3188,19 +3796,22 @@ Workbench preview. Review project-wide licensing language before publication.
 
                 if (!name) {
                     elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Enter a name for this countdown.";
+                    presetMessage = { key: "timer.presets.nameRequired" };
+                    setFormMessage(elements.presetFormMessage, presetMessage);
                     elements.presetName.focus();
                     return;
                 }
                 if (milliseconds <= 0) {
                     elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Choose a duration longer than zero seconds.";
+                    presetMessage = { key: "timer.presets.durationRequired" };
+                    setFormMessage(elements.presetFormMessage, presetMessage);
                     elements.presetMinutes.focus();
                     return;
                 }
                 if (state.presets.length >= MAX_PRESETS) {
                     elements.presetFormMessage.className = "form-message error";
-                    elements.presetFormMessage.textContent = "Delete a saved countdown before adding another.";
+                    presetMessage = { key: "timer.presets.limitReached" };
+                    setFormMessage(elements.presetFormMessage, presetMessage);
                     return;
                 }
 
@@ -3208,7 +3819,8 @@ Workbench preview. Review project-wide licensing language before publication.
                 persistState();
                 renderPresets();
                 elements.presetName.value = "";
-                elements.presetFormMessage.textContent = `Saved “${name}”.`;
+                presetMessage = { key: "timer.presets.saved", replacements: { name } };
+                setFormMessage(elements.presetFormMessage, presetMessage);
             }
 
             function saveCountdownDefaults() {
@@ -3221,7 +3833,8 @@ Workbench preview. Review project-wide licensing language before publication.
 
                 if (milliseconds <= 0) {
                     elements.defaultCountdownMessage.className = "form-message error";
-                    elements.defaultCountdownMessage.textContent = "Choose a default longer than zero seconds.";
+                    defaultMessage = { key: "timer.defaults.invalid" };
+                    setFormMessage(elements.defaultCountdownMessage, defaultMessage);
                     elements.defaultMinutes.focus();
                     return;
                 }
@@ -3232,7 +3845,31 @@ Workbench preview. Review project-wide licensing language before publication.
                     .map(input => Number(input.dataset.quickPresetSetting));
                 persistState();
                 renderPresets();
-                elements.defaultCountdownMessage.textContent = "Saved automatically. The default time will be used the next time the app opens.";
+                defaultMessage = { key: "timer.defaults.saved" };
+                setFormMessage(elements.defaultCountdownMessage, defaultMessage);
+            }
+
+            function applyTimerLanguage() {
+                const description = document.querySelector('meta[name="description"]');
+                if (description) description.content = t("timer.meta.description", "A simple classroom countdown and stopwatch with locally saved presets.");
+                setCountdownStatus(countdownStatusKey);
+                setStopwatchStatus(stopwatchStatusKey);
+                setRunButton(
+                    elements.countdownStartButton,
+                    countdownRunning,
+                    countdownRunning
+                        ? "timer.action.pause"
+                        : countdownStatusKey === "timer.status.finished"
+                            ? "timer.action.startAgain"
+                            : "timer.action.start"
+                );
+                setRunButton(elements.stopwatchStartButton, stopwatchRunning);
+                updatePresentationButton();
+                renderPresets();
+                setFormMessage(elements.presetFormMessage, presetMessage);
+                setFormMessage(elements.defaultCountdownMessage, defaultMessage);
+                lastDocumentTitle = "";
+                updateDocumentTitle();
             }
 
             elements.countdownTab.addEventListener("click", () => setMode("countdown"));
@@ -3312,6 +3949,8 @@ Workbench preview. Review project-wide licensing language before publication.
                 renderPresets();
             });
 
+            window.addEventListener("teacher-tools:languagechange", applyTimerLanguage);
+
             elements.soundEnabledInput.checked = state.soundEnabled;
             syncDefaultControls();
             renderPresets();
@@ -3319,6 +3958,7 @@ Workbench preview. Review project-wide licensing language before publication.
             renderStopwatch();
             setMode("countdown");
             updatePresentationButton();
+            applyTimerLanguage();
         })();
     </script>
 <!-- TEACHER-TOOLS:HOOTIE:START -->

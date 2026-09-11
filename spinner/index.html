@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <!--
-Spinner Wheel · Teacher Tools Workbench Preview
+Spinner Wheel · Teacher Tools
 Copyright © 2026. All rights reserved.
 
-This Workbench preview is not intended for direct publication.
-Confirm the final copyright and usage language before release.
 -->
 <html lang="en">
 <head>
@@ -21,6 +19,7 @@ Confirm the final copyright and usage language before release.
     <script>
         (() => {
             const key = "teacherTools.sitePreferences.v1";
+            const languageKey = "teacherTools.siteLanguage.v1";
             const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
 
             try {
@@ -30,6 +29,15 @@ Confirm the final copyright and usage language before release.
             } catch (error) {
                 // Ocean Blue remains the safe default when storage is unavailable.
             }
+
+            try {
+                const saved = JSON.parse(localStorage.getItem(languageKey));
+                document.documentElement.lang = saved && ["en", "ja"].includes(saved.language)
+                    ? saved.language
+                    : "en";
+            } catch (error) {
+                document.documentElement.lang = "en";
+            }
         })();
     </script>
 <!-- TEACHER-TOOLS:THEME-BOOTSTRAP:END -->
@@ -38,7 +46,7 @@ Confirm the final copyright and usage language before release.
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
          * Teacher Tools canonical theme tokens.
-         * This file is embedded into registered pages by the shared UI sync.
+         * This file is embedded into registered Workbench pages by the shared UI sync.
          * Published applets remain self-contained and never load this file at runtime.
          */
 
@@ -235,6 +243,7 @@ Confirm the final copyright and usage language before release.
             background: var(--accent-soft);
             border-color: var(--accent-border);
         }
+         .site-language-button,
          .site-data-button,
         .site-settings-button {
             width: 40px;
@@ -251,11 +260,14 @@ Confirm the final copyright and usage language before release.
             cursor: pointer;
             transition: color 180ms ease;
         }
-         .site-data-button:hover,
+         .site-language-button:hover,
+        .site-language-button[aria-expanded="true"],
+        .site-data-button:hover,
         .site-data-button[aria-expanded="true"],
         .site-settings-button:hover,
         .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
-         .site-data-button svg {
+         .site-language-button svg,
+        .site-data-button svg {
             width: 22px;
             height: 22px;
             fill: none;
@@ -300,6 +312,7 @@ Confirm the final copyright and usage language before release.
             stroke-linecap: round;
         }
          .site-tools-menu,
+         .site-language-panel,
         .site-data-panel,
         .site-theme-panel {
             position: absolute;
@@ -313,8 +326,9 @@ Confirm the final copyright and usage language before release.
         }
          .site-tools-menu { width: min(300px, calc(100vw - 32px)); padding: 7px; }
         .site-data-panel { z-index: 121; width: min(380px, calc(100vw - 32px)); padding: 13px; }
+        .site-language-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
         .site-theme-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
-        .site-tools-menu[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
+        .site-tools-menu[hidden], .site-language-panel[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
          .site-menu-label {
             padding: 6px 9px 5px;
             color: var(--muted);
@@ -375,7 +389,8 @@ Confirm the final copyright and usage language before release.
             line-height: 1.3;
         }
          .site-menu-status { color: var(--muted); font-size: 8.5px; font-weight: 700; }
-         .site-data-header,
+         .site-language-header,
+        .site-data-header,
         .site-theme-header {
             display: flex;
             align-items: center;
@@ -383,9 +398,11 @@ Confirm the final copyright and usage language before release.
             gap: 12px;
             margin-bottom: 3px;
         }
-         .site-data-title,
+         .site-language-title,
+        .site-data-title,
         .site-theme-title { margin: 0; font-size: 14px; }
-         .site-data-close,
+         .site-language-close,
+        .site-data-close,
         .site-theme-close,
         .close-button {
             width: 34px;
@@ -402,14 +419,40 @@ Confirm the final copyright and usage language before release.
             line-height: 1;
             cursor: pointer;
         }
-         .site-data-close:hover,
+         .site-language-close:hover,
+        .site-data-close:hover,
         .site-theme-close:hover,
         .close-button:hover { color: var(--text); background: var(--panel); }
-         .site-data-help,
+         .site-language-help,
+        .site-data-help,
         .site-theme-help {
             margin: 0 0 11px;
             color: var(--muted);
             font-size: 10.5px;
+            line-height: 1.45;
+        }
+        .site-language-label {
+            display: block;
+            margin: 0 0 5px;
+            color: var(--text);
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+        .site-language-select {
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 34px 8px 10px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 12px;
+        }
+        .site-language-select:hover { border-color: var(--accent-border); }
+        .site-language-note {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 9.5px;
             line-height: 1.45;
         }
          .site-data-summary {
@@ -818,6 +861,7 @@ Confirm the final copyright and usage language before release.
             .site-nav { display: none; }
             .site-mobile-toggle { display: inline-flex; }
             .site-tools-menu,
+            .site-language-panel,
             .site-data-panel,
             .site-theme-panel { top: calc(100% - 4px); right: 10px; width: calc(100vw - 20px); }
             .site-menu-home { display: grid; }
@@ -1486,11 +1530,10 @@ Confirm the final copyright and usage language before release.
     </style>
 </head>
 <body>
-    <!-- Workbench links are relative. Use /, /scheduler/, and /spinner/ in production. -->
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
-            <a class="site-brand" href="/" aria-label="Teacher Tools home">
+            <a class="site-brand" href="/" aria-label="Teacher Tools home" data-i18n-aria-label="nav.homeAria">
                 <span class="site-brand-mark" aria-hidden="true">
                     <svg viewBox="0 0 28 28">
                         <path d="M5.5 7.5h17v15h-17z" />
@@ -1504,18 +1547,24 @@ Confirm the final copyright and usage language before release.
                 </span>
             </a>
              <div class="site-header-actions">
-                <nav class="site-nav" aria-label="Main navigation">
-                    <a class="site-nav-link" href="/">Home</a>
+                <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="nav.mainAria">
+                    <a class="site-nav-link" href="/" data-i18n="nav.home">Home</a>
                     <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
-                        Tools <span class="site-menu-chevron" aria-hidden="true"></span>
+                        <span data-i18n="nav.tools">Tools</span> <span class="site-menu-chevron" aria-hidden="true"></span>
                     </button>
                 </nav>
-                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore">
+                 <button type="button" id="siteLanguageButton" class="site-language-button" aria-label="Open language settings" aria-expanded="false" aria-controls="siteLanguagePanel" title="Language" data-i18n-aria-label="language.open" data-i18n-title="language.title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="8.5" />
+                        <path d="M3.8 12h16.4M12 3.5c2.2 2.3 3.3 5.1 3.3 8.5S14.2 18.2 12 20.5M12 3.5C9.8 5.8 8.7 8.6 8.7 12s1.1 6.2 3.3 8.5" />
+                    </svg>
+                </button>
+                 <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore" data-i18n-aria-label="backup.open" data-i18n-title="backup.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3" />
                     </svg>
                 </button>
-                 <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance">
+                 <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance" data-i18n-aria-label="appearance.open" data-i18n-title="appearance.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
                     </svg>
@@ -1526,19 +1575,19 @@ Confirm the final copyright and usage language before release.
                         <path d="M5 10h2v4H5zm12 0h2v4h-2z" fill="currentColor" stroke="none" />
                     </svg>
                 </button>
-                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu">
+                 <button type="button" id="siteMobileMenuButton" class="site-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="siteToolsMenu" data-i18n-aria-label="nav.open">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 7h14M5 12h14M5 17h14" />
                     </svg>
                 </button>
             </div>
-             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" hidden>
+             <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" data-i18n-aria-label="nav.tools" hidden>
                 <a class="site-menu-item site-menu-home" href="/">
                     <span class="site-menu-icon" aria-hidden="true">⌂</span>
-                    <span><span class="site-menu-name">Home</span><span class="site-menu-description">Teacher Tools overview and updates</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="nav.home">Home</span><span class="site-menu-description" data-i18n="nav.homeDescription">Teacher Tools overview and updates</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
-                 <div class="site-menu-label">Available tools</div>
+                 <div class="site-menu-label" data-i18n="nav.available">Available tools</div>
                 <a class="site-menu-item" href="/scheduler/">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1547,8 +1596,8 @@ Confirm the final copyright and usage language before release.
                             <path d="m10 17 2.2 2.2L18 14.7" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Scheduler</span><span class="site-menu-description">Create calendar events from bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.scheduler">Class Scheduler</span><span class="site-menu-description" data-i18n="tool.schedulerDescription">Create calendar events from bell times</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/calendar/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1557,8 +1606,8 @@ Confirm the final copyright and usage language before release.
                             <path class="icon-fill" d="M11.2 12h5.6v5.25h-5.6z" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Calendar</span><span class="site-menu-description">Plan classes with school bell times</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.calendar">Class Calendar</span><span class="site-menu-description" data-i18n="tool.calendarDescription">Plan classes with school bell times</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                 <a class="site-menu-item" href="/spinner/" aria-current="page">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1568,8 +1617,8 @@ Confirm the final copyright and usage language before release.
                             <path d="M14 5v18M5 14h18M7.64 7.64l12.72 12.72M20.36 7.64 7.64 20.36" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Spinner Wheel</span><span class="site-menu-description">Choose a random number, name, or custom choice</span></span>
-                    <span class="site-menu-status">HERE</span>
+                    <span><span class="site-menu-name" data-i18n="tool.spinner">Spinner Wheel</span><span class="site-menu-description" data-i18n="tool.spinnerDescription">Choose a random number, name, or custom choice</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.HERE">HERE</span>
                 </a>
                  <a class="site-menu-item" href="/timer/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1580,8 +1629,8 @@ Confirm the final copyright and usage language before release.
                             <path d="M14 12v4l3 1.8" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Classroom Timer</span><span class="site-menu-description">Time classroom activities and games</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.timer">Classroom Timer</span><span class="site-menu-description" data-i18n="tool.timerDescription">Time classroom activities and games</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/tracker/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1590,8 +1639,8 @@ Confirm the final copyright and usage language before release.
                             <path d="m9.5 14 3 3 6-7" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Class Tracker</span><span class="site-menu-description">Track lesson and textbook progress</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.tracker">Class Tracker</span><span class="site-menu-description" data-i18n="tool.trackerDescription">Track lesson and textbook progress</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <a class="site-menu-item" href="/tricks/">
                     <span class="site-menu-icon" aria-hidden="true">
@@ -1601,11 +1650,11 @@ Confirm the final copyright and usage language before release.
                             <path class="icon-fill" d="m14 13 .8 1.8 2 .2-1.5 1.4.4 2-1.7-1-1.7 1 .4-2-1.5-1.4 2-.2Z" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Bag of Tricks</span><span class="site-menu-description">Flip, roll, and draw for classroom games</span></span>
-                    <span class="site-menu-status">OPEN</span>
+                    <span><span class="site-menu-name" data-i18n="tool.tricks">Bag of Tricks</span><span class="site-menu-description" data-i18n="tool.tricksDescription">Flip, roll, and draw for classroom games</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
 
-                 <div class="site-menu-label">Planned tools</div>
+                 <div class="site-menu-label" data-i18n="nav.planned">Planned tools</div>
                  <div class="site-menu-item" aria-disabled="true">
                     <span class="site-menu-icon" aria-hidden="true">
                         <svg viewBox="0 0 28 28">
@@ -1613,51 +1662,64 @@ Confirm the final copyright and usage language before release.
                             <rect x="4.5" y="7.5" width="16" height="15" rx="2" />
                         </svg>
                     </span>
-                    <span><span class="site-menu-name">Google Slides Automator</span><span class="site-menu-description">Build lesson slides from common fields</span></span>
-                    <span class="site-menu-status">PLANNED</span>
+                    <span><span class="site-menu-name" data-i18n="tool.slides">Google Slides Automator</span><span class="site-menu-description" data-i18n="tool.slidesDescription">Build lesson slides from common fields</span></span>
+                    <span class="site-menu-status" data-i18n="nav.status.PLANNED">PLANNED</span>
                 </div>
             </nav>
              <section id="siteDataPanel" class="site-data-panel" role="dialog" aria-labelledby="siteDataTitle" hidden>
                 <div class="site-data-header">
-                    <h2 id="siteDataTitle" class="site-data-title">Backup & restore</h2>
-                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore">×</button>
+                    <h2 id="siteDataTitle" class="site-data-title" data-i18n="backup.title">Backup & restore</h2>
+                    <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore" data-i18n-aria-label="backup.close">×</button>
                 </div>
-                <p class="site-data-help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
-                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data"></ul>
+                <p class="site-data-help" data-i18n="backup.help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
+                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data" data-i18n-aria-label="backup.summaryAria"></ul>
                 <div class="site-data-actions">
-                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary">Export all data</button>
-                    <button type="button" id="siteDataImportButton" class="site-data-action">Import backup</button>
+                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary" data-i18n="backup.exportAll">Export all data</button>
+                    <button type="button" id="siteDataImportButton" class="site-data-action" data-i18n="backup.import">Import backup</button>
                 </div>
                 <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
-                <p class="site-data-note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
+                <p class="site-data-note" data-i18n="backup.note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
                 <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+            </section>
+             <section id="siteLanguagePanel" class="site-language-panel" role="dialog" aria-labelledby="siteLanguageTitle" hidden>
+                <div class="site-language-header">
+                    <h2 id="siteLanguageTitle" class="site-language-title" data-i18n="language.title">Language</h2>
+                    <button type="button" id="siteLanguageCloseButton" class="site-language-close" aria-label="Close language settings" data-i18n-aria-label="language.close">×</button>
+                </div>
+                <p class="site-language-help" data-i18n="language.help">Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.</p>
+                <label class="site-language-label" for="siteLanguageChoice" data-i18n="language.label">Display language</label>
+                <select id="siteLanguageChoice" class="site-language-select">
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
+                </select>
+                <p class="site-language-note" data-i18n="language.progress">English and Japanese are available across all current Teacher Tools pages.</p>
             </section>
              <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
                 <div class="site-theme-header">
-                    <h2 id="siteThemeTitle" class="site-theme-title">Appearance</h2>
-                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings">×</button>
+                    <h2 id="siteThemeTitle" class="site-theme-title" data-i18n="appearance.title">Appearance</h2>
+                    <button type="button" id="siteThemeCloseButton" class="site-theme-close" aria-label="Close appearance settings" data-i18n-aria-label="appearance.close">×</button>
                 </div>
-                <p class="site-theme-help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
-                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme">
+                <p class="site-theme-help" data-i18n="appearance.help">This theme is shared by Home and every Teacher Tools applet in this browser.</p>
+                 <div class="site-theme-options" role="radiogroup" aria-label="Site color theme" data-i18n-aria-label="appearance.groupAria">
                     <label class="site-theme-option" data-theme-option="ocean-blue">
                         <input type="radio" name="siteThemeChoice" value="ocean-blue">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Ocean Blue</span>
+                        <span class="site-theme-name" data-i18n="theme.oceanBlue">Ocean Blue</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="color-pop">
                         <input type="radio" name="siteThemeChoice" value="color-pop">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Color Pop</span>
+                        <span class="site-theme-name" data-i18n="theme.colorPop">Color Pop</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="pretty-in-pink">
                         <input type="radio" name="siteThemeChoice" value="pretty-in-pink">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">Pretty in Pink</span>
+                        <span class="site-theme-name" data-i18n="theme.prettyInPink">Pretty in Pink</span>
                     </label>
                     <label class="site-theme-option" data-theme-option="true-dark">
                         <input type="radio" name="siteThemeChoice" value="true-dark">
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
-                        <span class="site-theme-name">True Dark</span>
+                        <span class="site-theme-name" data-i18n="theme.trueDark">True Dark</span>
                     </label>
                 </div>
             </section>
@@ -1669,20 +1731,20 @@ Confirm the final copyright and usage language before release.
         <div class="app-shell">
             <header class="app-header">
                 <div class="title-wrap">
-                    <h1 class="app-title">Spinner Wheel</h1>
+                    <h1 class="app-title" data-i18n="spinner.title">Spinner Wheel</h1>
                     <span class="version-badge">v1.2</span>
                 </div>
 
                 <div class="app-header-actions">
-                    <button type="button" id="presentationButton" class="icon-button" aria-label="Enter presentation mode" aria-pressed="false" title="Presentation mode">
+                    <button type="button" id="presentationButton" class="icon-button" aria-label="Enter presentation mode" aria-pressed="false" title="Presentation mode" data-i18n-aria-label="spinner.presentation.enter" data-i18n-title="spinner.presentation.title">
                         <svg class="presentation-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M8.5 4.5h-4v4M15.5 4.5h4v4M19.5 15.5v4h-4M8.5 19.5h-4v-4" />
                         </svg>
                     </button>
-                    <button type="button" id="helpOpenButton" class="icon-button" data-modal-open="helpModal" aria-label="Open Spinner Wheel help" aria-haspopup="dialog" title="Spinner Wheel help">
+                    <button type="button" id="helpOpenButton" class="icon-button" data-modal-open="helpModal" aria-label="Open Spinner Wheel help" aria-haspopup="dialog" title="Spinner Wheel help" data-i18n-aria-label="spinner.help.open" data-i18n-title="spinner.help.title">
                         <span class="help-button-mark" aria-hidden="true">?</span>
                     </button>
-                    <button type="button" id="settingsOpenButton" class="icon-button" data-modal-open="settingsModal" aria-label="Open Spinner Wheel settings" aria-haspopup="dialog" title="Spinner Wheel settings">
+                    <button type="button" id="settingsOpenButton" class="icon-button" data-modal-open="settingsModal" aria-label="Open Spinner Wheel settings" aria-haspopup="dialog" title="Spinner Wheel settings" data-i18n-aria-label="spinner.settings.open" data-i18n-title="spinner.settings.title">
                         <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
                         </svg>
@@ -1691,7 +1753,7 @@ Confirm the final copyright and usage language before release.
             </header>
 
             <div class="app-main">
-                <section class="wheel-card" aria-label="Spinner wheel">
+                <section class="wheel-card" aria-label="Spinner wheel" data-i18n-aria-label="spinner.wheelAria">
                     <div class="wheel-summary" aria-hidden="true">
                         <span id="modeBadge" class="mode-badge">Numbers</span>
                         <span id="choiceCountText">24 choices</span>
@@ -1703,7 +1765,7 @@ Confirm the final copyright and usage language before release.
                         <div class="wheel-pointer" aria-hidden="true"></div>
                         <canvas id="wheelCanvas" width="720" height="720" aria-hidden="true"></canvas>
                         <div id="resultCard" class="result-card" role="status" aria-live="assertive" hidden>
-                            <span class="result-label">Selected</span>
+                            <span class="result-label" data-i18n="spinner.selected">Selected</span>
                             <strong id="resultValue" class="result-value"></strong>
                             <span id="resultDetail" class="result-detail"></span>
                         </div>
@@ -1712,21 +1774,21 @@ Confirm the final copyright and usage language before release.
                     <div class="spin-area">
                         <button type="button" id="spinButton" class="spin-button">
                             <span class="spin-icon" aria-hidden="true">↻</span>
-                            <span id="spinButtonText">Spin the wheel</span>
+                            <span id="spinButtonText" data-i18n="spinner.spin">Spin the wheel</span>
                         </button>
                         <p id="wheelStatus" class="wheel-status" role="status" aria-live="polite">24 choices are ready.</p>
 
                         <div id="roundPanel" class="round-panel" hidden>
                             <span id="roundCopy" class="round-copy"></span>
-                            <button type="button" id="restoreRoundButton" class="button button-secondary button-small">Restore all</button>
+                            <button type="button" id="restoreRoundButton" class="button button-secondary button-small" data-i18n="spinner.restoreAll">Restore all</button>
                         </div>
                     </div>
                 </section>
             </div>
 
             <footer class="app-footer">
-                <div class="footer-version">Spinner Wheel · v1.2</div>
-                <div class="footer-copyright">Workbench preview · Choices stay in this browser and are not uploaded.</div>
+                <div class="footer-version" data-i18n="spinner.footer.version">Spinner Wheel · v1.2</div>
+                <div class="footer-copyright" data-i18n="spinner.footer.note">Choices stay in this browser and are not uploaded.</div>
             </footer>
         </div>
     </main>
@@ -1734,32 +1796,32 @@ Confirm the final copyright and usage language before release.
     <div id="helpModal" class="modal-backdrop" data-shared-modal aria-hidden="true">
         <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle" aria-describedby="helpIntro">
             <header class="modal-header">
-                <h2 id="helpTitle" class="modal-title">Spinner Wheel help</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close Spinner Wheel help">×</button>
+                <h2 id="helpTitle" class="modal-title" data-i18n="spinner.help.title">Spinner Wheel help</h2>
+                <button type="button" class="close-button" data-modal-close aria-label="Close Spinner Wheel help" data-i18n-aria-label="spinner.help.close">×</button>
             </header>
 
             <div class="modal-content">
-                <p id="helpIntro" class="help-intro">Choose a saved class number set or one of your reusable custom lists, then spin.</p>
+                <p id="helpIntro" class="help-intro" data-i18n="spinner.help.intro">Choose a saved class number set or one of your reusable custom lists, then spin.</p>
                 <div class="help-steps">
                     <section class="help-step">
-                        <h3>1. Choose the wheel mode</h3>
-                        <p>Use Numbers to choose a school and class from Scheduler. New class ranges use the saved student count when available, and you can still adjust the minimum, maximum, or exclusions. Use Custom Choices to keep a reusable bank of named lists.</p>
-                        <button type="button" class="help-link" data-modal-switch="settingsModal">Open Settings</button>
+                        <h3 data-i18n="spinner.help.step1Title">1. Choose the wheel mode</h3>
+                        <p data-i18n="spinner.help.step1Body">Use Numbers to choose a school and class from Scheduler. New class ranges use the saved student count when available, and you can still adjust the minimum, maximum, or exclusions. Use Custom Choices to keep a reusable bank of named lists.</p>
+                        <button type="button" class="help-link" data-modal-switch="settingsModal" data-i18n="spinner.help.openSettings">Open Settings</button>
                     </section>
                     <section class="help-step">
-                        <h3>2. Decide what happens after a spin</h3>
-                        <p>Selections can stay available for repeats or be removed temporarily for the current round. Removed choices return when you restore the round, change wheel entries, or reload the page.</p>
+                        <h3 data-i18n="spinner.help.step2Title">2. Decide what happens after a spin</h3>
+                        <p data-i18n="spinner.help.step2Body">Selections can stay available for repeats or be removed temporarily for the current round. Removed choices return when you restore the round, change wheel entries, or reload the page.</p>
                     </section>
                     <section class="help-step">
-                        <h3>3. Spin and announce the result</h3>
-                        <p>The selected choice is shown in full and announced for screen readers. Presentation mode enlarges the wheel for smartboards and landscape displays, while reduced-motion preferences replace the long spin with a brief transition.</p>
+                        <h3 data-i18n="spinner.help.step3Title">3. Spin and announce the result</h3>
+                        <p data-i18n="spinner.help.step3Body">The selected choice is shown in full and announced for screen readers. Presentation mode enlarges the wheel for smartboards and landscape displays, while reduced-motion preferences replace the long spin with a brief transition.</p>
                     </section>
                 </div>
-                <div class="privacy-note" role="note">Your settings and custom choices are saved only in this browser. Clearing site data can remove them; export a backup if the list is important.</div>
+                <div class="privacy-note" role="note" data-i18n="spinner.help.privacy">Your settings and custom choices are saved only in this browser. Clearing site data can remove them; export a backup if the list is important.</div>
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="button button-primary" data-modal-close>Done</button>
+                <button type="button" class="button button-primary" data-modal-close data-i18n="spinner.done">Done</button>
             </div>
         </section>
     </div>
@@ -1767,57 +1829,57 @@ Confirm the final copyright and usage language before release.
     <div id="settingsModal" class="modal-backdrop" data-shared-modal aria-hidden="true">
         <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
             <header class="modal-header">
-                <h2 id="settingsTitle" class="modal-title">Spinner Wheel settings</h2>
-                <button type="button" class="close-button" data-modal-close aria-label="Close Spinner Wheel settings">×</button>
+                <h2 id="settingsTitle" class="modal-title" data-i18n="spinner.settings.title">Spinner Wheel settings</h2>
+                <button type="button" class="close-button" data-modal-close aria-label="Close Spinner Wheel settings" data-i18n-aria-label="spinner.settings.close">×</button>
             </header>
 
             <div class="modal-content">
                 <section class="settings-section" aria-labelledby="wheelModeHeading">
-                    <h3 id="wheelModeHeading" class="settings-heading">Wheel mode</h3>
-                    <p class="settings-help">Changes update the wheel immediately. Switching modes keeps the other mode's entries for later.</p>
+                    <h3 id="wheelModeHeading" class="settings-heading" data-i18n="spinner.settings.modeTitle">Wheel mode</h3>
+                    <p class="settings-help" data-i18n="spinner.settings.modeHelp">Changes update the wheel immediately. Switching modes keeps the other mode's entries for later.</p>
 
                     <div class="mode-choice">
-                        <span id="numbersModeLabel" class="mode-choice-label active">Numbers</span>
+                        <span id="numbersModeLabel" class="mode-choice-label active" data-i18n="spinner.mode.numbers">Numbers</span>
                         <label class="switch">
-                            <input id="modeToggle" type="checkbox" aria-label="Use Custom Choices mode" aria-describedby="wheelModeHeading">
+                            <input id="modeToggle" type="checkbox" aria-label="Use Custom Choices mode" aria-describedby="wheelModeHeading" data-i18n-aria-label="spinner.mode.customAria">
                             <span class="switch-track" aria-hidden="true"></span>
                         </label>
-                        <span id="customModeLabel" class="mode-choice-label">Custom Choices</span>
+                        <span id="customModeLabel" class="mode-choice-label" data-i18n="spinner.mode.custom">Custom Choices</span>
                     </div>
 
                     <div id="numbersSettingsPanel" class="mode-settings-panel">
                         <div class="source-grid">
                             <label class="field">
-                                <span class="field-label">School</span>
+                                <span class="field-label" data-i18n="spinner.school">School</span>
                                 <select id="schoolSelect" class="settings-select"></select>
                             </label>
                             <label class="field">
-                                <span class="field-label">Class</span>
+                                <span class="field-label" data-i18n="spinner.class">Class</span>
                                 <select id="classSelect" class="settings-select"></select>
                             </label>
                         </div>
-                        <p id="schoolSourceNote" class="school-source-note">Schools and classes come from ALT Class Scheduler.</p>
-                        <h4 id="numberProfileHeading" class="number-profile-heading">Number set</h4>
+                        <p id="schoolSourceNote" class="school-source-note" data-i18n="spinner.schoolSource">Schools and classes come from ALT Class Scheduler.</p>
+                        <h4 id="numberProfileHeading" class="number-profile-heading" data-i18n="spinner.numberSet">Number set</h4>
                         <div class="settings-grid">
                             <label class="field">
-                                <span class="field-label">Minimum</span>
+                                <span class="field-label" data-i18n="spinner.minimum">Minimum</span>
                                 <input id="minimumInput" type="text" inputmode="numeric" value="1" autocomplete="off" spellcheck="false">
                             </label>
                             <label class="field">
-                                <span class="field-label">Maximum</span>
+                                <span class="field-label" data-i18n="spinner.maximum">Maximum</span>
                                 <input id="maximumInput" type="text" inputmode="numeric" value="24" autocomplete="off" spellcheck="false">
                             </label>
                             <div class="field field-full">
                                 <span class="field-label-row">
-                                    <label class="field-label" for="exclusionsInput">Excluded numbers</label>
-                                    <button type="button" class="tooltip-trigger" data-tooltip="Enter individual whole numbers separated by commas or spaces. Numbers outside the current range are ignored." aria-label="Help for excluded numbers">i</button>
+                                    <label class="field-label" for="exclusionsInput" data-i18n="spinner.exclusions">Excluded numbers</label>
+                                    <button type="button" class="tooltip-trigger" data-tooltip="Enter individual whole numbers separated by commas or spaces. Numbers outside the current range are ignored." aria-label="Help for excluded numbers" data-i18n-tooltip="spinner.exclusionsHelp" data-i18n-aria-label="spinner.exclusionsAria">i</button>
                                 </span>
-                                <input id="exclusionsInput" type="text" placeholder="For example: 37, 42" autocomplete="off" spellcheck="false">
-                                <span class="helper-text">The inclusive range may contain up to 100 numbers before exclusions.</span>
+                                <input id="exclusionsInput" type="text" placeholder="For example: 37, 42" autocomplete="off" spellcheck="false" data-i18n-placeholder="spinner.exclusionsPlaceholder">
+                                <span class="helper-text" data-i18n="spinner.rangeHelp">The inclusive range may contain up to 100 numbers before exclusions.</span>
                             </div>
                         </div>
                         <div class="settings-button-row">
-                            <button type="button" id="useClassSizeButton" class="button button-secondary button-small">Use saved class size</button>
+                            <button type="button" id="useClassSizeButton" class="button button-secondary button-small" data-i18n="spinner.useClassSize">Use saved class size</button>
                         </div>
                         <p id="numberValidation" class="validation-message" role="status"></p>
                     </div>
@@ -1826,28 +1888,28 @@ Confirm the final copyright and usage language before release.
                         <div class="custom-bank">
                             <div class="custom-list-bank">
                                 <div class="custom-list-bank-header">
-                                    <strong>Saved lists</strong>
-                                    <button type="button" id="addCustomListButton" class="button button-secondary button-small">Add</button>
+                                    <strong data-i18n="spinner.savedLists">Saved lists</strong>
+                                    <button type="button" id="addCustomListButton" class="button button-secondary button-small" data-i18n="spinner.add">Add</button>
                                 </div>
-                                <div id="customListItems" class="custom-list-items" aria-label="Saved custom lists"></div>
+                                <div id="customListItems" class="custom-list-items" aria-label="Saved custom lists" data-i18n-aria-label="spinner.savedListsAria"></div>
                             </div>
                             <div class="custom-list-editor">
                                 <div class="list-editor-grid">
                                     <label class="field field-full">
-                                        <span class="field-label">List name</span>
+                                        <span class="field-label" data-i18n="spinner.listName">List name</span>
                                         <input id="customListNameInput" type="text" maxlength="60" autocomplete="off" spellcheck="false">
                                     </label>
                                 </div>
                                 <div class="field">
                                     <span class="field-label-row">
-                                        <label class="field-label" for="customChoicesInput">Choices</label>
-                                        <button type="button" class="tooltip-trigger" data-tooltip="Type or paste one choice per line. Blank lines are ignored, and exact duplicates each receive their own equal slice." aria-label="Help for custom choices">i</button>
+                                        <label class="field-label" for="customChoicesInput" data-i18n="spinner.choices">Choices</label>
+                                        <button type="button" class="tooltip-trigger" data-tooltip="Type or paste one choice per line. Blank lines are ignored, and exact duplicates each receive their own equal slice." aria-label="Help for custom choices" data-i18n-tooltip="spinner.choicesHelp" data-i18n-aria-label="spinner.choicesAria">i</button>
                                     </span>
-                                    <textarea id="customChoicesInput" placeholder="Vocabulary word&#10;Short phrase&#10;Discussion prompt" autocomplete="off" spellcheck="false"></textarea>
+                                    <textarea id="customChoicesInput" placeholder="Vocabulary word&#10;Short phrase&#10;Discussion prompt" autocomplete="off" spellcheck="false" data-i18n-placeholder="spinner.choicesPlaceholder"></textarea>
                                     <span id="customCountText" class="helper-text">0 of 100 choices</span>
                                 </div>
                                 <div class="custom-list-actions">
-                                    <button type="button" id="deleteCustomListButton" class="button button-danger button-small">Delete list</button>
+                                    <button type="button" id="deleteCustomListButton" class="button button-danger button-small" data-i18n="spinner.deleteList">Delete list</button>
                                 </div>
                             </div>
                         </div>
@@ -1856,68 +1918,68 @@ Confirm the final copyright and usage language before release.
                 </section>
 
                 <section class="settings-section" aria-labelledby="roundBehaviorHeading">
-                    <h3 id="roundBehaviorHeading" class="settings-heading">Round behavior</h3>
+                    <h3 id="roundBehaviorHeading" class="settings-heading" data-i18n="spinner.round.title">Round behavior</h3>
                     <div class="setting-row">
                         <span>
-                            <span class="setting-label">Remove selections for this round</span>
-                            <span class="setting-description">After each spin, take the selected item off the wheel until the round is restored or the page reloads.</span>
+                            <span class="setting-label" data-i18n="spinner.round.remove">Remove selections for this round</span>
+                            <span class="setting-description" data-i18n="spinner.round.removeHelp">After each spin, take the selected item off the wheel until the round is restored or the page reloads.</span>
                         </span>
                         <label class="switch">
-                            <input id="removeAfterSpinInput" type="checkbox" aria-label="Remove selected choices for the current round">
+                            <input id="removeAfterSpinInput" type="checkbox" aria-label="Remove selected choices for the current round" data-i18n-aria-label="spinner.round.removeAria">
                             <span class="switch-track" aria-hidden="true"></span>
                         </label>
                     </div>
                 </section>
 
                 <section class="settings-section" aria-labelledby="spinBehaviorHeading">
-                    <h3 id="spinBehaviorHeading" class="settings-heading">Spin behavior</h3>
+                    <h3 id="spinBehaviorHeading" class="settings-heading" data-i18n="spinner.behavior.title">Spin behavior</h3>
                     <div class="setting-row">
                         <label for="spinLengthInput">
-                            <span class="setting-label">Spin length</span>
-                            <span class="setting-description">Choose a quick, standard, dramatic, or suspenseful classroom spin.</span>
+                            <span class="setting-label" data-i18n="spinner.behavior.length">Spin length</span>
+                            <span class="setting-description" data-i18n="spinner.behavior.lengthHelp">Choose a quick, standard, dramatic, or suspenseful classroom spin.</span>
                         </label>
                         <select id="spinLengthInput" class="settings-select">
-                            <option value="quick">Quick</option>
-                            <option value="standard" selected>Standard</option>
-                            <option value="dramatic">Dramatic</option>
-                            <option value="suspenseful">Suspenseful</option>
+                            <option value="quick" data-i18n="spinner.length.quick">Quick</option>
+                            <option value="standard" selected data-i18n="spinner.length.standard">Standard</option>
+                            <option value="dramatic" data-i18n="spinner.length.dramatic">Dramatic</option>
+                            <option value="suspenseful" data-i18n="spinner.length.suspenseful">Suspenseful</option>
                         </select>
                     </div>
                     <div class="setting-row">
                         <span>
-                            <span class="setting-label">Spinning sound</span>
-                            <span class="setting-description">Play a mechanical ticking effect while the wheel is moving.</span>
+                            <span class="setting-label" data-i18n="spinner.behavior.spinSound">Spinning sound</span>
+                            <span class="setting-description" data-i18n="spinner.behavior.spinSoundHelp">Play a mechanical ticking effect while the wheel is moving.</span>
                         </span>
                         <label class="switch">
-                            <input id="spinSoundInput" type="checkbox" aria-label="Play a sound while the wheel spins">
+                            <input id="spinSoundInput" type="checkbox" aria-label="Play a sound while the wheel spins" data-i18n-aria-label="spinner.behavior.spinSoundAria">
                             <span class="switch-track" aria-hidden="true"></span>
                         </label>
                     </div>
                     <div class="setting-row">
                         <span>
-                            <span class="setting-label">Final-selection sound</span>
-                            <span class="setting-description">Play a short locally generated chime when the wheel stops.</span>
+                            <span class="setting-label" data-i18n="spinner.behavior.resultSound">Final-selection sound</span>
+                            <span class="setting-description" data-i18n="spinner.behavior.resultSoundHelp">Play a short locally generated chime when the wheel stops.</span>
                         </span>
                         <label class="switch">
-                            <input id="soundInput" type="checkbox" aria-label="Play a result sound">
+                            <input id="soundInput" type="checkbox" aria-label="Play a result sound" data-i18n-aria-label="spinner.behavior.resultSoundAria">
                             <span class="switch-track" aria-hidden="true"></span>
                         </label>
                     </div>
                 </section>
 
                 <section class="settings-section" aria-labelledby="dataHeading">
-                    <h3 id="dataHeading" class="settings-heading">Reset Spinner Wheel</h3>
-                    <p class="settings-help">Use Backup & restore in the Teacher Tools header to export or import your saved data across all applets.</p>
+                    <h3 id="dataHeading" class="settings-heading" data-i18n="spinner.reset.title">Reset Spinner Wheel</h3>
+                    <p class="settings-help" data-i18n="spinner.reset.help">Use Backup & restore in the Teacher Tools header to export or import your saved data across all applets.</p>
                     <div class="settings-button-row">
-                        <button type="button" id="resetButton" class="button button-danger button-small">Reset applet</button>
+                        <button type="button" id="resetButton" class="button button-danger button-small" data-i18n="spinner.reset.button">Reset applet</button>
                     </div>
                     <p id="dataStatus" class="data-status" role="status" aria-live="polite"></p>
-                    <div class="privacy-note" role="note">Custom entries may contain student names. Nothing is uploaded, but exported Teacher Tools backup files should still be handled carefully.</div>
+                    <div class="privacy-note" role="note" data-i18n="spinner.reset.privacy">Custom entries may contain student names. Nothing is uploaded, but exported Teacher Tools backup files should still be handled carefully.</div>
                 </section>
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="button button-primary" data-modal-close>Done</button>
+                <button type="button" class="button button-primary" data-modal-close data-i18n="spinner.done">Done</button>
             </div>
         </section>
     </div>
@@ -1941,6 +2003,9 @@ Confirm the final copyright and usage language before release.
                 !["school","category"].every(k => typeof p[k] === "string")) return false;
             if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
                 p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
+            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
+            if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
+            if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
             const ids = new Set();
             return value.events.every(e => {
                 if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
@@ -1957,7 +2022,181 @@ Confirm the final copyright and usage language before release.
             "use strict";
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
+            const SITE_LANGUAGE_KEY = "teacherTools.siteLanguage.v1";
             const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const ALLOWED_LANGUAGES = ["en", "ja"];
+            const SHARED_TRANSLATIONS = {
+                en: {
+                    "nav.homeAria": "Teacher Tools home",
+                    "nav.mainAria": "Main navigation",
+                    "nav.home": "Home",
+                    "nav.tools": "Tools",
+                    "nav.open": "Open navigation",
+                    "nav.homeDescription": "Teacher Tools overview and updates",
+                    "nav.available": "Available tools",
+                    "nav.planned": "Planned tools",
+                    "nav.status.HERE": "HERE",
+                    "nav.status.OPEN": "OPEN",
+                    "nav.status.PLANNED": "PLANNED",
+                    "tool.scheduler": "Class Scheduler",
+                    "tool.schedulerDescription": "Create calendar events from bell times",
+                    "tool.calendar": "Class Calendar",
+                    "tool.calendarDescription": "Plan classes with school bell times",
+                    "tool.spinner": "Spinner Wheel",
+                    "tool.spinnerDescription": "Choose a random number, name, or custom choice",
+                    "tool.timer": "Classroom Timer",
+                    "tool.timerDescription": "Time classroom activities and games",
+                    "tool.tracker": "Class Tracker",
+                    "tool.trackerDescription": "Track lesson and textbook progress",
+                    "tool.tricks": "Bag of Tricks",
+                    "tool.tricksDescription": "Flip, roll, and draw for classroom games",
+                    "tool.slides": "Google Slides Automator",
+                    "tool.slidesDescription": "Build lesson slides from common fields",
+                    "language.open": "Open language settings",
+                    "language.title": "Language",
+                    "language.close": "Close language settings",
+                    "language.help": "Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.",
+                    "language.label": "Display language",
+                    "language.progress": "English and Japanese are available across all current Teacher Tools pages.",
+                    "backup.open": "Open Teacher Tools backup and restore",
+                    "backup.title": "Backup & restore",
+                    "backup.close": "Close backup and restore",
+                    "backup.help": "Choose which saved data to include in one local backup file. Nothing is uploaded.",
+                    "backup.summaryAria": "Saved Teacher Tools data",
+                    "backup.exportAll": "Export all data",
+                    "backup.import": "Import backup",
+                    "backup.note": "Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.",
+                    "backup.saved": "Saved",
+                    "backup.invalid": "Needs attention",
+                    "backup.missing": "No saved data",
+                    "backup.exportCount": "Export ({count}) {items}",
+                    "backup.item": "item",
+                    "backup.items": "items",
+                    "backup.select": "Select data to export",
+                    "backup.selectError": "Select at least one saved item to export.",
+                    "backup.exported": "Backup exported with {count} saved {areas}.",
+                    "backup.area": "area",
+                    "backup.areas": "areas",
+                    "backup.readError": "The backup file could not be read.",
+                    "backup.siteUnsupported": "This is not a supported Teacher Tools site backup.",
+                    "backup.invalidRecord": "{label} data in this backup is not valid.",
+                    "backup.noSupportedData": "This backup does not contain any supported Teacher Tools data.",
+                    "backup.spinnerInvalid": "The Spinner Wheel data in this backup is not valid.",
+                    "backup.schedulerV1Invalid": "The Version 1 Scheduler data in this backup is not valid.",
+                    "backup.schedulerVersionInvalid": "The Version {version} Scheduler data in this backup is not valid.",
+                    "backup.unsupported": "This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.",
+                    "backup.storageError": "Browser storage is unavailable or full.",
+                    "backup.tooLarge": "That file is too large to be a Teacher Tools backup.",
+                    "backup.confirm": "Import this {kind} backup? It will replace saved data for: {labels}. Other saved tool data will remain unchanged. This page will reload afterward.",
+                    "backup.kindOlder": "older single-tool",
+                    "backup.kindSite": "Teacher Tools",
+                    "backup.cancelled": "Import cancelled.",
+                    "backup.success": "Backup imported successfully. Reloading this page…",
+                    "backup.successAlert": "Teacher Tools backup imported successfully. This page will now reload.",
+                    "backup.importError": "The backup could not be imported.",
+                    "record.calendar": "Class Calendar",
+                    "record.appearance": "Site appearance",
+                    "record.language": "Site language",
+                    "record.scheduler": "ALT Class Scheduler",
+                    "record.spinner": "Spinner Wheel",
+                    "record.timer": "Classroom Timer",
+                    "record.tracker": "Class Tracker",
+                    "appearance.open": "Open site appearance settings",
+                    "appearance.title": "Appearance",
+                    "appearance.close": "Close appearance settings",
+                    "appearance.help": "This theme is shared by Home and every Teacher Tools applet in this browser.",
+                    "appearance.groupAria": "Site color theme",
+                    "theme.oceanBlue": "Ocean Blue",
+                    "theme.colorPop": "Color Pop",
+                    "theme.prettyInPink": "Pretty in Pink",
+                    "theme.trueDark": "True Dark"
+                },
+                ja: {
+                    "nav.homeAria": "Teacher Tools ホーム",
+                    "nav.mainAria": "メインナビゲーション",
+                    "nav.home": "ホーム",
+                    "nav.tools": "ツール",
+                    "nav.open": "ナビゲーションを開く",
+                    "nav.homeDescription": "Teacher Toolsの概要と更新情報",
+                    "nav.available": "利用できるツール",
+                    "nav.planned": "開発予定のツール",
+                    "nav.status.HERE": "表示中",
+                    "nav.status.OPEN": "開く",
+                    "nav.status.PLANNED": "予定",
+                    "tool.scheduler": "クラススケジューラー",
+                    "tool.schedulerDescription": "時間割からカレンダー予定を作成",
+                    "tool.calendar": "クラスカレンダー",
+                    "tool.calendarDescription": "学校の時間割に合わせて授業を計画",
+                    "tool.spinner": "スピナーホイール",
+                    "tool.spinnerDescription": "数字・名前・選択肢からランダムに決定",
+                    "tool.timer": "教室タイマー",
+                    "tool.timerDescription": "授業活動やゲームの時間を計測",
+                    "tool.tracker": "クラストラッカー",
+                    "tool.trackerDescription": "授業や教科書の進捗を記録",
+                    "tool.tricks": "お楽しみツール",
+                    "tool.tricksDescription": "コイン・サイコロ・カードを授業で活用",
+                    "tool.slides": "Googleスライド自動作成",
+                    "tool.slidesDescription": "よく使う項目から授業スライドを作成",
+                    "language.open": "言語設定を開く",
+                    "language.title": "言語",
+                    "language.close": "言語設定を閉じる",
+                    "language.help": "Teacher Toolsの画面に表示する言語を選択します。自分で入力した内容は翻訳も変更もされません。",
+                    "language.label": "表示言語",
+                    "language.progress": "現在のTeacher Tools全ページを英語と日本語で利用できます。",
+                    "backup.open": "Teacher Toolsのバックアップと復元を開く",
+                    "backup.title": "バックアップと復元",
+                    "backup.close": "バックアップと復元を閉じる",
+                    "backup.help": "保存済みデータを選び、1つのローカルバックアップファイルにまとめます。データはアップロードされません。",
+                    "backup.summaryAria": "保存済みのTeacher Toolsデータ",
+                    "backup.exportAll": "すべてのデータを書き出す",
+                    "backup.import": "バックアップを読み込む",
+                    "backup.note": "読み込むと、ファイルに含まれるツールの保存データが置き換わります。その他のツールのデータは変わりません。旧形式のスケジューラーとスピナーホイールのバックアップにも対応しています。",
+                    "backup.saved": "保存済み",
+                    "backup.invalid": "確認が必要",
+                    "backup.missing": "保存データなし",
+                    "backup.exportCount": "{count}件を書き出す",
+                    "backup.item": "件",
+                    "backup.items": "件",
+                    "backup.select": "書き出すデータを選択",
+                    "backup.selectError": "書き出す保存済みデータを1件以上選択してください。",
+                    "backup.exported": "保存済みデータ{count}件をバックアップに書き出しました。",
+                    "backup.area": "件",
+                    "backup.areas": "件",
+                    "backup.readError": "バックアップファイルを読み込めませんでした。",
+                    "backup.siteUnsupported": "対応しているTeacher Toolsのサイトバックアップではありません。",
+                    "backup.invalidRecord": "バックアップ内の「{label}」データが正しくありません。",
+                    "backup.noSupportedData": "対応しているTeacher Toolsのデータがバックアップに含まれていません。",
+                    "backup.spinnerInvalid": "バックアップ内のスピナーホイールデータが正しくありません。",
+                    "backup.schedulerV1Invalid": "バックアップ内のバージョン1のスケジューラーデータが正しくありません。",
+                    "backup.schedulerVersionInvalid": "バックアップ内のバージョン{version}のスケジューラーデータが正しくありません。",
+                    "backup.unsupported": "対応しているTeacher Tools、スケジューラー、またはスピナーホイールのバックアップではありません。",
+                    "backup.storageError": "ブラウザの保存領域を利用できないか、空き容量がありません。",
+                    "backup.tooLarge": "Teacher Toolsのバックアップとしてはファイルサイズが大きすぎます。",
+                    "backup.confirm": "この{kind}バックアップを読み込みますか？ 次の保存データが置き換わります：{labels}。その他のツールのデータは変わりません。完了後、このページを再読み込みします。",
+                    "backup.kindOlder": "旧形式の単一ツール",
+                    "backup.kindSite": "Teacher Tools",
+                    "backup.cancelled": "読み込みをキャンセルしました。",
+                    "backup.success": "バックアップを読み込みました。ページを再読み込みしています…",
+                    "backup.successAlert": "Teacher Toolsのバックアップを読み込みました。このページを再読み込みします。",
+                    "backup.importError": "バックアップを読み込めませんでした。",
+                    "record.calendar": "クラスカレンダー",
+                    "record.appearance": "サイトの外観",
+                    "record.language": "サイトの言語",
+                    "record.scheduler": "ALTクラススケジューラー",
+                    "record.spinner": "スピナーホイール",
+                    "record.timer": "教室タイマー",
+                    "record.tracker": "クラストラッカー",
+                    "appearance.open": "サイトの外観設定を開く",
+                    "appearance.title": "外観",
+                    "appearance.close": "外観設定を閉じる",
+                    "appearance.help": "このテーマは、このブラウザのホームとすべてのTeacher Toolsアプレットで共有されます。",
+                    "appearance.groupAria": "サイトのカラーテーマ",
+                    "theme.oceanBlue": "オーシャンブルー",
+                    "theme.colorPop": "カラーポップ",
+                    "theme.prettyInPink": "プリティ・イン・ピンク",
+                    "theme.trueDark": "トゥルーダーク"
+                }
+            };
             const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
             const SITE_BACKUP_SCHEMA_VERSION = 1;
             const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
@@ -1965,19 +2204,30 @@ Confirm the final copyright and usage language before release.
                 {
                     id: "class-calendar",
                     label: "Class Calendar",
+                    labelKey: "record.calendar",
                     storageKey: "teacherTools.classCalendar.state.v1",
                     validate: value => window.TeacherToolsCalendarValidate(value)
                 },
                 {
                     id: "appearance",
                     label: "Site appearance",
+                    labelKey: "record.appearance",
                     storageKey: SITE_PREFERENCES_KEY,
                     validate: value => isPlainObject(value) &&
                         value.version === 1 && ALLOWED_THEMES.includes(value.theme)
                 },
                 {
+                    id: "language",
+                    label: "Site language",
+                    labelKey: "record.language",
+                    storageKey: SITE_LANGUAGE_KEY,
+                    validate: value => isPlainObject(value) && value.version === 1 &&
+                        ALLOWED_LANGUAGES.includes(value.language)
+                },
+                {
                     id: "scheduler",
                     label: "ALT Class Scheduler",
+                    labelKey: "record.scheduler",
                     storageKey: "classAutomatorData_v3",
                     validate: value => isPlainObject(value) && value.version === 3 &&
                         Array.isArray(value.schools) && isPlainObject(value.schedule) &&
@@ -1986,6 +2236,7 @@ Confirm the final copyright and usage language before release.
                 {
                     id: "spinner",
                     label: "Spinner Wheel",
+                    labelKey: "record.spinner",
                     storageKey: "teacherTools.spinnerWheel.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         ["numbers", "custom"].includes(value.mode) &&
@@ -1996,6 +2247,7 @@ Confirm the final copyright and usage language before release.
                 {
                     id: "timer",
                     label: "Classroom Timer",
+                    labelKey: "record.timer",
                     storageKey: "teacherTools.classroomTimer.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         typeof value.soundEnabled === "boolean" &&
@@ -2005,6 +2257,7 @@ Confirm the final copyright and usage language before release.
                 {
                     id: "class-tracker",
                     label: "Class Tracker",
+                    labelKey: "record.tracker",
                     storageKey: "teacherTools.classTracker.state.v1",
                     validate: value => isPlainObject(value) && value.version === 1 &&
                         Array.isArray(value.templates) && isPlainObject(value.assignments) &&
@@ -2018,6 +2271,12 @@ Confirm the final copyright and usage language before release.
             let tooltipContent = null;
             let tooltipPinned = false;
             let tooltipFrame = 0;
+            let activeLanguage = "en";
+            const translationCatalogs = {
+                en: { ...SHARED_TRANSLATIONS.en },
+                ja: { ...SHARED_TRANSLATIONS.ja }
+            };
+            const translationDefaults = new WeakMap();
 
             function storageGet(key) {
                 try {
@@ -2049,6 +2308,79 @@ Confirm the final copyright and usage language before release.
                 return Boolean(value) && typeof value === "object" && !Array.isArray(value);
             }
 
+            function normalizeLanguage(value) {
+                return ALLOWED_LANGUAGES.includes(value) ? value : "en";
+            }
+
+            function languageFromStoredValue(value) {
+                if (!value) return null;
+                try {
+                    const saved = JSON.parse(value);
+                    return saved && ALLOWED_LANGUAGES.includes(saved.language) ? saved.language : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function interpolateTranslation(text, replacements = {}) {
+                return Object.entries(replacements).reduce(
+                    (result, [name, value]) => result.replaceAll(`{${name}}`, String(value)),
+                    text
+                );
+            }
+
+            function translate(key, fallback = key, replacements = {}) {
+                const localized = translationCatalogs[activeLanguage]?.[key];
+                const english = translationCatalogs.en?.[key];
+                return interpolateTranslation(localized ?? english ?? fallback, replacements);
+            }
+
+            function translationDefault(element, name, value) {
+                const defaults = translationDefaults.get(element) || {};
+                if (!(name in defaults)) defaults[name] = value;
+                translationDefaults.set(element, defaults);
+                return defaults[name];
+            }
+
+            function applyDocumentTranslations(root = document) {
+                root.querySelectorAll("[data-i18n]").forEach(element => {
+                    const fallback = translationDefault(element, "text", element.textContent);
+                    element.textContent = translate(element.dataset.i18n, fallback);
+                });
+                ["aria-label", "title", "placeholder"].forEach(attribute => {
+                    const dataName = `i18n${attribute.split("-").map(part => part[0].toUpperCase() + part.slice(1)).join("")}`;
+                    root.querySelectorAll(`[data-i18n-${attribute}]`).forEach(element => {
+                        const fallback = translationDefault(element, attribute, element.getAttribute(attribute) || "");
+                        element.setAttribute(attribute, translate(element.dataset[dataName], fallback));
+                    });
+                });
+            }
+
+            function applyGlobalLanguage(requestedLanguage, persist = true) {
+                activeLanguage = normalizeLanguage(requestedLanguage);
+                document.documentElement.lang = activeLanguage;
+                const choice = document.getElementById("siteLanguageChoice");
+                if (choice) choice.value = activeLanguage;
+                applyDocumentTranslations();
+                if (document.getElementById("siteDataSummary")) updateSiteDataSummary();
+                setSiteDataStatus("");
+                if (persist) {
+                    storageSet(SITE_LANGUAGE_KEY, JSON.stringify({ version: 1, language: activeLanguage }));
+                }
+                window.dispatchEvent(new CustomEvent("teacher-tools:languagechange", {
+                    detail: { language: activeLanguage }
+                }));
+            }
+
+            function registerTranslations(catalogs) {
+                for (const language of ALLOWED_LANGUAGES) {
+                    if (isPlainObject(catalogs?.[language])) {
+                        Object.assign(translationCatalogs[language], catalogs[language]);
+                    }
+                }
+                applyDocumentTranslations();
+            }
+
             function readSiteDataRecord(definition) {
                 const raw = storageGet(definition.storageKey);
                 if (raw === null) return { definition, state: "missing", value: null };
@@ -2065,6 +2397,10 @@ Confirm the final copyright and usage language before release.
 
             function siteDataSnapshot() {
                 return SITE_DATA_RECORDS.map(readSiteDataRecord);
+            }
+
+            function siteDataRecordLabel(definition) {
+                return translate(definition.labelKey, definition.label);
             }
 
             function setSiteDataStatus(message, error = false) {
@@ -2090,13 +2426,15 @@ Confirm the final copyright and usage language before release.
                     checkbox.checked = record.state === "saved";
                     checkbox.disabled = record.state !== "saved";
                     const label = document.createElement("span");
-                    label.textContent = record.definition.label;
+                    label.textContent = siteDataRecordLabel(record.definition);
                     selection.append(checkbox, label);
                     const state = document.createElement("span");
                     state.className = `site-data-summary-state ${record.state}`;
                     state.textContent = record.state === "saved"
-                        ? "Saved"
-                        : record.state === "invalid" ? "Needs attention" : "No saved data";
+                        ? translate("backup.saved", "Saved")
+                        : record.state === "invalid"
+                            ? translate("backup.invalid", "Needs attention")
+                            : translate("backup.missing", "No saved data");
                     item.append(selection, state);
                     return item;
                 }));
@@ -2118,10 +2456,13 @@ Confirm the final copyright and usage language before release.
                 const selectedCount = selectable.filter(checkbox => checkbox.checked).length;
                 exportButton.disabled = selectedCount === 0;
                 exportButton.textContent = selectedCount === selectable.length && selectable.length > 0
-                    ? "Export all data"
+                    ? translate("backup.exportAll", "Export all data")
                     : selectedCount > 0
-                        ? `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`
-                        : "Select data to export";
+                        ? translate("backup.exportCount", `Export (${selectedCount}) ${selectedCount === 1 ? "item" : "items"}`, {
+                            count: selectedCount,
+                            items: translate(selectedCount === 1 ? "backup.item" : "backup.items", selectedCount === 1 ? "item" : "items")
+                        })
+                        : translate("backup.select", "Select data to export");
             }
 
             function localDateStamp(date = new Date()) {
@@ -2151,7 +2492,7 @@ Confirm the final copyright and usage language before release.
                     record.state === "saved" && selectedIds.has(record.definition.id)
                 );
                 if (!saved.length) {
-                    setSiteDataStatus("Select at least one saved item to export.", true);
+                    setSiteDataStatus(translate("backup.selectError", "Select at least one saved item to export."), true);
                     return;
                 }
 
@@ -2166,16 +2507,21 @@ Confirm the final copyright and usage language before release.
                 };
 
                 downloadJsonFile(payload, `teacher-tools-backup-${localDateStamp()}.json`);
-                setSiteDataStatus(
-                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`
-                );
+                setSiteDataStatus(translate(
+                    "backup.exported",
+                    `Backup exported with ${saved.length} saved ${saved.length === 1 ? "area" : "areas"}.`,
+                    {
+                        count: saved.length,
+                        areas: translate(saved.length === 1 ? "backup.area" : "backup.areas", saved.length === 1 ? "area" : "areas")
+                    }
+                ));
             }
 
             function readFileText(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.addEventListener("load", () => resolve(String(reader.result || "")));
-                    reader.addEventListener("error", () => reject(new Error("The backup file could not be read.")));
+                    reader.addEventListener("error", () => reject(new Error(translate("backup.readError", "The backup file could not be read."))));
                     reader.readAsText(file);
                 });
             }
@@ -2183,7 +2529,7 @@ Confirm the final copyright and usage language before release.
             function globalBackupPlan(payload) {
                 if (!isPlainObject(payload) || payload.app !== SITE_BACKUP_APP_ID ||
                     payload.schemaVersion !== SITE_BACKUP_SCHEMA_VERSION || !isPlainObject(payload.records)) {
-                    throw new Error("This is not a supported Teacher Tools site backup.");
+                    throw new Error(translate("backup.siteUnsupported", "This is not a supported Teacher Tools site backup."));
                 }
 
                 const changes = [];
@@ -2192,14 +2538,16 @@ Confirm the final copyright and usage language before release.
                     if (!Object.prototype.hasOwnProperty.call(payload.records, definition.id)) return;
                     const value = payload.records[definition.id];
                     if (!definition.validate(value)) {
-                        throw new Error(`${definition.label} data in this backup is not valid.`);
+                        throw new Error(translate("backup.invalidRecord", `${definition.label} data in this backup is not valid.`, {
+                            label: siteDataRecordLabel(definition)
+                        }));
                     }
                     changes.push({ key: definition.storageKey, value: JSON.stringify(value) });
-                    labels.push(definition.label);
+                    labels.push(siteDataRecordLabel(definition));
                 });
 
                 if (!changes.length) {
-                    throw new Error("This backup does not contain any supported Teacher Tools data.");
+                    throw new Error(translate("backup.noSupportedData", "This backup does not contain any supported Teacher Tools data."));
                 }
                 return { changes, labels, legacy: false };
             }
@@ -2210,11 +2558,11 @@ Confirm the final copyright and usage language before release.
 
                 const definition = SITE_DATA_RECORDS.find(record => record.id === "spinner");
                 if (!definition.validate(payload.state)) {
-                    throw new Error("The Spinner Wheel data in this backup is not valid.");
+                    throw new Error(translate("backup.spinnerInvalid", "The Spinner Wheel data in this backup is not valid."));
                 }
                 return {
                     changes: [{ key: definition.storageKey, value: JSON.stringify(payload.state) }],
-                    labels: [definition.label],
+                    labels: [siteDataRecordLabel(definition)],
                     legacy: true
                 };
             }
@@ -2224,7 +2572,7 @@ Confirm the final copyright and usage language before release.
 
                 if (payload.version === 1) {
                     if (!isPlainObject(payload.schedule)) {
-                        throw new Error("The Version 1 Scheduler data in this backup is not valid.");
+                        throw new Error(translate("backup.schedulerV1Invalid", "The Version 1 Scheduler data in this backup is not valid."));
                     }
                     return {
                         changes: [
@@ -2232,14 +2580,14 @@ Confirm the final copyright and usage language before release.
                             { key: "classAutomatorData_v2", value: null },
                             { key: "classAutomatorSchedule_v1", value: JSON.stringify(payload.schedule) }
                         ],
-                        labels: ["ALT Class Scheduler"],
+                        labels: [translate("record.scheduler", "ALT Class Scheduler")],
                         legacy: true
                     };
                 }
 
                 if (!Array.isArray(payload.schools) || !isPlainObject(payload.schedule) ||
                     (payload.preferences !== undefined && !isPlainObject(payload.preferences))) {
-                    throw new Error(`The Version ${payload.version} Scheduler data in this backup is not valid.`);
+                    throw new Error(translate("backup.schedulerVersionInvalid", `The Version ${payload.version} Scheduler data in this backup is not valid.`, { version: payload.version }));
                 }
 
                 const theme = isPlainObject(payload.preferences) &&
@@ -2249,7 +2597,9 @@ Confirm the final copyright and usage language before release.
                 const themeChange = theme
                     ? [{ key: SITE_PREFERENCES_KEY, value: JSON.stringify({ version: 1, theme }) }]
                     : [];
-                const labels = theme ? ["ALT Class Scheduler", "Site appearance"] : ["ALT Class Scheduler"];
+                const labels = theme
+                    ? [translate("record.scheduler", "ALT Class Scheduler"), translate("record.appearance", "Site appearance")]
+                    : [translate("record.scheduler", "ALT Class Scheduler")];
 
                 if (payload.version === 2) {
                     return {
@@ -2281,7 +2631,7 @@ Confirm the final copyright and usage language before release.
                 if (spinnerPlan) return spinnerPlan;
                 const schedulerPlan = schedulerBackupPlan(payload);
                 if (schedulerPlan) return schedulerPlan;
-                throw new Error("This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup.");
+                throw new Error(translate("backup.unsupported", "This is not a supported Teacher Tools, Scheduler, or Spinner Wheel backup."));
             }
 
             function applyStorageChanges(changes) {
@@ -2295,7 +2645,7 @@ Confirm the final copyright and usage language before release.
                             ? storageRemove(change.key)
                             : storageSet(change.key, change.value);
                         if (!succeeded) {
-                            throw new Error("Browser storage is unavailable or full.");
+                            throw new Error(translate("backup.storageError", "Browser storage is unavailable or full."));
                         }
                         changed.push(change.key);
                     });
@@ -2312,29 +2662,30 @@ Confirm the final copyright and usage language before release.
             async function importSiteDataBackup(file) {
                 if (!file) return;
                 if (file.size > SITE_BACKUP_MAX_BYTES) {
-                    setSiteDataStatus("That file is too large to be a Teacher Tools backup.", true);
+                    setSiteDataStatus(translate("backup.tooLarge", "That file is too large to be a Teacher Tools backup."), true);
                     return;
                 }
 
                 try {
                     const plan = buildImportPlan(JSON.parse(await readFileText(file)));
-                    const confirmed = window.confirm(
-                        `Import this ${plan.legacy ? "older single-tool" : "Teacher Tools"} backup? ` +
-                        `It will replace saved data for: ${plan.labels.join(", ")}. ` +
-                        "Other saved tool data will remain unchanged. This page will reload afterward."
-                    );
+                    const kind = translate(plan.legacy ? "backup.kindOlder" : "backup.kindSite", plan.legacy ? "older single-tool" : "Teacher Tools");
+                    const confirmed = window.confirm(translate(
+                        "backup.confirm",
+                        `Import this ${kind} backup? It will replace saved data for: ${plan.labels.join(", ")}. Other saved tool data will remain unchanged. This page will reload afterward.`,
+                        { kind, labels: plan.labels.join(activeLanguage === "ja" ? "、" : ", ") }
+                    ));
                     if (!confirmed) {
-                        setSiteDataStatus("Import cancelled.");
+                        setSiteDataStatus(translate("backup.cancelled", "Import cancelled."));
                         return;
                     }
 
                     applyStorageChanges(plan.changes);
-                    setSiteDataStatus("Backup imported successfully. Reloading this page…");
-                    window.alert("Teacher Tools backup imported successfully. This page will now reload.");
+                    setSiteDataStatus(translate("backup.success", "Backup imported successfully. Reloading this page…"));
+                    window.alert(translate("backup.successAlert", "Teacher Tools backup imported successfully. This page will now reload."));
                     window.location.reload();
                 } catch (error) {
                     setSiteDataStatus(
-                        error instanceof Error ? error.message : "The backup could not be imported.",
+                        error instanceof Error ? error.message : translate("backup.importError", "The backup could not be imported."),
                         true
                     );
                 }
@@ -2545,8 +2896,10 @@ Confirm the final copyright and usage language before release.
 
             function closeSiteOverlays() {
                 const toolsMenu = document.getElementById("siteToolsMenu");
+                const languagePanel = document.getElementById("siteLanguagePanel");
                 const dataPanel = document.getElementById("siteDataPanel");
                 const themePanel = document.getElementById("siteThemePanel");
+                const languageButton = document.getElementById("siteLanguageButton");
                 const dataButton = document.getElementById("siteDataButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
@@ -2555,8 +2908,10 @@ Confirm the final copyright and usage language before release.
                 ].filter(Boolean);
 
                 if (toolsMenu) toolsMenu.hidden = true;
+                if (languagePanel) languagePanel.hidden = true;
                 if (dataPanel) dataPanel.hidden = true;
                 if (themePanel) themePanel.hidden = true;
+                if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                 if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                 if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                 menuButtons.forEach(button => button.setAttribute("aria-expanded", "false"));
@@ -2574,6 +2929,10 @@ Confirm the final copyright and usage language before release.
                 const dataButton = document.getElementById("siteDataButton");
                 const dataPanel = document.getElementById("siteDataPanel");
                 const dataCloseButton = document.getElementById("siteDataCloseButton");
+                const languageButton = document.getElementById("siteLanguageButton");
+                const languagePanel = document.getElementById("siteLanguagePanel");
+                const languageCloseButton = document.getElementById("siteLanguageCloseButton");
+                const languageChoice = document.getElementById("siteLanguageChoice");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const themePanel = document.getElementById("siteThemePanel");
                 const themeCloseButton = document.getElementById("siteThemeCloseButton");
@@ -2581,8 +2940,10 @@ Confirm the final copyright and usage language before release.
                 function setToolsMenu(open) {
                     if (!toolsMenu) return;
                     if (open) {
+                        if (languagePanel) languagePanel.hidden = true;
                         if (dataPanel) dataPanel.hidden = true;
                         if (themePanel) themePanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                         if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                     }
@@ -2594,7 +2955,9 @@ Confirm the final copyright and usage language before release.
                     if (!dataPanel || !dataButton) return;
                     if (open) {
                         setToolsMenu(false);
+                        if (languagePanel) languagePanel.hidden = true;
                         if (themePanel) themePanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
                     }
                     dataPanel.hidden = !open;
@@ -2608,11 +2971,27 @@ Confirm the final copyright and usage language before release.
                     }
                 }
 
+                function setLanguagePanel(open) {
+                    if (!languagePanel || !languageButton) return;
+                    if (open) {
+                        setToolsMenu(false);
+                        if (dataPanel) dataPanel.hidden = true;
+                        if (themePanel) themePanel.hidden = true;
+                        if (dataButton) dataButton.setAttribute("aria-expanded", "false");
+                        if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+                    }
+                    languagePanel.hidden = !open;
+                    languageButton.setAttribute("aria-expanded", String(open));
+                    if (open && languageChoice) languageChoice.focus();
+                }
+
                 function setThemePanel(open) {
                     if (!themePanel || !settingsButton) return;
                     if (open) {
                         setToolsMenu(false);
+                        if (languagePanel) languagePanel.hidden = true;
                         if (dataPanel) dataPanel.hidden = true;
+                        if (languageButton) languageButton.setAttribute("aria-expanded", "false");
                         if (dataButton) dataButton.setAttribute("aria-expanded", "false");
                     }
                     themePanel.hidden = !open;
@@ -2632,6 +3011,26 @@ Confirm the final copyright and usage language before release.
                 });
 
                 if (toolsMenu) toolsMenu.addEventListener("click", event => event.stopPropagation());
+
+                if (languageButton) {
+                    languageButton.addEventListener("click", event => {
+                        event.stopPropagation();
+                        setLanguagePanel(languagePanel ? languagePanel.hidden : false);
+                    });
+                }
+
+                if (languageCloseButton) {
+                    languageCloseButton.addEventListener("click", () => {
+                        setLanguagePanel(false);
+                        languageButton.focus();
+                    });
+                }
+
+                if (languageChoice) {
+                    languageChoice.addEventListener("change", () => applyGlobalLanguage(languageChoice.value));
+                }
+
+                if (languagePanel) languagePanel.addEventListener("click", event => event.stopPropagation());
 
                 if (dataButton) {
                     dataButton.addEventListener("click", event => {
@@ -2738,9 +3137,11 @@ Confirm the final copyright and usage language before release.
                 }
 
                 const dataPanel = document.getElementById("siteDataPanel");
+                const languagePanel = document.getElementById("siteLanguagePanel");
                 const themePanel = document.getElementById("siteThemePanel");
                 const toolsMenu = document.getElementById("siteToolsMenu");
                 const dataButton = document.getElementById("siteDataButton");
+                const languageButton = document.getElementById("siteLanguageButton");
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const menuButtons = [
                     document.getElementById("siteToolsMenuButton"),
@@ -2750,6 +3151,12 @@ Confirm the final copyright and usage language before release.
                 if (dataPanel && !dataPanel.hidden) {
                     closeSiteOverlays();
                     if (dataButton) dataButton.focus();
+                    return;
+                }
+
+                if (languagePanel && !languagePanel.hidden) {
+                    closeSiteOverlays();
+                    if (languageButton) languageButton.focus();
                     return;
                 }
 
@@ -2767,22 +3174,35 @@ Confirm the final copyright and usage language before release.
             });
 
             window.addEventListener("storage", event => {
-                if (event.key !== SITE_PREFERENCES_KEY) return;
-                applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                if (event.key === SITE_PREFERENCES_KEY) {
+                    applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                }
+                if (event.key === SITE_LANGUAGE_KEY) {
+                    applyGlobalLanguage(languageFromStoredValue(event.newValue) || "en", false);
+                }
             });
 
             window.TeacherToolsUI = Object.freeze({
                 applyGlobalTheme,
+                applyGlobalLanguage,
                 closeModal,
                 openModal,
+                registerTranslations,
                 storageGet,
-                storageSet
+                storageSet,
+                translate
             });
 
             applyGlobalTheme(
                 themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY)) ||
                 document.documentElement.getAttribute("data-theme") ||
                 "ocean-blue",
+                false
+            );
+            applyGlobalLanguage(
+                languageFromStoredValue(storageGet(SITE_LANGUAGE_KEY)) ||
+                document.documentElement.lang ||
+                "en",
                 false
             );
             initSiteHeader();
@@ -2802,6 +3222,263 @@ Confirm the final copyright and usage language before release.
             const SCHEDULER_STORAGE_KEY = "classAutomatorData_v3";
             const MAX_CHOICES = 100;
             const TWO_PI = Math.PI * 2;
+            const translations = {
+                en: {
+                    "spinner.meta.title": "Spinner Wheel · Teacher Tools",
+                    "spinner.meta.description": "Choose a random number, student, name, or custom choice with a reusable classroom spinner wheel.",
+                    "spinner.title": "Spinner Wheel",
+                    "spinner.presentation.enter": "Enter presentation mode",
+                    "spinner.presentation.exit": "Exit presentation mode",
+                    "spinner.presentation.title": "Presentation mode",
+                    "spinner.help.open": "Open Spinner Wheel help",
+                    "spinner.help.title": "Spinner Wheel help",
+                    "spinner.help.close": "Close Spinner Wheel help",
+                    "spinner.settings.open": "Open Spinner Wheel settings",
+                    "spinner.settings.title": "Spinner Wheel settings",
+                    "spinner.settings.close": "Close Spinner Wheel settings",
+                    "spinner.wheelAria": "Spinner wheel",
+                    "spinner.selected": "Selected",
+                    "spinner.spin": "Spin the wheel",
+                    "spinner.spinAgain": "Spin again",
+                    "spinner.spinning": "Spinning…",
+                    "spinner.restoreAll": "Restore all",
+                    "spinner.footer.version": "Spinner Wheel · v1.2",
+                    "spinner.footer.note": "Choices stay in this browser and are not uploaded.",
+                    "spinner.help.intro": "Choose a saved class number set or one of your reusable custom lists, then spin.",
+                    "spinner.help.step1Title": "1. Choose the wheel mode",
+                    "spinner.help.step1Body": "Use Numbers to choose a school and class from Scheduler. New class ranges use the saved student count when available, and you can still adjust the minimum, maximum, or exclusions. Use Custom Choices to keep a reusable bank of named lists.",
+                    "spinner.help.openSettings": "Open Settings",
+                    "spinner.help.step2Title": "2. Decide what happens after a spin",
+                    "spinner.help.step2Body": "Selections can stay available for repeats or be removed temporarily for the current round. Removed choices return when you restore the round, change wheel entries, or reload the page.",
+                    "spinner.help.step3Title": "3. Spin and announce the result",
+                    "spinner.help.step3Body": "The selected choice is shown in full and announced for screen readers. Presentation mode enlarges the wheel for smartboards and landscape displays, while reduced-motion preferences replace the long spin with a brief transition.",
+                    "spinner.help.privacy": "Your settings and custom choices are saved only in this browser. Clearing site data can remove them; export a backup if the list is important.",
+                    "spinner.done": "Done",
+                    "spinner.settings.modeTitle": "Wheel mode",
+                    "spinner.settings.modeHelp": "Changes update the wheel immediately. Switching modes keeps the other mode's entries for later.",
+                    "spinner.mode.numbers": "Numbers",
+                    "spinner.mode.custom": "Custom Choices",
+                    "spinner.mode.customAria": "Use Custom Choices mode",
+                    "spinner.school": "School",
+                    "spinner.class": "Class",
+                    "spinner.schoolSource": "Schools and classes come from ALT Class Scheduler.",
+                    "spinner.numberSet": "Number set",
+                    "spinner.generalNumberSet": "General number set",
+                    "spinner.numberSetFor": "Number set for {className}",
+                    "spinner.noSchools": "No saved schools",
+                    "spinner.noClasses": "No saved classes",
+                    "spinner.noSchoolsNote": "No Scheduler schools were found. This general number set will remain available until schools and classes are added in Scheduler.",
+                    "spinner.classCount": "{school} · {className} has {count} students saved in Scheduler.",
+                    "spinner.classNoCount": "{school} · {className} has no student count saved in Scheduler.",
+                    "spinner.schoolNoClasses": "{school} has no saved classes.",
+                    "spinner.minimum": "Minimum",
+                    "spinner.maximum": "Maximum",
+                    "spinner.exclusions": "Excluded numbers",
+                    "spinner.exclusionsHelp": "Enter individual whole numbers separated by commas or spaces. Numbers outside the current range are ignored.",
+                    "spinner.exclusionsAria": "Help for excluded numbers",
+                    "spinner.exclusionsPlaceholder": "For example: 37, 42",
+                    "spinner.rangeHelp": "The inclusive range may contain up to 100 numbers before exclusions.",
+                    "spinner.useClassSize": "Use saved class size",
+                    "spinner.useClassSizeCount": "Use saved class size ({count})",
+                    "spinner.savedLists": "Saved lists",
+                    "spinner.savedListsAria": "Saved custom lists",
+                    "spinner.add": "Add",
+                    "spinner.listName": "List name",
+                    "spinner.choices": "Choices",
+                    "spinner.choicesHelp": "Type or paste one choice per line. Blank lines are ignored, and exact duplicates each receive their own equal slice.",
+                    "spinner.choicesAria": "Help for custom choices",
+                    "spinner.choicesPlaceholder": "Vocabulary word\nShort phrase\nDiscussion prompt",
+                    "spinner.deleteList": "Delete list",
+                    "spinner.moveUp": "Move up: {name}",
+                    "spinner.moveDown": "Move down: {name}",
+                    "spinner.round.title": "Round behavior",
+                    "spinner.round.remove": "Remove selections for this round",
+                    "spinner.round.removeHelp": "After each spin, take the selected item off the wheel until the round is restored or the page reloads.",
+                    "spinner.round.removeAria": "Remove selected choices for the current round",
+                    "spinner.behavior.title": "Spin behavior",
+                    "spinner.behavior.length": "Spin length",
+                    "spinner.behavior.lengthHelp": "Choose a quick, standard, dramatic, or suspenseful classroom spin.",
+                    "spinner.length.quick": "Quick",
+                    "spinner.length.standard": "Standard",
+                    "spinner.length.dramatic": "Dramatic",
+                    "spinner.length.suspenseful": "Suspenseful",
+                    "spinner.behavior.spinSound": "Spinning sound",
+                    "spinner.behavior.spinSoundHelp": "Play a mechanical ticking effect while the wheel is moving.",
+                    "spinner.behavior.spinSoundAria": "Play a sound while the wheel spins",
+                    "spinner.behavior.resultSound": "Final-selection sound",
+                    "spinner.behavior.resultSoundHelp": "Play a short locally generated chime when the wheel stops.",
+                    "spinner.behavior.resultSoundAria": "Play a result sound",
+                    "spinner.reset.title": "Reset Spinner Wheel",
+                    "spinner.reset.help": "Use Backup & restore in the Teacher Tools header to export or import your saved data across all applets.",
+                    "spinner.reset.button": "Reset applet",
+                    "spinner.reset.privacy": "Custom entries may contain student names. Nothing is uploaded, but exported Teacher Tools backup files should still be handled carefully.",
+                    "spinner.count": "{count} {count, plural, one {choice} other {choices}}",
+                    "spinner.countOne": "{count} choice",
+                    "spinner.countMany": "{count} choices",
+                    "spinner.customCount": "{count} of {maximum} choices",
+                    "spinner.customCountEntered": "{count} of {maximum} choices ({total} entered)",
+                    "spinner.selection.remove": "Selections are removed for the round",
+                    "spinner.selection.stay": "Selections stay on the wheel",
+                    "spinner.round.removedOne": "{count} choice is temporarily removed.",
+                    "spinner.round.removedMany": "{count} choices are temporarily removed.",
+                    "spinner.status.customEmpty": "Add at least two custom choices in Settings.",
+                    "spinner.status.numbersEmpty": "No numbers remain in this range.",
+                    "spinner.status.oneRemoved": "One choice remains. Restore the round or change the entries to keep spinning.",
+                    "spinner.status.oneOnly": "Add at least one more choice before spinning.",
+                    "spinner.status.ready": "{count} choices are ready.",
+                    "spinner.status.readyRemoved": "{count} choices are ready; {removed} temporarily removed.",
+                    "spinner.status.spinning": "The wheel is spinning.",
+                    "spinner.result.removed": "Removed for this round",
+                    "spinner.result.available": "Still available on the wheel",
+                    "spinner.result.selectedRemoved": "{choice} was selected. It is removed for this round.",
+                    "spinner.result.selectedAvailable": "{choice} was selected. It remains available.",
+                    "spinner.canvas.empty": "Add choices in Settings",
+                    "spinner.error.wholeNumbers": "Minimum and maximum must both be whole numbers.",
+                    "spinner.error.minimum": "Minimum cannot be greater than maximum.",
+                    "spinner.error.range": "The number range can contain at most {maximum} values before exclusions.",
+                    "spinner.error.excludedOne": "Check the excluded value: {values}.",
+                    "spinner.error.excludedMany": "Check the excluded values: {values}.",
+                    "spinner.warning.excluded": "{count} excluded",
+                    "spinner.warning.outside": "{count} outside the range ignored",
+                    "spinner.error.customLimit": "Custom Choices supports up to {maximum} non-empty entries.",
+                    "spinner.warning.duplicateOne": "{count} duplicate entry has an additional equal slice.",
+                    "spinner.warning.duplicateMany": "{count} duplicate entries have an additional equal slice.",
+                    "spinner.classSizeUpdated": "Maximum updated to the saved class size of {count}.",
+                    "spinner.listLimit": "You can save up to 50 custom lists.",
+                    "spinner.deleteConfirm": "Delete the saved list “{name}”?",
+                    "spinner.resetConfirm": "Reset Spinner Wheel and delete all saved number overrides, custom lists, and applet settings?",
+                    "spinner.resetDone": "Spinner Wheel was reset to its defaults."
+                },
+                ja: {
+                    "spinner.meta.title": "スピナーホイール · Teacher Tools",
+                    "spinner.meta.description": "授業で使う数字、生徒、名前、自由入力の項目からランダムに選べる再利用可能なスピナーホイールです。",
+                    "spinner.title": "スピナーホイール",
+                    "spinner.presentation.enter": "プレゼンテーション表示にする",
+                    "spinner.presentation.exit": "プレゼンテーション表示を終了",
+                    "spinner.presentation.title": "プレゼンテーション表示",
+                    "spinner.help.open": "スピナーホイールの使い方を開く",
+                    "spinner.help.title": "スピナーホイールの使い方",
+                    "spinner.help.close": "スピナーホイールの使い方を閉じる",
+                    "spinner.settings.open": "スピナーホイール設定を開く",
+                    "spinner.settings.title": "スピナーホイール設定",
+                    "spinner.settings.close": "スピナーホイール設定を閉じる",
+                    "spinner.wheelAria": "スピナーホイール",
+                    "spinner.selected": "選ばれた項目",
+                    "spinner.spin": "ホイールを回す",
+                    "spinner.spinAgain": "もう一度回す",
+                    "spinner.spinning": "回転中…",
+                    "spinner.restoreAll": "すべて戻す",
+                    "spinner.footer.version": "スピナーホイール · v1.2",
+                    "spinner.footer.note": "選択肢はこのブラウザだけに保存され、アップロードされません。",
+                    "spinner.help.intro": "保存済みクラスの数字セットまたは再利用できるカスタムリストを選び、ホイールを回します。",
+                    "spinner.help.step1Title": "1. ホイールのモードを選ぶ",
+                    "spinner.help.step1Body": "「数字」では、スケジューラーの学校とクラスを選びます。保存済みの生徒数があれば新しい範囲に使われ、最小値・最大値・除外する数字も調整できます。「カスタム選択肢」では、名前付きリストを繰り返し使えます。",
+                    "spinner.help.openSettings": "設定を開く",
+                    "spinner.help.step2Title": "2. 回した後の動作を決める",
+                    "spinner.help.step2Body": "選ばれた項目を繰り返し使えるよう残すか、現在のラウンドだけ一時的に外すかを選べます。外した項目は、ラウンドを戻す、項目を変更する、またはページを再読み込みすると戻ります。",
+                    "spinner.help.step3Title": "3. 回して結果を伝える",
+                    "spinner.help.step3Body": "選ばれた項目は大きく表示され、スクリーンリーダーにも通知されます。プレゼンテーション表示ではスマートボードや横長画面向けにホイールが拡大され、動きを減らす設定では短い切り替えになります。",
+                    "spinner.help.privacy": "設定とカスタム選択肢はこのブラウザだけに保存されます。サイトデータを消去すると失われる場合があるため、大切なリストはバックアップを書き出してください。",
+                    "spinner.done": "完了",
+                    "spinner.settings.modeTitle": "ホイールのモード",
+                    "spinner.settings.modeHelp": "変更はすぐにホイールへ反映されます。モードを切り替えても、もう一方の項目は後で使えるよう残ります。",
+                    "spinner.mode.numbers": "数字",
+                    "spinner.mode.custom": "カスタム選択肢",
+                    "spinner.mode.customAria": "カスタム選択肢モードを使う",
+                    "spinner.school": "学校",
+                    "spinner.class": "クラス",
+                    "spinner.schoolSource": "学校とクラスはALTクラススケジューラーから読み込みます。",
+                    "spinner.numberSet": "数字セット",
+                    "spinner.generalNumberSet": "共通の数字セット",
+                    "spinner.numberSetFor": "{className}の数字セット",
+                    "spinner.noSchools": "保存済みの学校はありません",
+                    "spinner.noClasses": "保存済みのクラスはありません",
+                    "spinner.noSchoolsNote": "スケジューラーに学校が見つかりません。学校とクラスを追加するまでは、この共通の数字セットを使用できます。",
+                    "spinner.classCount": "{school} · {className}：スケジューラーに生徒{count}人が保存されています。",
+                    "spinner.classNoCount": "{school} · {className}：スケジューラーに生徒数が保存されていません。",
+                    "spinner.schoolNoClasses": "{school}には保存済みのクラスがありません。",
+                    "spinner.minimum": "最小値",
+                    "spinner.maximum": "最大値",
+                    "spinner.exclusions": "除外する数字",
+                    "spinner.exclusionsHelp": "整数をカンマまたは空白で区切って入力します。現在の範囲外の数字は無視されます。",
+                    "spinner.exclusionsAria": "除外する数字のヘルプ",
+                    "spinner.exclusionsPlaceholder": "例：37, 42",
+                    "spinner.rangeHelp": "除外前の範囲には最大100個の数字を含められます。",
+                    "spinner.useClassSize": "保存済みのクラス人数を使う",
+                    "spinner.useClassSizeCount": "保存済みのクラス人数を使う（{count}）",
+                    "spinner.savedLists": "保存済みリスト",
+                    "spinner.savedListsAria": "保存済みカスタムリスト",
+                    "spinner.add": "追加",
+                    "spinner.listName": "リスト名",
+                    "spinner.choices": "選択肢",
+                    "spinner.choicesHelp": "1行に1つずつ入力または貼り付けます。空白行は無視され、完全に同じ項目もそれぞれ同じ大きさの区画になります。",
+                    "spinner.choicesAria": "カスタム選択肢のヘルプ",
+                    "spinner.choicesPlaceholder": "単語\n短いフレーズ\n話し合いのお題",
+                    "spinner.deleteList": "リストを削除",
+                    "spinner.moveUp": "上へ移動：{name}",
+                    "spinner.moveDown": "下へ移動：{name}",
+                    "spinner.round.title": "ラウンドの動作",
+                    "spinner.round.remove": "このラウンドでは選ばれた項目を外す",
+                    "spinner.round.removeHelp": "回すたびに、選ばれた項目をラウンドの復元またはページの再読み込みまでホイールから外します。",
+                    "spinner.round.removeAria": "選ばれた項目を現在のラウンドから外す",
+                    "spinner.behavior.title": "回転の動作",
+                    "spinner.behavior.length": "回転時間",
+                    "spinner.behavior.lengthHelp": "短め、標準、ドラマチック、サスペンスから授業向けの回転時間を選びます。",
+                    "spinner.length.quick": "短め",
+                    "spinner.length.standard": "標準",
+                    "spinner.length.dramatic": "ドラマチック",
+                    "spinner.length.suspenseful": "サスペンス",
+                    "spinner.behavior.spinSound": "回転音",
+                    "spinner.behavior.spinSoundHelp": "ホイールの回転中に機械的なクリック音を鳴らします。",
+                    "spinner.behavior.spinSoundAria": "ホイールの回転中に音を鳴らす",
+                    "spinner.behavior.resultSound": "決定音",
+                    "spinner.behavior.resultSoundHelp": "ホイールが止まったときに、この端末で生成した短い音を鳴らします。",
+                    "spinner.behavior.resultSoundAria": "結果が決まったときに音を鳴らす",
+                    "spinner.reset.title": "スピナーホイールをリセット",
+                    "spinner.reset.help": "Teacher Toolsヘッダーの「バックアップと復元」から、すべてのアプレットの保存データを書き出しまたは読み込みできます。",
+                    "spinner.reset.button": "アプレットをリセット",
+                    "spinner.reset.privacy": "カスタム項目には生徒名が含まれる場合があります。アップロードはされませんが、書き出したTeacher Toolsバックアップファイルは慎重に扱ってください。",
+                    "spinner.count": "{count}件",
+                    "spinner.countOne": "{count}件",
+                    "spinner.countMany": "{count}件",
+                    "spinner.customCount": "{maximum}件中{count}件",
+                    "spinner.customCountEntered": "{maximum}件中{count}件（入力{total}件）",
+                    "spinner.selection.remove": "選ばれた項目はラウンドから外れます",
+                    "spinner.selection.stay": "選ばれた項目はホイールに残ります",
+                    "spinner.round.removedOne": "{count}件を一時的に外しています。",
+                    "spinner.round.removedMany": "{count}件を一時的に外しています。",
+                    "spinner.status.customEmpty": "設定でカスタム選択肢を2件以上追加してください。",
+                    "spinner.status.numbersEmpty": "この範囲に数字が残っていません。",
+                    "spinner.status.oneRemoved": "残り1件です。続けて回すには、ラウンドを戻すか項目を変更してください。",
+                    "spinner.status.oneOnly": "回す前にもう1件以上追加してください。",
+                    "spinner.status.ready": "{count}件の選択肢を回せます。",
+                    "spinner.status.readyRemoved": "{count}件の選択肢を回せます（{removed}件を一時的に除外中）。",
+                    "spinner.status.spinning": "ホイールを回しています。",
+                    "spinner.result.removed": "このラウンドから外しました",
+                    "spinner.result.available": "ホイールに残っています",
+                    "spinner.result.selectedRemoved": "{choice}が選ばれました。このラウンドから外します。",
+                    "spinner.result.selectedAvailable": "{choice}が選ばれました。引き続き選べます。",
+                    "spinner.canvas.empty": "設定で選択肢を追加してください",
+                    "spinner.error.wholeNumbers": "最小値と最大値には整数を入力してください。",
+                    "spinner.error.minimum": "最小値を最大値より大きくすることはできません。",
+                    "spinner.error.range": "除外前の数字の範囲は最大{maximum}個です。",
+                    "spinner.error.excludedOne": "除外する値を確認してください：{values}。",
+                    "spinner.error.excludedMany": "除外する値を確認してください：{values}。",
+                    "spinner.warning.excluded": "{count}件を除外",
+                    "spinner.warning.outside": "範囲外の{count}件を無視",
+                    "spinner.error.customLimit": "カスタム選択肢は空白でない項目を最大{maximum}件まで登録できます。",
+                    "spinner.warning.duplicateOne": "重複した項目{count}件にも同じ大きさの区画を割り当てます。",
+                    "spinner.warning.duplicateMany": "重複した項目{count}件にも同じ大きさの区画を割り当てます。",
+                    "spinner.classSizeUpdated": "最大値を保存済みのクラス人数{count}人に更新しました。",
+                    "spinner.listLimit": "カスタムリストは最大50件まで保存できます。",
+                    "spinner.deleteConfirm": "保存済みリスト「{name}」を削除しますか？",
+                    "spinner.resetConfirm": "スピナーホイールをリセットし、保存済みの数字設定、カスタムリスト、アプレット設定をすべて削除しますか？",
+                    "spinner.resetDone": "スピナーホイールを初期設定に戻しました。"
+                }
+            };
+            const { registerTranslations, translate } = window.TeacherToolsUI;
+            registerTranslations(translations);
+            const t = (key, fallback, replacements) => translate(key, fallback, replacements);
             const DEFAULT_STATE = Object.freeze({
                 version: 1,
                 mode: "numbers",
@@ -2882,6 +3559,7 @@ Confirm the final copyright and usage language before release.
             let presentationUsesFullscreen = false;
             let schedulerSchools = [];
             let schedulerPreferences = {};
+            let lastSelectedEntry = null;
 
             function makeId(prefix) {
                 return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -3060,13 +3738,13 @@ Confirm the final copyright and usage language before release.
                 classSelect.replaceChildren();
 
                 if (!schedulerSchools.length) {
-                    schoolSelect.add(new Option("No saved schools", ""));
-                    classSelect.add(new Option("General number set", ""));
+                    schoolSelect.add(new Option(t("spinner.noSchools", "No saved schools"), ""));
+                    classSelect.add(new Option(t("spinner.generalNumberSet", "General number set"), ""));
                     schoolSelect.disabled = true;
                     classSelect.disabled = true;
-                    schoolSourceNote.textContent = "No Scheduler schools were found. This general number set will remain available until schools and classes are added in Scheduler.";
+                    schoolSourceNote.textContent = t("spinner.noSchoolsNote", "No Scheduler schools were found. This general number set will remain available until schools and classes are added in Scheduler.");
                     schoolSourceNote.classList.add("warning");
-                    numberProfileHeading.textContent = "General number set";
+                    numberProfileHeading.textContent = t("spinner.generalNumberSet", "General number set");
                     useClassSizeButton.disabled = true;
                     return;
                 }
@@ -3085,18 +3763,22 @@ Confirm the final copyright and usage language before release.
                 if (className) state.selectedClassBySchool[school.id] = className;
                 classSelect.disabled = school.classes.length === 0;
                 if (className) classSelect.value = className;
-                else classSelect.add(new Option("No saved classes", ""));
+                else classSelect.add(new Option(t("spinner.noClasses", "No saved classes"), ""));
 
                 const count = classSizeFor(school, className);
                 schoolSourceNote.textContent = className
                     ? count
-                        ? `${school.name} · ${className} has ${count} students saved in Scheduler.`
-                        : `${school.name} · ${className} has no student count saved in Scheduler.`
-                    : `${school.name} has no saved classes.`;
+                        ? t("spinner.classCount", "{school} · {className} has {count} students saved in Scheduler.", { school: school.name, className, count })
+                        : t("spinner.classNoCount", "{school} · {className} has no student count saved in Scheduler.", { school: school.name, className })
+                    : t("spinner.schoolNoClasses", "{school} has no saved classes.", { school: school.name });
                 schoolSourceNote.classList.toggle("warning", !className || !count);
-                numberProfileHeading.textContent = className ? `Number set for ${className}` : "General number set";
+                numberProfileHeading.textContent = className
+                    ? t("spinner.numberSetFor", "Number set for {className}", { className })
+                    : t("spinner.generalNumberSet", "General number set");
                 useClassSizeButton.disabled = !count;
-                useClassSizeButton.textContent = count ? `Use saved class size (${count})` : "Use saved class size";
+                useClassSizeButton.textContent = count
+                    ? t("spinner.useClassSizeCount", "Use saved class size ({count})", { count })
+                    : t("spinner.useClassSize", "Use saved class size");
             }
 
             function syncNumberInputsFromProfile() {
@@ -3131,12 +3813,12 @@ Confirm the final copyright and usage language before release.
 
                     const order = document.createElement("span");
                     order.className = "custom-list-order";
-                    [["↑", -1, "Move up"], ["↓", 1, "Move down"]].forEach(([symbol, offset, label]) => {
+                    [["↑", -1, "spinner.moveUp"], ["↓", 1, "spinner.moveDown"]].forEach(([symbol, offset, labelKey]) => {
                         const button = document.createElement("button");
                         button.type = "button";
                         button.className = "order-button";
                         button.textContent = symbol;
-                        button.setAttribute("aria-label", `${label}: ${list.name}`);
+                        button.setAttribute("aria-label", t(labelKey, translations.en[labelKey], { name: list.name }));
                         button.disabled = index + offset < 0 || index + offset >= state.customLists.length;
                         button.addEventListener("click", () => moveCustomList(list.id, offset));
                         order.appendChild(button);
@@ -3185,7 +3867,9 @@ Confirm the final copyright and usage language before release.
                 customModeLabel.classList.toggle("active", custom);
                 const list = currentCustomList();
                 const className = selectedClassName();
-                modeBadge.textContent = custom ? (list ? list.name : "Custom Choices") : (className || "Numbers");
+                modeBadge.textContent = custom
+                    ? (list ? list.name : t("spinner.mode.custom", "Custom Choices"))
+                    : (className || t("spinner.mode.numbers", "Numbers"));
             }
 
             function parseInteger(value) {
@@ -3200,15 +3884,15 @@ Confirm the final copyright and usage language before release.
                 const minimum = parseInteger(profile.minimum);
                 const maximum = parseInteger(profile.maximum);
                 if (minimum === null || maximum === null) {
-                    return { entries: [], error: "Minimum and maximum must both be whole numbers.", warning: "" };
+                    return { entries: [], error: t("spinner.error.wholeNumbers", "Minimum and maximum must both be whole numbers."), warning: "" };
                 }
                 if (minimum > maximum) {
-                    return { entries: [], error: "Minimum cannot be greater than maximum.", warning: "" };
+                    return { entries: [], error: t("spinner.error.minimum", "Minimum cannot be greater than maximum."), warning: "" };
                 }
 
                 const rangeSize = maximum - minimum + 1;
                 if (!Number.isSafeInteger(rangeSize) || rangeSize > MAX_CHOICES) {
-                    return { entries: [], error: `The number range can contain at most ${MAX_CHOICES} values before exclusions.`, warning: "" };
+                    return { entries: [], error: t("spinner.error.range", "The number range can contain at most {maximum} values before exclusions.", { maximum: MAX_CHOICES }), warning: "" };
                 }
 
                 const tokens = profile.exclusions.trim() ? profile.exclusions.trim().split(/[\s,]+/).filter(Boolean) : [];
@@ -3221,7 +3905,8 @@ Confirm the final copyright and usage language before release.
                 });
 
                 if (invalidTokens.length) {
-                    return { entries: [], error: `Check the excluded value${invalidTokens.length === 1 ? "" : "s"}: ${invalidTokens.slice(0, 3).join(", ")}.`, warning: "" };
+                    const key = invalidTokens.length === 1 ? "spinner.error.excludedOne" : "spinner.error.excludedMany";
+                    return { entries: [], error: t(key, translations.en[key], { values: invalidTokens.slice(0, 3).join(", ") }), warning: "" };
                 }
 
                 const excludedInRange = new Set(parsedExclusions.filter(number => number >= minimum && number <= maximum));
@@ -3232,8 +3917,8 @@ Confirm the final copyright and usage language before release.
                 }
 
                 const warningParts = [];
-                if (excludedInRange.size) warningParts.push(`${excludedInRange.size} excluded`);
-                if (ignoredCount) warningParts.push(`${ignoredCount} outside the range ignored`);
+                if (excludedInRange.size) warningParts.push(t("spinner.warning.excluded", "{count} excluded", { count: excludedInRange.size }));
+                if (ignoredCount) warningParts.push(t("spinner.warning.outside", "{count} outside the range ignored", { count: ignoredCount }));
                 return { entries, error: "", warning: warningParts.join(" · ") };
             }
 
@@ -3250,8 +3935,11 @@ Confirm the final copyright and usage language before release.
                 });
                 const duplicateCount = Array.from(lowerCounts.values()).reduce((total, count) => total + Math.max(0, count - 1), 0);
                 const entries = choices.slice(0, MAX_CHOICES).map((label, index) => ({ id: `custom:${index}:${label}`, label }));
-                const error = choices.length > MAX_CHOICES ? `Custom Choices supports up to ${MAX_CHOICES} non-empty entries.` : "";
-                const warning = !error && duplicateCount ? `${duplicateCount} duplicate ${duplicateCount === 1 ? "entry has" : "entries have"} an additional equal slice.` : "";
+                const error = choices.length > MAX_CHOICES
+                    ? t("spinner.error.customLimit", "Custom Choices supports up to {maximum} non-empty entries.", { maximum: MAX_CHOICES })
+                    : "";
+                const duplicateKey = duplicateCount === 1 ? "spinner.warning.duplicateOne" : "spinner.warning.duplicateMany";
+                const warning = !error && duplicateCount ? t(duplicateKey, translations.en[duplicateKey], { count: duplicateCount }) : "";
                 return { entries: error ? [] : entries, error, warning, total: choices.length };
             }
 
@@ -3269,6 +3957,7 @@ Confirm the final copyright and usage language before release.
                 resultCard.hidden = true;
                 resultValue.textContent = "";
                 resultDetail.textContent = "";
+                lastSelectedEntry = null;
             }
 
             function refreshWheel({ resetRound = false, clearSelection = false } = {}) {
@@ -3281,26 +3970,40 @@ Confirm the final copyright and usage language before release.
                 activeEntries = allEntries.filter(entry => !removedEntryIds.has(entry.id));
 
                 const customParsed = parseCustomEntries();
-                customCountText.textContent = `${Math.min(customParsed.total, MAX_CHOICES)} of ${MAX_CHOICES} choices${customParsed.total > MAX_CHOICES ? ` (${customParsed.total} entered)` : ""}`;
+                const customCountKey = customParsed.total > MAX_CHOICES ? "spinner.customCountEntered" : "spinner.customCount";
+                customCountText.textContent = t(customCountKey, translations.en[customCountKey], {
+                    count: Math.min(customParsed.total, MAX_CHOICES), maximum: MAX_CHOICES, total: customParsed.total
+                });
                 setValidation(numberValidation, state.mode === "numbers" ? (parsed.error || parsed.warning) : "", parsed.error ? "error" : parsed.warning ? "warning" : "");
                 setValidation(customValidation, state.mode === "custom" ? (parsed.error || parsed.warning) : "", parsed.error ? "error" : parsed.warning ? "warning" : "");
 
-                choiceCountText.textContent = `${activeEntries.length} ${activeEntries.length === 1 ? "choice" : "choices"}`;
-                selectionBehaviorText.textContent = state.removeAfterSpin ? "Selections are removed for the round" : "Selections stay on the wheel";
+                const choiceCountKey = activeEntries.length === 1 ? "spinner.countOne" : "spinner.countMany";
+                choiceCountText.textContent = t(choiceCountKey, translations.en[choiceCountKey], { count: activeEntries.length });
+                selectionBehaviorText.textContent = state.removeAfterSpin
+                    ? t("spinner.selection.remove", "Selections are removed for the round")
+                    : t("spinner.selection.stay", "Selections stay on the wheel");
 
                 roundPanel.hidden = removedEntryIds.size === 0;
-                roundCopy.textContent = `${removedEntryIds.size} ${removedEntryIds.size === 1 ? "choice is" : "choices are"} temporarily removed.`;
+                const removedKey = removedEntryIds.size === 1 ? "spinner.round.removedOne" : "spinner.round.removedMany";
+                roundCopy.textContent = t(removedKey, translations.en[removedKey], { count: removedEntryIds.size });
 
                 const error = parsed.error;
                 wheelStatus.classList.toggle("error", Boolean(error));
                 if (error) {
                     wheelStatus.textContent = error;
                 } else if (activeEntries.length === 0) {
-                    wheelStatus.textContent = state.mode === "custom" ? "Add at least two custom choices in Settings." : "No numbers remain in this range.";
+                    wheelStatus.textContent = state.mode === "custom"
+                        ? t("spinner.status.customEmpty", "Add at least two custom choices in Settings.")
+                        : t("spinner.status.numbersEmpty", "No numbers remain in this range.");
                 } else if (activeEntries.length === 1) {
-                    wheelStatus.textContent = removedEntryIds.size ? "One choice remains. Restore the round or change the entries to keep spinning." : "Add at least one more choice before spinning.";
+                    wheelStatus.textContent = removedEntryIds.size
+                        ? t("spinner.status.oneRemoved", "One choice remains. Restore the round or change the entries to keep spinning.")
+                        : t("spinner.status.oneOnly", "Add at least one more choice before spinning.");
                 } else {
-                    wheelStatus.textContent = `${activeEntries.length} choices are ready${removedEntryIds.size ? `; ${removedEntryIds.size} temporarily removed` : ""}.`;
+                    const readyKey = removedEntryIds.size ? "spinner.status.readyRemoved" : "spinner.status.ready";
+                    wheelStatus.textContent = t(readyKey, translations.en[readyKey], {
+                        count: activeEntries.length, removed: removedEntryIds.size
+                    });
                 }
 
                 spinButton.disabled = isSpinning || Boolean(error) || activeEntries.length < 2;
@@ -3427,7 +4130,7 @@ Confirm the final copyright and usage language before release.
                     context.font = "700 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
                     context.textAlign = "center";
                     context.textBaseline = "middle";
-                    context.fillText("Add choices in Settings", center, center);
+                    context.fillText(t("spinner.canvas.empty", "Add choices in Settings"), center, center);
                     return;
                 }
 
@@ -3574,20 +4277,22 @@ Confirm the final copyright and usage language before release.
             function finishSpin(selectedEntry, entriesAtStart, finalRotation) {
                 currentRotation = ((finalRotation % TWO_PI) + TWO_PI) % TWO_PI;
                 isSpinning = false;
-                spinButtonText.textContent = "Spin again";
+                lastSelectedEntry = selectedEntry;
+                spinButtonText.textContent = t("spinner.spinAgain", "Spin again");
                 resultValue.textContent = selectedEntry.label;
 
                 if (state.removeAfterSpin) {
                     removedEntryIds.add(selectedEntry.id);
-                    resultDetail.textContent = "Removed for this round";
+                    resultDetail.textContent = t("spinner.result.removed", "Removed for this round");
                 } else {
-                    resultDetail.textContent = "Still available on the wheel";
+                    resultDetail.textContent = t("spinner.result.available", "Still available on the wheel");
                 }
                 resultCard.hidden = false;
                 playResultSound();
 
                 refreshWheel();
-                wheelStatus.textContent = `${selectedEntry.label} was selected. ${state.removeAfterSpin ? "It is removed for this round." : "It remains available."}`;
+                const selectedKey = state.removeAfterSpin ? "spinner.result.selectedRemoved" : "spinner.result.selectedAvailable";
+                wheelStatus.textContent = t(selectedKey, translations.en[selectedKey], { choice: selectedEntry.label });
                 window.setTimeout(() => {
                     if (!isSpinning) drawWheel(currentRotation, activeEntries);
                 }, 450);
@@ -3615,9 +4320,9 @@ Confirm the final copyright and usage language before release.
                 spinButton.disabled = true;
                 settingsOpenButton.disabled = true;
                 restoreRoundButton.disabled = true;
-                spinButtonText.textContent = "Spinning…";
+                spinButtonText.textContent = t("spinner.spinning", "Spinning…");
                 wheelStatus.classList.remove("error");
-                wheelStatus.textContent = "The wheel is spinning.";
+                wheelStatus.textContent = t("spinner.status.spinning", "The wheel is spinning.");
                 playSpinningSound(duration);
 
                 cancelAnimationFrame(animationFrame);
@@ -3663,11 +4368,11 @@ Confirm the final copyright and usage language before release.
                 syncNumberInputsFromProfile();
                 saveState();
                 refreshWheel({ resetRound: true, clearSelection: true });
-                numberValidation.textContent = `Maximum updated to the saved class size of ${count}.`;
+                numberValidation.textContent = t("spinner.classSizeUpdated", "Maximum updated to the saved class size of {count}.", { count });
             });
             addCustomListButton.addEventListener("click", () => {
                 if (state.customLists.length >= 50) {
-                    setValidation(customValidation, "You can save up to 50 custom lists.", "error");
+                    setValidation(customValidation, t("spinner.listLimit", "You can save up to 50 custom lists."), "error");
                     return;
                 }
                 const list = { id: makeId("list"), name: `List ${state.customLists.length + 1}`, choices: "" };
@@ -3683,7 +4388,7 @@ Confirm the final copyright and usage language before release.
             deleteCustomListButton.addEventListener("click", () => {
                 const list = currentCustomList();
                 if (!list) return;
-                if (!window.confirm(`Delete the saved list “${list.name}”?`)) return;
+                if (!window.confirm(t("spinner.deleteConfirm", "Delete the saved list “{name}”?", { name: list.name }))) return;
                 const index = state.customLists.findIndex(item => item.id === list.id);
                 state.customLists.splice(index, 1);
                 if (!state.customLists.length) {
@@ -3701,8 +4406,12 @@ Confirm the final copyright and usage language before release.
 
             function updatePresentationButton() {
                 presentationButton.setAttribute("aria-pressed", String(presentationMode));
-                presentationButton.setAttribute("aria-label", presentationMode ? "Exit presentation mode" : "Enter presentation mode");
-                presentationButton.title = presentationMode ? "Exit presentation mode" : "Presentation mode";
+                presentationButton.setAttribute("aria-label", presentationMode
+                    ? t("spinner.presentation.exit", "Exit presentation mode")
+                    : t("spinner.presentation.enter", "Enter presentation mode"));
+                presentationButton.title = presentationMode
+                    ? t("spinner.presentation.exit", "Exit presentation mode")
+                    : t("spinner.presentation.title", "Presentation mode");
             }
 
             function setPresentationMode(active) {
@@ -3760,20 +4469,49 @@ Confirm the final copyright and usage language before release.
             restoreRoundButton.addEventListener("click", () => {
                 removedEntryIds.clear();
                 clearResult();
-                spinButtonText.textContent = "Spin the wheel";
+                spinButtonText.textContent = t("spinner.spin", "Spin the wheel");
                 refreshWheel();
             });
 
             resetButton.addEventListener("click", () => {
-                if (!window.confirm("Reset Spinner Wheel and delete all saved number overrides, custom lists, and applet settings?")) return;
+                if (!window.confirm(t("spinner.resetConfirm", "Reset Spinner Wheel and delete all saved number overrides, custom lists, and applet settings?"))) return;
                 state = normalizeState(DEFAULT_STATE);
                 removedEntryIds.clear();
                 syncControlsFromState();
                 saveState();
                 refreshWheel({ resetRound: true, clearSelection: true });
-                spinButtonText.textContent = "Spin the wheel";
-                dataStatus.textContent = "Spinner Wheel was reset to its defaults.";
+                spinButtonText.textContent = t("spinner.spin", "Spin the wheel");
+                dataStatus.textContent = t("spinner.resetDone", "Spinner Wheel was reset to its defaults.");
             });
+
+            function applySpinnerLanguage() {
+                document.title = t("spinner.meta.title", "Spinner Wheel · Teacher Tools");
+                const description = document.querySelector('meta[name="description"]');
+                if (description) description.content = t("spinner.meta.description", "Choose a random number, student, name, or custom choice with a reusable classroom spinner wheel.");
+                document.querySelectorAll("[data-i18n-tooltip]").forEach(element => {
+                    const key = element.dataset.i18nTooltip;
+                    element.dataset.tooltip = t(key, translations.en[key]);
+                });
+                refreshSchoolControls();
+                renderCustomListBank();
+                refreshWheel();
+                updatePresentationButton();
+                if (isSpinning) {
+                    spinButtonText.textContent = t("spinner.spinning", "Spinning…");
+                    wheelStatus.textContent = t("spinner.status.spinning", "The wheel is spinning.");
+                } else if (lastSelectedEntry && !resultCard.hidden) {
+                    spinButtonText.textContent = t("spinner.spinAgain", "Spin again");
+                    resultDetail.textContent = state.removeAfterSpin
+                        ? t("spinner.result.removed", "Removed for this round")
+                        : t("spinner.result.available", "Still available on the wheel");
+                    const key = state.removeAfterSpin ? "spinner.result.selectedRemoved" : "spinner.result.selectedAvailable";
+                    wheelStatus.textContent = t(key, translations.en[key], { choice: lastSelectedEntry.label });
+                } else {
+                    spinButtonText.textContent = t("spinner.spin", "Spin the wheel");
+                }
+                if (dataStatus.textContent) dataStatus.textContent = t("spinner.resetDone", "Spinner Wheel was reset to its defaults.");
+                window.setTimeout(resizeCanvas, 0);
+            }
 
             window.addEventListener("storage", event => {
                 if (![STORAGE_KEY, SCHEDULER_STORAGE_KEY].includes(event.key)) return;
@@ -3782,6 +4520,7 @@ Confirm the final copyright and usage language before release.
                 syncControlsFromState();
                 refreshWheel({ resetRound: true, clearSelection: true });
             });
+            window.addEventListener("teacher-tools:languagechange", applySpinnerLanguage);
 
             new MutationObserver(() => drawWheel(currentRotation, activeEntries)).observe(document.documentElement, {
                 attributes: true,
@@ -3798,6 +4537,7 @@ Confirm the final copyright and usage language before release.
             saveState();
             refreshWheel({ resetRound: true });
             updatePresentationButton();
+            applySpinnerLanguage();
             window.setTimeout(resizeCanvas, 0);
         })();
     </script>
