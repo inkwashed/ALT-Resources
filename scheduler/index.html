@@ -1755,6 +1755,78 @@ The software is provided "as is" without warranty of any kind.
             border-color: #b08d2f;
         }
 
+
+/* TEACHER-TOOLS:SHARED-SCHOOL-SETTINGS-CSS:START */
+.shared-school-settings { min-height: 0; flex: 1; display: flex; flex-direction: column; color: var(--text); }
+.shared-school-settings *, .shared-school-settings *::before, .shared-school-settings *::after { box-sizing: border-box; }
+.shared-school-settings .settings-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; padding: 10px 14px 0; }
+.shared-school-settings .settings-tab { min-height: 40px; padding: 8px 6px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 7px 7px 0 0; font: inherit; font-size: 11px; font-weight: 650; cursor: pointer; }
+.shared-school-settings .settings-tab.active { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
+.shared-school-settings .settings-scroll { min-height: 0; flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px 14px 16px; }
+.shared-school-settings .settings-panel { display: none; }
+.shared-school-settings .settings-panel.active { display: block; }
+.shared-school-settings .settings-section { padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; }
+.shared-school-settings h3 { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+.shared-school-settings .settings-subheading { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.shared-school-settings .form-group { display: block; margin: 0 0 12px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.shared-school-settings .form-group > span { display: flex; align-items: end; min-height: 15px; margin-bottom: 5px; }
+.shared-school-settings input, .shared-school-settings select { width: 100%; min-width: 0; min-height: 40px; padding: 8px 10px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; font: inherit; font-size: 14px; }
+.shared-school-settings select { border-color: var(--accent-border); background: color-mix(in srgb,var(--accent-soft) 26%,var(--surface)); }
+.shared-school-settings .settings-buttons, .shared-school-settings .add-class-row { display: flex; align-items: end; flex-wrap: wrap; gap: 7px; margin-top: 7px; }
+.shared-school-settings .settings-btn { flex: 1; min-width: 105px; min-height: 36px; padding: 8px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; font: inherit; font-size: 11px; cursor: pointer; }
+.shared-school-settings .settings-btn:hover { background: var(--accent-soft); border-color: var(--accent-border); }
+.shared-school-settings .danger-btn { color: var(--danger); }
+.shared-school-settings .compact-btn { flex: none !important; width: max-content; min-width: 0; padding: 5px 8px; font-size: 10px; }
+.shared-school-settings .school-fields { margin-top: 12px; }
+.shared-school-settings .classes-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; }
+.shared-school-settings .classes-heading-row.section-divider { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.shared-school-settings .classes-heading-row h3 { margin: 0; }
+.shared-school-settings .class-list, .shared-school-settings .schedule-date-list { display: grid; gap: 5px; }
+.shared-school-settings .class-edit-row { width: 100%; display: grid; grid-template-columns: 20px minmax(0,10fr) minmax(0,7fr) minmax(0,3fr) 20px; align-items: center; gap: 5px; padding: 4px 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.shared-school-settings .class-order-controls { display: grid; grid-template-rows: repeat(2,17px); align-self: center; gap: 2px; }
+.shared-school-settings .class-order-button { width: 20px; height: 17px; padding: 0; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; font-size: 9px; line-height: 1; cursor: pointer; }
+.shared-school-settings .class-name-field, .shared-school-settings .class-details .form-group { margin: 0 !important; min-width: 0; font-size: 10px !important; line-height: 1.1 !important; }
+.shared-school-settings .class-name-field > span, .shared-school-settings .class-details .form-group > span { min-height: 11px; margin-bottom: 2px; font-size: 10px; line-height: 1.1; }
+.shared-school-settings .class-name-field input, .shared-school-settings .class-details input { min-width: 0 !important; min-height: 28px !important; padding: 3px 5px !important; font-size: 10px !important; line-height: 1.1 !important; }
+.shared-school-settings .class-details { display: contents !important; }
+.shared-school-settings .class-details .form-group { align-self: center; min-width: 0; }
+.shared-school-settings .remove-button { align-self: center; width: 20px; padding: 0; color: var(--danger); background: transparent; border: 0; font-size: 17px; line-height: 1; cursor: pointer; }
+.shared-school-settings .working-hours-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) 80px; align-items: end; gap: 8px; }
+.shared-school-settings .working-hours-row .form-group > span { min-height: 30px; }
+.shared-school-settings .working-color-field input { appearance: none; -webkit-appearance: none; width: 80px !important; max-width: 100%; height: 40px; min-height: 40px !important; padding: 0 !important; background: var(--surface) !important; border: 1px solid var(--line) !important; border-radius: 7px !important; cursor: pointer; }
+.shared-school-settings .working-color-field input::-webkit-color-swatch-wrapper { padding: 5px; }
+.shared-school-settings .working-color-field input::-webkit-color-swatch { opacity: 1; background: linear-gradient(90deg,var(--working-color,#43877d) 0 5px,color-mix(in srgb,var(--working-color,#43877d) 18%,var(--surface)) 5px 100%) !important; border: 1px solid color-mix(in srgb,var(--working-color,#43877d) 65%,var(--line)); border-radius: 0; }
+.shared-school-settings .working-color-field input::-moz-color-swatch { opacity: 1; background: linear-gradient(90deg,var(--working-color,#43877d) 0 5px,color-mix(in srgb,var(--working-color,#43877d) 18%,var(--surface)) 5px 100%) !important; border: 1px solid color-mix(in srgb,var(--working-color,#43877d) 65%,var(--line)); border-radius: 0; }
+.shared-school-settings .helper-text, .shared-school-settings .settings-status { margin: 5px 0 0; color: var(--muted); font-size: 10.5px; line-height: 1.4; }
+.shared-school-settings .saved-dates-header { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; gap: 8px; margin: 11px 0 7px; text-align: center; }
+.shared-school-settings .saved-dates-title { color: var(--muted); font-size: 12px; font-weight: 700; }
+.shared-school-settings .schedule-month-label { margin-top: 2px; color: var(--muted); font-size: 11px; }
+.shared-school-settings .month-nav-btn { width: 36px; height: 32px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
+.shared-school-settings .schedule-date-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; font-size: 11px; }
+.shared-school-settings .period-table { width: 100%; margin-top: 7px; border-collapse: collapse; font-size: 11px; }
+.shared-school-settings .period-table th, .shared-school-settings .period-table td { padding: 4px 3px; text-align: left; vertical-align: middle; }
+.shared-school-settings .period-table th { color: var(--muted); font-weight: 650; }
+.shared-school-settings .period-table input { min-height: 36px; padding: 6px; font-size: 11px; }
+.shared-school-settings .switch-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; color: var(--text); font-size: 11px; font-weight: 500; }
+.shared-school-settings .switch-row input { width: 18px; min-height: 18px; }
+.shared-school-settings .mode-panel { padding: 10px; background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 8px; }
+.shared-school-settings .irregular-lunch-panel .form-group { margin-bottom: 0; }
+.shared-school-settings .paired-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+@media (max-width: 520px) {
+    .shared-school-settings .settings-tabs { padding-left: 8px; padding-right: 8px; }
+    .shared-school-settings .settings-scroll { padding: 10px 8px 12px; }
+    .shared-school-settings .class-edit-row { grid-template-columns: 18px minmax(0,10fr) minmax(0,7fr) minmax(0,3fr) 18px; gap: 3px; padding: 4px; }
+    .shared-school-settings .class-order-button { width: 18px; }
+    .shared-school-settings .remove-button { width: 18px; }
+    .shared-school-settings .class-name-field input, .shared-school-settings .class-details input { padding-left: 3px !important; padding-right: 3px !important; font-size: 9px !important; }
+}
+@media (max-width: 380px) {
+    .shared-school-settings .settings-tab { font-size: 10px; }
+    .shared-school-settings .working-hours-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .shared-school-settings .working-hours-row > .form-group:last-child { width: 80px; }
+}
+
+/* TEACHER-TOOLS:SHARED-SCHOOL-SETTINGS-CSS:END */
 </style>
 </head>
 <body>
@@ -2101,7 +2173,7 @@ The software is provided "as is" without warranty of any kind.
             Teacher Tools header to preserve your data or move it to another browser.
         </div>
 
-        <div class="settings-tabs" role="tablist" aria-label="Settings sections">
+        <div class="legacy-school-settings" hidden aria-hidden="true"><div class="settings-tabs" role="tablist" aria-label="Settings sections">
             <button type="button" id="settingsTab-schools" class="settings-tab active" data-settings-tab="schools" role="tab" aria-selected="true" aria-controls="settingsPanel-schools">Schools</button>
             <button type="button" id="settingsTab-schedule" class="settings-tab" data-settings-tab="schedule" role="tab" aria-selected="false" aria-controls="settingsPanel-schedule" tabindex="-1">Schedule</button>
             <button type="button" id="settingsTab-periods" class="settings-tab" data-settings-tab="periods" role="tab" aria-selected="false" aria-controls="settingsPanel-periods" tabindex="-1">Periods</button>
@@ -2189,6 +2261,74 @@ The software is provided "as is" without warranty of any kind.
                 </div>
             </section>
         </div>
+</div>
+<!-- TEACHER-TOOLS:SHARED-SCHOOL-SETTINGS:START -->
+<div class="shared-school-settings" data-shared-school-settings>
+    <div class="settings-tabs" role="tablist" aria-label="Shared school settings">
+        <button type="button" class="settings-tab active" data-school-settings-tab="schools" role="tab" aria-selected="true" aria-controls="sharedSettingsPanel-schools">Schools</button>
+        <button type="button" class="settings-tab" data-school-settings-tab="schedule" role="tab" aria-selected="false" aria-controls="sharedSettingsPanel-schedule" tabindex="-1">Schedule</button>
+        <button type="button" class="settings-tab" data-school-settings-tab="periods" role="tab" aria-selected="false" aria-controls="sharedSettingsPanel-periods" tabindex="-1">Periods</button>
+    </div>
+
+    <div class="settings-scroll">
+        <section id="sharedSettingsPanel-schools" class="settings-panel active" data-school-settings-panel="schools" role="tabpanel">
+            <div class="settings-section">
+                <h3>School Information</h3>
+                <label class="form-group"><span>Edit School</span><select data-school-select></select></label>
+                <div class="settings-buttons"><button type="button" class="settings-btn" data-add-school>＋ Add School</button><button type="button" class="settings-btn danger-btn" data-delete-school>− Delete School</button></div>
+                <div class="school-fields">
+                    <label class="form-group"><span>School Name</span><input type="text" maxlength="200" data-school-field="name"></label>
+                    <label class="form-group"><span>Location (optional)</span><input type="text" maxlength="200" data-school-field="location"></label>
+                </div>
+                <div class="classes-heading-row section-divider"><h3>Classes</h3><button type="button" class="settings-btn compact-btn" data-sort-classes>Sort A–Z</button></div>
+                <div class="class-list" data-class-list></div>
+                <div class="add-class-row"><input type="text" maxlength="100" placeholder="e.g. ４−１" aria-label="New class name" data-new-class><button type="button" class="settings-btn" data-add-class>＋ Add Class</button></div>
+            </div>
+        </section>
+
+        <section id="sharedSettingsPanel-schedule" class="settings-panel" data-school-settings-panel="schedule" role="tabpanel" hidden>
+            <div class="settings-section">
+                <h3>Schedule</h3>
+                <label class="form-group"><span>Edit Schedule For</span><select data-school-select></select></label>
+                <h3 class="settings-subheading">Working Hours</h3>
+                <div class="working-hours-row">
+                    <label class="form-group"><span>Start</span><input type="time" data-working-start></label>
+                    <label class="form-group"><span>End</span><input type="time" data-working-end></label>
+                    <label class="form-group working-color-field"><span>Color</span><input type="color" value="#43877d" data-working-color></label>
+                </div>
+                <p class="helper-text">Working hours and color are shared across Teacher Tools.</p>
+                <h3 class="settings-subheading">Teaching Dates</h3>
+                <label class="form-group"><span>Add Date</span><input type="date" data-teaching-date></label>
+                <div class="settings-buttons"><button type="button" class="settings-btn" data-add-teaching-date>＋ Add Date</button></div>
+                <div class="saved-dates-header"><button type="button" class="month-nav-btn" data-previous-month aria-label="Previous saved dates month">←</button><div><div class="saved-dates-title">Saved Dates</div><div class="schedule-month-label" data-month-label></div></div><button type="button" class="month-nav-btn" data-next-month aria-label="Next saved dates month">→</button></div>
+                <div class="schedule-date-list" data-teaching-date-list></div><p class="helper-text" data-teaching-date-count></p>
+            </div>
+        </section>
+
+        <section id="sharedSettingsPanel-periods" class="settings-panel" data-school-settings-panel="periods" role="tabpanel" hidden>
+            <div class="settings-section">
+                <h3>Periods &amp; Bell Times</h3>
+                <label class="form-group"><span>Edit Periods For</span><select data-school-select></select></label>
+                <h3 class="settings-subheading">Periods</h3><div data-regular-periods></div>
+                <h3 class="settings-subheading">Irregular Schedule</h3>
+                <label class="switch-row"><input type="checkbox" data-irregular-enabled><span>Enable alternate period times</span></label>
+                <div class="mode-panel" data-irregular-panel hidden><div data-irregular-periods></div></div>
+                <h3 class="settings-subheading">Lunch / 給食</h3>
+                <label class="switch-row"><input type="checkbox" data-lunch-enabled><span>Enable lunch period</span></label>
+                <div data-lunch-panel hidden>
+                    <label class="form-group"><span>Lunch Mode</span><select data-lunch-mode><option value="class">Use selected class</option><option value="general">General lunch</option></select></label>
+                    <div class="paired-fields"><label class="form-group"><span>Start</span><input type="time" data-lunch-start></label><label class="form-group"><span>Duration</span><input type="number" min="1" max="180" step="1" data-lunch-duration></label></div>
+                    <div data-irregular-lunch-section hidden><h3 class="settings-subheading">Irregular Lunch</h3><label class="switch-row"><input type="checkbox" data-irregular-lunch-enabled><span>Use alternate lunch times</span></label><div class="paired-fields mode-panel irregular-lunch-panel" data-irregular-lunch-panel hidden><label class="form-group"><span>Start</span><input type="time" data-irregular-lunch-start></label><label class="form-group"><span>Duration</span><input type="number" min="1" max="180" step="1" data-irregular-lunch-duration></label></div></div>
+                    <label class="form-group" data-general-lunch-title-field><span>General Lunch Title</span><input type="text" maxlength="200" data-general-lunch-title></label>
+                </div>
+                <p class="settings-status" role="status" aria-live="polite" data-settings-status>Changes save automatically to this browser.</p>
+            </div>
+        </section>
+    </div>
+</div>
+<!-- TEACHER-TOOLS:SHARED-SCHOOL-SETTINGS:END -->
+
+
     </div>
 </div>
 
@@ -3137,7 +3277,7 @@ The software is provided "as is" without warranty of any kind.
             button.tabIndex = selected ? 0 : -1;
         });
 
-        document.querySelectorAll(".settings-panel").forEach(panel => {
+        document.querySelectorAll(".legacy-school-settings .settings-panel").forEach(panel => {
             const selected = panel.id === "settingsPanel-" + tabName;
             panel.classList.toggle("active", selected);
             panel.hidden = !selected;
@@ -3148,7 +3288,7 @@ The software is provided "as is" without warranty of any kind.
         button.addEventListener("click", () => showSettingsTab(button.dataset.tutorialTab));
     });
 
-    const settingsTabs = [...document.querySelectorAll(".settings-tab")];
+    const settingsTabs = [...document.querySelectorAll(".legacy-school-settings .settings-tab")];
 
     settingsTabs.forEach(button => {
         button.addEventListener("click", () => showSettingsTab(button.dataset.settingsTab));
@@ -5062,5 +5202,99 @@ The software is provided "as is" without warranty of any kind.
 <!-- TEACHER-TOOLS:HOOTIE:START -->
     <script defer src="/assets/hootie/hootie.v1.js"></script>
 <!-- TEACHER-TOOLS:HOOTIE:END -->
+<!-- TEACHER-TOOLS:SHARED-SCHOOL-SETTINGS-SCRIPT:START -->
+<script>
+/* Canonical shared Schools / Schedule / Periods controller. Workbench source only. */
+(() => {
+    "use strict";
+    const clone = value => JSON.parse(JSON.stringify(value));
+    const validColor = value => /^#[0-9a-f]{6}$/i.test(value || "");
+    const today = () => { const date = new Date(); return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+    const defaults = school => ({
+        ...school,
+        location: school.location || "",
+        calendarColor: validColor(school.calendarColor) ? school.calendarColor : "#43877d",
+        workingHours: { start: school.workingHours?.start || "", end: school.workingHours?.end || "" },
+        classes: Array.isArray(school.classes) ? school.classes : [],
+        teachersByClass: school.teachersByClass && typeof school.teachersByClass === "object" ? school.teachersByClass : {},
+        studentCounts: school.studentCounts && typeof school.studentCounts === "object" ? school.studentCounts : {},
+        periods: Array.isArray(school.periods) ? school.periods : [],
+        irregular: { enabled: !!school.irregular?.enabled, periods: Array.isArray(school.irregular?.periods) ? school.irregular.periods : [], lunch: { enabled: !!school.irregular?.lunch?.enabled, start: school.irregular?.lunch?.start || school.lunch?.start || "12:00", duration: Number(school.irregular?.lunch?.duration || school.lunch?.duration || 45) } },
+        lunch: { enabled: !!school.lunch?.enabled, mode: school.lunch?.mode === "class" ? "class" : "general", start: school.lunch?.start || "12:00", duration: Number(school.lunch?.duration || 45), generalTitle: school.lunch?.generalTitle || "Lunch" }
+    });
+
+    function create({ root, adapter, appletId = "applet", initialTab = "schools", extraTabs = [] }) {
+        if (!(root instanceof Element)) throw new TypeError("Shared school settings requires a root element.");
+        if (!adapter || typeof adapter.read !== "function" || typeof adapter.write !== "function") throw new TypeError("Adapter requires read() and write(state).");
+        const all = selector => [...root.querySelectorAll(selector)];
+        const one = selector => root.querySelector(selector);
+        let state, selectedSchoolId = "", month = today().slice(0, 7);
+        const uiKey = `teacherTools.${appletId}.sharedSchoolSettings.ui.v1`;
+        const readUi = () => { try { return JSON.parse(localStorage.getItem(uiKey)) || {}; } catch { return {}; } };
+        const writeUi = value => { try { localStorage.setItem(uiKey, JSON.stringify(value)); } catch {} };
+        const school = () => state.schools.find(item => item.id === selectedSchoolId) || state.schools[0];
+        const commonTabs = () => all("[data-school-settings-tab]");
+        const tabRecords = () => [...commonTabs().map(button => ({ name: button.dataset.schoolSettingsTab, button, panel: one(`[data-school-settings-panel="${button.dataset.schoolSettingsTab}"]`) })), ...extraTabs];
+        const commit = (message, detail = {}) => { adapter.write(clone(state), detail); one("[data-settings-status]").textContent = message || "Changes saved automatically to this browser."; render(); };
+
+        function showTab(name, focus = false) {
+            const records = tabRecords(); if (!records.some(record => record.name === name)) name = "schools";
+            records.forEach(record => { const active = record.name === name; record.button.classList.toggle("active", active); record.button.setAttribute("aria-selected", String(active)); record.button.tabIndex = active ? 0 : -1; record.panel.classList.toggle("active", active); record.panel.hidden = !active; if (active && focus) record.button.focus(); if (active) record.onShow?.(); });
+            writeUi({ ...readUi(), tab: name, schoolId: selectedSchoolId });
+        }
+        function selectSchool(id) { if (state.schools.some(item => item.id === id)) selectedSchoolId = id; writeUi({ ...readUi(), schoolId: selectedSchoolId }); render(); }
+        function renderPeriods(target, periods) { target.replaceChildren(); const table = document.createElement("table"); table.className = "period-table"; table.innerHTML = "<thead><tr><th>Period</th><th>Start</th><th>Duration</th></tr></thead>"; const body = document.createElement("tbody"); periods.forEach(period => { const row = document.createElement("tr"); row.innerHTML = `<td>${period.number}</td><td><input type="time" value="${period.start || ""}"></td><td><input type="number" min="1" max="180" step="1" value="${period.duration || 45}"></td>`; const inputs = row.querySelectorAll("input"); inputs[0].onchange = () => { period.start = inputs[0].value; commit(); }; inputs[1].onchange = () => { period.duration = Number(inputs[1].value); commit(); }; body.append(row); }); table.append(body); target.append(table); }
+        function renderClasses(current) { const list = one("[data-class-list]"); list.replaceChildren(); current.classes.forEach((name, index) => { const row = document.createElement("div"); row.className = "class-edit-row"; const order = document.createElement("div"); order.className = "class-order-controls"; for (const [label, delta] of [["↑", -1], ["↓", 1]]) { const button = document.createElement("button"); button.type = "button"; button.className = "class-order-button"; button.textContent = label; button.disabled = index + delta < 0 || index + delta >= current.classes.length; button.setAttribute("aria-label", `Move ${name} ${delta < 0 ? "up" : "down"}`); button.onclick = () => { [current.classes[index], current.classes[index + delta]] = [current.classes[index + delta], current.classes[index]]; commit(); }; order.append(button); } const nameField = document.createElement("label"); nameField.className = "form-group class-name-field"; const nameLabel = document.createElement("span"); nameLabel.textContent = "Name"; const nameInput = document.createElement("input"); nameInput.value = name; nameInput.setAttribute("aria-label", "Class name"); nameInput.onchange = () => { const next = nameInput.value.trim(); if (!next || current.classes.some((item, other) => other !== index && item === next)) { render(); return; } current.classes[index] = next; if (Object.hasOwn(current.teachersByClass, name)) { current.teachersByClass[next] = current.teachersByClass[name]; delete current.teachersByClass[name]; } if (Object.hasOwn(current.studentCounts, name)) { current.studentCounts[next] = current.studentCounts[name]; delete current.studentCounts[name]; } commit("Class name updated.", { classRename: { schoolId: current.id, from: name, to: next } }); }; nameField.append(nameLabel, nameInput); const details = document.createElement("div"); details.className = "class-details"; for (const [label, type, value, save] of [["Teacher", "text", current.teachersByClass[name] || "", value => current.teachersByClass[name] = value], ["Students", "number", current.studentCounts[name] ?? "", value => { if (value === "") delete current.studentCounts[name]; else current.studentCounts[name] = Number(value); }]]) { const field = document.createElement("label"); field.className = "form-group"; const copy = document.createElement("span"); copy.textContent = label; const input = document.createElement("input"); input.type = type; input.value = value; input.setAttribute("aria-label", `${label} for ${name}`); input.onchange = () => { save(input.value.trim()); commit(); }; field.append(copy, input); details.append(field); } const remove = document.createElement("button"); remove.type = "button"; remove.className = "remove-button"; remove.textContent = "×"; remove.setAttribute("aria-label", `Remove ${name}`); remove.onclick = () => { current.classes.splice(index, 1); delete current.teachersByClass[name]; delete current.studentCounts[name]; commit("Class removed.", { classRemoved: { schoolId: current.id, name } }); }; row.append(order, nameField, details, remove); list.append(row); }); if (!current.classes.length) list.textContent = "No classes added yet."; }
+        function renderDates(current) { const dates = [...(state.schedule[current.id] || [])].sort(), shown = dates.filter(date => date.startsWith(month)), list = one("[data-teaching-date-list]"); one("[data-month-label]").textContent = new Intl.DateTimeFormat("en", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(month + "-01T12:00:00Z")); one("[data-teaching-date-count]").textContent = `${shown.length} this month • ${dates.length} total saved`; list.replaceChildren(); shown.forEach(date => { const row = document.createElement("div"); row.className = "schedule-date-row"; const label = document.createElement("span"); label.textContent = new Intl.DateTimeFormat("en", { weekday: "short", year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(date + "T12:00:00Z")); const remove = document.createElement("button"); remove.type = "button"; remove.className = "remove-button"; remove.textContent = "×"; remove.setAttribute("aria-label", `Remove teaching date ${date}`); remove.onclick = () => { state.schedule[current.id] = dates.filter(item => item !== date); commit(); }; row.append(label, remove); list.append(row); }); if (!shown.length) list.textContent = "No saved dates in this month."; }
+        function render() {
+            state = clone(adapter.read()); state.schools = state.schools.map(defaults); state.schedule ||= {};
+            if (!state.schools.some(item => item.id === selectedSchoolId)) selectedSchoolId = state.schools[0]?.id || "";
+            const current = school(); if (!current) return;
+            all("[data-school-select]").forEach(select => { select.replaceChildren(...state.schools.map(item => new Option(item.name, item.id))); select.value = current.id; });
+            all("[data-school-field]").forEach(input => input.value = current[input.dataset.schoolField] || "");
+            renderClasses(current); one("[data-delete-school]").disabled = state.schools.length <= 1; one("[data-sort-classes]").disabled = current.classes.length < 2;
+            one("[data-working-start]").value = current.workingHours.start; one("[data-working-end]").value = current.workingHours.end; one("[data-working-color]").value = current.calendarColor; one("[data-working-color]").style.setProperty("--working-color", current.calendarColor);
+            if (!one("[data-teaching-date]").value) one("[data-teaching-date]").value = today(); renderDates(current);
+            renderPeriods(one("[data-regular-periods]"), current.periods); renderPeriods(one("[data-irregular-periods]"), current.irregular.periods);
+            one("[data-irregular-enabled]").checked = current.irregular.enabled; one("[data-irregular-panel]").hidden = !current.irregular.enabled;
+            one("[data-lunch-enabled]").checked = current.lunch.enabled; one("[data-lunch-panel]").hidden = !current.lunch.enabled; one("[data-lunch-mode]").value = current.lunch.mode; one("[data-lunch-start]").value = current.lunch.start; one("[data-lunch-duration]").value = current.lunch.duration; one("[data-general-lunch-title]").value = current.lunch.generalTitle; one("[data-general-lunch-title-field]").hidden = current.lunch.mode !== "general";
+            one("[data-irregular-lunch-section]").hidden = !current.irregular.enabled; one("[data-irregular-lunch-enabled]").checked = current.irregular.lunch.enabled; one("[data-irregular-lunch-panel]").hidden = !current.irregular.lunch.enabled; one("[data-irregular-lunch-start]").value = current.irregular.lunch.start; one("[data-irregular-lunch-duration]").value = current.irregular.lunch.duration;
+        }
+        tabRecords().forEach(record => record.button.onclick = () => showTab(record.name));
+        one("[role=tablist]").onkeydown = event => { if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return; const records = tabRecords(), tabs = records.map(record => record.button), index = tabs.indexOf(document.activeElement); if (index < 0) return; event.preventDefault(); const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length; showTab(records[next].name, true); };
+        all("[data-school-select]").forEach(select => select.onchange = () => selectSchool(select.value));
+        all("[data-school-field]").forEach(input => input.onchange = () => { school()[input.dataset.schoolField] = input.value.trim(); commit(); });
+        one("[data-add-school]").onclick = () => { const created = defaults(adapter.createSchool?.() || { id: crypto.randomUUID?.() || `school-${Date.now()}`, name: "New School", classes: [], periods: [], irregular: {} }); state.schools.push(created); state.schedule[created.id] = []; selectedSchoolId = created.id; commit("New school added.", { schoolAdded: created.id }); };
+        one("[data-delete-school]").onclick = () => { const current = school(); if (!current || state.schools.length <= 1 || !confirm(`Delete ${current.name} and its saved teaching dates?`)) return; state.schools = state.schools.filter(item => item.id !== current.id); delete state.schedule[current.id]; selectedSchoolId = state.schools[0].id; commit("School deleted.", { schoolRemoved: current.id }); };
+        one("[data-add-class]").onclick = () => { const input = one("[data-new-class]"), name = input.value.trim(), current = school(); if (!name || current.classes.includes(name)) return; current.classes.push(name); input.value = ""; commit("Class added."); };
+        one("[data-sort-classes]").onclick = () => { school().classes.sort((a, b) => a.normalize("NFKC").localeCompare(b.normalize("NFKC"), undefined, { numeric: true, sensitivity: "base" })); commit("Classes sorted."); };
+        one("[data-working-start]").onchange = event => { school().workingHours.start = event.target.value; commit(); }; one("[data-working-end]").onchange = event => { school().workingHours.end = event.target.value; commit(); }; one("[data-working-color]").oninput = event => { if (validColor(event.target.value)) event.target.style.setProperty("--working-color", event.target.value); }; one("[data-working-color]").onchange = event => { if (validColor(event.target.value)) { school().calendarColor = event.target.value; commit(); } };
+        one("[data-add-teaching-date]").onclick = () => { const date = one("[data-teaching-date]").value; if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return; state.schedule[school().id] = [...new Set([...(state.schedule[school().id] || []), date])].sort(); month = date.slice(0, 7); commit(); };
+        for (const [selector, amount] of [["[data-previous-month]", -1], ["[data-next-month]", 1]]) one(selector).onclick = () => { const date = new Date(month + "-01T12:00:00Z"); date.setUTCMonth(date.getUTCMonth() + amount); month = date.toISOString().slice(0, 7); render(); };
+        one("[data-irregular-enabled]").onchange = event => { school().irregular.enabled = event.target.checked; if (event.target.checked && !school().irregular.periods.length) school().irregular.periods = clone(school().periods); commit(); };
+        one("[data-lunch-enabled]").onchange = event => { school().lunch.enabled = event.target.checked; commit(); }; one("[data-lunch-mode]").onchange = event => { school().lunch.mode = event.target.value; commit(); }; one("[data-lunch-start]").onchange = event => { school().lunch.start = event.target.value; commit(); }; one("[data-lunch-duration]").onchange = event => { school().lunch.duration = Number(event.target.value); commit(); }; one("[data-general-lunch-title]").onchange = event => { school().lunch.generalTitle = event.target.value.trim() || "Lunch"; commit(); };
+        one("[data-irregular-lunch-enabled]").onchange = event => { school().irregular.lunch.enabled = event.target.checked; commit(); }; one("[data-irregular-lunch-start]").onchange = event => { school().irregular.lunch.start = event.target.value; commit(); }; one("[data-irregular-lunch-duration]").onchange = event => { school().irregular.lunch.duration = Number(event.target.value); commit(); };
+        const remembered = readUi(); state = clone(adapter.read()); selectedSchoolId = remembered.schoolId || state.schools?.[0]?.id || ""; render(); showTab(remembered.tab || initialTab);
+        return Object.freeze({ refresh: render, showTab, selectSchool, restoreTab: () => showTab(readUi().tab || initialTab) });
+    }
+    window.TeacherToolsSchoolSettings = Object.freeze({ create });
+})();
+
+(() => {
+ const key='classAutomatorData_v3', root=document.querySelector('[data-shared-school-settings]');
+ const read=()=>JSON.parse(localStorage.getItem(key));
+ const options={root,appletId:'class-scheduler',adapter:{
+  read,
+  write(next){const value=JSON.stringify(next);localStorage.setItem(key,value);window.dispatchEvent(new StorageEvent('storage',{key,newValue:value}));},
+  createSchool(){return {id:'school-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name:'New School',location:'',calendarColor:'#43877d',workingHours:{start:'',end:''},classes:[],teachersByClass:{},studentCounts:{},periods:Array.from({length:6},(_,i)=>({number:i+1,start:['08:30','09:30','10:30','11:30','13:30','14:30'][i],duration:45})),irregular:{enabled:false,periods:[],lunch:{enabled:false,start:'12:00',duration:45}},lunch:{enabled:false,mode:'general',start:'12:00',duration:45,generalTitle:'Lunch'}};}
+ }};
+ 
+ const controller=TeacherToolsSchoolSettings.create(options);
+ document.querySelectorAll('#settingsOpenBtn').forEach(button=>button.addEventListener('click',()=>{controller.refresh();controller.restoreTab();}));
+ document.querySelectorAll('[data-tutorial-tab]').forEach(button=>button.addEventListener('click',()=>controller.showTab(button.dataset.tutorialTab)));
+ window.addEventListener('storage',event=>{if(event.key===key)controller.refresh();});
+})();
+</script>
+<!-- TEACHER-TOOLS:SHARED-SCHOOL-SETTINGS-SCRIPT:END -->
 </body>
 </html>
