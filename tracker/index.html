@@ -925,6 +925,8 @@
         .dashboard-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; margin-bottom: 14px; }
         .note-card { border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 76%, var(--accent-soft)); border-radius: 10px; padding: 14px; margin: 12px 0; min-width: 0; }
         .note-card h3 { margin: 0 0 10px; overflow-wrap: anywhere; }
+        .calendar-note-badge { float: right; margin-left: 8px; color: var(--accent); }
+        .note-archive-button { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); }
         .note-line { white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1.5em; line-height: 1.7; }
         .note-line.complete { text-decoration: line-through; color: var(--muted); }
         .note-line .check-marker-icon { display: inline-block; vertical-align: middle; margin: 0 3px; color: var(--accent); }
@@ -1308,8 +1310,8 @@
                             <p id="pointsStatus" class="status" role="status"></p>
                         </section>
                         <section id="dashboardPanel-notes" role="tabpanel" aria-labelledby="dashboardTab-notes" hidden>
-                            <div class="tracker-heading"><h2>Class notes</h2><button type="button" id="addNoteButton" class="button">＋ Add Note</button></div>
-                            <p class="settings-help">Quick reminders and to-do lists saved separately for each class.</p>
+                            <div class="tracker-heading"><h2>Class notes</h2><div class="note-actions"><button type="button" id="toggleArchivedNotes" class="button note-archive-button" aria-pressed="false">Archived</button><button type="button" id="addNoteButton" class="button">＋ Add Note</button></div></div>
+                            <p class="settings-help">Quick reminders and to-do lists saved separately for each class. Calendar event notes appear automatically for the matching school and class in this browser. Edit linked notes in Calendar; archive them here to hide them.</p>
                             <div id="notesList"></div>
                             <form id="noteEditor" hidden>
                                 <h3 id="noteEditorHeading">Add note</h3>
@@ -8170,7 +8172,22 @@
             showDashboardTab(dashboardTabs[next].dataset.dashboardTab); dashboardTabs[next].focus();
         });
 
-        let noteEditingId=null, noteEditingClass=null;
+        let noteEditingId=null, noteEditingClass=null, showingArchivedNotes=false;
+        const CALENDAR_NOTES_KEY="teacherTools.classCalendar.state.v1";
+        function noteArchiveIcon(restore=false){
+            const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+            svg.setAttribute("viewBox","0 0 24 24"); svg.setAttribute("class","check-marker-icon"); svg.setAttribute("aria-hidden","true");
+            svg.innerHTML='<path d="M3 13h18v8H3zM3 13l3-3h2m13 3-3-3h-2M9 17h6"/><path d="'+(restore?'M12 11V2m-4 4 4-4 4 4':'M12 2v9m-4-4 4 4 4-4')+'"/>'; return svg;
+        }
+        function calendarNotesForClass(){
+            try {
+                const calendar=JSON.parse(get(CALENDAR_NOTES_KEY));
+                if(!calendar || calendar.version!==1 || !Array.isArray(calendar.events)) return [];
+                return calendar.events.filter(e=>e && e.schoolId===schoolSelect.value && e.className===classSelect.value && typeof e.notes==="string" && e.notes.trim() && typeof e.id==="string" && typeof e.date==="string")
+                    .sort((a,b)=>a.date.localeCompare(b.date)||(a.start||"").localeCompare(b.start||""))
+                    .map(e=>({id:"calendar:"+e.id,calendar:true,title:(Number.isInteger(e.period)?(e.period===0?"Lunch":"Period "+e.period)+" · ":"")+e.date.replace(/-/g,"/"),body:e.notes}));
+            } catch { return []; }
+        }
         function noteStatus(text){ document.getElementById("notesStatus").textContent=text; }
         function persistNotes(){
             const ok=set(TRACKER_KEY,state);
@@ -8185,6 +8202,7 @@
             return String(number)+"\u20dd";
         }
         function openNoteEditor(note=null){
+            if(!note && showingArchivedNotes){ showingArchivedNotes=false; renderNotes(); }
             noteEditingId=note?.id||null; noteEditingClass=classKey();
             document.getElementById("noteEditor").hidden=false;
             document.getElementById("noteEditorHeading").textContent=note?"Edit note":"Add note";
@@ -8201,11 +8219,25 @@
             const root=document.getElementById("notesList"); root.replaceChildren();
             const key=classKey(), available=!!classSelect.value;
             document.getElementById("addNoteButton").disabled=!available;
-            const notes=Array.isArray(state.notes[key])?state.notes[key]:[];
-            if(!notes.length){ const empty=document.createElement("p"); empty.className="settings-help"; empty.textContent=available?"No notes yet. Add a reminder or to-do list.":"Choose a class to add notes."; root.append(empty); }
+            const localNotes=Array.isArray(state.notes?.[key])?state.notes[key]:[];
+            const allNotes=[...localNotes,...calendarNotesForClass()];
+            const archivedIds=new Set(state.preferences.archivedNoteIds||[]);
+            const isArchived=note=>note.calendar?archivedIds.has(note.id):!!note.archived;
+            const notes=allNotes.filter(note=>isArchived(note)===showingArchivedNotes);
+            const toggle=document.getElementById("toggleArchivedNotes");
+            toggle.replaceChildren(noteArchiveIcon(),document.createTextNode(showingArchivedNotes?" Back to notes":" Archived ("+allNotes.filter(isArchived).length+")"));
+            toggle.setAttribute("aria-pressed",String(showingArchivedNotes));
+            if(!notes.length){ const empty=document.createElement("p"); empty.className="settings-help"; empty.textContent=available?(showingArchivedNotes?"No archived notes.":"No notes yet. Add a reminder or to-do list."):"Choose a class to add notes."; root.append(empty); }
             notes.forEach((note,index)=>{
                 const card=document.createElement("article"); card.className="note-card";
                 const title=document.createElement("h3"); title.textContent=note.title; card.append(title);
+                if(note.calendar){
+                    const badge=document.createElementNS("http://www.w3.org/2000/svg","svg");
+                    badge.setAttribute("viewBox","0 0 28 28"); badge.setAttribute("class","check-marker-icon calendar-note-badge");
+                    badge.setAttribute("role","img"); badge.setAttribute("aria-label","Synced from Class Calendar");
+                    badge.innerHTML='<path d="M5.5 7.5h17v15h-17zM9 4.5v6M19 4.5v6M5.5 12h17M11.2 12v10.5M16.8 12v10.5M5.5 17.25h17"/><path fill="currentColor" d="M11.2 12h5.6v5.25h-5.6z"/>';
+                    title.append(badge);
+                }
                 let offset=0;
                 String(note.body||"").split("\n").forEach(line=>{
                     const row=document.createElement("div"); row.className="note-line";
@@ -8221,7 +8253,7 @@
                             icon.setAttribute("role","img"); icon.setAttribute("aria-label",marker.label);
                             icon.innerHTML=marker.svg; row.append(icon);
                         } else {
-                            const input=document.createElement("input"); input.type="checkbox"; input.checked=/x/i.test(match[0]);
+                            const input=document.createElement("input"); input.type="checkbox"; input.checked=/x/i.test(match[0]); input.disabled=!!note.calendar;
                             input.setAttribute("aria-label",note.title+": "+(line.slice(match.index+match[0].length).trim()||"Checklist item"));
                             const position=offset+match.index, length=match[0].length;
                             input.addEventListener("change",()=>{
@@ -8241,13 +8273,36 @@
                 });
                 const actions=document.createElement("div"); actions.className="note-actions";
                 const action=(text,label,fn,disabled=false)=>{ const b=document.createElement("button"); b.type="button"; b.className="button"; b.textContent=text; b.setAttribute("aria-label",label+" "+note.title); b.disabled=disabled; b.addEventListener("click",fn); actions.append(b); };
-                action("↑","Move up",()=>{ [notes[index-1],notes[index]]=[notes[index],notes[index-1]]; persistNotes(); renderNotes(); },index===0);
-                action("↓","Move down",()=>{ [notes[index+1],notes[index]]=[notes[index],notes[index+1]]; persistNotes(); renderNotes(); },index===notes.length-1);
-                action("Edit","Edit",()=>openNoteEditor(note));
-                action("Delete","Delete",()=>{ if(!confirm('Delete note "'+note.title+'"?')) return; notes.splice(index,1); if(noteEditingId===note.id) closeNoteEditor(); persistNotes(); renderNotes(); document.getElementById("addNoteButton").focus(); });
+                const move=direction=>{
+                    const target=notes[index+direction]; if(!target || note.calendar || target.calendar) return;
+                    const a=localNotes.indexOf(note),b=localNotes.indexOf(target);
+                    [localNotes[a],localNotes[b]]=[localNotes[b],localNotes[a]]; persistNotes(); renderNotes();
+                };
+                if(!note.calendar){
+                    action("↑","Move up",()=>move(-1),index===0||!!notes[index-1]?.calendar);
+                    action("↓","Move down",()=>move(1),index===notes.length-1||!!notes[index+1]?.calendar);
+                    action("Edit","Edit",()=>openNoteEditor(note));
+                    action("Delete","Delete",()=>{ if(!confirm('Delete note "'+note.title+'"?')) return; localNotes.splice(localNotes.indexOf(note),1); if(noteEditingId===note.id) closeNoteEditor(); persistNotes(); renderNotes(); document.getElementById("addNoteButton").focus(); });
+                } else {
+                    const link=document.createElement("a"); link.className="button"; link.href="/calendar/"; link.textContent="Open Calendar"; actions.append(link);
+                }
+                const archive=document.createElement("button"); archive.type="button"; archive.className="button note-archive-button";
+                const label=showingArchivedNotes?"Restore":"Archive"; archive.title=label; archive.setAttribute("aria-label",label+" "+note.title);
+                archive.append(noteArchiveIcon(showingArchivedNotes));
+                archive.addEventListener("click",()=>{
+                    if(note.calendar){ const ids=new Set(state.preferences.archivedNoteIds||[]); if(showingArchivedNotes) ids.delete(note.id); else ids.add(note.id); state.preferences.archivedNoteIds=[...ids]; }
+                    else note.archived=!showingArchivedNotes;
+                    if(noteEditingId===note.id) closeNoteEditor();
+                    persistNotes(); renderNotes(); document.getElementById("toggleArchivedNotes").focus();
+                });
+                actions.append(archive);
                 card.append(actions); root.append(card);
             });
         }
+        document.getElementById("toggleArchivedNotes").addEventListener("click",()=>{ showingArchivedNotes=!showingArchivedNotes; closeNoteEditor(); renderNotes(); });
+        window.addEventListener("storage",event=>{ if(event.key===CALENDAR_NOTES_KEY || event.key===null) renderNotes(); });
+        window.addEventListener("focus",()=>renderNotes());
+        document.addEventListener("visibilitychange",()=>{ if(!document.hidden) renderNotes(); });
         document.getElementById("addNoteButton").addEventListener("click",()=>openNoteEditor());
         document.getElementById("cancelNoteButton").addEventListener("click",()=>{ closeNoteEditor(); document.getElementById("addNoteButton").focus(); });
         document.getElementById("noteEditor").addEventListener("submit",event=>{
