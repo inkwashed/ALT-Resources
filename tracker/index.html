@@ -15,12 +15,28 @@
         (() => {
             const key = "teacherTools.sitePreferences.v1";
             const languageKey = "teacherTools.siteLanguage.v1";
-            const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark", "custom"];
 
             try {
                 const saved = JSON.parse(localStorage.getItem(key));
                 const theme = saved && themes.includes(saved.theme) ? saved.theme : "ocean-blue";
                 if (theme !== "ocean-blue") document.documentElement.setAttribute("data-theme", theme);
+                if (theme === "custom") {
+                    const valid = value => /^#[0-9a-f]{6}$/i.test(value || "");
+                    const colors = {
+                        primary: valid(saved.customColors?.primary) ? saved.customColors.primary.toLowerCase() : "#2563eb",
+                        secondary: valid(saved.customColors?.secondary) ? saved.customColors.secondary.toLowerCase() : "#7c3aed",
+                        background: valid(saved.customColors?.background) ? saved.customColors.background.toLowerCase() : "#f5f8ff"
+                    };
+                    const rgb = hex => [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16));
+                    const hex = values => `#${values.map(value => Math.round(value).toString(16).padStart(2, "0")).join("")}`;
+                    const mix = (a, b, amount) => hex(rgb(a).map((value, index) => value + (rgb(b)[index] - value) * amount));
+                    const lum = value => { const channels = rgb(value).map(item => { const part = item / 255; return part <= .04045 ? part / 12.92 : ((part + .055) / 1.055) ** 2.4; }); return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2]; };
+                    const contrastText = value => 1.05 / (lum(value) + .05) >= (lum(value) + .05) / .05 ? "#ffffff" : "#111827";
+                    const dark = lum(colors.background) < .3, surface = mix(colors.background, "#ffffff", dark ? .075 : .88), panel = mix(colors.background, surface, dark ? .42 : .68), text = dark ? "#f3f6fa" : "#24282d";
+                    const tokens = { "--accent": colors.primary, "--accent-secondary": colors.secondary, "--accent-soft": mix(colors.primary, surface, dark ? .78 : .84), "--accent-border": mix(colors.primary, surface, dark ? .52 : .58), "--focus-ring": `${colors.primary}3d`, "--accent-contrast": contrastText(colors.primary), "--text": text, "--muted": mix(text, surface, dark ? .48 : .42), "--line": mix(text, surface, dark ? .79 : .86), "--bg": colors.background, "--surface": surface, "--panel": panel, "--danger": dark ? "#ff7676" : "#d93025", "--warning-bg": dark ? mix("#332b12", surface, .12) : "#fff8e1", "--warning-border": dark ? "#8a7125" : "#f5d67b", "--warning-text": dark ? "#ffe08a" : "#6f5200", "--tooltip-text": contrastText(colors.primary), "--custom-color-scheme": dark ? "dark" : "light" };
+                    Object.entries(tokens).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
+                }
             } catch (error) {
                 // Ocean Blue remains the safe default when storage is unavailable.
             }
@@ -103,6 +119,8 @@
             --warning-text: #ffe08a;
             --tooltip-text: #07101d;
         }
+
+        html[data-theme="custom"] { color-scheme: var(--custom-color-scheme, light); }
 
         /* Global Teacher Tools page foundation */
         * { box-sizing: border-box; }
@@ -602,6 +620,26 @@
         .site-theme-option[data-theme-option="true-dark"] {
             --theme-primary: #8ab4f8; --theme-secondary: #c4a7ff; --theme-light: #0d0f12;
         }
+        .site-theme-option[data-theme-option="custom"] {
+            --theme-primary: var(--custom-preview-primary, #2563eb);
+            --theme-secondary: var(--custom-preview-secondary, #7c3aed);
+            --theme-light: var(--custom-preview-background, #f5f8ff);
+        }
+        .site-custom-theme-controls {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--line);
+        }
+        .site-custom-theme-controls[hidden] { display: none; }
+        .site-custom-theme-pickers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+        .site-custom-theme-pickers label { display: grid; gap: 4px; color: var(--muted); font-size: 9.5px; font-weight: 700; text-align: center; }
+        .site-custom-theme-pickers input[type="color"] { width: 100%; height: 34px; padding: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; cursor: pointer; }
+        .site-custom-theme-reset { width: 100%; min-height: 32px; margin-top: 8px; color: var(--accent); background: var(--surface); border: 1px solid var(--accent-border); border-radius: 7px; font: inherit; font-size: 9.5px; font-weight: 700; cursor: pointer; }
+        .site-custom-theme-reset:hover { background: var(--accent-soft); }
+        .site-custom-theme-note { margin: 7px 0 0; color: var(--muted); font-size: 9px; line-height: 1.4; }
+        html[data-theme="custom"] .button-primary,
+        html[data-theme="custom"] .primary { color: var(--accent-contrast) !important; }
+        html[data-theme="custom"] .site-brand-mark { color: var(--accent-contrast); }
 
         /* Shared contextual help */
         .field-label-row,
@@ -848,6 +886,149 @@
         .disclosure-panel { margin-top: 9px; }
         .disclosure-panel[hidden] { display: none; }
 
+        /* Canonical applet identity and Getting Started treatment. */
+        body .app-shell .app-header .version-badge {
+            flex: 0 0 auto;
+            padding: 3px 7px;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 750;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        body .app-shell .app-header .help-button-mark {
+            width: 21px;
+            height: 21px;
+            display: inline-grid;
+            place-items: center;
+            border: 1.8px solid currentColor;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        body .app-shell .app-header .icon-button {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--accent);
+            background: transparent;
+            border: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: color 180ms ease;
+        }
+
+        body .app-shell .app-header .icon-button:hover,
+        body .app-shell .app-header .icon-button:focus-visible {
+            color: var(--accent-secondary);
+            background: transparent;
+            border-color: transparent;
+        }
+
+        #helpModal .tutorial-intro,
+        #helpModal .help-intro,
+        #helpModal .modal-intro,
+        #tutorialModal .tutorial-intro {
+            margin: 0 0 14px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        #helpModal .tutorial-steps,
+        #helpModal .help-steps,
+        #helpModal .help-list,
+        #tutorialModal .tutorial-steps {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #helpModal .tutorial-step,
+        #helpModal .help-step,
+        #helpModal .help-list > li,
+        #tutorialModal .tutorial-step {
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr);
+            gap: 11px;
+            align-items: start;
+            padding: 12px;
+            color: var(--text);
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 9px;
+        }
+
+        #helpModal .tutorial-number,
+        #helpModal .help-number,
+        #tutorialModal .tutorial-number,
+        #tutorialModal .tutorial-step-number {
+            width: 30px;
+            height: 30px;
+            display: inline-grid;
+            place-items: center;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        #helpModal .tutorial-step h3,
+        #helpModal .help-step h3,
+        #helpModal .help-list h3,
+        #tutorialModal .tutorial-step h3 {
+            margin: 1px 0 3px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 750;
+            line-height: 1.3;
+        }
+
+        #helpModal .tutorial-step p,
+        #helpModal .help-step p,
+        #helpModal .help-list p,
+        #tutorialModal .tutorial-step p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        #helpModal .notice,
+        #helpModal .privacy-note,
+        #tutorialModal .notice,
+        #tutorialModal .privacy-note {
+            margin: 12px 0 0;
+            padding: 10px 12px;
+            color: var(--warning-text);
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 8px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        #helpModal .tutorial-step .help-link,
+        #tutorialModal .tutorial-step .tutorial-step-action {
+            grid-column: 2;
+            justify-self: start;
+        }
+
         @media (max-width: 620px) {
             .site-header-inner { min-height: 58px; padding: 8px 10px; }
             .site-brand-mark { width: 38px; height: 38px; flex-basis: 38px; border-radius: 9px; }
@@ -1089,6 +1270,7 @@
     
 /* TEACHER-TOOLS:SHARED-SCHOOL-SETTINGS-CSS:START */
 .shared-school-settings { min-height: 0; flex: 1; display: flex; flex-direction: column; color: var(--text); }
+.shared-school-settings [hidden] { display: none !important; }
 .shared-school-settings *, .shared-school-settings *::before, .shared-school-settings *::after { box-sizing: border-box; }
 .shared-school-settings .settings-tabs { display: grid; grid-template-columns: repeat(var(--shared-settings-tab-count,3),minmax(0,1fr)) !important; gap: 5px; padding: 10px 14px 0; }
 .shared-school-settings .settings-tab { min-height: 40px; padding: 8px 6px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 7px 7px 0 0; font: inherit; font-size: 11px; font-weight: 650; cursor: pointer; }
@@ -1130,6 +1312,13 @@
 .shared-school-settings .working-color-field input::-moz-color-swatch { opacity: 1; background: linear-gradient(90deg,var(--working-color,#43877d) 0 5px,color-mix(in srgb,var(--working-color,#43877d) 18%,var(--surface)) 5px 100%) !important; border: 1px solid color-mix(in srgb,var(--working-color,#43877d) 65%,var(--line)); border-radius: 0; }
 .shared-school-settings .helper-text, .shared-school-settings .settings-status { margin: 5px 0 0; color: var(--muted); font-size: 10.5px; line-height: 1.4; }
 .shared-school-settings .saved-dates-header { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; gap: 8px; margin: 11px 0 7px; text-align: center; }
+.shared-school-settings .alternate-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.shared-school-settings .alternate-heading-row h3 { margin: 0; }
+.shared-school-settings .alternate-schedule-header { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; gap: 8px; margin: 11px 0 7px; text-align: center; }
+.shared-school-settings .alternate-schedule-panel { display: grid; gap: 8px; }
+.shared-school-settings .alternate-name-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 8px; }
+.shared-school-settings .alternate-name-row .form-group { margin: 0; }
+.shared-school-settings .alternate-name-row .settings-btn { margin-bottom: 2px; }
 .shared-school-settings .saved-dates-title { color: var(--muted); font-size: 12px; font-weight: 700; }
 .shared-school-settings .schedule-month-label { margin-top: 2px; color: var(--muted); font-size: 11px; }
 .shared-school-settings .month-nav-btn { width: 36px; height: 32px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
@@ -1141,6 +1330,7 @@
 .shared-school-settings .switch-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; color: var(--text); font-size: 11px; font-weight: 500; }
 .shared-school-settings .switch-row input { width: 18px; min-height: 18px; }
 .shared-school-settings .mode-panel { padding: 10px; background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 8px; }
+.shared-school-settings .alternate-schedule-panel > .settings-subheading { margin-top: 4px; }
 .shared-school-settings .irregular-lunch-panel .form-group { margin-bottom: 0; }
 .shared-school-settings .paired-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
 @media (max-width: 520px) {
@@ -1352,6 +1542,20 @@
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
                         <span class="site-theme-name" data-i18n="theme.trueDark">True Dark</span>
                     </label>
+                    <label class="site-theme-option" data-theme-option="custom">
+                        <input type="radio" name="siteThemeChoice" value="custom">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name" data-i18n="theme.custom">Custom</span>
+                    </label>
+                </div>
+                <div id="siteCustomThemeControls" class="site-custom-theme-controls" hidden>
+                    <div class="site-custom-theme-pickers">
+                        <label><span data-i18n="appearance.primary">Primary</span><input id="siteCustomPrimary" type="color" value="#2563eb"></label>
+                        <label><span data-i18n="appearance.secondary">Secondary</span><input id="siteCustomSecondary" type="color" value="#7c3aed"></label>
+                        <label><span data-i18n="appearance.background">Background</span><input id="siteCustomBackground" type="color" value="#f5f8ff"></label>
+                    </div>
+                    <button type="button" id="siteCustomThemeReset" class="site-custom-theme-reset" data-i18n="appearance.resetCustom">Reset custom colors</button>
+                    <p class="site-custom-theme-note" data-i18n="appearance.customNote">Text, panels, and borders are adjusted automatically for readability.</p>
                 </div>
             </section>
         </div>
@@ -1457,7 +1661,7 @@
         <button type="button" class="settings-tab active" data-school-settings-tab="schools" role="tab" aria-selected="true" aria-controls="sharedSettingsPanel-schools" data-i18n="schoolSettings.schools">Schools</button>
         <button type="button" class="settings-tab" data-school-settings-tab="schedule" role="tab" aria-selected="false" aria-controls="sharedSettingsPanel-schedule" tabindex="-1" data-i18n="schoolSettings.schedule">Schedule</button>
         <button type="button" class="settings-tab" data-school-settings-tab="periods" role="tab" aria-selected="false" aria-controls="sharedSettingsPanel-periods" tabindex="-1" data-i18n="schoolSettings.periods">Periods</button>
-    <button type="button" id="sharedSettingsTab-textbooks" class="settings-tab" role="tab" aria-selected="false" aria-controls="settingsPanel-textbooks" tabindex="-1" data-i18n="tracker.textbooks">Textbooks</button></div>
+    <button type="button" id="sharedSettingsTab-textbooks" class="settings-tab" role="tab" aria-selected="false" aria-controls="settingsPanel-textbooks" tabindex="-1">Textbooks</button></div>
 
     <div class="settings-scroll">
         <section id="sharedSettingsPanel-schools" class="settings-panel active" data-school-settings-panel="schools" role="tabpanel">
@@ -1499,16 +1703,24 @@
                 <h3 data-i18n="schoolSettings.periodsTitle">Periods &amp; Bell Times</h3>
                 <label class="form-group"><span data-i18n="schoolSettings.editPeriods">Edit Periods For</span><select data-school-select></select></label>
                 <h3 class="settings-subheading" data-i18n="schoolSettings.periods">Periods</h3><div data-regular-periods></div>
-                <h3 class="settings-subheading" data-i18n="schoolSettings.irregular">Irregular Schedule</h3>
-                <label class="switch-row"><input type="checkbox" data-irregular-enabled><span data-i18n="schoolSettings.irregularEnable">Enable alternate period times</span></label>
-                <div class="mode-panel" data-irregular-panel hidden><div data-irregular-periods></div></div>
                 <h3 class="settings-subheading" data-i18n="schoolSettings.lunch">Lunch / 給食</h3>
                 <label class="switch-row"><input type="checkbox" data-lunch-enabled><span data-i18n="schoolSettings.lunchEnable">Enable lunch period</span></label>
                 <div data-lunch-panel hidden>
                     <label class="form-group"><span data-i18n="schoolSettings.lunchMode">Lunch Mode</span><select data-lunch-mode><option value="class" data-i18n="schoolSettings.lunchClass">Use selected class</option><option value="general" data-i18n="schoolSettings.lunchGeneral">General lunch</option></select></label>
                     <div class="paired-fields"><label class="form-group"><span data-i18n="schoolSettings.start">Start</span><input type="time" data-lunch-start></label><label class="form-group"><span data-i18n="schoolSettings.duration">Duration</span><input type="number" min="1" max="180" step="1" data-lunch-duration></label></div>
-                    <div data-irregular-lunch-section hidden><h3 class="settings-subheading" data-i18n="schoolSettings.irregularLunch">Irregular Lunch</h3><label class="switch-row"><input type="checkbox" data-irregular-lunch-enabled><span data-i18n="schoolSettings.irregularLunchEnable">Use alternate lunch times</span></label><div class="paired-fields mode-panel irregular-lunch-panel" data-irregular-lunch-panel hidden><label class="form-group"><span data-i18n="schoolSettings.start">Start</span><input type="time" data-irregular-lunch-start></label><label class="form-group"><span data-i18n="schoolSettings.duration">Duration</span><input type="number" min="1" max="180" step="1" data-irregular-lunch-duration></label></div></div>
                     <label class="form-group" data-general-lunch-title-field><span data-i18n="schoolSettings.generalLunchTitle">General Lunch Title</span><input type="text" maxlength="200" data-general-lunch-title></label>
+                </div>
+                <div class="alternate-heading-row settings-subheading"><h3 data-i18n="schoolSettings.alternateSchedules">Alternate Schedules</h3><button type="button" class="settings-btn compact-btn" data-add-alternate data-i18n="schoolSettings.addAlternate">＋ Add Alternate Schedule</button></div>
+                <p class="helper-text" data-alternate-empty data-i18n="schoolSettings.noAlternates">No alternate schedules added. The main periods above will be used.</p>
+                <div data-alternate-editor hidden>
+                    <div class="alternate-schedule-header"><button type="button" class="month-nav-btn" data-previous-alternate aria-label="Previous alternate schedule" data-i18n-aria-label="schoolSettings.previousAlternate">←</button><div><div class="saved-dates-title" data-alternate-title></div><div class="schedule-month-label" data-alternate-count></div></div><button type="button" class="month-nav-btn" data-next-alternate aria-label="Next alternate schedule" data-i18n-aria-label="schoolSettings.nextAlternate">→</button></div>
+                    <div class="mode-panel alternate-schedule-panel">
+                        <div class="alternate-name-row"><label class="form-group"><span data-i18n="schoolSettings.scheduleName">Schedule Name</span><input type="text" maxlength="100" data-alternate-name></label><button type="button" class="settings-btn danger-btn compact-btn" data-delete-alternate data-i18n="schoolSettings.deleteAlternate">− Delete</button></div>
+                        <div data-alternate-periods></div>
+                        <h3 class="settings-subheading" data-i18n="schoolSettings.alternateLunch">Alternate Lunch</h3>
+                        <label class="switch-row"><input type="checkbox" data-alternate-lunch-enabled><span data-i18n="schoolSettings.alternateLunchEnable">Use alternate lunch time for this schedule</span></label>
+                        <div class="paired-fields mode-panel irregular-lunch-panel" data-alternate-lunch-panel hidden><label class="form-group"><span data-i18n="schoolSettings.start">Start</span><input type="time" data-alternate-lunch-start></label><label class="form-group"><span data-i18n="schoolSettings.duration">Duration</span><input type="number" min="1" max="180" step="1" data-alternate-lunch-duration></label></div>
+                    </div>
                 </div>
                 <p class="settings-status" role="status" aria-live="polite" data-settings-status data-i18n="schoolSettings.saved">Changes save automatically to this browser.</p>
             </div>
@@ -1528,6 +1740,11 @@
 
 
 
+
+
+
+
+
         </section>
     </div>
 
@@ -1539,6 +1756,7 @@
             const date = d => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) &&
                 !isNaN(Date.parse(d)) && new Date(d + "T12:00:00Z").toISOString().slice(0,10) === d;
             const time = t => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
+            const scheduleMode = mode => ["regular","irregular"].includes(mode) || (typeof mode === "string" && /^alternate:[^:\s]+(?::[^:\s]+)?$/.test(mode));
             if (!object(value) || value.version !== 1 || typeof value.timeZone !== "string" ||
                 !Array.isArray(value.events) || !object(value.preferences)) return false;
             try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }); } catch { return false; }
@@ -1546,22 +1764,24 @@
             if (!["month","week","agenda","custom"].includes(p.view) ||
                 !Array.isArray(p.days) || !p.days.length || p.days.length > 7 ||
                 new Set(p.days).size !== p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6) ||
-                !["regular","irregular","off"].includes(p.ghostMode) || typeof p.working !== "boolean" ||
+                !(p.ghostMode === "off" || scheduleMode(p.ghostMode)) || typeof p.working !== "boolean" ||
                 !["school","category"].every(k => typeof p[k] === "string")) return false;
             if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
                 p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
-            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
+            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other","Holiday"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
             if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
             if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
             const ids = new Set();
             return value.events.every(e => {
                 if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
                     !e.id || /[\r\n]/.test(e.id) || ids.has(e.id) || !e.title.trim() || !date(e.date) ||
-                    !time(e.start) || !time(e.end) || e.end <= e.start ||
-                    !["regular","irregular","custom"].includes(e.mode) ||
+                    !time(e.start) || !time(e.end) || (e.endDate !== undefined && !date(e.endDate)) || (e.endDate || e.date) < e.date || ((e.endDate || e.date) === e.date && e.end <= e.start) ||
+                    !(e.mode === "custom" || scheduleMode(e.mode)) ||
                     (e.mode === "custom" ? e.period !== null : !Number.isInteger(e.period) || e.period < 0) ||
-                    !["Class","Lunch","Meeting","Other"].includes(e.category) ||
+                    !["Class","Lunch","Meeting","Other","Holiday"].includes(e.category) ||
                     !Number.isFinite(Date.parse(e.created)) || !Number.isFinite(Date.parse(e.modified))) return false;
+                if (e.allDay !== undefined && typeof e.allDay !== "boolean") return false;
+                if (e.allDay && (e.mode !== "custom" || e.start !== "00:00" || e.end !== "23:59")) return false;
                 ids.add(e.id); return true;
             });
         };
@@ -1570,8 +1790,11 @@
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
             const SITE_LANGUAGE_KEY = "teacherTools.siteLanguage.v1";
-            const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark", "custom"];
             const ALLOWED_LANGUAGES = ["en", "ja"];
+            const DEFAULT_CUSTOM_COLORS = Object.freeze({ primary: "#2563eb", secondary: "#7c3aed", background: "#f5f8ff" });
+            const HEX_COLOR = /^#[0-9a-f]{6}$/i;
+            let rememberedCustomColors = { ...DEFAULT_CUSTOM_COLORS };
             const SHARED_TRANSLATIONS = {
                 en: {
                     "nav.homeAria": "Teacher Tools home",
@@ -1656,7 +1879,13 @@
                     "theme.oceanBlue": "Ocean Blue",
                     "theme.colorPop": "Color Pop",
                     "theme.prettyInPink": "Pretty in Pink",
-                    "theme.trueDark": "True Dark"
+                    "theme.trueDark": "True Dark",
+                    "theme.custom": "Custom",
+                    "appearance.primary": "Primary",
+                    "appearance.secondary": "Secondary",
+                    "appearance.background": "Background",
+                    "appearance.resetCustom": "Reset custom colors",
+                    "appearance.customNote": "Text, panels, and borders are adjusted automatically for readability."
                 },
                 ja: {
                     "nav.homeAria": "Teacher Tools ホーム",
@@ -1741,7 +1970,13 @@
                     "theme.oceanBlue": "オーシャンブルー",
                     "theme.colorPop": "カラーポップ",
                     "theme.prettyInPink": "プリティ・イン・ピンク",
-                    "theme.trueDark": "トゥルーダーク"
+                    "theme.trueDark": "トゥルーダーク",
+                    "theme.custom": "カスタム",
+                    "appearance.primary": "メイン",
+                    "appearance.secondary": "サブ",
+                    "appearance.background": "背景",
+                    "appearance.resetCustom": "カスタム色をリセット",
+                    "appearance.customNote": "文字、パネル、枠線は読みやすい色に自動調整されます。"
                 }
             };
             const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
@@ -1760,8 +1995,8 @@
                     label: "Site appearance",
                     labelKey: "record.appearance",
                     storageKey: SITE_PREFERENCES_KEY,
-                    validate: value => isPlainObject(value) &&
-                        value.version === 1 && ALLOWED_THEMES.includes(value.theme)
+                    validate: value => isPlainObject(value) && value.version === 1 && ALLOWED_THEMES.includes(value.theme) &&
+                        (value.theme !== "custom" || validCustomColors(value.customColors))
                 },
                 {
                     id: "language",
@@ -2263,19 +2498,100 @@
                 return ALLOWED_THEMES.includes(value) ? value : "ocean-blue";
             }
 
+            function validCustomColors(value) {
+                return isPlainObject(value) && ["primary", "secondary", "background"].every(key => HEX_COLOR.test(value[key] || ""));
+            }
+
+            function normalizeCustomColors(value) {
+                return Object.fromEntries(Object.entries(DEFAULT_CUSTOM_COLORS).map(([key, fallback]) => [key, HEX_COLOR.test(value?.[key] || "") ? value[key].toLowerCase() : fallback]));
+            }
+
+            function colorRgb(hex) {
+                const value = hex.slice(1);
+                return [0, 2, 4].map(index => parseInt(value.slice(index, index + 2), 16));
+            }
+
+            function colorHex(values) {
+                return `#${values.map(value => Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, "0")).join("")}`;
+            }
+
+            function mixColor(first, second, amount) {
+                const a = colorRgb(first), b = colorRgb(second);
+                return colorHex(a.map((value, index) => value + (b[index] - value) * amount));
+            }
+
+            function colorLuminance(hex) {
+                const channels = colorRgb(hex).map(value => { const channel = value / 255; return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4; });
+                return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+            }
+
+            function contrastText(background) {
+                const luminance = colorLuminance(background);
+                const whiteContrast = 1.05 / (luminance + 0.05);
+                const darkContrast = (luminance + 0.05) / 0.05;
+                return whiteContrast >= darkContrast ? "#ffffff" : "#111827";
+            }
+
+            function customThemeTokens(value) {
+                const colors = normalizeCustomColors(value), dark = colorLuminance(colors.background) < 0.3;
+                const surface = mixColor(colors.background, dark ? "#ffffff" : "#ffffff", dark ? 0.075 : 0.88);
+                const panel = mixColor(colors.background, surface, dark ? 0.42 : 0.68);
+                const text = dark ? "#f3f6fa" : "#24282d";
+                return { colors, dark, tokens: {
+                    "--accent": colors.primary,
+                    "--accent-secondary": colors.secondary,
+                    "--accent-soft": mixColor(colors.primary, surface, dark ? 0.78 : 0.84),
+                    "--accent-border": mixColor(colors.primary, surface, dark ? 0.52 : 0.58),
+                    "--focus-ring": `${colors.primary}3d`,
+                    "--accent-contrast": contrastText(colors.primary),
+                    "--text": text,
+                    "--muted": mixColor(text, surface, dark ? 0.48 : 0.42),
+                    "--line": mixColor(text, surface, dark ? 0.79 : 0.86),
+                    "--bg": colors.background,
+                    "--surface": surface,
+                    "--panel": panel,
+                    "--danger": dark ? "#ff7676" : "#d93025",
+                    "--warning-bg": dark ? mixColor("#332b12", surface, 0.12) : "#fff8e1",
+                    "--warning-border": dark ? "#8a7125" : "#f5d67b",
+                    "--warning-text": dark ? "#ffe08a" : "#6f5200",
+                    "--tooltip-text": contrastText(colors.primary),
+                    "--custom-color-scheme": dark ? "dark" : "light"
+                } };
+            }
+
+            const CUSTOM_TOKEN_NAMES = Object.keys(customThemeTokens(DEFAULT_CUSTOM_COLORS).tokens);
+
+            function setCustomThemeControls(colors, visible) {
+                const normalized = normalizeCustomColors(colors);
+                const controls = document.getElementById("siteCustomThemeControls");
+                if (controls) controls.hidden = !visible;
+                for (const [id, key] of [["siteCustomPrimary", "primary"], ["siteCustomSecondary", "secondary"], ["siteCustomBackground", "background"]]) {
+                    const input = document.getElementById(id); if (input && input.value.toLowerCase() !== normalized[key]) input.value = normalized[key];
+                }
+                const option = document.querySelector('[data-theme-option="custom"]');
+                option?.style.setProperty("--custom-preview-primary", normalized.primary);
+                option?.style.setProperty("--custom-preview-secondary", normalized.secondary);
+                option?.style.setProperty("--custom-preview-background", normalized.background);
+            }
+
             function themeFromStoredValue(value) {
                 if (!value) return null;
 
                 try {
                     const saved = JSON.parse(value);
-                    return saved && ALLOWED_THEMES.includes(saved.theme) ? saved.theme : null;
+                    return saved && ALLOWED_THEMES.includes(saved.theme) ? { theme: saved.theme, customColors: normalizeCustomColors(saved.customColors) } : null;
                 } catch (error) {
                     return null;
                 }
             }
 
-            function applyGlobalTheme(requestedTheme, persist = true) {
+            function applyGlobalTheme(requestedTheme, persist = true, requestedCustomColors = null) {
                 const theme = normalizeTheme(requestedTheme);
+                if (requestedCustomColors) rememberedCustomColors = normalizeCustomColors(requestedCustomColors);
+                const custom = customThemeTokens(rememberedCustomColors);
+
+                CUSTOM_TOKEN_NAMES.forEach(name => document.documentElement.style.removeProperty(name));
+                if (theme === "custom") Object.entries(custom.tokens).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
 
                 if (theme === "ocean-blue") {
                     document.documentElement.removeAttribute("data-theme");
@@ -2292,8 +2608,10 @@
                     if (option) option.classList.toggle("selected", selected);
                 });
 
+                setCustomThemeControls(custom.colors, theme === "custom");
+
                 if (persist) {
-                    storageSet(SITE_PREFERENCES_KEY, JSON.stringify({ version: 1, theme }));
+                    storageSet(SITE_PREFERENCES_KEY, JSON.stringify({ version: 1, theme, customColors: custom.colors }));
                 }
             }
 
@@ -2483,6 +2801,8 @@
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const themePanel = document.getElementById("siteThemePanel");
                 const themeCloseButton = document.getElementById("siteThemeCloseButton");
+                const customColorInputs = ["siteCustomPrimary", "siteCustomSecondary", "siteCustomBackground"].map(id => document.getElementById(id)).filter(Boolean);
+                const customColorsFromInputs = () => normalizeCustomColors({ primary: document.getElementById("siteCustomPrimary")?.value, secondary: document.getElementById("siteCustomSecondary")?.value, background: document.getElementById("siteCustomBackground")?.value });
 
                 function setToolsMenu(open) {
                     if (!toolsMenu) return;
@@ -2613,9 +2933,12 @@
 
                 document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
                     input.addEventListener("change", () => {
-                        if (input.checked) applyGlobalTheme(input.value);
+                        if (input.checked) applyGlobalTheme(input.value, true, input.value === "custom" ? customColorsFromInputs() : null);
                     });
                 });
+
+                customColorInputs.forEach(input => input.addEventListener("input", () => applyGlobalTheme("custom", true, customColorsFromInputs())));
+                document.getElementById("siteCustomThemeReset")?.addEventListener("click", () => applyGlobalTheme("custom", true, DEFAULT_CUSTOM_COLORS));
 
                 document.addEventListener("click", closeSiteOverlays);
             }
@@ -2722,7 +3045,8 @@
 
             window.addEventListener("storage", event => {
                 if (event.key === SITE_PREFERENCES_KEY) {
-                    applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                    const saved = themeFromStoredValue(event.newValue);
+                    applyGlobalTheme(saved?.theme || "ocean-blue", false, saved?.customColors);
                 }
                 if (event.key === SITE_LANGUAGE_KEY) {
                     applyGlobalLanguage(languageFromStoredValue(event.newValue) || "en", false);
@@ -2740,12 +3064,8 @@
                 translate
             });
 
-            applyGlobalTheme(
-                themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY)) ||
-                document.documentElement.getAttribute("data-theme") ||
-                "ocean-blue",
-                false
-            );
+            const initialTheme = themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY));
+            applyGlobalTheme(initialTheme?.theme || document.documentElement.getAttribute("data-theme") || "ocean-blue", false, initialTheme?.customColors);
             applyGlobalLanguage(
                 languageFromStoredValue(storageGet(SITE_LANGUAGE_KEY)) ||
                 document.documentElement.lang ||
@@ -8496,7 +8816,7 @@
             }
         ];
         /* CLASS-TRACKER:TEXTBOOK-PRESETS:END */
-        const fallbackSchools = [{id:"school-1",name:"My School",location:"",calendarColor:"#43877d",workingHours:{start:"",end:""},classes:["Class 6-1"],teachersByClass:{},studentCounts:{},periods:[],irregular:{enabled:false,periods:[],lunch:{enabled:false,start:"12:00",duration:45}},lunch:{enabled:false,mode:"general",start:"12:00",duration:45,generalTitle:"Lunch"}}];
+        const fallbackSchools = [{id:"school-1",name:"My School",location:"",calendarColor:"#43877d",workingHours:{start:"",end:""},classes:["Class 6-1"],teachersByClass:{},studentCounts:{},periods:[],alternateSchedules:[],irregular:{enabled:false,periods:[],lunch:{enabled:false,start:"12:00",duration:45}},lunch:{enabled:false,mode:"general",start:"12:00",duration:45,generalTitle:"Lunch"}}];
         const blankTracker = () => ({version:1,templates:clone(TEXTBOOK_PRESETS),assignments:{},progress:{},points:{},pointAudit:{},expanded:{},preferences:{selectedSchoolId:"",selectedClass:""}});
         const get = key => { try { return localStorage.getItem(key); } catch(e) { return null; } };
         const set = (key,value) => { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch(e) { return false; } };
@@ -8620,7 +8940,7 @@
         }
         function renderTrackerDates(){const school=sharedSettingsSchool();if(!school)return;const all=[...(scheduler.schedule[school.id]||[])].sort(),shown=all.filter(d=>d.startsWith(trackerScheduleMonth));document.getElementById("trackerMonthLabel").textContent=new Intl.DateTimeFormat("en",{month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(trackerScheduleMonth+"-01T12:00:00Z"));document.getElementById("trackerTeachingCount").textContent=shown.length+" this month • "+all.length+" total saved";const root=document.getElementById("trackerTeachingDates");root.replaceChildren();shown.forEach(date=>{const row=document.createElement("div");row.className="schedule-date-row";const label=document.createElement("span");label.textContent=new Intl.DateTimeFormat("en",{weekday:"short",year:"numeric",month:"short",day:"numeric",timeZone:"UTC"}).format(new Date(date+"T12:00:00Z"));const remove=document.createElement("button");remove.type="button";remove.className="remove-class-button";remove.textContent="×";remove.setAttribute("aria-label","Remove teaching date "+date);remove.onclick=()=>{scheduler.schedule[school.id]=all.filter(d=>d!==date);saveSharedSchools();};row.append(label,remove);root.append(row);});if(!shown.length){const empty=document.createElement("div");empty.className="settings-help";empty.textContent="No saved dates in this month.";root.append(empty);}}
         function editorField(label,type,value,onchange){const wrap=document.createElement("label");wrap.className="field";const text=document.createElement("span");text.className="field-label";text.textContent=label;const input=document.createElement("input");input.type=type;input.value=value;if(type==="number"){input.min="1";input.max="180";input.step="1";}input.addEventListener("change",()=>onchange(input));wrap.append(text,input);return wrap;}
-        function periodTable(periods){const table=document.createElement("table");table.className="period-table";const head=document.createElement("tr");["Period","Start","Duration"].forEach(t=>{const th=document.createElement("th");th.textContent=t;head.append(th);});table.append(head);periods.forEach(period=>{const row=document.createElement("tr"),number=document.createElement("td"),start=document.createElement("td"),duration=document.createElement("td");number.textContent=period.number;const startInput=document.createElement("input");startInput.type="time";startInput.value=period.start;startInput.onchange=()=>{if(startInput.value){period.start=startInput.value;saveSharedSchools();}};const durationInput=document.createElement("input");durationInput.type="number";durationInput.min="1";durationInput.max="180";durationInput.value=period.duration;durationInput.onchange=()=>{const n=Number(durationInput.value);if(Number.isInteger(n)&&n>0&&n<=180){period.duration=n;saveSharedSchools();}else durationInput.value=period.duration;};start.append(startInput);duration.append(durationInput);row.append(number,start,duration);table.append(row);});return table;}
+        function periodTable(periods){const table=document.createElement("table");table.className="period-table";const head=document.createElement("tr");["Period","Start","Duration"].forEach(t=>{const th=document.createElement("th");th.textContent=t;head.append(th);});table.append(head);periods.forEach(period=>{const row=document.createElement("tr"),number=document.createElement("td"),start=document.createElement("td"),duration=document.createElement("td");number.textContent=period.number;const startInput=document.createElement("input");startInput.type="time";startInput.value=period.start;startInput.onchange=()=>{period.start=startInput.value;saveSharedSchools();};const durationInput=document.createElement("input");durationInput.type="number";durationInput.min="1";durationInput.max="180";durationInput.value=period.duration;durationInput.onchange=()=>{const n=Number(durationInput.value);if(Number.isInteger(n)&&n>0&&n<=180){period.duration=n;saveSharedSchools();}else durationInput.value=period.duration;};start.append(startInput);duration.append(durationInput);row.append(number,start,duration);table.append(row);});return table;}
         function renderTrackerPeriods(){const school=sharedSettingsSchool(),root=document.getElementById("trackerPeriodsEditor");if(!school)return;root.replaceChildren();const heading=t=>{const h=document.createElement("h3");h.className="settings-subheading";h.textContent=t;root.append(h);};heading("Periods");root.append(periodTable(school.periods));heading("Irregular Schedule");const toggle=document.createElement("label");toggle.className="switch-row";const check=document.createElement("input");check.type="checkbox";check.checked=!!school.irregular.enabled;const copy=document.createElement("span");copy.textContent="Enable alternate period times";check.onchange=()=>{school.irregular.enabled=check.checked;if(check.checked&&!school.irregular.periods.length)school.irregular.periods=clone(school.periods);saveSharedSchools();};toggle.append(check,copy);root.append(toggle);if(school.irregular.enabled)root.append(periodTable(school.irregular.periods));heading("Lunch / 給食");const lunchToggle=document.createElement("label");lunchToggle.className="switch-row";const lunchCheck=document.createElement("input");lunchCheck.type="checkbox";lunchCheck.checked=!!school.lunch.enabled;const lunchCopy=document.createElement("span");lunchCopy.textContent="Enable lunch period";lunchCheck.onchange=()=>{school.lunch.enabled=lunchCheck.checked;saveSharedSchools();};lunchToggle.append(lunchCheck,lunchCopy);root.append(lunchToggle);if(!school.lunch.enabled)return;const mode=document.createElement("label");mode.className="field";const modeLabel=document.createElement("span");modeLabel.className="field-label";modeLabel.textContent="Lunch Mode";const modeSelect=document.createElement("select");modeSelect.append(new Option("Use selected class","class"),new Option("General lunch","general"));modeSelect.value=school.lunch.mode||"general";modeSelect.onchange=()=>{school.lunch.mode=modeSelect.value;saveSharedSchools();};mode.append(modeLabel,modeSelect);root.append(mode);const lunchFields=document.createElement("div");lunchFields.className="lunch-fields";lunchFields.append(editorField("Start","time",school.lunch.start,i=>{if(i.value){school.lunch.start=i.value;saveSharedSchools();}}),editorField("Duration","number",school.lunch.duration,i=>{const n=Number(i.value);if(Number.isInteger(n)&&n>0&&n<=180){school.lunch.duration=n;saveSharedSchools();}}));root.append(lunchFields);if(school.irregular.enabled){heading("Irregular Lunch");const altToggle=document.createElement("label");altToggle.className="switch-row";const altCheck=document.createElement("input");altCheck.type="checkbox";altCheck.checked=!!school.irregular.lunch.enabled;const altCopy=document.createElement("span");altCopy.textContent="Use alternate lunch times";altCheck.onchange=()=>{school.irregular.lunch.enabled=altCheck.checked;saveSharedSchools();};altToggle.append(altCheck,altCopy);root.append(altToggle);if(school.irregular.lunch.enabled){const altFields=document.createElement("div");altFields.className="lunch-fields";altFields.append(editorField("Start","time",school.irregular.lunch.start,i=>{if(i.value){school.irregular.lunch.start=i.value;saveSharedSchools();}}),editorField("Duration","number",school.irregular.lunch.duration,i=>{const n=Number(i.value);if(Number.isInteger(n)&&n>0&&n<=180){school.irregular.lunch.duration=n;saveSharedSchools();}}));root.append(altFields);}}if(school.lunch.mode==="general")root.append(editorField("General Lunch Title","text",school.lunch.generalTitle||"Lunch",i=>{school.lunch.generalTitle=i.value.trim()||"Lunch";saveSharedSchools();}));}
         function renderSchoolEditor(){
             const root=document.getElementById("schoolEditor");
@@ -8881,7 +9201,7 @@
         document.getElementById("trackerAddTeachingDate").addEventListener("click",()=>{const s=sharedSettingsSchool(),date=document.getElementById("trackerTeachingDate").value;if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(date))return;scheduler.schedule[s.id]=[...new Set([...(scheduler.schedule[s.id]||[]),date])].sort();trackerScheduleMonth=date.slice(0,7);saveSharedSchools();});
         document.getElementById("trackerPreviousMonth").addEventListener("click",()=>{const d=new Date(trackerScheduleMonth+"-01T12:00:00Z");d.setUTCMonth(d.getUTCMonth()-1);trackerScheduleMonth=d.toISOString().slice(0,7);renderTrackerDates();});
         document.getElementById("trackerNextMonth").addEventListener("click",()=>{const d=new Date(trackerScheduleMonth+"-01T12:00:00Z");d.setUTCMonth(d.getUTCMonth()+1);trackerScheduleMonth=d.toISOString().slice(0,7);renderTrackerDates();});
-        document.getElementById("addSchoolButton").addEventListener("click",()=>{ const id=makeId("school"); scheduler.schools.push({id,name:"New School",location:"",calendarColor:"#43877d",workingHours:{start:"",end:""},classes:[],teachersByClass:{},studentCounts:{},periods:[],irregular:{enabled:false,periods:[],lunch:{enabled:false,start:"12:00",duration:45}},lunch:{enabled:false,mode:"general",start:"12:00",duration:45,generalTitle:"Lunch"}}); scheduler.schedule[id]=[]; saveSharedSchools("New school added."); refreshSettingsSchoolSelect(id);refreshSharedSettings(); });
+        document.getElementById("addSchoolButton").addEventListener("click",()=>{ const id=makeId("school"); scheduler.schools.push({id,name:"New School",location:"",calendarColor:"#43877d",workingHours:{start:"",end:""},classes:[],teachersByClass:{},studentCounts:{},periods:[],alternateSchedules:[],irregular:{enabled:false,periods:[],lunch:{enabled:false,start:"12:00",duration:45}},lunch:{enabled:false,mode:"general",start:"12:00",duration:45,generalTitle:"Lunch"}}); scheduler.schedule[id]=[]; saveSharedSchools("New school added."); refreshSettingsSchoolSelect(id);refreshSharedSettings(); });
         document.getElementById("deleteSchoolButton").addEventListener("click",()=>{ if(scheduler.schools.length<=1) return; const select=document.getElementById("settingsSchoolSelect"), school=scheduler.schools.find(s=>s.id===select.value); if(!school||!confirm("Delete "+school.name+" from both Class Tracker and Scheduler?")) return; scheduler.schools=scheduler.schools.filter(item=>item.id!==school.id); delete scheduler.schedule[school.id]; saveSharedSchools("School deleted."); refreshSettingsSchoolSelect(); });
         let editingTemplateId=null;
         const textbookStatus=message=>{ document.getElementById("templateStatus").textContent=message; };
@@ -8958,24 +9278,129 @@
 <!-- TEACHER-TOOLS:HOOTIE:END -->
 <!-- TEACHER-TOOLS:SHARED-SCHOOL-SETTINGS-SCRIPT:START -->
 <script>
+/* Canonical shared school-data compatibility model. Workbench source only. */
+(function (root, factory) {
+    const api = factory();
+    if (typeof module === "object" && module.exports) module.exports = api;
+    if (root) root.TeacherToolsSchoolSettingsModel = api;
+})(typeof globalThis !== "undefined" ? globalThis : this, () => {
+    "use strict";
+
+    const clone = value => JSON.parse(JSON.stringify(value));
+    const validId = value => typeof value === "string" && value.trim();
+    const validName = value => typeof value === "string" && value.trim();
+
+    const normalizePeriods = value => Array.isArray(value) ? value.map((period, index) => ({
+        ...(period && typeof period === "object" ? period : {}),
+        number: Number.isInteger(Number(period?.number)) ? Number(period.number) : index + 1,
+        start: typeof period?.start === "string" ? period.start : "",
+        duration: Number(period?.duration) > 0 ? Number(period.duration) : 45
+    })) : [];
+
+    const normalizeLunch = (value, fallback = {}) => ({
+        ...(value && typeof value === "object" ? value : {}),
+        enabled: !!value?.enabled,
+        start: typeof value?.start === "string" ? value.start : (typeof fallback.start === "string" ? fallback.start : "12:00"),
+        duration: Number(value?.duration) > 0 ? Number(value.duration) : (Number(fallback.duration) > 0 ? Number(fallback.duration) : 45)
+    });
+
+    const normalizeAlternate = (value, index, regularLunch = {}) => ({
+        ...(value && typeof value === "object" ? value : {}),
+        id: validId(value?.id) ? value.id.trim() : `alternate-${index + 1}`,
+        name: validName(value?.name) ? value.name.trim() : `Alternate Schedule ${index + 1}`,
+        periods: normalizePeriods(value?.periods),
+        lunch: normalizeLunch(value?.lunch, regularLunch)
+    });
+
+    function migrateSchool(value) {
+        const school = value && typeof value === "object" ? clone(value) : {};
+        const regularLunch = school.lunch || {};
+        let alternateSchedules;
+        if (Array.isArray(school.alternateSchedules)) {
+            alternateSchedules = school.alternateSchedules.map((item, index) => normalizeAlternate(item, index, regularLunch));
+        } else if (school.irregular?.enabled) {
+            alternateSchedules = [normalizeAlternate({
+                id: "alternate-legacy",
+                name: school.irregular.name,
+                periods: school.irregular.periods,
+                lunch: school.irregular.lunch
+            }, 0, regularLunch)];
+        } else {
+            alternateSchedules = [];
+        }
+
+        const first = alternateSchedules[0];
+        school.periods = normalizePeriods(school.periods);
+        school.alternateSchedules = alternateSchedules;
+        school.irregular = first ? {
+            ...(school.irregular && typeof school.irregular === "object" ? school.irregular : {}),
+            enabled: true,
+            periods: clone(first.periods),
+            lunch: clone(first.lunch)
+        } : {
+            ...(school.irregular && typeof school.irregular === "object" ? school.irregular : {}),
+            enabled: false,
+            periods: normalizePeriods(school.irregular?.periods),
+            lunch: normalizeLunch(school.irregular?.lunch, regularLunch)
+        };
+        return school;
+    }
+
+    // Temporary bridge used while the visible editor still changes `irregular`.
+    // It keeps the first alternate compatible without discarding additional entries.
+    function reconcileLegacyEditor(value) {
+        const school = value && typeof value === "object" ? clone(value) : {};
+        const existing = Array.isArray(school.alternateSchedules) ? school.alternateSchedules : [];
+        if (!school.irregular?.enabled) {
+            school.alternateSchedules = [];
+            return migrateSchool(school);
+        }
+        const first = normalizeAlternate({
+            ...(existing[0] || {}),
+            periods: school.irregular.periods,
+            lunch: school.irregular.lunch
+        }, 0, school.lunch || {});
+        school.alternateSchedules = [first, ...existing.slice(1).map((item, index) => normalizeAlternate(item, index + 1, school.lunch || {}))];
+        return migrateSchool(school);
+    }
+
+    function migrateRecord(value) {
+        const record = value && typeof value === "object" ? clone(value) : {};
+        record.version = Number(record.version) || 3;
+        record.schools = Array.isArray(record.schools) ? record.schools.map(migrateSchool) : [];
+        record.schedule = record.schedule && typeof record.schedule === "object" && !Array.isArray(record.schedule) ? record.schedule : {};
+        record.preferences = record.preferences && typeof record.preferences === "object" && !Array.isArray(record.preferences) ? record.preferences : {};
+        return record;
+    }
+
+    return Object.freeze({ normalizePeriods, normalizeAlternate, migrateSchool, reconcileLegacyEditor, migrateRecord });
+});
+
 /* Canonical shared Schools / Schedule / Periods controller. Workbench source only. */
 (() => {
     "use strict";
     const translations = {
         en: {
-            "schoolSettings.aria":"Shared school settings","schoolSettings.schools":"Schools","schoolSettings.schedule":"Schedule","schoolSettings.periods":"Periods","schoolSettings.schoolInfo":"School Information","schoolSettings.editSchool":"Edit School","schoolSettings.addSchool":"＋ Add School","schoolSettings.deleteSchool":"− Delete School","schoolSettings.schoolName":"School Name","schoolSettings.location":"Location (optional)","schoolSettings.classes":"Classes","schoolSettings.sort":"Sort A–Z","schoolSettings.classPlaceholder":"e.g. ４−１","schoolSettings.newClassAria":"New class name","schoolSettings.addClass":"＋ Add Class","schoolSettings.editSchedule":"Edit Schedule For","schoolSettings.workingHours":"Working Hours","schoolSettings.start":"Start","schoolSettings.end":"End","schoolSettings.color":"Color","schoolSettings.workingHelp":"Working hours and color are shared across Teacher Tools.","schoolSettings.teachingDates":"Teaching Dates","schoolSettings.addDate":"Add Date","schoolSettings.addDateButton":"＋ Add Date","schoolSettings.previousMonth":"Previous saved dates month","schoolSettings.nextMonth":"Next saved dates month","schoolSettings.savedDates":"Saved Dates","schoolSettings.periodsTitle":"Periods & Bell Times","schoolSettings.editPeriods":"Edit Periods For","schoolSettings.irregular":"Irregular Schedule","schoolSettings.irregularEnable":"Enable alternate period times","schoolSettings.lunch":"Lunch / 給食","schoolSettings.lunchEnable":"Enable lunch period","schoolSettings.lunchMode":"Lunch Mode","schoolSettings.lunchClass":"Use selected class","schoolSettings.lunchGeneral":"General lunch","schoolSettings.duration":"Duration","schoolSettings.irregularLunch":"Irregular Lunch","schoolSettings.irregularLunchEnable":"Use alternate lunch times","schoolSettings.generalLunchTitle":"General Lunch Title","schoolSettings.saved":"Changes save automatically to this browser.","schoolSettings.period":"Period","schoolSettings.name":"Name","schoolSettings.className":"Class name","schoolSettings.teacher":"Teacher","schoolSettings.students":"Students","schoolSettings.moveUp":"Move {name} up","schoolSettings.moveDown":"Move {name} down","schoolSettings.teacherFor":"Teacher for {name}","schoolSettings.studentsFor":"Students for {name}","schoolSettings.removeClass":"Remove {name}","schoolSettings.noClasses":"No classes added yet.","schoolSettings.monthCount":"{monthCount} this month • {totalCount} total saved","schoolSettings.removeDate":"Remove teaching date {date}","schoolSettings.noDates":"No saved dates in this month.","schoolSettings.classUpdated":"Class name updated.","schoolSettings.classRemoved":"Class removed.","schoolSettings.newSchool":"New School","schoolSettings.schoolAdded":"New school added.","schoolSettings.deleteConfirm":"Delete {name} and its saved teaching dates?","schoolSettings.schoolDeleted":"School deleted.","schoolSettings.classAdded":"Class added.","schoolSettings.classesSorted":"Classes sorted."
+            "schoolSettings.defaultAlternateName":"Alternate Schedule {number}",
+            "schoolSettings.aria":"Shared school settings","schoolSettings.schools":"Schools","schoolSettings.schedule":"Schedule","schoolSettings.periods":"Periods","schoolSettings.schoolInfo":"School Information","schoolSettings.editSchool":"Edit School","schoolSettings.addSchool":"＋ Add School","schoolSettings.deleteSchool":"− Delete School","schoolSettings.schoolName":"School Name","schoolSettings.location":"Location (optional)","schoolSettings.classes":"Classes","schoolSettings.sort":"Sort A–Z","schoolSettings.classPlaceholder":"e.g. ４−１","schoolSettings.newClassAria":"New class name","schoolSettings.addClass":"＋ Add Class","schoolSettings.editSchedule":"Edit Schedule For","schoolSettings.workingHours":"Working Hours","schoolSettings.start":"Start","schoolSettings.end":"End","schoolSettings.color":"Color","schoolSettings.workingHelp":"Working hours and color are shared across Teacher Tools.","schoolSettings.teachingDates":"Teaching Dates","schoolSettings.addDate":"Add Date","schoolSettings.addDateButton":"＋ Add Date","schoolSettings.previousMonth":"Previous saved dates month","schoolSettings.nextMonth":"Next saved dates month","schoolSettings.savedDates":"Saved Dates","schoolSettings.periodsTitle":"Periods & Bell Times","schoolSettings.editPeriods":"Edit Periods For","schoolSettings.irregular":"Irregular Schedule","schoolSettings.irregularEnable":"Enable alternate period times","schoolSettings.lunch":"Lunch / 給食","schoolSettings.lunchEnable":"Enable lunch period","schoolSettings.lunchMode":"Lunch Mode","schoolSettings.lunchClass":"Use selected class","schoolSettings.lunchGeneral":"General lunch","schoolSettings.duration":"Duration","schoolSettings.irregularLunch":"Irregular Lunch","schoolSettings.irregularLunchEnable":"Use alternate lunch times","schoolSettings.generalLunchTitle":"General Lunch Title","schoolSettings.alternateSchedules":"Alternate Schedules","schoolSettings.addAlternate":"＋ Add Alternate Schedule","schoolSettings.noAlternates":"No alternate schedules added. The main periods above will be used.","schoolSettings.previousAlternate":"Previous alternate schedule","schoolSettings.nextAlternate":"Next alternate schedule","schoolSettings.scheduleName":"Schedule Name","schoolSettings.deleteAlternate":"− Delete","schoolSettings.alternateLunch":"Alternate Lunch","schoolSettings.alternateLunchEnable":"Use alternate lunch time for this schedule","schoolSettings.alternatePosition":"{current} of {total}","schoolSettings.alternateAdded":"Alternate schedule added.","schoolSettings.alternateDeleted":"Alternate schedule deleted.","schoolSettings.deleteAlternateConfirm":"Delete {name}?","schoolSettings.saved":"Changes save automatically to this browser.","schoolSettings.period":"Period","schoolSettings.name":"Name","schoolSettings.className":"Class name","schoolSettings.teacher":"Teacher","schoolSettings.students":"Students","schoolSettings.moveUp":"Move {name} up","schoolSettings.moveDown":"Move {name} down","schoolSettings.teacherFor":"Teacher for {name}","schoolSettings.studentsFor":"Students for {name}","schoolSettings.removeClass":"Remove {name}","schoolSettings.noClasses":"No classes added yet.","schoolSettings.monthCount":"{monthCount} this month • {totalCount} total saved","schoolSettings.removeDate":"Remove teaching date {date}","schoolSettings.noDates":"No saved dates in this month.","schoolSettings.classUpdated":"Class name updated.","schoolSettings.classRemoved":"Class removed.","schoolSettings.newSchool":"New School","schoolSettings.schoolAdded":"New school added.","schoolSettings.deleteConfirm":"Delete {name} and its saved teaching dates?","schoolSettings.schoolDeleted":"School deleted.","schoolSettings.classAdded":"Class added.","schoolSettings.classesSorted":"Classes sorted."
         },
         ja: {
-            "schoolSettings.aria":"共通の学校設定","schoolSettings.schools":"学校","schoolSettings.schedule":"スケジュール","schoolSettings.periods":"時限","schoolSettings.schoolInfo":"学校情報","schoolSettings.editSchool":"編集する学校","schoolSettings.addSchool":"＋ 学校を追加","schoolSettings.deleteSchool":"− 学校を削除","schoolSettings.schoolName":"学校名","schoolSettings.location":"場所（任意）","schoolSettings.classes":"クラス","schoolSettings.sort":"五十音・A–Z順","schoolSettings.classPlaceholder":"例：４−１","schoolSettings.newClassAria":"新しいクラス名","schoolSettings.addClass":"＋ クラスを追加","schoolSettings.editSchedule":"スケジュールを編集する学校","schoolSettings.workingHours":"勤務時間","schoolSettings.start":"開始","schoolSettings.end":"終了","schoolSettings.color":"色","schoolSettings.workingHelp":"勤務時間と色はTeacher Tools全体で共有されます。","schoolSettings.teachingDates":"授業日","schoolSettings.addDate":"日付を追加","schoolSettings.addDateButton":"＋ 日付を追加","schoolSettings.previousMonth":"保存済み日付の前月","schoolSettings.nextMonth":"保存済み日付の翌月","schoolSettings.savedDates":"保存済み日付","schoolSettings.periodsTitle":"時限とチャイム時間","schoolSettings.editPeriods":"時限を編集する学校","schoolSettings.irregular":"変則スケジュール","schoolSettings.irregularEnable":"別の時限時間を有効にする","schoolSettings.lunch":"給食 / Lunch","schoolSettings.lunchEnable":"給食時間を有効にする","schoolSettings.lunchMode":"給食モード","schoolSettings.lunchClass":"選択中のクラスを使う","schoolSettings.lunchGeneral":"共通の給食","schoolSettings.duration":"長さ（分）","schoolSettings.irregularLunch":"変則日の給食","schoolSettings.irregularLunchEnable":"別の給食時間を使う","schoolSettings.generalLunchTitle":"共通の給食タイトル","schoolSettings.saved":"変更はこのブラウザに自動保存されます。","schoolSettings.period":"時限","schoolSettings.name":"名前","schoolSettings.className":"クラス名","schoolSettings.teacher":"先生","schoolSettings.students":"生徒数","schoolSettings.moveUp":"{name}を上へ移動","schoolSettings.moveDown":"{name}を下へ移動","schoolSettings.teacherFor":"{name}の先生","schoolSettings.studentsFor":"{name}の生徒数","schoolSettings.removeClass":"{name}を削除","schoolSettings.noClasses":"クラスはまだ追加されていません。","schoolSettings.monthCount":"今月{monthCount}件 • 保存済み合計{totalCount}件","schoolSettings.removeDate":"授業日{date}を削除","schoolSettings.noDates":"今月の保存済み日付はありません。","schoolSettings.classUpdated":"クラス名を更新しました。","schoolSettings.classRemoved":"クラスを削除しました。","schoolSettings.newSchool":"新しい学校","schoolSettings.schoolAdded":"新しい学校を追加しました。","schoolSettings.deleteConfirm":"{name}と保存済みの授業日を削除しますか？","schoolSettings.schoolDeleted":"学校を削除しました。","schoolSettings.classAdded":"クラスを追加しました。","schoolSettings.classesSorted":"クラスを並べ替えました。"
+            "schoolSettings.defaultAlternateName":"代替スケジュール {number}",
+            "schoolSettings.aria":"共通の学校設定","schoolSettings.schools":"学校","schoolSettings.schedule":"スケジュール","schoolSettings.periods":"時限","schoolSettings.schoolInfo":"学校情報","schoolSettings.editSchool":"編集する学校","schoolSettings.addSchool":"＋ 学校を追加","schoolSettings.deleteSchool":"− 学校を削除","schoolSettings.schoolName":"学校名","schoolSettings.location":"場所（任意）","schoolSettings.classes":"クラス","schoolSettings.sort":"五十音・A–Z順","schoolSettings.classPlaceholder":"例：４−１","schoolSettings.newClassAria":"新しいクラス名","schoolSettings.addClass":"＋ クラスを追加","schoolSettings.editSchedule":"スケジュールを編集する学校","schoolSettings.workingHours":"勤務時間","schoolSettings.start":"開始","schoolSettings.end":"終了","schoolSettings.color":"色","schoolSettings.workingHelp":"勤務時間と色はTeacher Tools全体で共有されます。","schoolSettings.teachingDates":"授業日","schoolSettings.addDate":"日付を追加","schoolSettings.addDateButton":"＋ 日付を追加","schoolSettings.previousMonth":"保存済み日付の前月","schoolSettings.nextMonth":"保存済み日付の翌月","schoolSettings.savedDates":"保存済み日付","schoolSettings.periodsTitle":"時限とチャイム時間","schoolSettings.editPeriods":"時限を編集する学校","schoolSettings.irregular":"変則スケジュール","schoolSettings.irregularEnable":"別の時限時間を有効にする","schoolSettings.lunch":"給食 / Lunch","schoolSettings.lunchEnable":"給食時間を有効にする","schoolSettings.lunchMode":"給食モード","schoolSettings.lunchClass":"選択中のクラスを使う","schoolSettings.lunchGeneral":"共通の給食","schoolSettings.duration":"長さ（分）","schoolSettings.irregularLunch":"変則日の給食","schoolSettings.irregularLunchEnable":"別の給食時間を使う","schoolSettings.generalLunchTitle":"共通の給食タイトル","schoolSettings.alternateSchedules":"代替スケジュール","schoolSettings.addAlternate":"＋ 代替スケジュールを追加","schoolSettings.noAlternates":"代替スケジュールはありません。上の通常時限が使用されます。","schoolSettings.previousAlternate":"前の代替スケジュール","schoolSettings.nextAlternate":"次の代替スケジュール","schoolSettings.scheduleName":"スケジュール名","schoolSettings.deleteAlternate":"− 削除","schoolSettings.alternateLunch":"代替日の給食","schoolSettings.alternateLunchEnable":"このスケジュールで別の給食時間を使う","schoolSettings.alternatePosition":"{current} / {total}","schoolSettings.alternateAdded":"代替スケジュールを追加しました。","schoolSettings.alternateDeleted":"代替スケジュールを削除しました。","schoolSettings.deleteAlternateConfirm":"{name}を削除しますか？","schoolSettings.saved":"変更はこのブラウザに自動保存されます。","schoolSettings.period":"時限","schoolSettings.name":"名前","schoolSettings.className":"クラス名","schoolSettings.teacher":"先生","schoolSettings.students":"生徒数","schoolSettings.moveUp":"{name}を上へ移動","schoolSettings.moveDown":"{name}を下へ移動","schoolSettings.teacherFor":"{name}の先生","schoolSettings.studentsFor":"{name}の生徒数","schoolSettings.removeClass":"{name}を削除","schoolSettings.noClasses":"クラスはまだ追加されていません。","schoolSettings.monthCount":"今月{monthCount}件 • 保存済み合計{totalCount}件","schoolSettings.removeDate":"授業日{date}を削除","schoolSettings.noDates":"今月の保存済み日付はありません。","schoolSettings.classUpdated":"クラス名を更新しました。","schoolSettings.classRemoved":"クラスを削除しました。","schoolSettings.newSchool":"新しい学校","schoolSettings.schoolAdded":"新しい学校を追加しました。","schoolSettings.deleteConfirm":"{name}と保存済みの授業日を削除しますか？","schoolSettings.schoolDeleted":"学校を削除しました。","schoolSettings.classAdded":"クラスを追加しました。","schoolSettings.classesSorted":"クラスを並べ替えました。"
         }
     };
     window.TeacherToolsUI?.registerTranslations(translations);
-    const t = (key, fallback, replacements) => window.TeacherToolsUI?.translate(key, fallback, replacements) ?? fallback;
+    const t = (key, fallback, replacements = {}) => { const translated = window.TeacherToolsUI?.translate(key, fallback, replacements); if (translated != null) return translated; return Object.entries(replacements).reduce((text, [name, value]) => text.replaceAll(`{${name}}`, String(value)), fallback); };
     const locale = () => document.documentElement.lang === "ja" ? "ja-JP" : "en";
     const clone = value => JSON.parse(JSON.stringify(value));
     const validColor = value => /^#[0-9a-f]{6}$/i.test(value || "");
     const today = () => { const date = new Date(); return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
-    const defaults = school => ({
+    const model = window.TeacherToolsSchoolSettingsModel;
+    if (!model) throw new Error("Shared school settings model must load before its controller.");
+    const normalizePeriods = model.normalizePeriods;
+    const defaults = value => {
+        const school = model.migrateSchool(value);
+        return ({
         ...school,
         location: school.location || "",
         calendarColor: validColor(school.calendarColor) ? school.calendarColor : "#43877d",
@@ -8983,10 +9408,11 @@
         classes: Array.isArray(school.classes) ? school.classes : [],
         teachersByClass: school.teachersByClass && typeof school.teachersByClass === "object" ? school.teachersByClass : {},
         studentCounts: school.studentCounts && typeof school.studentCounts === "object" ? school.studentCounts : {},
-        periods: Array.isArray(school.periods) ? school.periods : [],
-        irregular: { enabled: !!school.irregular?.enabled, periods: Array.isArray(school.irregular?.periods) ? school.irregular.periods : [], lunch: { enabled: !!school.irregular?.lunch?.enabled, start: school.irregular?.lunch?.start || school.lunch?.start || "12:00", duration: Number(school.irregular?.lunch?.duration || school.lunch?.duration || 45) } },
+        periods: normalizePeriods(school.periods),
+        irregular: { enabled: !!school.irregular?.enabled, periods: normalizePeriods(school.irregular?.periods), lunch: { enabled: !!school.irregular?.lunch?.enabled, start: school.irregular?.lunch?.start || school.lunch?.start || "12:00", duration: Number(school.irregular?.lunch?.duration || school.lunch?.duration || 45) } },
         lunch: { enabled: !!school.lunch?.enabled, mode: school.lunch?.mode === "class" ? "class" : "general", start: school.lunch?.start || "12:00", duration: Number(school.lunch?.duration || 45), generalTitle: school.lunch?.generalTitle || "Lunch" }
-    });
+        });
+    };
 
     function create({ root, adapter, appletId = "applet", initialTab = "schools", extraTabs = [] }) {
         if (!(root instanceof Element)) throw new TypeError("Shared school settings requires a root element.");
@@ -9001,7 +9427,9 @@
         const school = () => state.schools.find(item => item.id === selectedSchoolId) || state.schools[0];
         const commonTabs = () => all("[data-school-settings-tab]");
         const tabRecords = () => [...commonTabs().map(button => ({ name: button.dataset.schoolSettingsTab, button, panel: one(`[data-school-settings-panel="${button.dataset.schoolSettingsTab}"]`) })), ...extraTabs];
-        const commit = (message, detail = {}) => { adapter.write(clone(state), detail); one("[data-settings-status]").textContent = message || t("schoolSettings.saved", "Changes saved automatically to this browser."); render(); };
+        const commit = (message, detail = {}) => { state = { ...state, schools: state.schools.map(model.migrateSchool) }; adapter.write(clone(state), detail); one("[data-settings-status]").textContent = message || t("schoolSettings.saved", "Changes saved automatically to this browser."); render(); };
+        const alternate = current => { const items = current.alternateSchedules || [], remembered = readUi().alternateBySchool?.[current.id]; return items.find(item => item.id === remembered) || items[0] || null; };
+        const rememberAlternate = (current, id) => { const ui = readUi(); writeUi({ ...ui, alternateBySchool: { ...(ui.alternateBySchool || {}), [current.id]: id } }); };
 
         function showTab(name, focus = false) {
             const records = tabRecords(); if (!records.some(record => record.name === name)) name = "schools";
@@ -9021,10 +9449,11 @@
             renderClasses(current); one("[data-delete-school]").disabled = state.schools.length <= 1; one("[data-sort-classes]").disabled = current.classes.length < 2;
             one("[data-working-start]").value = current.workingHours.start; one("[data-working-end]").value = current.workingHours.end; one("[data-working-color]").value = current.calendarColor; one("[data-working-color]").style.setProperty("--working-color", current.calendarColor);
             if (!one("[data-teaching-date]").value) one("[data-teaching-date]").value = today(); renderDates(current);
-            renderPeriods(one("[data-regular-periods]"), current.periods); renderPeriods(one("[data-irregular-periods]"), current.irregular.periods);
-            one("[data-irregular-enabled]").checked = current.irregular.enabled; one("[data-irregular-panel]").hidden = !current.irregular.enabled;
+            renderPeriods(one("[data-regular-periods]"), current.periods);
             one("[data-lunch-enabled]").checked = current.lunch.enabled; one("[data-lunch-panel]").hidden = !current.lunch.enabled; one("[data-lunch-mode]").value = current.lunch.mode; one("[data-lunch-start]").value = current.lunch.start; one("[data-lunch-duration]").value = current.lunch.duration; one("[data-general-lunch-title]").value = current.lunch.generalTitle; one("[data-general-lunch-title-field]").hidden = current.lunch.mode !== "general";
-            one("[data-irregular-lunch-section]").hidden = !current.irregular.enabled; one("[data-irregular-lunch-enabled]").checked = current.irregular.lunch.enabled; one("[data-irregular-lunch-panel]").hidden = !current.irregular.lunch.enabled; one("[data-irregular-lunch-start]").value = current.irregular.lunch.start; one("[data-irregular-lunch-duration]").value = current.irregular.lunch.duration;
+            const activeAlternate = alternate(current), alternateCount = current.alternateSchedules.length, alternateIndex = activeAlternate ? current.alternateSchedules.indexOf(activeAlternate) : -1;
+            one("[data-alternate-empty]").hidden = !!activeAlternate; one("[data-alternate-editor]").hidden = !activeAlternate;
+            if (activeAlternate) { one("[data-alternate-title]").textContent = activeAlternate.name; one("[data-alternate-count]").textContent = t("schoolSettings.alternatePosition", "{current} of {total}", { current: alternateIndex + 1, total: alternateCount }); one("[data-previous-alternate]").disabled = alternateCount < 2; one("[data-next-alternate]").disabled = alternateCount < 2; one("[data-alternate-name]").value = activeAlternate.name; renderPeriods(one("[data-alternate-periods]"), activeAlternate.periods); one("[data-alternate-lunch-enabled]").checked = activeAlternate.lunch.enabled; one("[data-alternate-lunch-panel]").hidden = !activeAlternate.lunch.enabled; one("[data-alternate-lunch-start]").value = activeAlternate.lunch.start; one("[data-alternate-lunch-duration]").value = activeAlternate.lunch.duration; }
         }
         tabRecords().forEach(record => record.button.onclick = () => showTab(record.name));
         one("[role=tablist]").onkeydown = event => { if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return; const records = tabRecords(), tabs = records.map(record => record.button), index = tabs.indexOf(document.activeElement); if (index < 0) return; event.preventDefault(); const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length; showTab(records[next].name, true); };
@@ -9037,9 +9466,12 @@
         one("[data-working-start]").onchange = event => { school().workingHours.start = event.target.value; commit(); }; one("[data-working-end]").onchange = event => { school().workingHours.end = event.target.value; commit(); }; one("[data-working-color]").oninput = event => { if (validColor(event.target.value)) event.target.style.setProperty("--working-color", event.target.value); }; one("[data-working-color]").onchange = event => { if (validColor(event.target.value)) { school().calendarColor = event.target.value; commit(); } };
         one("[data-add-teaching-date]").onclick = () => { const date = one("[data-teaching-date]").value; if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return; state.schedule[school().id] = [...new Set([...(state.schedule[school().id] || []), date])].sort(); month = date.slice(0, 7); commit(); };
         for (const [selector, amount] of [["[data-previous-month]", -1], ["[data-next-month]", 1]]) one(selector).onclick = () => { const date = new Date(month + "-01T12:00:00Z"); date.setUTCMonth(date.getUTCMonth() + amount); month = date.toISOString().slice(0, 7); render(); };
-        one("[data-irregular-enabled]").onchange = event => { school().irregular.enabled = event.target.checked; if (event.target.checked && !school().irregular.periods.length) school().irregular.periods = clone(school().periods); commit(); };
         one("[data-lunch-enabled]").onchange = event => { school().lunch.enabled = event.target.checked; commit(); }; one("[data-lunch-mode]").onchange = event => { school().lunch.mode = event.target.value; commit(); }; one("[data-lunch-start]").onchange = event => { school().lunch.start = event.target.value; commit(); }; one("[data-lunch-duration]").onchange = event => { school().lunch.duration = Number(event.target.value); commit(); }; one("[data-general-lunch-title]").onchange = event => { school().lunch.generalTitle = event.target.value.trim() || "Lunch"; commit(); };
-        one("[data-irregular-lunch-enabled]").onchange = event => { school().irregular.lunch.enabled = event.target.checked; commit(); }; one("[data-irregular-lunch-start]").onchange = event => { school().irregular.lunch.start = event.target.value; commit(); }; one("[data-irregular-lunch-duration]").onchange = event => { school().irregular.lunch.duration = Number(event.target.value); commit(); };
+        one("[data-add-alternate]").onclick = () => { const current = school(), number = current.alternateSchedules.length + 1, created = model.normalizeAlternate({ id: crypto.randomUUID?.() || `alternate-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, name: t("schoolSettings.defaultAlternateName", "Alternate Schedule {number}", { number }), periods: current.periods.map(period => ({ number: period.number, start: "", duration: period.duration })), lunch: { enabled: false, start: current.lunch.start || "12:00", duration: current.lunch.duration || 45 } }, current.alternateSchedules.length, current.lunch); current.alternateSchedules.push(created); rememberAlternate(current, created.id); commit(t("schoolSettings.alternateAdded", "Alternate schedule added.")); };
+        for (const [selector, amount] of [["[data-previous-alternate]", -1], ["[data-next-alternate]", 1]]) one(selector).onclick = () => { const current = school(), items = current.alternateSchedules, active = alternate(current); if (items.length < 2 || !active) return; const index = (items.indexOf(active) + amount + items.length) % items.length; rememberAlternate(current, items[index].id); render(); };
+        one("[data-alternate-name]").onchange = event => { const current = school(), active = alternate(current); if (!active) return; active.name = event.target.value.trim() || t("schoolSettings.defaultAlternateName", "Alternate Schedule {number}", { number: current.alternateSchedules.indexOf(active) + 1 }); commit(); };
+        one("[data-delete-alternate]").onclick = () => { const current = school(), active = alternate(current); if (!active || !confirm(t("schoolSettings.deleteAlternateConfirm", "Delete {name}?", { name: active.name }))) return; const index = current.alternateSchedules.indexOf(active); current.alternateSchedules.splice(index, 1); const next = current.alternateSchedules[Math.min(index, current.alternateSchedules.length - 1)]; rememberAlternate(current, next?.id || ""); commit(t("schoolSettings.alternateDeleted", "Alternate schedule deleted.")); };
+        one("[data-alternate-lunch-enabled]").onchange = event => { const active = alternate(school()); if (!active) return; active.lunch.enabled = event.target.checked; commit(); }; one("[data-alternate-lunch-start]").onchange = event => { const active = alternate(school()); if (!active) return; active.lunch.start = event.target.value; commit(); }; one("[data-alternate-lunch-duration]").onchange = event => { const active = alternate(school()); if (!active) return; active.lunch.duration = Number(event.target.value); commit(); };
         const remembered = readUi(); state = clone(adapter.read()); selectedSchoolId = remembered.schoolId || state.schools?.[0]?.id || ""; render(); showTab(remembered.tab || initialTab);
         window.addEventListener("teacher-tools:languagechange", render);
         return Object.freeze({ refresh: render, showTab, selectSchool, restoreTab: () => showTab(readUi().tab || initialTab) });
@@ -9053,7 +9485,7 @@
  const options={root,appletId:'class-tracker',adapter:{
   read,
   write(next){const value=JSON.stringify(next);localStorage.setItem(key,value);window.dispatchEvent(new StorageEvent('storage',{key,newValue:value}));},
-  createSchool(){return {id:'school-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name:window.TeacherToolsUI.translate('schoolSettings.newSchool','New School'),location:'',calendarColor:'#43877d',workingHours:{start:'',end:''},classes:[],teachersByClass:{},studentCounts:{},periods:Array.from({length:6},(_,i)=>({number:i+1,start:['08:30','09:30','10:30','11:30','13:30','14:30'][i],duration:45})),irregular:{enabled:false,periods:[],lunch:{enabled:false,start:'12:00',duration:45}},lunch:{enabled:false,mode:'general',start:'12:00',duration:45,generalTitle:'Lunch'}};}
+  createSchool(){return {id:'school-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name:window.TeacherToolsUI.translate('schoolSettings.newSchool','New School'),location:'',calendarColor:'#43877d',workingHours:{start:'',end:''},classes:[],teachersByClass:{},studentCounts:{},periods:Array.from({length:6},(_,i)=>({number:i+1,start:['08:30','09:30','10:30','11:30','13:30','14:30'][i],duration:45})),alternateSchedules:[],irregular:{enabled:false,periods:[],lunch:{enabled:false,start:'12:00',duration:45}},lunch:{enabled:false,mode:'general',start:'12:00',duration:45,generalTitle:'Lunch'}};}
  }};
  
  const textbookButton=document.getElementById('sharedSettingsTab-textbooks');

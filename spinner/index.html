@@ -20,12 +20,28 @@ Copyright © 2026. All rights reserved.
         (() => {
             const key = "teacherTools.sitePreferences.v1";
             const languageKey = "teacherTools.siteLanguage.v1";
-            const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark", "custom"];
 
             try {
                 const saved = JSON.parse(localStorage.getItem(key));
                 const theme = saved && themes.includes(saved.theme) ? saved.theme : "ocean-blue";
                 if (theme !== "ocean-blue") document.documentElement.setAttribute("data-theme", theme);
+                if (theme === "custom") {
+                    const valid = value => /^#[0-9a-f]{6}$/i.test(value || "");
+                    const colors = {
+                        primary: valid(saved.customColors?.primary) ? saved.customColors.primary.toLowerCase() : "#2563eb",
+                        secondary: valid(saved.customColors?.secondary) ? saved.customColors.secondary.toLowerCase() : "#7c3aed",
+                        background: valid(saved.customColors?.background) ? saved.customColors.background.toLowerCase() : "#f5f8ff"
+                    };
+                    const rgb = hex => [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16));
+                    const hex = values => `#${values.map(value => Math.round(value).toString(16).padStart(2, "0")).join("")}`;
+                    const mix = (a, b, amount) => hex(rgb(a).map((value, index) => value + (rgb(b)[index] - value) * amount));
+                    const lum = value => { const channels = rgb(value).map(item => { const part = item / 255; return part <= .04045 ? part / 12.92 : ((part + .055) / 1.055) ** 2.4; }); return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2]; };
+                    const contrastText = value => 1.05 / (lum(value) + .05) >= (lum(value) + .05) / .05 ? "#ffffff" : "#111827";
+                    const dark = lum(colors.background) < .3, surface = mix(colors.background, "#ffffff", dark ? .075 : .88), panel = mix(colors.background, surface, dark ? .42 : .68), text = dark ? "#f3f6fa" : "#24282d";
+                    const tokens = { "--accent": colors.primary, "--accent-secondary": colors.secondary, "--accent-soft": mix(colors.primary, surface, dark ? .78 : .84), "--accent-border": mix(colors.primary, surface, dark ? .52 : .58), "--focus-ring": `${colors.primary}3d`, "--accent-contrast": contrastText(colors.primary), "--text": text, "--muted": mix(text, surface, dark ? .48 : .42), "--line": mix(text, surface, dark ? .79 : .86), "--bg": colors.background, "--surface": surface, "--panel": panel, "--danger": dark ? "#ff7676" : "#d93025", "--warning-bg": dark ? mix("#332b12", surface, .12) : "#fff8e1", "--warning-border": dark ? "#8a7125" : "#f5d67b", "--warning-text": dark ? "#ffe08a" : "#6f5200", "--tooltip-text": contrastText(colors.primary), "--custom-color-scheme": dark ? "dark" : "light" };
+                    Object.entries(tokens).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
+                }
             } catch (error) {
                 // Ocean Blue remains the safe default when storage is unavailable.
             }
@@ -109,6 +125,8 @@ Copyright © 2026. All rights reserved.
             --warning-text: #ffe08a;
             --tooltip-text: #07101d;
         }
+
+        html[data-theme="custom"] { color-scheme: var(--custom-color-scheme, light); }
 
         /* Global Teacher Tools page foundation */
         * { box-sizing: border-box; }
@@ -608,6 +626,26 @@ Copyright © 2026. All rights reserved.
         .site-theme-option[data-theme-option="true-dark"] {
             --theme-primary: #8ab4f8; --theme-secondary: #c4a7ff; --theme-light: #0d0f12;
         }
+        .site-theme-option[data-theme-option="custom"] {
+            --theme-primary: var(--custom-preview-primary, #2563eb);
+            --theme-secondary: var(--custom-preview-secondary, #7c3aed);
+            --theme-light: var(--custom-preview-background, #f5f8ff);
+        }
+        .site-custom-theme-controls {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--line);
+        }
+        .site-custom-theme-controls[hidden] { display: none; }
+        .site-custom-theme-pickers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+        .site-custom-theme-pickers label { display: grid; gap: 4px; color: var(--muted); font-size: 9.5px; font-weight: 700; text-align: center; }
+        .site-custom-theme-pickers input[type="color"] { width: 100%; height: 34px; padding: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; cursor: pointer; }
+        .site-custom-theme-reset { width: 100%; min-height: 32px; margin-top: 8px; color: var(--accent); background: var(--surface); border: 1px solid var(--accent-border); border-radius: 7px; font: inherit; font-size: 9.5px; font-weight: 700; cursor: pointer; }
+        .site-custom-theme-reset:hover { background: var(--accent-soft); }
+        .site-custom-theme-note { margin: 7px 0 0; color: var(--muted); font-size: 9px; line-height: 1.4; }
+        html[data-theme="custom"] .button-primary,
+        html[data-theme="custom"] .primary { color: var(--accent-contrast) !important; }
+        html[data-theme="custom"] .site-brand-mark { color: var(--accent-contrast); }
 
         /* Shared contextual help */
         .field-label-row,
@@ -853,6 +891,149 @@ Copyright © 2026. All rights reserved.
         .disclosure-button[aria-expanded="true"] .disclosure-indicator { transform: rotate(45deg); }
         .disclosure-panel { margin-top: 9px; }
         .disclosure-panel[hidden] { display: none; }
+
+        /* Canonical applet identity and Getting Started treatment. */
+        body .app-shell .app-header .version-badge {
+            flex: 0 0 auto;
+            padding: 3px 7px;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 750;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        body .app-shell .app-header .help-button-mark {
+            width: 21px;
+            height: 21px;
+            display: inline-grid;
+            place-items: center;
+            border: 1.8px solid currentColor;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        body .app-shell .app-header .icon-button {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: var(--accent);
+            background: transparent;
+            border: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: color 180ms ease;
+        }
+
+        body .app-shell .app-header .icon-button:hover,
+        body .app-shell .app-header .icon-button:focus-visible {
+            color: var(--accent-secondary);
+            background: transparent;
+            border-color: transparent;
+        }
+
+        #helpModal .tutorial-intro,
+        #helpModal .help-intro,
+        #helpModal .modal-intro,
+        #tutorialModal .tutorial-intro {
+            margin: 0 0 14px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        #helpModal .tutorial-steps,
+        #helpModal .help-steps,
+        #helpModal .help-list,
+        #tutorialModal .tutorial-steps {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #helpModal .tutorial-step,
+        #helpModal .help-step,
+        #helpModal .help-list > li,
+        #tutorialModal .tutorial-step {
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr);
+            gap: 11px;
+            align-items: start;
+            padding: 12px;
+            color: var(--text);
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 9px;
+        }
+
+        #helpModal .tutorial-number,
+        #helpModal .help-number,
+        #tutorialModal .tutorial-number,
+        #tutorialModal .tutorial-step-number {
+            width: 30px;
+            height: 30px;
+            display: inline-grid;
+            place-items: center;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        #helpModal .tutorial-step h3,
+        #helpModal .help-step h3,
+        #helpModal .help-list h3,
+        #tutorialModal .tutorial-step h3 {
+            margin: 1px 0 3px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 750;
+            line-height: 1.3;
+        }
+
+        #helpModal .tutorial-step p,
+        #helpModal .help-step p,
+        #helpModal .help-list p,
+        #tutorialModal .tutorial-step p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        #helpModal .notice,
+        #helpModal .privacy-note,
+        #tutorialModal .notice,
+        #tutorialModal .privacy-note {
+            margin: 12px 0 0;
+            padding: 10px 12px;
+            color: var(--warning-text);
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 8px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        #helpModal .tutorial-step .help-link,
+        #tutorialModal .tutorial-step .tutorial-step-action {
+            grid-column: 2;
+            justify-self: start;
+        }
 
         @media (max-width: 620px) {
             .site-header-inner { min-height: 58px; padding: 8px 10px; }
@@ -1721,6 +1902,20 @@ Copyright © 2026. All rights reserved.
                         <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
                         <span class="site-theme-name" data-i18n="theme.trueDark">True Dark</span>
                     </label>
+                    <label class="site-theme-option" data-theme-option="custom">
+                        <input type="radio" name="siteThemeChoice" value="custom">
+                        <span class="site-theme-preview" aria-hidden="true"><span></span><span></span><span></span></span>
+                        <span class="site-theme-name" data-i18n="theme.custom">Custom</span>
+                    </label>
+                </div>
+                <div id="siteCustomThemeControls" class="site-custom-theme-controls" hidden>
+                    <div class="site-custom-theme-pickers">
+                        <label><span data-i18n="appearance.primary">Primary</span><input id="siteCustomPrimary" type="color" value="#2563eb"></label>
+                        <label><span data-i18n="appearance.secondary">Secondary</span><input id="siteCustomSecondary" type="color" value="#7c3aed"></label>
+                        <label><span data-i18n="appearance.background">Background</span><input id="siteCustomBackground" type="color" value="#f5f8ff"></label>
+                    </div>
+                    <button type="button" id="siteCustomThemeReset" class="site-custom-theme-reset" data-i18n="appearance.resetCustom">Reset custom colors</button>
+                    <p class="site-custom-theme-note" data-i18n="appearance.customNote">Text, panels, and borders are adjusted automatically for readability.</p>
                 </div>
             </section>
         </div>
@@ -1802,19 +1997,19 @@ Copyright © 2026. All rights reserved.
 
             <div class="modal-content">
                 <p id="helpIntro" class="help-intro" data-i18n="spinner.help.intro">Choose a saved class number set or one of your reusable custom lists, then spin.</p>
-                <div class="help-steps">
-                    <section class="help-step">
-                        <h3 data-i18n="spinner.help.step1Title">1. Choose the wheel mode</h3>
+                <div class="help-steps tutorial-steps">
+                    <section class="help-step tutorial-step">
+                        <span class="tutorial-number" aria-hidden="true">1</span><div><h3 data-i18n="spinner.help.step1Title">Choose the wheel mode</h3>
                         <p data-i18n="spinner.help.step1Body">Use Numbers to choose a school and class from Scheduler. New class ranges use the saved student count when available, and you can still adjust the minimum, maximum, or exclusions. Use Custom Choices to keep a reusable bank of named lists.</p>
-                        <button type="button" class="help-link" data-modal-switch="settingsModal" data-i18n="spinner.help.openSettings">Open Settings</button>
+                        <button type="button" class="help-link" data-modal-switch="settingsModal" data-i18n="spinner.help.openSettings">Open Settings</button></div>
                     </section>
-                    <section class="help-step">
-                        <h3 data-i18n="spinner.help.step2Title">2. Decide what happens after a spin</h3>
-                        <p data-i18n="spinner.help.step2Body">Selections can stay available for repeats or be removed temporarily for the current round. Removed choices return when you restore the round, change wheel entries, or reload the page.</p>
+                    <section class="help-step tutorial-step">
+                        <span class="tutorial-number" aria-hidden="true">2</span><div><h3 data-i18n="spinner.help.step2Title">Decide what happens after a spin</h3>
+                        <p data-i18n="spinner.help.step2Body">Selections can stay available for repeats or be removed temporarily for the current round. Removed choices return when you restore the round, change wheel entries, or reload the page.</p></div>
                     </section>
-                    <section class="help-step">
-                        <h3 data-i18n="spinner.help.step3Title">3. Spin and announce the result</h3>
-                        <p data-i18n="spinner.help.step3Body">The selected choice is shown in full and announced for screen readers. Presentation mode enlarges the wheel for smartboards and landscape displays, while reduced-motion preferences replace the long spin with a brief transition.</p>
+                    <section class="help-step tutorial-step">
+                        <span class="tutorial-number" aria-hidden="true">3</span><div><h3 data-i18n="spinner.help.step3Title">Spin and announce the result</h3>
+                        <p data-i18n="spinner.help.step3Body">The selected choice is shown in full and announced for screen readers. Presentation mode enlarges the wheel for smartboards and landscape displays, while reduced-motion preferences replace the long spin with a brief transition.</p></div>
                     </section>
                 </div>
                 <div class="privacy-note" role="note" data-i18n="spinner.help.privacy">Your settings and custom choices are saved only in this browser. Clearing site data can remove them; export a backup if the list is important.</div>
@@ -1992,6 +2187,7 @@ Copyright © 2026. All rights reserved.
             const date = d => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) &&
                 !isNaN(Date.parse(d)) && new Date(d + "T12:00:00Z").toISOString().slice(0,10) === d;
             const time = t => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
+            const scheduleMode = mode => ["regular","irregular"].includes(mode) || (typeof mode === "string" && /^alternate:[^:\s]+(?::[^:\s]+)?$/.test(mode));
             if (!object(value) || value.version !== 1 || typeof value.timeZone !== "string" ||
                 !Array.isArray(value.events) || !object(value.preferences)) return false;
             try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }); } catch { return false; }
@@ -1999,22 +2195,24 @@ Copyright © 2026. All rights reserved.
             if (!["month","week","agenda","custom"].includes(p.view) ||
                 !Array.isArray(p.days) || !p.days.length || p.days.length > 7 ||
                 new Set(p.days).size !== p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6) ||
-                !["regular","irregular","off"].includes(p.ghostMode) || typeof p.working !== "boolean" ||
+                !(p.ghostMode === "off" || scheduleMode(p.ghostMode)) || typeof p.working !== "boolean" ||
                 !["school","category"].every(k => typeof p[k] === "string")) return false;
             if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
                 p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
-            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
+            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other","Holiday"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
             if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
             if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
             const ids = new Set();
             return value.events.every(e => {
                 if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
                     !e.id || /[\r\n]/.test(e.id) || ids.has(e.id) || !e.title.trim() || !date(e.date) ||
-                    !time(e.start) || !time(e.end) || e.end <= e.start ||
-                    !["regular","irregular","custom"].includes(e.mode) ||
+                    !time(e.start) || !time(e.end) || (e.endDate !== undefined && !date(e.endDate)) || (e.endDate || e.date) < e.date || ((e.endDate || e.date) === e.date && e.end <= e.start) ||
+                    !(e.mode === "custom" || scheduleMode(e.mode)) ||
                     (e.mode === "custom" ? e.period !== null : !Number.isInteger(e.period) || e.period < 0) ||
-                    !["Class","Lunch","Meeting","Other"].includes(e.category) ||
+                    !["Class","Lunch","Meeting","Other","Holiday"].includes(e.category) ||
                     !Number.isFinite(Date.parse(e.created)) || !Number.isFinite(Date.parse(e.modified))) return false;
+                if (e.allDay !== undefined && typeof e.allDay !== "boolean") return false;
+                if (e.allDay && (e.mode !== "custom" || e.start !== "00:00" || e.end !== "23:59")) return false;
                 ids.add(e.id); return true;
             });
         };
@@ -2023,8 +2221,11 @@ Copyright © 2026. All rights reserved.
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
             const SITE_LANGUAGE_KEY = "teacherTools.siteLanguage.v1";
-            const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark"];
+            const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark", "custom"];
             const ALLOWED_LANGUAGES = ["en", "ja"];
+            const DEFAULT_CUSTOM_COLORS = Object.freeze({ primary: "#2563eb", secondary: "#7c3aed", background: "#f5f8ff" });
+            const HEX_COLOR = /^#[0-9a-f]{6}$/i;
+            let rememberedCustomColors = { ...DEFAULT_CUSTOM_COLORS };
             const SHARED_TRANSLATIONS = {
                 en: {
                     "nav.homeAria": "Teacher Tools home",
@@ -2109,7 +2310,13 @@ Copyright © 2026. All rights reserved.
                     "theme.oceanBlue": "Ocean Blue",
                     "theme.colorPop": "Color Pop",
                     "theme.prettyInPink": "Pretty in Pink",
-                    "theme.trueDark": "True Dark"
+                    "theme.trueDark": "True Dark",
+                    "theme.custom": "Custom",
+                    "appearance.primary": "Primary",
+                    "appearance.secondary": "Secondary",
+                    "appearance.background": "Background",
+                    "appearance.resetCustom": "Reset custom colors",
+                    "appearance.customNote": "Text, panels, and borders are adjusted automatically for readability."
                 },
                 ja: {
                     "nav.homeAria": "Teacher Tools ホーム",
@@ -2194,7 +2401,13 @@ Copyright © 2026. All rights reserved.
                     "theme.oceanBlue": "オーシャンブルー",
                     "theme.colorPop": "カラーポップ",
                     "theme.prettyInPink": "プリティ・イン・ピンク",
-                    "theme.trueDark": "トゥルーダーク"
+                    "theme.trueDark": "トゥルーダーク",
+                    "theme.custom": "カスタム",
+                    "appearance.primary": "メイン",
+                    "appearance.secondary": "サブ",
+                    "appearance.background": "背景",
+                    "appearance.resetCustom": "カスタム色をリセット",
+                    "appearance.customNote": "文字、パネル、枠線は読みやすい色に自動調整されます。"
                 }
             };
             const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
@@ -2213,8 +2426,8 @@ Copyright © 2026. All rights reserved.
                     label: "Site appearance",
                     labelKey: "record.appearance",
                     storageKey: SITE_PREFERENCES_KEY,
-                    validate: value => isPlainObject(value) &&
-                        value.version === 1 && ALLOWED_THEMES.includes(value.theme)
+                    validate: value => isPlainObject(value) && value.version === 1 && ALLOWED_THEMES.includes(value.theme) &&
+                        (value.theme !== "custom" || validCustomColors(value.customColors))
                 },
                 {
                     id: "language",
@@ -2716,19 +2929,100 @@ Copyright © 2026. All rights reserved.
                 return ALLOWED_THEMES.includes(value) ? value : "ocean-blue";
             }
 
+            function validCustomColors(value) {
+                return isPlainObject(value) && ["primary", "secondary", "background"].every(key => HEX_COLOR.test(value[key] || ""));
+            }
+
+            function normalizeCustomColors(value) {
+                return Object.fromEntries(Object.entries(DEFAULT_CUSTOM_COLORS).map(([key, fallback]) => [key, HEX_COLOR.test(value?.[key] || "") ? value[key].toLowerCase() : fallback]));
+            }
+
+            function colorRgb(hex) {
+                const value = hex.slice(1);
+                return [0, 2, 4].map(index => parseInt(value.slice(index, index + 2), 16));
+            }
+
+            function colorHex(values) {
+                return `#${values.map(value => Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, "0")).join("")}`;
+            }
+
+            function mixColor(first, second, amount) {
+                const a = colorRgb(first), b = colorRgb(second);
+                return colorHex(a.map((value, index) => value + (b[index] - value) * amount));
+            }
+
+            function colorLuminance(hex) {
+                const channels = colorRgb(hex).map(value => { const channel = value / 255; return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4; });
+                return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+            }
+
+            function contrastText(background) {
+                const luminance = colorLuminance(background);
+                const whiteContrast = 1.05 / (luminance + 0.05);
+                const darkContrast = (luminance + 0.05) / 0.05;
+                return whiteContrast >= darkContrast ? "#ffffff" : "#111827";
+            }
+
+            function customThemeTokens(value) {
+                const colors = normalizeCustomColors(value), dark = colorLuminance(colors.background) < 0.3;
+                const surface = mixColor(colors.background, dark ? "#ffffff" : "#ffffff", dark ? 0.075 : 0.88);
+                const panel = mixColor(colors.background, surface, dark ? 0.42 : 0.68);
+                const text = dark ? "#f3f6fa" : "#24282d";
+                return { colors, dark, tokens: {
+                    "--accent": colors.primary,
+                    "--accent-secondary": colors.secondary,
+                    "--accent-soft": mixColor(colors.primary, surface, dark ? 0.78 : 0.84),
+                    "--accent-border": mixColor(colors.primary, surface, dark ? 0.52 : 0.58),
+                    "--focus-ring": `${colors.primary}3d`,
+                    "--accent-contrast": contrastText(colors.primary),
+                    "--text": text,
+                    "--muted": mixColor(text, surface, dark ? 0.48 : 0.42),
+                    "--line": mixColor(text, surface, dark ? 0.79 : 0.86),
+                    "--bg": colors.background,
+                    "--surface": surface,
+                    "--panel": panel,
+                    "--danger": dark ? "#ff7676" : "#d93025",
+                    "--warning-bg": dark ? mixColor("#332b12", surface, 0.12) : "#fff8e1",
+                    "--warning-border": dark ? "#8a7125" : "#f5d67b",
+                    "--warning-text": dark ? "#ffe08a" : "#6f5200",
+                    "--tooltip-text": contrastText(colors.primary),
+                    "--custom-color-scheme": dark ? "dark" : "light"
+                } };
+            }
+
+            const CUSTOM_TOKEN_NAMES = Object.keys(customThemeTokens(DEFAULT_CUSTOM_COLORS).tokens);
+
+            function setCustomThemeControls(colors, visible) {
+                const normalized = normalizeCustomColors(colors);
+                const controls = document.getElementById("siteCustomThemeControls");
+                if (controls) controls.hidden = !visible;
+                for (const [id, key] of [["siteCustomPrimary", "primary"], ["siteCustomSecondary", "secondary"], ["siteCustomBackground", "background"]]) {
+                    const input = document.getElementById(id); if (input && input.value.toLowerCase() !== normalized[key]) input.value = normalized[key];
+                }
+                const option = document.querySelector('[data-theme-option="custom"]');
+                option?.style.setProperty("--custom-preview-primary", normalized.primary);
+                option?.style.setProperty("--custom-preview-secondary", normalized.secondary);
+                option?.style.setProperty("--custom-preview-background", normalized.background);
+            }
+
             function themeFromStoredValue(value) {
                 if (!value) return null;
 
                 try {
                     const saved = JSON.parse(value);
-                    return saved && ALLOWED_THEMES.includes(saved.theme) ? saved.theme : null;
+                    return saved && ALLOWED_THEMES.includes(saved.theme) ? { theme: saved.theme, customColors: normalizeCustomColors(saved.customColors) } : null;
                 } catch (error) {
                     return null;
                 }
             }
 
-            function applyGlobalTheme(requestedTheme, persist = true) {
+            function applyGlobalTheme(requestedTheme, persist = true, requestedCustomColors = null) {
                 const theme = normalizeTheme(requestedTheme);
+                if (requestedCustomColors) rememberedCustomColors = normalizeCustomColors(requestedCustomColors);
+                const custom = customThemeTokens(rememberedCustomColors);
+
+                CUSTOM_TOKEN_NAMES.forEach(name => document.documentElement.style.removeProperty(name));
+                if (theme === "custom") Object.entries(custom.tokens).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
 
                 if (theme === "ocean-blue") {
                     document.documentElement.removeAttribute("data-theme");
@@ -2745,8 +3039,10 @@ Copyright © 2026. All rights reserved.
                     if (option) option.classList.toggle("selected", selected);
                 });
 
+                setCustomThemeControls(custom.colors, theme === "custom");
+
                 if (persist) {
-                    storageSet(SITE_PREFERENCES_KEY, JSON.stringify({ version: 1, theme }));
+                    storageSet(SITE_PREFERENCES_KEY, JSON.stringify({ version: 1, theme, customColors: custom.colors }));
                 }
             }
 
@@ -2936,6 +3232,8 @@ Copyright © 2026. All rights reserved.
                 const settingsButton = document.getElementById("siteSettingsButton");
                 const themePanel = document.getElementById("siteThemePanel");
                 const themeCloseButton = document.getElementById("siteThemeCloseButton");
+                const customColorInputs = ["siteCustomPrimary", "siteCustomSecondary", "siteCustomBackground"].map(id => document.getElementById(id)).filter(Boolean);
+                const customColorsFromInputs = () => normalizeCustomColors({ primary: document.getElementById("siteCustomPrimary")?.value, secondary: document.getElementById("siteCustomSecondary")?.value, background: document.getElementById("siteCustomBackground")?.value });
 
                 function setToolsMenu(open) {
                     if (!toolsMenu) return;
@@ -3066,9 +3364,12 @@ Copyright © 2026. All rights reserved.
 
                 document.querySelectorAll('input[name="siteThemeChoice"]').forEach(input => {
                     input.addEventListener("change", () => {
-                        if (input.checked) applyGlobalTheme(input.value);
+                        if (input.checked) applyGlobalTheme(input.value, true, input.value === "custom" ? customColorsFromInputs() : null);
                     });
                 });
+
+                customColorInputs.forEach(input => input.addEventListener("input", () => applyGlobalTheme("custom", true, customColorsFromInputs())));
+                document.getElementById("siteCustomThemeReset")?.addEventListener("click", () => applyGlobalTheme("custom", true, DEFAULT_CUSTOM_COLORS));
 
                 document.addEventListener("click", closeSiteOverlays);
             }
@@ -3175,7 +3476,8 @@ Copyright © 2026. All rights reserved.
 
             window.addEventListener("storage", event => {
                 if (event.key === SITE_PREFERENCES_KEY) {
-                    applyGlobalTheme(themeFromStoredValue(event.newValue) || "ocean-blue", false);
+                    const saved = themeFromStoredValue(event.newValue);
+                    applyGlobalTheme(saved?.theme || "ocean-blue", false, saved?.customColors);
                 }
                 if (event.key === SITE_LANGUAGE_KEY) {
                     applyGlobalLanguage(languageFromStoredValue(event.newValue) || "en", false);
@@ -3193,12 +3495,8 @@ Copyright © 2026. All rights reserved.
                 translate
             });
 
-            applyGlobalTheme(
-                themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY)) ||
-                document.documentElement.getAttribute("data-theme") ||
-                "ocean-blue",
-                false
-            );
+            const initialTheme = themeFromStoredValue(storageGet(SITE_PREFERENCES_KEY));
+            applyGlobalTheme(initialTheme?.theme || document.documentElement.getAttribute("data-theme") || "ocean-blue", false, initialTheme?.customColors);
             applyGlobalLanguage(
                 languageFromStoredValue(storageGet(SITE_LANGUAGE_KEY)) ||
                 document.documentElement.lang ||
@@ -3245,12 +3543,12 @@ Copyright © 2026. All rights reserved.
                     "spinner.footer.version": "Spinner Wheel · v1.2",
                     "spinner.footer.note": "Choices stay in this browser and are not uploaded.",
                     "spinner.help.intro": "Choose a saved class number set or one of your reusable custom lists, then spin.",
-                    "spinner.help.step1Title": "1. Choose the wheel mode",
+                    "spinner.help.step1Title": "Choose the wheel mode",
                     "spinner.help.step1Body": "Use Numbers to choose a school and class from Scheduler. New class ranges use the saved student count when available, and you can still adjust the minimum, maximum, or exclusions. Use Custom Choices to keep a reusable bank of named lists.",
                     "spinner.help.openSettings": "Open Settings",
-                    "spinner.help.step2Title": "2. Decide what happens after a spin",
+                    "spinner.help.step2Title": "Decide what happens after a spin",
                     "spinner.help.step2Body": "Selections can stay available for repeats or be removed temporarily for the current round. Removed choices return when you restore the round, change wheel entries, or reload the page.",
-                    "spinner.help.step3Title": "3. Spin and announce the result",
+                    "spinner.help.step3Title": "Spin and announce the result",
                     "spinner.help.step3Body": "The selected choice is shown in full and announced for screen readers. Presentation mode enlarges the wheel for smartboards and landscape displays, while reduced-motion preferences replace the long spin with a brief transition.",
                     "spinner.help.privacy": "Your settings and custom choices are saved only in this browser. Clearing site data can remove them; export a backup if the list is important.",
                     "spinner.done": "Done",
@@ -3371,12 +3669,12 @@ Copyright © 2026. All rights reserved.
                     "spinner.footer.version": "スピナーホイール · v1.2",
                     "spinner.footer.note": "選択肢はこのブラウザだけに保存され、アップロードされません。",
                     "spinner.help.intro": "保存済みクラスの数字セットまたは再利用できるカスタムリストを選び、ホイールを回します。",
-                    "spinner.help.step1Title": "1. ホイールのモードを選ぶ",
+                    "spinner.help.step1Title": "ホイールのモードを選ぶ",
                     "spinner.help.step1Body": "「数字」では、スケジューラーの学校とクラスを選びます。保存済みの生徒数があれば新しい範囲に使われ、最小値・最大値・除外する数字も調整できます。「カスタム選択肢」では、名前付きリストを繰り返し使えます。",
                     "spinner.help.openSettings": "設定を開く",
-                    "spinner.help.step2Title": "2. 回した後の動作を決める",
+                    "spinner.help.step2Title": "回した後の動作を決める",
                     "spinner.help.step2Body": "選ばれた項目を繰り返し使えるよう残すか、現在のラウンドだけ一時的に外すかを選べます。外した項目は、ラウンドを戻す、項目を変更する、またはページを再読み込みすると戻ります。",
-                    "spinner.help.step3Title": "3. 回して結果を伝える",
+                    "spinner.help.step3Title": "回して結果を伝える",
                     "spinner.help.step3Body": "選ばれた項目は大きく表示され、スクリーンリーダーにも通知されます。プレゼンテーション表示ではスマートボードや横長画面向けにホイールが拡大され、動きを減らす設定では短い切り替えになります。",
                     "spinner.help.privacy": "設定とカスタム選択肢はこのブラウザだけに保存されます。サイトデータを消去すると失われる場合があるため、大切なリストはバックアップを書き出してください。",
                     "spinner.done": "完了",

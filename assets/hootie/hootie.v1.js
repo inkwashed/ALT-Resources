@@ -4,7 +4,28 @@
   if (window.Hootie) return;
   const base = new URL('.', document.currentScript.src);
   const key = 'teacherTools.hootie.v1';
+  const languageKey = 'teacherTools.siteLanguage.v1';
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const messages = {
+    en: {
+      heading: 'Hi, I’m Hootie!', intro: 'A little company while you teach. Where shall we go?',
+      close: 'Close Hootie’s helper panel', help: 'Help with this tool', home: 'Explore Teacher Tools',
+      hello: 'Say hello', pause: 'Pause animations', resume: 'Resume animations', tuck: 'Tuck Hootie away',
+      bringBack: 'Bring Hootie back', open: 'Open Hootie’s helper panel',
+      reduced: 'Animations are off to respect your reduced-motion setting.',
+      remembered: 'Your pause and tuck-away choices are remembered on this browser.'
+    },
+    ja: {
+      heading: 'こんにちは、Hootieです！', intro: '授業中、そばでお手伝いします。どこへ行きますか？',
+      close: 'Hootieのヘルパーパネルを閉じる', help: 'このツールの使い方', home: 'Teacher Toolsを見る',
+      hello: 'あいさつする', pause: 'アニメーションを一時停止', resume: 'アニメーションを再開', tuck: 'Hootieをしまう',
+      bringBack: 'Hootieを呼び戻す', open: 'Hootieのヘルパーパネルを開く',
+      reduced: '動きを抑える設定に合わせて、アニメーションを停止しています。',
+      remembered: '一時停止としまう設定は、このブラウザに保存されます。'
+    }
+  };
+  const language = () => document.documentElement.lang === 'ja' ? 'ja' : 'en';
+  const text = name => messages[language()][name];
   let prefs = { paused: false, tucked: false };
   try { const saved = JSON.parse(localStorage.getItem(key));
     if (saved) prefs = { paused: saved.paused === true, tucked: saved.tucked === true };
@@ -48,21 +69,32 @@
     panel.hidden = true; launcher.setAttribute('aria-expanded', 'false');
     if (restoreFocus) (prefs.tucked ? headerButton : launcher)?.focus();
   }
+  function updateText() {
+    $('#hootie-heading').lastChild.textContent = text('heading');
+    $('.heading + p').textContent = text('intro');
+    $('.close').setAttribute('aria-label', text('close'));
+    $('.help').textContent = text('help');
+    $('.home').textContent = text('home');
+    $('.wave').textContent = text('hello');
+    $('.tuck').textContent = text('tuck');
+    $('.launcher .label').textContent = 'Hootie';
+  }
   function update() {
+    updateText();
     host.hidden = prefs.tucked || !!document.fullscreenElement || document.body.classList.contains('presentation-open') || document.body.classList.contains('modal-open');
     if (host.hidden) close();
     if (headerButton) {
-      const label = prefs.tucked ? 'Bring Hootie back' : 'Tuck Hootie away';
+      const label = prefs.tucked ? text('bringBack') : text('tuck');
       headerButton.setAttribute('aria-label', label);
       headerButton.setAttribute('aria-pressed', String(!prefs.tucked));
       headerButton.title = label;
     }
     host.toggleAttribute('data-stopped', stopped());
     $('.pause').setAttribute('aria-pressed', String(prefs.paused));
-    $('.pause').textContent = prefs.paused ? 'Resume animations' : 'Pause animations';
+    $('.pause').textContent = prefs.paused ? text('resume') : text('pause');
     $('.pause').disabled = motion.matches;
-    $('.note').textContent = motion.matches ? 'Animations are off to respect your reduced-motion setting.' : 'Your pause and tuck-away choices are remembered on this browser.';
-    launcher.setAttribute('aria-label', prefs.tucked ? 'Bring Hootie back' : 'Open Hootie’s helper panel');
+    $('.note').textContent = motion.matches ? text('reduced') : text('remembered');
+    launcher.setAttribute('aria-label', prefs.tucked ? text('bringBack') : text('open'));
     if (stopped()) reset();
   }
   function save() { try { localStorage.setItem(key, JSON.stringify(prefs)); } catch (_) {} update(); }
@@ -102,9 +134,11 @@
   document.addEventListener('fullscreenchange', update);
   new MutationObserver(update).observe(document.body, { attributes: true, attributeFilter: ['class'] });
   window.addEventListener('storage', event => {
+    if (event.key === languageKey) { update(); return; }
     if (event.key !== key && event.key !== null) return;
     try { const saved = JSON.parse(event.newValue); prefs = { paused: saved?.paused === true, tucked: saved?.tucked === true }; update(); } catch (_) {}
   });
+  window.addEventListener('teacher-tools:languagechange', update);
   window.Hootie = Object.freeze({ setMood, happy: () => setMood('happy'), wave: () => setMood('wave'), read: () => setMood('read'), think: () => setMood('think') });
   const css = $('link');
   css.onload = () => { host.style.visibility = ''; if (headerButton) headerButton.hidden = false; };
