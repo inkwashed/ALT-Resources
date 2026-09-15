@@ -1759,7 +1759,7 @@ Copyright © 2026. All rights reserved.
 
                 <article class="update-entry">
                     <div class="update-date"><time datetime="2026-09-15" data-i18n="home.dateSep15">September 15, 2026</time><span class="update-version">v0.6</span></div>
-                    <div><h3 class="update-title" data-i18n="home.updateCalendarLatestTitle">Plan more of your school calendar</h3><p class="update-copy" data-i18n="home.updateCalendarLatestCopy">Class Calendar now supports holidays, multi-day and all-day events, named alternate schedules, clearer conflicts and notes, and smarter period suggestions that avoid times you have already booked.</p><a class="update-link" href="/calendar/"><span data-i18n="home.calendarLink">Open Class Calendar</span> →</a></div>
+                    <div><h3 class="update-title" data-i18n="home.updateCalendarLatestTitle">Plan more of your school calendar</h3><p class="update-copy" data-i18n="home.updateCalendarLatestCopy">Class Calendar now includes statistics with class counts, school totals, and category-hour charts, plus date-specific working locations for split days. Holidays, multi-day events, and named alternate schedules help you plan the rest.</p><a class="update-link" href="/calendar/"><span data-i18n="home.calendarLink">Open Class Calendar</span> →</a></div>
                 </article>
 
                 <article class="update-entry">
@@ -1813,41 +1813,52 @@ Copyright © 2026. All rights reserved.
     <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
     <script>
         // Shared structural contract for Calendar persistence and central backup imports.
-        window.TeacherToolsCalendarValidate = value => {
-            const object = v => v && typeof v === "object" && !Array.isArray(v);
-            const date = d => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) &&
-                !isNaN(Date.parse(d)) && new Date(d + "T12:00:00Z").toISOString().slice(0,10) === d;
-            const time = t => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
-            const scheduleMode = mode => ["regular","irregular"].includes(mode) || (typeof mode === "string" && /^alternate:[^:\s]+(?::[^:\s]+)?$/.test(mode));
-            if (!object(value) || value.version !== 1 || typeof value.timeZone !== "string" ||
-                !Array.isArray(value.events) || !object(value.preferences)) return false;
-            try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }); } catch { return false; }
-            const p = value.preferences;
-            if (!["month","week","agenda","custom"].includes(p.view) ||
-                !Array.isArray(p.days) || !p.days.length || p.days.length > 7 ||
-                new Set(p.days).size !== p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6) ||
-                !(p.ghostMode === "off" || scheduleMode(p.ghostMode)) || typeof p.working !== "boolean" ||
-                !["school","category"].every(k => typeof p[k] === "string")) return false;
-            if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
-                p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
-            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other","Holiday"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
-            if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
-            if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
-            const ids = new Set();
-            return value.events.every(e => {
-                if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
-                    !e.id || /[\r\n]/.test(e.id) || ids.has(e.id) || !e.title.trim() || !date(e.date) ||
-                    !time(e.start) || !time(e.end) || (e.endDate !== undefined && !date(e.endDate)) || (e.endDate || e.date) < e.date || ((e.endDate || e.date) === e.date && e.end <= e.start) ||
-                    !(e.mode === "custom" || scheduleMode(e.mode)) ||
-                    (e.mode === "custom" ? e.period !== null : !Number.isInteger(e.period) || e.period < 0) ||
-                    !["Class","Lunch","Meeting","Other","Holiday"].includes(e.category) ||
-                    !Number.isFinite(Date.parse(e.created)) || !Number.isFinite(Date.parse(e.modified))) return false;
-                if (e.allDay !== undefined && typeof e.allDay !== "boolean") return false;
-                if (e.allDay && (e.mode !== "custom" || e.start !== "00:00" || e.end !== "23:59")) return false;
-                ids.add(e.id); return true;
-            });
-        };
-        (() => {
+window.TeacherToolsCalendarValidate = value => {
+    const object = v => v && typeof v === "object" && !Array.isArray(v);
+    const date = d => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) &&
+        !isNaN(Date.parse(d)) && new Date(d + "T12:00:00Z").toISOString().slice(0,10) === d;
+    const time = t => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
+    const scheduleMode = mode => ["regular","irregular"].includes(mode) || (typeof mode === "string" && /^alternate:[^:\s]+(?::[^:\s]+)?$/.test(mode));
+    if (!object(value) || value.version !== 1 || typeof value.timeZone !== "string" ||
+        !Array.isArray(value.events) || !object(value.preferences)) return false;
+    try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }); } catch { return false; }
+    const p = value.preferences;
+    if (!["month","week","agenda","custom"].includes(p.view) ||
+        !Array.isArray(p.days) || !p.days.length || p.days.length > 7 ||
+        new Set(p.days).size !== p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6) ||
+        !(p.ghostMode === "off" || scheduleMode(p.ghostMode)) || typeof p.working !== "boolean" ||
+        !["school","category"].every(k => typeof p[k] === "string")) return false;
+    if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
+        p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
+    if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other","Holiday"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
+    if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
+    if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
+    if (value.workingOverrides !== undefined) {
+        if (!object(value.workingOverrides)) return false;
+        for (const [day, blocks] of Object.entries(value.workingOverrides)) {
+            if (!date(day) || !Array.isArray(blocks) || blocks.length > 24) return false;
+            const blockIds = new Set();
+            for (const b of blocks) {
+                if (!object(b) || typeof b.id !== "string" || !b.id || /[\r\n]/.test(b.id) || blockIds.has(b.id) || typeof b.schoolId !== "string" || typeof b.location !== "string" || !b.location.trim() || !time(b.start) || !time(b.end) || b.end <= b.start || !/^#[0-9a-f]{6}$/i.test(b.color)) return false;
+                blockIds.add(b.id);
+            }
+        }
+    }
+    const ids = new Set();
+    return value.events.every(e => {
+        if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
+            !e.id || /[\r\n]/.test(e.id) || ids.has(e.id) || !e.title.trim() || !date(e.date) ||
+            !time(e.start) || !time(e.end) || (e.endDate !== undefined && !date(e.endDate)) || (e.endDate || e.date) < e.date || ((e.endDate || e.date) === e.date && e.end <= e.start) ||
+            !(e.mode === "custom" || scheduleMode(e.mode)) ||
+            (e.mode === "custom" ? e.period !== null : !Number.isInteger(e.period) || e.period < 0) ||
+            !["Class","Lunch","Meeting","Other","Holiday"].includes(e.category) ||
+            !Number.isFinite(Date.parse(e.created)) || !Number.isFinite(Date.parse(e.modified))) return false;
+        if (e.allDay !== undefined && typeof e.allDay !== "boolean") return false;
+        if (e.allDay && (e.mode !== "custom" || e.start !== "00:00" || e.end !== "23:59")) return false;
+        ids.add(e.id); return true;
+    });
+};
+(() => {
             "use strict";
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
@@ -3187,7 +3198,7 @@ Copyright © 2026. All rights reserved.
                     "home.updateAppearanceTitle": "Make Teacher Tools your own",
                     "home.updateAppearanceCopy": "Create a custom color theme with your own primary, secondary, and background colors. Appearance, language, backup, Hootie, and shared school settings now stay consistent across every current tool.",
                     "home.updateCalendarLatestTitle": "Plan more of your school calendar",
-                    "home.updateCalendarLatestCopy": "Class Calendar now supports holidays, multi-day and all-day events, named alternate schedules, clearer conflicts and notes, and smarter period suggestions that avoid times you have already booked.",
+                    "home.updateCalendarLatestCopy": "Class Calendar now includes statistics with class counts, school totals, and category-hour charts, plus date-specific working locations for split days. Holidays, multi-day events, and named alternate schedules help you plan the rest.",
                     "home.updateTricksLatestTitle": "Present classroom games on the big screen",
                     "home.updateTricksLatestCopy": "Bag of Tricks adds a classroom presentation view for Coin, Dice, and Cards, plus Standard, Cat, and Shiba-inspired coin styles for quick decisions and games.",
                     "home.updateTrackerLatestTitle": "Keep lesson notes connected",
@@ -3243,7 +3254,7 @@ Copyright © 2026. All rights reserved.
                     "home.updateAppearanceTitle": "Teacher Toolsを自分好みに",
                     "home.updateAppearanceCopy": "メインカラー、サブカラー、背景色を選んで、オリジナルの配色を作れるようになりました。外観、言語、バックアップ、Hootie、学校の共有設定も、現在のすべてのツールで統一されています。",
                     "home.updateCalendarLatestTitle": "学校カレンダーをもっと幅広く計画",
-                    "home.updateCalendarLatestCopy": "クラスカレンダーが、祝日、複数日・終日の予定、名前付きの代替時間割に対応しました。重複やメモを見つけやすくし、予約済みの時限を避ける候補表示も追加しました。",
+                    "home.updateCalendarLatestCopy": "クラスカレンダーに、クラス別の授業回数、学校別の合計、カテゴリ別時間のグラフを確認できる統計機能を追加しました。日付ごとの勤務場所も設定でき、午前・午後で異なる場所に勤務する日にも対応します。祝日、複数日の予定、名前付きの代替時間割も利用できます。",
                     "home.updateTricksLatestTitle": "教室ゲームを大画面で表示",
                     "home.updateTricksLatestCopy": "お楽しみツールに、コイン、サイコロ、カードを大きく見せるプレゼン表示を追加しました。コインは標準、ネコ、柴犬風のデザインから選べます。",
                     "home.updateTrackerLatestTitle": "授業メモをつなげて管理",
