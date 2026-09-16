@@ -127,7 +127,7 @@
   $('.help').addEventListener('pointerenter', () => setMood('think'));
   $('.help').addEventListener('focus', () => setMood('think'));
   $('.help').addEventListener('click', () => { close(); help?.click(); });
-  $('.home').href = document.querySelector('.site-brand')?.href || new URL('../../previews/teacher-tools-home/index.html', base).href;
+  $('.home').href = document.querySelector('.site-brand')?.href || new URL('/', location.origin).href;
   $('.home').addEventListener('pointerenter', () => setMood('read'));
   motion.addEventListener('change', update);
   document.addEventListener('visibilitychange', update);
@@ -141,7 +141,15 @@
   window.addEventListener('teacher-tools:languagechange', update);
   window.Hootie = Object.freeze({ setMood, happy: () => setMood('happy'), wave: () => setMood('wave'), read: () => setMood('read'), think: () => setMood('think') });
   const css = $('link');
-  css.onload = () => { host.style.visibility = ''; if (headerButton) headerButton.hidden = false; };
+  css.onload = () => {
+    host.style.visibility = '';
+    if (headerButton) {
+      headerButton.classList.remove('is-loading');
+      headerButton.disabled = false;
+      headerButton.removeAttribute('aria-hidden');
+      headerButton.removeAttribute('tabindex');
+    }
+  };
   css.onerror = () => host.remove();
   css.href = new URL('hootie.v1.css', base).href;
   update();
