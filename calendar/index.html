@@ -23,10 +23,13 @@ Class Calendar v0.6 — Teacher Tools.
             const key = "teacherTools.sitePreferences.v1";
             const languageKey = "teacherTools.siteLanguage.v1";
             const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark", "custom"];
+            const themeColors = { "ocean-blue": "#1e40af", "color-pop": "#8b5cf6", "pretty-in-pink": "#db2777", "true-dark": "#15191e" };
+            let browserThemeColor = themeColors["ocean-blue"];
 
             try {
                 const saved = JSON.parse(localStorage.getItem(key));
                 const theme = saved && themes.includes(saved.theme) ? saved.theme : "ocean-blue";
+                browserThemeColor = themeColors[theme] || browserThemeColor;
                 if (theme !== "ocean-blue") document.documentElement.setAttribute("data-theme", theme);
                 if (theme === "custom") {
                     const valid = value => /^#[0-9a-f]{6}$/i.test(value || "");
@@ -35,6 +38,7 @@ Class Calendar v0.6 — Teacher Tools.
                         secondary: valid(saved.customColors?.secondary) ? saved.customColors.secondary.toLowerCase() : "#7c3aed",
                         background: valid(saved.customColors?.background) ? saved.customColors.background.toLowerCase() : "#f5f8ff"
                     };
+                    browserThemeColor = colors.primary;
                     const rgb = hex => [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16));
                     const hex = values => `#${values.map(value => Math.round(value).toString(16).padStart(2, "0")).join("")}`;
                     const mix = (a, b, amount) => hex(rgb(a).map((value, index) => value + (rgb(b)[index] - value) * amount));
@@ -47,6 +51,14 @@ Class Calendar v0.6 — Teacher Tools.
             } catch (error) {
                 // Ocean Blue remains the safe default when storage is unavailable.
             }
+
+            let themeColorMeta = document.querySelector('meta[name="theme-color"]');
+            if (!themeColorMeta) {
+                themeColorMeta = document.createElement("meta");
+                themeColorMeta.name = "theme-color";
+                document.head.appendChild(themeColorMeta);
+            }
+            themeColorMeta.content = browserThemeColor;
 
             try {
                 const saved = JSON.parse(localStorage.getItem(languageKey));
@@ -64,7 +76,7 @@ Class Calendar v0.6 — Teacher Tools.
         /* TEACHER-TOOLS:SHARED-STYLES:START */
         /*
          * Teacher Tools canonical theme tokens.
-         * This file is embedded into registered pages by the shared UI sync.
+         * This file is embedded into registered Workbench pages by the shared UI sync.
          * Published applets remain self-contained and never load this file at runtime.
          */
 
@@ -265,6 +277,7 @@ Class Calendar v0.6 — Teacher Tools.
         }
          .site-language-button,
          .site-data-button,
+        .site-install-button,
         .site-settings-button {
             width: 40px;
             height: 40px;
@@ -277,6 +290,7 @@ Class Calendar v0.6 — Teacher Tools.
             background: transparent;
             border: 1px solid transparent;
             border-radius: 50%;
+            text-decoration: none;
             cursor: pointer;
             transition: color 180ms ease;
         }
@@ -284,10 +298,12 @@ Class Calendar v0.6 — Teacher Tools.
         .site-language-button[aria-expanded="true"],
         .site-data-button:hover,
         .site-data-button[aria-expanded="true"],
+        .site-install-button:hover,
         .site-settings-button:hover,
         .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
          .site-language-button svg,
-        .site-data-button svg {
+        .site-data-button svg,
+        .site-install-button svg {
             width: 22px;
             height: 22px;
             fill: none;
@@ -1043,6 +1059,12 @@ Class Calendar v0.6 — Teacher Tools.
             .site-brand-title { font-size: 14px; }
             .site-nav { display: none; }
             .site-mobile-toggle { display: inline-flex; }
+            .site-header-actions { gap: 4px; }
+            .site-language-button,
+            .site-data-button,
+            .site-install-button,
+            .site-settings-button,
+            .site-mobile-toggle { width: 36px; height: 36px; }
             .site-tools-menu,
             .site-language-panel,
             .site-data-panel,
@@ -1056,6 +1078,13 @@ Class Calendar v0.6 — Teacher Tools.
 
         @media (max-width: 380px) {
             .site-brand-domain { display: none; }
+            .site-header-inner { padding-inline: 7px; }
+            .site-header-actions { gap: 2px; }
+            .site-language-button,
+            .site-data-button,
+            .site-install-button,
+            .site-settings-button,
+            .site-mobile-toggle { width: 34px; height: 34px; }
         }
 /* TEACHER-TOOLS:SHARED-STYLES:END */
 
@@ -1878,7 +1907,6 @@ html[data-theme="true-dark"] .calendar .event.continues-before.is-past[data-cate
 </style>
 </head>
 <body>
-    
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
@@ -1910,9 +1938,16 @@ html[data-theme="true-dark"] .calendar .event.continues-before.is-past[data-cate
                 </button>
                  <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore" data-i18n-aria-label="backup.open" data-i18n-title="backup.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3" />
+                        <path d="M5 3.5h12l2 2v15H5Z" />
+                        <path d="M8 3.5v6h8v-6M8 20.5v-7h8v7M10 6.5h4" />
                     </svg>
                 </button>
+                 <a id="siteInstallButton" class="site-install-button" href="/offline/" aria-label="Install Teacher Tools or manage offline use" title="Install & offline use" data-i18n-aria-label="offline.open" data-i18n-title="offline.title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v10M8 9l4 4 4-4" />
+                        <path d="M5 16.5v3h14v-3" />
+                    </svg>
+                </a>
                  <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance" data-i18n-aria-label="appearance.open" data-i18n-title="appearance.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
@@ -2041,7 +2076,7 @@ html[data-theme="true-dark"] .calendar .event.continues-before.is-past[data-cate
                     <option value="en">English</option>
                     <option value="ja">日本語</option>
                 </select>
-                <p class="site-language-note" data-i18n="language.progress">English and Japanese are available across all current Teacher Tools pages in this version.</p>
+                <p class="site-language-note" data-i18n="language.progress">English and Japanese are available across all current Teacher Tools pages.</p>
             </section>
              <section id="siteThemePanel" class="site-theme-panel" role="dialog" aria-labelledby="siteThemeTitle" hidden>
                 <div class="site-theme-header">
@@ -2237,6 +2272,7 @@ html[data-theme="true-dark"] .calendar .event.continues-before.is-past[data-cate
             const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark", "custom"];
             const ALLOWED_LANGUAGES = ["en", "ja"];
             const DEFAULT_CUSTOM_COLORS = Object.freeze({ primary: "#2563eb", secondary: "#7c3aed", background: "#f5f8ff" });
+            const BROWSER_THEME_COLORS = Object.freeze({ "ocean-blue": "#1e40af", "color-pop": "#8b5cf6", "pretty-in-pink": "#db2777", "true-dark": "#15191e" });
             const HEX_COLOR = /^#[0-9a-f]{6}$/i;
             let rememberedCustomColors = { ...DEFAULT_CUSTOM_COLORS };
             const SHARED_TRANSLATIONS = {
@@ -2266,12 +2302,17 @@ html[data-theme="true-dark"] .calendar .event.continues-before.is-past[data-cate
                     "tool.tricksDescription": "Flip, roll, and draw for classroom games",
                     "tool.slides": "Google Slides Automator",
                     "tool.slidesDescription": "Build lesson slides from common fields",
+                    "offline.open": "Install Teacher Tools or manage offline use",
+                    "offline.title": "Install & offline use",
+                    "offlinePage.progressLabel": "Preparing offline files",
+                    "offlinePage.progressAria": "Offline preparation progress",
+                    "offlinePage.protocolWarning": "This page was opened directly from a file. Installation and offline updates require the hosted site or the local preview server.",
                     "language.open": "Open language settings",
                     "language.title": "Language",
                     "language.close": "Close language settings",
                     "language.help": "Choose the language used for Teacher Tools interface text. Your own entries are never translated or changed.",
                     "language.label": "Display language",
-                    "language.progress": "English and Japanese are available across all current Teacher Tools pages in this version.",
+                    "language.progress": "English and Japanese are available across all current Teacher Tools pages.",
                     "backup.open": "Open Teacher Tools backup and restore",
                     "backup.title": "Backup & restore",
                     "backup.close": "Close backup and restore",
@@ -2357,12 +2398,17 @@ html[data-theme="true-dark"] .calendar .event.continues-before.is-past[data-cate
                     "tool.tricksDescription": "コイン・サイコロ・カードを授業で活用",
                     "tool.slides": "Googleスライド自動作成",
                     "tool.slidesDescription": "よく使う項目から授業スライドを作成",
+                    "offline.open": "Teacher Toolsのインストールとオフライン利用を開く",
+                    "offline.title": "インストールとオフライン利用",
+                    "offlinePage.progressLabel": "オフライン用ファイルを準備中",
+                    "offlinePage.progressAria": "オフライン準備の進行状況",
+                    "offlinePage.protocolWarning": "このページはファイルから直接開かれています。インストールとオフライン更新には、公開サイトまたはローカルプレビューサーバーから開く必要があります。",
                     "language.open": "言語設定を開く",
                     "language.title": "言語",
                     "language.close": "言語設定を閉じる",
                     "language.help": "Teacher Toolsの画面に表示する言語を選択します。自分で入力した内容は翻訳も変更もされません。",
                     "language.label": "表示言語",
-                    "language.progress": "このWorkbenchプレビューでは、現在のTeacher Tools全ページを英語と日本語で利用できます。",
+                    "language.progress": "現在のTeacher Tools全ページを英語と日本語で利用できます。",
                     "backup.open": "Teacher Toolsのバックアップと復元を開く",
                     "backup.title": "バックアップと復元",
                     "backup.close": "バックアップと復元を閉じる",
@@ -3054,6 +3100,14 @@ html[data-theme="true-dark"] .calendar .event.continues-before.is-past[data-cate
 
                 setCustomThemeControls(custom.colors, theme === "custom");
 
+                let themeColorMeta = document.querySelector('meta[name="theme-color"]');
+                if (!themeColorMeta) {
+                    themeColorMeta = document.createElement("meta");
+                    themeColorMeta.name = "theme-color";
+                    document.head.appendChild(themeColorMeta);
+                }
+                themeColorMeta.content = theme === "custom" ? custom.colors.primary : BROWSER_THEME_COLORS[theme];
+
                 if (persist) {
                     storageSet(SITE_PREFERENCES_KEY, JSON.stringify({ version: 1, theme, customColors: custom.colors }));
                 }
@@ -3736,7 +3790,7 @@ const CALENDAR_TRANSLATIONS={
 en:{
 "calendar.metaTitle":"Class Calendar · Teacher Tools","calendar.metaDescription":"Plan classes with saved school days and bell times, then export calendar events.","calendar.title":"Class Calendar","calendar.helpOpen":"Open Class Calendar help","calendar.helpTitle":"Getting started","calendar.helpClose":"Close Class Calendar help","calendar.settingsOpen":"Open Class Calendar settings","calendar.settingsTitle":"Class Calendar settings","calendar.settingsClose":"Close settings",
 "calendar.previous":"Previous period","calendar.today":"Today","calendar.next":"Next period","calendar.jump":"Jump to date","calendar.view":"View","calendar.view.week":"Week","calendar.view.month":"Month","calendar.view.agenda":"Day / agenda","calendar.view.custom":"Custom days","calendar.addEvent":"＋ Add event","calendar.school":"School","calendar.periods":"Periods","calendar.regular":"Regular","calendar.irregular":"Irregular","calendar.hidden":"Hidden","calendar.class":"Class","calendar.category":"Category","calendar.allSchools":"All schools","calendar.allClasses":"All classes","calendar.allCategories":"All categories","calendar.workingHours":"Working hours","calendar.exportICS":"Export ICS","calendar.customDaysAria":"Days shown in custom view","calendar.onboarding":"No schools yet. Add a school and attendance dates in Settings → Schools to see suggested periods, or use Add event to start with custom times.","calendar.suggestionsHelp":"Dashed slots are suggestions, not saved events. Select ＋ to add a class. Times stay fixed after saving; edit an event to apply different bell times.","calendar.footerVersion":"Class Calendar v0.6","calendar.footerCopy":"Data stays in this browser. Use the header’s Backup & restore to keep a copy.",
-"calendar.event.add":"Add event","calendar.event.edit":"Edit event","calendar.event.duplicate":"Duplicate event","calendar.event.close":"Close event editor","calendar.event.title":"Title","calendar.event.titlePlaceholder":"Uses class name if left empty","calendar.event.date":"Date","calendar.event.timeSource":"Time source","calendar.event.custom":"Custom","calendar.event.period":"Period","calendar.event.start":"Start","calendar.event.end":"End","calendar.event.location":"Location / classroom","calendar.event.meeting":"Meeting","calendar.event.other":"Other","calendar.event.addNote":"＋ Add lesson note","calendar.event.hideNote":"− Hide lesson note","calendar.event.note":"Lesson note","calendar.event.save":"Save event","calendar.event.duplicateButton":"Duplicate","calendar.event.delete":"Delete","calendar.event.export":"Export this event","calendar.event.noSchool":"No school / standalone","calendar.event.noClass":"No class","calendar.event.enterTimes":"Enter your own times. Switch to Regular or Irregular to use a school period.","calendar.event.noBells":"No bell times are available. Choose a school or switch to Custom.","calendar.event.periodHint":"Period times are set in Settings. Choose Custom to enter your own times.","calendar.event.saved":"Event saved in this browser.","calendar.event.deleted":"Event deleted.","calendar.event.deleteConfirm":"Delete this saved event? Its suggested period will become available again.","calendar.event.copySuffix":" (copy)","calendar.event.changed":"Calendar data changed in another tab. Close this editor and reopen the event before saving.","calendar.event.changedShort":"Calendar data changed. Close and reopen this editor.","calendar.event.invalidTime":"Choose a valid date and an end time after the start time. Overnight events are not supported in this version.","calendar.event.invalidPeriod":"Choose an available school period or switch to Custom.",
+"calendar.event.add":"Add event","calendar.event.edit":"Edit event","calendar.event.duplicate":"Duplicate event","calendar.event.close":"Close event editor","calendar.event.title":"Title","calendar.event.titlePlaceholder":"Uses class name if left empty","calendar.event.date":"Date","calendar.event.timeSource":"Time source","calendar.event.custom":"Custom","calendar.event.period":"Period","calendar.event.start":"Start","calendar.event.end":"End","calendar.event.location":"Location / classroom","calendar.event.meeting":"Meeting","calendar.event.other":"Other","calendar.event.addNote":"＋ Add lesson note","calendar.event.hideNote":"− Hide lesson note","calendar.event.note":"Lesson note","calendar.event.save":"Save event","calendar.event.duplicateButton":"Duplicate","calendar.event.delete":"Delete","calendar.event.export":"Export this event","calendar.event.noSchool":"No school / standalone","calendar.event.noClass":"No class","calendar.event.enterTimes":"Enter your own times. Switch to Regular or Irregular to use a school period.","calendar.event.noBells":"No bell times are available. Choose a school or switch to Custom.","calendar.event.periodHint":"Period times are set in Settings. Choose Custom to enter your own times.","calendar.event.saved":"Event saved in this browser.","calendar.event.deleted":"Event deleted.","calendar.event.deleteConfirm":"Delete this saved event? Its suggested period will become available again.","calendar.event.copySuffix":" (copy)","calendar.event.changed":"Calendar data changed in another tab. Close this editor and reopen the event before saving.","calendar.event.changedShort":"Calendar data changed. Close and reopen this editor.","calendar.event.invalidTime":"Choose a valid date and an end time after the start time. Overnight events are not supported.","calendar.event.invalidPeriod":"Choose an available school period or switch to Custom.",
 "calendar.settings.storage":"Your data is saved only in this browser. Use Backup & restore in the Teacher Tools header to keep a copy. School settings are shared with Scheduler and Tracker.","calendar.settings.calendarTab":"Calendar","calendar.settings.timeZone":"Time Zone","calendar.settings.zoneLabel":"Calendar time zone (IANA)","calendar.settings.detected":"Device time zone: {zone}","calendar.settings.zonePolicy":"If changing time zone, existing events should…","calendar.settings.keepClock":"Keep their displayed clock times","calendar.settings.keepInstant":"Keep their exact moments","calendar.settings.zoneHelp":"A time-zone change asks for confirmation when timed events exist. Ambiguous or nonexistent daylight-saving times must be adjusted before saving. Backups include this setting.","calendar.settings.saved":"Changes save automatically.","calendar.settings.headerHelp":"Appearance and Backup & restore are in the Teacher Tools header.","calendar.settings.importTitle":"Import Calendar","calendar.settings.importHelp":"Import a .ics file from Google Calendar or another calendar. Times are converted to this calendar’s time zone. Imported events use Custom times.","calendar.settings.importSchool":"School for imported events","calendar.settings.icsFile":"ICS file","calendar.settings.importLimits":"This version imports timed events. Recurring, all-day, and unsupported events are listed for review and skipped. Existing events are kept; matching calendar IDs are skipped on repeat imports.","calendar.settings.importEvents":"Import events","calendar.cancel":"Cancel",
 "calendar.export.title":"Export calendar","calendar.export.close":"Close export","calendar.export.events":"Events","calendar.export.visible":"Visible dates and active filters","calendar.export.range":"Date range and active filters","calendar.export.filtered":"All events within active filters","calendar.export.all":"Entire calendar","calendar.export.from":"From","calendar.export.through":"Through","calendar.export.help":"ICS exports are snapshots, not synchronization. Suggested periods are not exported.","calendar.export.download":"Download .ics","calendar.export.done":"Exported {count} events. Unsaved periods were not included.","calendar.export.invalidRange":"Choose a valid date range.",
 "calendar.help.intro":"Plan classes from your saved school days and bell times, then export the events when you are ready.","calendar.help.step1Title":"Confirm your calendar settings","calendar.help.step1Body":"Open Settings to confirm your detected time zone and choose what should happen if it changes later.","calendar.help.step2Title":"Set up schools and teaching dates","calendar.help.step2Body":"Use existing Scheduler schools, or add schools, attendance dates, classes, and bell times in Settings.","calendar.help.step3Title":"Add classes from suggested periods","calendar.help.step3Body":"Choose Regular or Irregular periods, then select a dashed suggestion to add a class. Use Add event for custom times.","calendar.help.step4Title":"Review and export","calendar.help.step4Body":"Saved event times stay fixed when school settings change. Export an ICS snapshot when you are ready, and use the header to back up your data.","calendar.help.limits":"Events can span multiple days. Suggested periods disappear when the same period is booked for that school and day.","calendar.help.start":"Start using Class Calendar",
@@ -3744,8 +3798,8 @@ en:{
 },
 ja:{
 "calendar.metaTitle":"クラスカレンダー · Teacher Tools","calendar.metaDescription":"保存済みの授業日とチャイム時間で授業を計画し、カレンダー予定を書き出します。","calendar.title":"クラスカレンダー","calendar.helpOpen":"クラスカレンダーの使い方を開く","calendar.helpTitle":"はじめに","calendar.helpClose":"クラスカレンダーの使い方を閉じる","calendar.settingsOpen":"クラスカレンダー設定を開く","calendar.settingsTitle":"クラスカレンダー設定","calendar.settingsClose":"設定を閉じる",
-"calendar.previous":"前の期間","calendar.today":"今日","calendar.next":"次の期間","calendar.jump":"日付へ移動","calendar.view":"表示","calendar.view.week":"週","calendar.view.month":"月","calendar.view.agenda":"日・予定一覧","calendar.view.custom":"曜日指定","calendar.addEvent":"＋ 予定を追加","calendar.school":"学校","calendar.periods":"時限","calendar.regular":"通常","calendar.irregular":"変則","calendar.hidden":"非表示","calendar.class":"クラス","calendar.category":"カテゴリー","calendar.allSchools":"すべての学校","calendar.allClasses":"すべてのクラス","calendar.allCategories":"すべてのカテゴリー","calendar.workingHours":"勤務時間","calendar.exportICS":"ICSを書き出す","calendar.customDaysAria":"曜日指定表示に含める曜日","calendar.onboarding":"学校がまだありません。「設定 → 学校」で学校と授業日を追加すると候補時限を表示できます。カスタム時間から始める場合は「予定を追加」を使ってください。","calendar.suggestionsHelp":"破線の枠は候補で、保存済み予定ではありません。＋を選ぶと授業を追加できます。保存後の時刻は固定されます。別のチャイム時間を適用するには予定を編集してください。","calendar.footerVersion":"クラスカレンダー v0.6","calendar.footerCopy":"Workbenchプレビュー · データはこのブラウザに保存されます。ヘッダーの「バックアップと復元」でコピーを保管してください。",
-"calendar.event.add":"予定を追加","calendar.event.edit":"予定を編集","calendar.event.duplicate":"予定を複製","calendar.event.close":"予定編集を閉じる","calendar.event.title":"タイトル","calendar.event.titlePlaceholder":"空欄の場合はクラス名を使用","calendar.event.date":"日付","calendar.event.timeSource":"時刻の参照元","calendar.event.custom":"カスタム","calendar.event.period":"時限","calendar.event.start":"開始","calendar.event.end":"終了","calendar.event.location":"場所・教室","calendar.event.meeting":"会議","calendar.event.other":"その他","calendar.event.addNote":"＋ 授業メモを追加","calendar.event.hideNote":"− 授業メモを隠す","calendar.event.note":"授業メモ","calendar.event.save":"予定を保存","calendar.event.duplicateButton":"複製","calendar.event.delete":"削除","calendar.event.export":"この予定を書き出す","calendar.event.noSchool":"学校なし・単独","calendar.event.noClass":"クラスなし","calendar.event.enterTimes":"時刻を入力してください。「通常」または「変則」に切り替えると学校の時限を使えます。","calendar.event.noBells":"利用できるチャイム時間がありません。学校を選ぶか「カスタム」に切り替えてください。","calendar.event.periodHint":"時限は設定で指定されています。独自の時刻を入力するには「カスタム」を選んでください。","calendar.event.saved":"予定をこのブラウザに保存しました。","calendar.event.deleted":"予定を削除しました。","calendar.event.deleteConfirm":"この保存済み予定を削除しますか？対応する候補時限が再び表示されます。","calendar.event.copySuffix":"（コピー）","calendar.event.changed":"別のタブでカレンダーデータが変更されました。この編集画面を閉じてから予定を開き直してください。","calendar.event.changedShort":"カレンダーデータが変更されました。この編集画面を閉じて開き直してください。","calendar.event.invalidTime":"有効な日付と、開始時刻より後の終了時刻を選んでください。このプレビューは日をまたぐ予定に対応していません。","calendar.event.invalidPeriod":"利用できる学校の時限を選ぶか「カスタム」に切り替えてください。",
+"calendar.previous":"前の期間","calendar.today":"今日","calendar.next":"次の期間","calendar.jump":"日付へ移動","calendar.view":"表示","calendar.view.week":"週","calendar.view.month":"月","calendar.view.agenda":"日・予定一覧","calendar.view.custom":"曜日指定","calendar.addEvent":"＋ 予定を追加","calendar.school":"学校","calendar.periods":"時限","calendar.regular":"通常","calendar.irregular":"変則","calendar.hidden":"非表示","calendar.class":"クラス","calendar.category":"カテゴリー","calendar.allSchools":"すべての学校","calendar.allClasses":"すべてのクラス","calendar.allCategories":"すべてのカテゴリー","calendar.workingHours":"勤務時間","calendar.exportICS":"ICSを書き出す","calendar.customDaysAria":"曜日指定表示に含める曜日","calendar.onboarding":"学校がまだありません。「設定 → 学校」で学校と授業日を追加すると候補時限を表示できます。カスタム時間から始める場合は「予定を追加」を使ってください。","calendar.suggestionsHelp":"破線の枠は候補で、保存済み予定ではありません。＋を選ぶと授業を追加できます。保存後の時刻は固定されます。別のチャイム時間を適用するには予定を編集してください。","calendar.footerVersion":"クラスカレンダー v0.6","calendar.footerCopy":"データはこのブラウザに保存されます。ヘッダーの「バックアップと復元」でコピーを保管してください。",
+"calendar.event.add":"予定を追加","calendar.event.edit":"予定を編集","calendar.event.duplicate":"予定を複製","calendar.event.close":"予定編集を閉じる","calendar.event.title":"タイトル","calendar.event.titlePlaceholder":"空欄の場合はクラス名を使用","calendar.event.date":"日付","calendar.event.timeSource":"時刻の参照元","calendar.event.custom":"カスタム","calendar.event.period":"時限","calendar.event.start":"開始","calendar.event.end":"終了","calendar.event.location":"場所・教室","calendar.event.meeting":"会議","calendar.event.other":"その他","calendar.event.addNote":"＋ 授業メモを追加","calendar.event.hideNote":"− 授業メモを隠す","calendar.event.note":"授業メモ","calendar.event.save":"予定を保存","calendar.event.duplicateButton":"複製","calendar.event.delete":"削除","calendar.event.export":"この予定を書き出す","calendar.event.noSchool":"学校なし・単独","calendar.event.noClass":"クラスなし","calendar.event.enterTimes":"時刻を入力してください。「通常」または「変則」に切り替えると学校の時限を使えます。","calendar.event.noBells":"利用できるチャイム時間がありません。学校を選ぶか「カスタム」に切り替えてください。","calendar.event.periodHint":"時限は設定で指定されています。独自の時刻を入力するには「カスタム」を選んでください。","calendar.event.saved":"予定をこのブラウザに保存しました。","calendar.event.deleted":"予定を削除しました。","calendar.event.deleteConfirm":"この保存済み予定を削除しますか？対応する候補時限が再び表示されます。","calendar.event.copySuffix":"（コピー）","calendar.event.changed":"別のタブでカレンダーデータが変更されました。この編集画面を閉じてから予定を開き直してください。","calendar.event.changedShort":"カレンダーデータが変更されました。この編集画面を閉じて開き直してください。","calendar.event.invalidTime":"有効な日付と、開始時刻より後の終了時刻を選んでください。日をまたぐ予定には対応していません。","calendar.event.invalidPeriod":"利用できる学校の時限を選ぶか「カスタム」に切り替えてください。",
 "calendar.settings.storage":"データはこのブラウザだけに保存されます。Teacher Toolsヘッダーの「バックアップと復元」でコピーを保管してください。学校設定はスケジューラーとトラッカーで共有されます。","calendar.settings.calendarTab":"カレンダー","calendar.settings.timeZone":"タイムゾーン","calendar.settings.zoneLabel":"カレンダーのタイムゾーン（IANA）","calendar.settings.detected":"端末のタイムゾーン：{zone}","calendar.settings.zonePolicy":"タイムゾーン変更時の既存予定…","calendar.settings.keepClock":"表示中の時計時刻を維持","calendar.settings.keepInstant":"正確な瞬間を維持","calendar.settings.zoneHelp":"時刻付き予定がある場合、タイムゾーン変更前に確認します。夏時間により曖昧または存在しない時刻は、保存前に調整が必要です。バックアップにはこの設定も含まれます。","calendar.settings.saved":"変更は自動保存されます。","calendar.settings.headerHelp":"外観とバックアップ・復元はTeacher Toolsヘッダーにあります。","calendar.settings.importTitle":"カレンダーを読み込む","calendar.settings.importHelp":"Googleカレンダーなどの.icsファイルを読み込みます。時刻はこのカレンダーのタイムゾーンに変換され、予定はカスタム時刻になります。","calendar.settings.importSchool":"読み込む予定の学校","calendar.settings.icsFile":"ICSファイル","calendar.settings.importLimits":"このバージョンは複数日にまたがる時刻付き予定も読み込みます。繰り返しや終日など未対応の項目は確認一覧に表示してスキップします。既存予定は保持され、同じカレンダーIDは再読み込み時にスキップされます。","calendar.settings.importEvents":"予定を読み込む","calendar.cancel":"キャンセル",
 "calendar.export.title":"カレンダーを書き出す","calendar.export.close":"書き出し画面を閉じる","calendar.export.events":"予定","calendar.export.visible":"表示中の日付と有効な絞り込み","calendar.export.range":"日付範囲と有効な絞り込み","calendar.export.filtered":"有効な絞り込み内のすべての予定","calendar.export.all":"カレンダー全体","calendar.export.from":"開始日","calendar.export.through":"終了日","calendar.export.help":"ICS書き出しは同期ではなく、その時点のスナップショットです。候補時限は書き出されません。","calendar.export.download":".icsをダウンロード","calendar.export.done":"{count}件の予定を書き出しました。未保存の候補時限は含まれていません。","calendar.export.invalidRange":"有効な日付範囲を選んでください。",
 "calendar.help.intro":"保存した授業日とチャイム時間から授業を計画し、準備ができたら予定を書き出します。","calendar.help.step1Title":"カレンダー設定を確認","calendar.help.step1Body":"設定を開き、検出されたタイムゾーンと、後で変更した場合の処理を確認します。","calendar.help.step2Title":"学校と授業日を設定","calendar.help.step2Body":"既存のスケジューラーの学校を使うか、設定で学校、授業日、クラス、チャイム時間を追加します。","calendar.help.step3Title":"候補時限から授業を追加","calendar.help.step3Body":"通常または変則時限を選び、破線の候補を選択して授業を追加します。独自の時刻には「予定を追加」を使います。","calendar.help.step4Title":"確認して書き出す","calendar.help.step4Body":"学校設定が変わっても保存済み予定の時刻は固定されます。準備ができたらICSを書き出し、ヘッダーからデータをバックアップしてください。","calendar.help.limits":"複数日にまたがる予定にも対応しています。同じ学校と日の同じ時限が予約済みの場合、その候補時限は表示されません。","calendar.help.start":"クラスカレンダーを使う",
@@ -4070,7 +4124,7 @@ $('settingsButton').addEventListener('click',()=>{sharedSettingsController.refre
 window.addEventListener('teacher-tools:languagechange',()=>{applyCalendarStatic();restoreControls();render();sharedSettingsController.refresh();if($('eventModal').getAttribute('aria-hidden')==='false'){updateTimeControls(false);setNoteOpen(!$('lessonNoteField').hidden);$('eventTitle').textContent=calendarT(editing?'calendar.event.edit':'calendar.event.add',editing?'Edit event':'Add event');}if($('settingsModal').getAttribute('aria-hidden')==='false')$('detectedZone').textContent=calendarT('calendar.settings.detected','Device time zone: {zone}',{zone:detected});if($('exportModal').getAttribute('aria-hidden')==='false')updateExportSummary();});
 window.ClassCalendarSharedSettingsTrial=Object.freeze({refresh:()=>sharedSettingsController.refresh()});
 
-// Calendar utilities; no storage mutation API.
+// Pure functions exposed for Workbench regression tests; no storage mutation API.
 setInterval(refreshFinishedEvents,30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshFinishedEvents();});
 window.addEventListener('focus',refreshFinishedEvents);

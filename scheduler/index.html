@@ -33,10 +33,13 @@ The software is provided "as is" without warranty of any kind.
             const key = "teacherTools.sitePreferences.v1";
             const languageKey = "teacherTools.siteLanguage.v1";
             const themes = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark", "custom"];
+            const themeColors = { "ocean-blue": "#1e40af", "color-pop": "#8b5cf6", "pretty-in-pink": "#db2777", "true-dark": "#15191e" };
+            let browserThemeColor = themeColors["ocean-blue"];
 
             try {
                 const saved = JSON.parse(localStorage.getItem(key));
                 const theme = saved && themes.includes(saved.theme) ? saved.theme : "ocean-blue";
+                browserThemeColor = themeColors[theme] || browserThemeColor;
                 if (theme !== "ocean-blue") document.documentElement.setAttribute("data-theme", theme);
                 if (theme === "custom") {
                     const valid = value => /^#[0-9a-f]{6}$/i.test(value || "");
@@ -45,6 +48,7 @@ The software is provided "as is" without warranty of any kind.
                         secondary: valid(saved.customColors?.secondary) ? saved.customColors.secondary.toLowerCase() : "#7c3aed",
                         background: valid(saved.customColors?.background) ? saved.customColors.background.toLowerCase() : "#f5f8ff"
                     };
+                    browserThemeColor = colors.primary;
                     const rgb = hex => [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16));
                     const hex = values => `#${values.map(value => Math.round(value).toString(16).padStart(2, "0")).join("")}`;
                     const mix = (a, b, amount) => hex(rgb(a).map((value, index) => value + (rgb(b)[index] - value) * amount));
@@ -57,6 +61,14 @@ The software is provided "as is" without warranty of any kind.
             } catch (error) {
                 // Ocean Blue remains the safe default when storage is unavailable.
             }
+
+            let themeColorMeta = document.querySelector('meta[name="theme-color"]');
+            if (!themeColorMeta) {
+                themeColorMeta = document.createElement("meta");
+                themeColorMeta.name = "theme-color";
+                document.head.appendChild(themeColorMeta);
+            }
+            themeColorMeta.content = browserThemeColor;
 
             try {
                 const saved = JSON.parse(localStorage.getItem(languageKey));
@@ -274,6 +286,7 @@ The software is provided "as is" without warranty of any kind.
         }
          .site-language-button,
          .site-data-button,
+        .site-install-button,
         .site-settings-button {
             width: 40px;
             height: 40px;
@@ -286,6 +299,7 @@ The software is provided "as is" without warranty of any kind.
             background: transparent;
             border: 1px solid transparent;
             border-radius: 50%;
+            text-decoration: none;
             cursor: pointer;
             transition: color 180ms ease;
         }
@@ -293,10 +307,12 @@ The software is provided "as is" without warranty of any kind.
         .site-language-button[aria-expanded="true"],
         .site-data-button:hover,
         .site-data-button[aria-expanded="true"],
+        .site-install-button:hover,
         .site-settings-button:hover,
         .site-settings-button[aria-expanded="true"] { color: var(--accent-secondary); }
          .site-language-button svg,
-        .site-data-button svg {
+        .site-data-button svg,
+        .site-install-button svg {
             width: 22px;
             height: 22px;
             fill: none;
@@ -1052,6 +1068,12 @@ The software is provided "as is" without warranty of any kind.
             .site-brand-title { font-size: 14px; }
             .site-nav { display: none; }
             .site-mobile-toggle { display: inline-flex; }
+            .site-header-actions { gap: 4px; }
+            .site-language-button,
+            .site-data-button,
+            .site-install-button,
+            .site-settings-button,
+            .site-mobile-toggle { width: 36px; height: 36px; }
             .site-tools-menu,
             .site-language-panel,
             .site-data-panel,
@@ -1065,6 +1087,13 @@ The software is provided "as is" without warranty of any kind.
 
         @media (max-width: 380px) {
             .site-brand-domain { display: none; }
+            .site-header-inner { padding-inline: 7px; }
+            .site-header-actions { gap: 2px; }
+            .site-language-button,
+            .site-data-button,
+            .site-install-button,
+            .site-settings-button,
+            .site-mobile-toggle { width: 34px; height: 34px; }
         }
 /* TEACHER-TOOLS:SHARED-STYLES:END */
 
@@ -2104,9 +2133,16 @@ The software is provided "as is" without warranty of any kind.
                 </button>
                  <button type="button" id="siteDataButton" class="site-data-button" aria-label="Open Teacher Tools backup and restore" aria-expanded="false" aria-controls="siteDataPanel" title="Backup & restore" data-i18n-aria-label="backup.open" data-i18n-title="backup.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3" />
+                        <path d="M5 3.5h12l2 2v15H5Z" />
+                        <path d="M8 3.5v6h8v-6M8 20.5v-7h8v7M10 6.5h4" />
                     </svg>
                 </button>
+                 <a id="siteInstallButton" class="site-install-button" href="/offline/" aria-label="Install Teacher Tools or manage offline use" title="Install & offline use" data-i18n-aria-label="offline.open" data-i18n-title="offline.title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v10M8 9l4 4 4-4" />
+                        <path d="M5 16.5v3h14v-3" />
+                    </svg>
+                </a>
                  <button type="button" id="siteSettingsButton" class="site-settings-button" aria-label="Open site appearance settings" aria-expanded="false" aria-controls="siteThemePanel" title="Appearance" data-i18n-aria-label="appearance.open" data-i18n-title="appearance.title">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2.8S5.8 9.6 5.8 14.2a6.2 6.2 0 0 0 12.4 0C18.2 9.6 12 2.8 12 2.8Z" />
@@ -2644,52 +2680,52 @@ The software is provided "as is" without warranty of any kind.
 <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
     <script>
         // Shared structural contract for Calendar persistence and central backup imports.
-window.TeacherToolsCalendarValidate = value => {
-    const object = v => v && typeof v === "object" && !Array.isArray(v);
-    const date = d => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) &&
-        !isNaN(Date.parse(d)) && new Date(d + "T12:00:00Z").toISOString().slice(0,10) === d;
-    const time = t => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
-    const scheduleMode = mode => ["regular","irregular"].includes(mode) || (typeof mode === "string" && /^alternate:[^:\s]+(?::[^:\s]+)?$/.test(mode));
-    if (!object(value) || value.version !== 1 || typeof value.timeZone !== "string" ||
-        !Array.isArray(value.events) || !object(value.preferences)) return false;
-    try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }); } catch { return false; }
-    const p = value.preferences;
-    if (!["month","week","agenda","custom"].includes(p.view) ||
-        !Array.isArray(p.days) || !p.days.length || p.days.length > 7 ||
-        new Set(p.days).size !== p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6) ||
-        !(p.ghostMode === "off" || scheduleMode(p.ghostMode)) || typeof p.working !== "boolean" ||
-        !["school","category"].every(k => typeof p[k] === "string")) return false;
-    if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
-        p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
-    if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other","Holiday"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
-    if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
-    if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
-    if (value.workingOverrides !== undefined) {
-        if (!object(value.workingOverrides)) return false;
-        for (const [day, blocks] of Object.entries(value.workingOverrides)) {
-            if (!date(day) || !Array.isArray(blocks) || blocks.length > 24) return false;
-            const blockIds = new Set();
-            for (const b of blocks) {
-                if (!object(b) || typeof b.id !== "string" || !b.id || /[\r\n]/.test(b.id) || blockIds.has(b.id) || typeof b.schoolId !== "string" || typeof b.location !== "string" || !b.location.trim() || !time(b.start) || !time(b.end) || b.end <= b.start || !/^#[0-9a-f]{6}$/i.test(b.color)) return false;
-                blockIds.add(b.id);
+        window.TeacherToolsCalendarValidate = value => {
+            const object = v => v && typeof v === "object" && !Array.isArray(v);
+            const date = d => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) &&
+                !isNaN(Date.parse(d)) && new Date(d + "T12:00:00Z").toISOString().slice(0,10) === d;
+            const time = t => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
+            const scheduleMode = mode => ["regular","irregular"].includes(mode) || (typeof mode === "string" && /^alternate:[^:\s]+(?::[^:\s]+)?$/.test(mode));
+            if (!object(value) || value.version !== 1 || typeof value.timeZone !== "string" ||
+                !Array.isArray(value.events) || !object(value.preferences)) return false;
+            try { new Intl.DateTimeFormat("en", { timeZone: value.timeZone }); } catch { return false; }
+            const p = value.preferences;
+            if (!["month","week","agenda","custom"].includes(p.view) ||
+                !Array.isArray(p.days) || !p.days.length || p.days.length > 7 ||
+                new Set(p.days).size !== p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6) ||
+                !(p.ghostMode === "off" || scheduleMode(p.ghostMode)) || typeof p.working !== "boolean" ||
+                !["school","category"].every(k => typeof p[k] === "string")) return false;
+            if (p.classSelection !== undefined && (!Array.isArray(p.classSelection) ||
+                p.classSelection.some(k => { try { const pair = JSON.parse(k); return !Array.isArray(pair) || pair.length !== 2 || pair.some(v => typeof v !== "string"); } catch { return true; } }) || new Set(p.classSelection).size !== p.classSelection.length)) return false;
+            if (p.categorySelection !== undefined && (!Array.isArray(p.categorySelection) || p.categorySelection.some(c => !["Class","Lunch","Meeting","Other","Holiday"].includes(c)) || new Set(p.categorySelection).size !== p.categorySelection.length)) return false;
+            if (p.settingsSchool !== undefined && typeof p.settingsSchool !== "string") return false;
+            if (p.settingsTab !== undefined && !["schools","schedule","periods","calendar"].includes(p.settingsTab)) return false;
+            if (value.workingOverrides !== undefined) {
+                if (!object(value.workingOverrides)) return false;
+                for (const [day, blocks] of Object.entries(value.workingOverrides)) {
+                    if (!date(day) || !Array.isArray(blocks) || blocks.length > 24) return false;
+                    const blockIds = new Set();
+                    for (const b of blocks) {
+                        if (!object(b) || typeof b.id !== "string" || !b.id || /[\r\n]/.test(b.id) || blockIds.has(b.id) || typeof b.schoolId !== "string" || typeof b.location !== "string" || !b.location.trim() || !time(b.start) || !time(b.end) || b.end <= b.start || !/^#[0-9a-f]{6}$/i.test(b.color)) return false;
+                        blockIds.add(b.id);
+                    }
+                }
             }
-        }
-    }
-    const ids = new Set();
-    return value.events.every(e => {
-        if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
-            !e.id || /[\r\n]/.test(e.id) || ids.has(e.id) || !e.title.trim() || !date(e.date) ||
-            !time(e.start) || !time(e.end) || (e.endDate !== undefined && !date(e.endDate)) || (e.endDate || e.date) < e.date || ((e.endDate || e.date) === e.date && e.end <= e.start) ||
-            !(e.mode === "custom" || scheduleMode(e.mode)) ||
-            (e.mode === "custom" ? e.period !== null : !Number.isInteger(e.period) || e.period < 0) ||
-            !["Class","Lunch","Meeting","Other","Holiday"].includes(e.category) ||
-            !Number.isFinite(Date.parse(e.created)) || !Number.isFinite(Date.parse(e.modified))) return false;
-        if (e.allDay !== undefined && typeof e.allDay !== "boolean") return false;
-        if (e.allDay && (e.mode !== "custom" || e.start !== "00:00" || e.end !== "23:59")) return false;
-        ids.add(e.id); return true;
-    });
-};
-(() => {
+            const ids = new Set();
+            return value.events.every(e => {
+                if (!object(e) || !["id","title","schoolId","className","location","category","notes","created","modified"].every(k => typeof e[k] === "string") ||
+                    !e.id || /[\r\n]/.test(e.id) || ids.has(e.id) || !e.title.trim() || !date(e.date) ||
+                    !time(e.start) || !time(e.end) || (e.endDate !== undefined && !date(e.endDate)) || (e.endDate || e.date) < e.date || ((e.endDate || e.date) === e.date && e.end <= e.start) ||
+                    !(e.mode === "custom" || scheduleMode(e.mode)) ||
+                    (e.mode === "custom" ? e.period !== null : !Number.isInteger(e.period) || e.period < 0) ||
+                    !["Class","Lunch","Meeting","Other","Holiday"].includes(e.category) ||
+                    !Number.isFinite(Date.parse(e.created)) || !Number.isFinite(Date.parse(e.modified))) return false;
+                if (e.allDay !== undefined && typeof e.allDay !== "boolean") return false;
+                if (e.allDay && (e.mode !== "custom" || e.start !== "00:00" || e.end !== "23:59")) return false;
+                ids.add(e.id); return true;
+            });
+        };
+        (() => {
             "use strict";
 
             const SITE_PREFERENCES_KEY = "teacherTools.sitePreferences.v1";
@@ -2697,6 +2733,7 @@ window.TeacherToolsCalendarValidate = value => {
             const ALLOWED_THEMES = ["ocean-blue", "color-pop", "pretty-in-pink", "true-dark", "custom"];
             const ALLOWED_LANGUAGES = ["en", "ja"];
             const DEFAULT_CUSTOM_COLORS = Object.freeze({ primary: "#2563eb", secondary: "#7c3aed", background: "#f5f8ff" });
+            const BROWSER_THEME_COLORS = Object.freeze({ "ocean-blue": "#1e40af", "color-pop": "#8b5cf6", "pretty-in-pink": "#db2777", "true-dark": "#15191e" });
             const HEX_COLOR = /^#[0-9a-f]{6}$/i;
             let rememberedCustomColors = { ...DEFAULT_CUSTOM_COLORS };
             const SHARED_TRANSLATIONS = {
@@ -2726,6 +2763,11 @@ window.TeacherToolsCalendarValidate = value => {
                     "tool.tricksDescription": "Flip, roll, and draw for classroom games",
                     "tool.slides": "Google Slides Automator",
                     "tool.slidesDescription": "Build lesson slides from common fields",
+                    "offline.open": "Install Teacher Tools or manage offline use",
+                    "offline.title": "Install & offline use",
+                    "offlinePage.progressLabel": "Preparing offline files",
+                    "offlinePage.progressAria": "Offline preparation progress",
+                    "offlinePage.protocolWarning": "This page was opened directly from a file. Installation and offline updates require the hosted site or the local preview server.",
                     "language.open": "Open language settings",
                     "language.title": "Language",
                     "language.close": "Close language settings",
@@ -2817,6 +2859,11 @@ window.TeacherToolsCalendarValidate = value => {
                     "tool.tricksDescription": "コイン・サイコロ・カードを授業で活用",
                     "tool.slides": "Googleスライド自動作成",
                     "tool.slidesDescription": "よく使う項目から授業スライドを作成",
+                    "offline.open": "Teacher Toolsのインストールとオフライン利用を開く",
+                    "offline.title": "インストールとオフライン利用",
+                    "offlinePage.progressLabel": "オフライン用ファイルを準備中",
+                    "offlinePage.progressAria": "オフライン準備の進行状況",
+                    "offlinePage.protocolWarning": "このページはファイルから直接開かれています。インストールとオフライン更新には、公開サイトまたはローカルプレビューサーバーから開く必要があります。",
                     "language.open": "言語設定を開く",
                     "language.title": "言語",
                     "language.close": "言語設定を閉じる",
@@ -3513,6 +3560,14 @@ window.TeacherToolsCalendarValidate = value => {
                 });
 
                 setCustomThemeControls(custom.colors, theme === "custom");
+
+                let themeColorMeta = document.querySelector('meta[name="theme-color"]');
+                if (!themeColorMeta) {
+                    themeColorMeta = document.createElement("meta");
+                    themeColorMeta.name = "theme-color";
+                    document.head.appendChild(themeColorMeta);
+                }
+                themeColorMeta.content = theme === "custom" ? custom.colors.primary : BROWSER_THEME_COLORS[theme];
 
                 if (persist) {
                     storageSet(SITE_PREFERENCES_KEY, JSON.stringify({ version: 1, theme, customColors: custom.colors }));

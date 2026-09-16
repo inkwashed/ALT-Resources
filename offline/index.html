@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<!--
-Teacher Tools Home
-Copyright © 2026. All rights reserved.
-
--->
+<!-- Teacher Tools Install & Offline Use -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Free practical browser-based tools for ALTs and teachers.">
-    <title>Teacher Tools</title>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="Install Teacher Tools, prepare it for offline use, and safely move locally saved teaching data.">
+    <meta name="theme-color" content="#1e40af">
+    <title>Install & Offline Use · Teacher Tools</title>
+    <link rel="manifest" href="/offline.webmanifest">
+    <link rel="apple-touch-icon" href="/assets/pwa/teacher-tools-icon-192.png">
     <!-- TEACHER-TOOLS:FAVICON:START -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%232563eb%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cstyle%3E.fill%7Bfill%3A%23bfdbfe%3Bstroke%3A%23fff%7D%3C%2Fstyle%3E%3Cpath%20d%3D%22M7%209h18v16H7zM11%205v7M21%205v7M7%2014h18m-13%206%202.3%202.3%205.8-5.2%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <!-- TEACHER-TOOLS:FAVICON:END -->
@@ -1083,340 +1083,67 @@ Copyright © 2026. All rights reserved.
         }
 /* TEACHER-TOOLS:SHARED-STYLES:END */
 
-        .home-main {
-            --success: #18794e;
-            --success-soft: #e8f7ef;
-            width: min(960px, 100%);
-            margin: 0 auto;
-            padding: 28px 18px 34px;
-        }
-
-        html[data-theme="true-dark"] .home-main {
-            --success: #75d5a6;
-            --success-soft: #163426;
-        }
-
-        .home-intro {
-            display: grid;
-            grid-template-columns: minmax(0, 1.45fr) minmax(230px, .75fr);
-            gap: 18px;
-            align-items: stretch;
-        }
-
-        .welcome-panel,
-        .hootie-feature,
-        .tool-entry,
-        .updates-panel {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0,0,0,.07);
-        }
-
-        .welcome-panel {
-            padding: 26px;
-        }
-
-        .welcome-kicker {
-            margin: 0 0 7px;
-            color: var(--accent);
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: .09em;
-            text-transform: uppercase;
-        }
-
-        .welcome-title {
-            max-width: 600px;
-            margin: 0;
-            color: var(--text);
-            font-size: clamp(25px, 4vw, 38px);
-            line-height: 1.12;
-            letter-spacing: -.025em;
-        }
-
-        .welcome-copy {
-            max-width: 620px;
-            margin: 12px 0 0;
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .primary-link {
-            min-height: 42px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            margin-top: 18px;
-            padding: 10px 15px;
-            color: #ffffff;
-            background: var(--accent);
-            border: 1px solid var(--accent);
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .primary-link:hover { filter: brightness(.96); }
-
-        html[data-theme="true-dark"] .primary-link { color: #07101d; }
-
-        .hootie-feature {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 17px 20px 19px;
-            text-align: center;
-            background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-            border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
-            box-shadow: none;
-        }
-
-        .hootie-feature-art {
-            width: 120px;
-            height: 96px;
-            flex: 0 0 auto;
-            background: url('/assets/hootie/hootie-sprites.v2.webp') no-repeat -120px -96px / 480px 480px;
-            image-rendering: pixelated;
-        }
-
-        .hootie-feature-title {
-            margin: 0 0 6px;
-            color: var(--text);
-            font-size: 15px;
-        }
-
-        .hootie-feature-copy {
-            margin: 0;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .home-section {
-            margin-top: 24px;
-        }
-
-        .section-heading-row {
-            display: flex;
-            align-items: end;
-            justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 9px;
-        }
-
-        .section-title {
-            margin: 0;
-            font-size: 17px;
-        }
-
-        .section-description {
-            margin: 3px 0 0;
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.45;
-        }
-
-        .tool-list {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .tool-entry {
-            position: relative;
-            display: grid;
-            grid-template-columns: 44px minmax(0, 1fr);
-            gap: 12px;
-            padding: 16px;
-            box-shadow: none;
-        }
-
-        .tool-entry.available {
-            border-color: var(--accent-border);
-        }
-
-        .tool-icon {
-            width: 44px;
-            height: 44px;
-            display: grid;
-            place-items: center;
-            color: var(--accent);
-            background: var(--accent-soft);
-            border-radius: 10px;
-            font-size: 20px;
-        }
-
-        .tool-icon svg {
-            width: 25px;
-            height: 25px;
-            display: block;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.7;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .tool-icon .icon-fill {
-            fill: currentColor;
-            stroke: none;
-        }
-
-        .tool-name-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .tool-name {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        .tool-status {
-            flex: 0 0 auto;
-            padding: 3px 7px;
-            color: var(--muted);
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            font-size: 8.5px;
-            font-weight: 750;
-            text-transform: uppercase;
-        }
-
-        .tool-entry.available .tool-status {
-            color: var(--success);
-            background: var(--success-soft);
-            border-color: color-mix(in srgb, var(--success) 25%, transparent);
-        }
-
-        .tool-description {
-            margin: 5px 0 0;
-            color: var(--muted);
-            font-size: 11.5px;
-            line-height: 1.45;
-        }
-
-        .tool-link {
-            display: inline-flex;
-            margin-top: 10px;
-            color: var(--accent);
-            font-size: 11px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .tool-link:hover { text-decoration: underline; }
-
-        .updates-panel {
-            overflow: hidden;
-            box-shadow: none;
-        }
-
-        .update-entry {
-            display: grid;
-            grid-template-columns: 105px minmax(0, 1fr);
-            gap: 18px;
-            padding: 17px 18px;
-        }
-
-        .update-entry + .update-entry { border-top: 1px solid var(--line); }
-
-        .update-date {
-            color: var(--muted);
-            font-size: 10px;
-            font-weight: 650;
-            line-height: 1.4;
-        }
-
-        .update-version {
-            display: inline-block;
-            margin-top: 5px;
-            padding: 2px 6px;
-            color: var(--accent);
-            background: var(--accent-soft);
-            border-radius: 999px;
-            font-size: 8.5px;
-            font-weight: 750;
-        }
-
-        .update-title {
-            margin: 0 0 5px;
-            font-size: 13px;
-        }
-
-        .update-copy {
-            margin: 0;
-            color: var(--muted);
-            font-size: 11.5px;
-            line-height: 1.5;
-        }
-
-        .update-link {
-            display: inline-flex;
-            margin-top: 8px;
-            color: var(--accent);
-            font-size: 10.5px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .update-link:hover { text-decoration: underline; }
-
-        .site-footer {
-            padding: 14px 18px 18px;
-            color: var(--muted);
-            text-align: center;
-            font-size: 9.5px;
-            line-height: 1.45;
-        }
-
-        @media (max-width: 700px) {
-            .home-intro { grid-template-columns: 1fr; }
-            .hootie-feature {
-                display: grid;
-                grid-template-columns: 120px minmax(0, 1fr);
-                gap: 14px;
-                text-align: left;
-            }
-        }
-
-        @media (max-width: 620px) {
-            .home-main { padding: 16px 8px 24px; }
-            .welcome-panel { padding: 20px 17px; }
-            .tool-list { grid-template-columns: 1fr; }
-            .update-entry { grid-template-columns: 1fr; gap: 6px; }
-            .update-version { margin: 0 0 0 6px; }
-        }
-
-        @media (max-width: 380px) {
-            .welcome-title { font-size: 25px; }
-            .hootie-feature { grid-template-columns: 1fr; text-align: center; }
-            .tool-entry { grid-template-columns: 38px minmax(0, 1fr); padding: 13px; }
-            .tool-icon { width: 38px; height: 38px; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                scroll-behavior: auto !important;
-                transition-duration: .01ms !important;
-                animation-duration: .01ms !important;
-            }
-        }
+        .offline-page { width: min(940px, 100%); margin: 0 auto; padding: 32px 18px 54px; }
+        .offline-hero { padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 10px 28px rgba(0,0,0,.07); }
+        .eyebrow { margin: 0 0 7px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        .offline-title { margin: 0; color: var(--text); font-size: clamp(25px, 4vw, 36px); line-height: 1.1; }
+        .offline-intro { max-width: 720px; margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+        .protocol-warning { margin-top: 15px; padding: 12px 14px; color: var(--warning-text); background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 10px; font-size: 12px; line-height: 1.55; }
+        .protocol-warning[hidden] { display: none; }
+        .status-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-top: 20px; }
+        .status-card { padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 11px; }
+        .status-label { display: block; color: var(--muted); font-size: 10px; font-weight: 750; text-transform: uppercase; letter-spacing: .06em; }
+        .status-value { display: block; margin-top: 4px; color: var(--text); font-size: 13px; font-weight: 750; }
+        .status-value.good { color: var(--accent); }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+        .action { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 14px; border: 1px solid var(--accent-border); border-radius: 9px; color: var(--accent); background: var(--accent-soft); font-size: 12px; font-weight: 750; text-decoration: none; cursor: pointer; }
+        .action.primary { color: var(--accent-contrast,#fff); background: var(--accent); border-color: var(--accent); }
+        .action:hover { filter: brightness(.98); transform: translateY(-1px); }
+        .action:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+        .action svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .live-status { min-height: 20px; margin: 12px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .live-status.error { color: var(--danger); }
+        .cache-progress { margin-top: 12px; padding: 11px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+        .cache-progress[hidden] { display: none; }
+        .cache-progress-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 7px; color: var(--muted); font-size: 11px; font-weight: 700; }
+        .cache-progress progress { display: block; width: 100%; height: 10px; overflow: hidden; border: 0; border-radius: 999px; color: var(--accent); background: var(--line); accent-color: var(--accent); }
+        .cache-progress progress::-webkit-progress-bar { background: var(--line); border-radius: 999px; }
+        .cache-progress progress::-webkit-progress-value { background: var(--accent); border-radius: 999px; transition: width .18s ease; }
+        .cache-progress progress::-moz-progress-bar { background: var(--accent); border-radius: 999px; }
+        .section { margin-top: 22px; }
+        .section-heading { margin: 0 0 5px; font-size: 19px; }
+        .section-copy { margin: 0 0 13px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+        .recommendation { padding: 15px; border: 1px solid var(--accent-border); border-left: 5px solid var(--accent); border-radius: 11px; background: var(--accent-soft); }
+        .recommendation strong { display: block; margin-bottom: 4px; font-size: 14px; }
+        .recommendation p { margin: 0; color: var(--text); font-size: 12px; line-height: 1.55; }
+        .option-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-top: 12px; }
+        .option-card { position: relative; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 13px; }
+        .option-card.recommended { border-color: var(--accent); box-shadow: 0 0 0 2px var(--focus-ring); }
+        .best-badge { display: none; position: absolute; top: 11px; right: 11px; padding: 3px 7px; border-radius: 999px; color: var(--accent-contrast,#fff); background: var(--accent); font-size: 9px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+        .option-card.recommended .best-badge { display: inline-flex; }
+        .option-card h3 { margin: 0 65px 5px 0; font-size: 15px; }
+        .option-card p, .option-card li { color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .option-card p { margin: 0; }
+        .option-card ol { margin: 10px 0 0; padding-left: 19px; }
+        .option-note { margin-top: 9px !important; padding-top: 9px; border-top: 1px solid var(--line); }
+        .data-panel { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 13px; }
+        .data-icon { width: 42px; height: 42px; display: grid; place-items: center; color: var(--accent); background: var(--accent-soft); border-radius: 10px; }
+        .data-icon svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .data-panel h3 { margin: 0 0 4px; font-size: 15px; }
+        .data-panel p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+        .data-panel .action { margin-top: 10px; }
+        .migration-list { margin: 11px 0 0; padding-left: 20px; color: var(--text); font-size: 12px; line-height: 1.65; }
+        .privacy-note { margin-top: 22px; padding: 13px 15px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; font-size: 11px; line-height: 1.55; }
+        .page-footer { margin-top: 24px; color: var(--muted); text-align: center; font-size: 10px; }
+        @media (max-width: 700px) { .status-grid, .option-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 480px) { .offline-page { padding: 20px 10px 40px; } .offline-hero { padding: 17px; border-radius: 12px; } .hero-actions .action { width: 100%; } .data-panel { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <!-- TEACHER-TOOLS:SITE-HEADER:START -->
     <header class="site-header" data-teacher-tools-header>
         <div class="site-header-inner">
-            <a class="site-brand" href="/" aria-label="Teacher Tools home" data-i18n-aria-label="nav.homeAria" aria-current="page">
+            <a class="site-brand" href="/" aria-label="Teacher Tools home" data-i18n-aria-label="nav.homeAria">
                 <span class="site-brand-mark" aria-hidden="true">
                     <svg viewBox="0 0 28 28">
                         <path d="M5.5 7.5h17v15h-17z" />
@@ -1431,7 +1158,7 @@ Copyright © 2026. All rights reserved.
             </a>
              <div class="site-header-actions">
                 <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="nav.mainAria">
-                    <a class="site-nav-link" href="/" data-i18n="nav.home" aria-current="page">Home</a>
+                    <a class="site-nav-link" href="/" data-i18n="nav.home">Home</a>
                     <button type="button" id="siteToolsMenuButton" class="site-menu-toggle" aria-expanded="false" aria-controls="siteToolsMenu">
                         <span data-i18n="nav.tools">Tools</span> <span class="site-menu-chevron" aria-hidden="true"></span>
                     </button>
@@ -1472,10 +1199,10 @@ Copyright © 2026. All rights reserved.
                 </button>
             </div>
              <nav id="siteToolsMenu" class="site-tools-menu" aria-label="Tools" data-i18n-aria-label="nav.tools" hidden>
-                <a class="site-menu-item site-menu-home" href="/" aria-current="page">
+                <a class="site-menu-item site-menu-home" href="/">
                     <span class="site-menu-icon" aria-hidden="true">⌂</span>
                     <span><span class="site-menu-name" data-i18n="nav.home">Home</span><span class="site-menu-description" data-i18n="nav.homeDescription">Teacher Tools overview and updates</span></span>
-                    <span class="site-menu-status" data-i18n="nav.status.HERE">HERE</span>
+                    <span class="site-menu-status" data-i18n="nav.status.OPEN">OPEN</span>
                 </a>
                  <div class="site-menu-label" data-i18n="nav.available">Available tools</div>
                 <a class="site-menu-item" href="/scheduler/">
@@ -1631,225 +1358,54 @@ Copyright © 2026. All rights reserved.
     </header>
 <!-- TEACHER-TOOLS:SITE-HEADER:END -->
 
-    <main class="home-main">
-        <div class="home-intro">
-            <section class="welcome-panel">
-                <p class="welcome-kicker" data-i18n="home.welcome">Welcome to Teacher Tools</p>
-                <h1 class="welcome-title" data-i18n="home.title">Practical tools for ALTs and teachers.</h1>
-                <p class="welcome-copy" data-i18n="home.intro">Simple browser-based utilities designed to make everyday planning and classroom work a little easier.</p>
-                <a class="primary-link" href="/scheduler/"><span data-i18n="home.openScheduler">Open Class Scheduler</span> <span aria-hidden="true">→</span></a>
-            </section>
-
-            <aside class="hootie-feature" aria-labelledby="hootieFeatureTitle">
-                <div class="hootie-feature-art" role="img" aria-label="Hootie the owl smiling excitedly" data-i18n-aria-label="home.hootieAria"></div>
-                <div>
-                    <h2 id="hootieFeatureTitle" class="hootie-feature-title" data-i18n="home.hootieTitle">Meet Hootie</h2>
-                    <p class="hootie-feature-copy" data-i18n="home.hootieCopy">Your cheerful Teacher Tools helper is here with quick guidance, easy navigation, and a little encouragement while you work.</p>
-                </div>
-            </aside>
-        </div>
-
-        <section class="home-section" aria-labelledby="toolsTitle">
-            <div class="section-heading-row">
-                <div>
-                    <h2 id="toolsTitle" class="section-title" data-i18n="home.toolsTitle">Available tools</h2>
-                    <p class="section-description" data-i18n="home.toolsDescription">Open a tool or see what is currently being planned.</p>
-                </div>
+    <main class="offline-page">
+        <section class="offline-hero" aria-labelledby="offlineTitle">
+            <p class="eyebrow" data-i18n="offlinePage.eyebrow">Teacher Tools on this device</p>
+            <h1 id="offlineTitle" class="offline-title" data-i18n="offlinePage.title">Install & offline use</h1>
+            <p class="offline-intro" data-i18n="offlinePage.intro">Prepare the complete Teacher Tools collection for classrooms without reliable internet. Every option uses the same app; your browser determines how it is installed and where local data is stored.</p>
+            <p id="protocolWarning" class="protocol-warning" role="alert" hidden data-i18n="offlinePage.protocolWarning">This page was opened directly from a file. Installation and offline updates require the hosted site or the local preview server.</p>
+            <div class="status-grid" aria-label="Offline readiness" data-i18n-aria-label="offlinePage.statusAria">
+                <div class="status-card"><span class="status-label" data-i18n="offlinePage.environment">This device</span><span id="environmentValue" class="status-value">Checking…</span></div>
+                <div class="status-card"><span class="status-label" data-i18n="offlinePage.installStatus">App status</span><span id="installValue" class="status-value">Checking…</span></div>
+                <div class="status-card"><span class="status-label" data-i18n="offlinePage.offlineStatus">Offline files</span><span id="offlineValue" class="status-value">Checking…</span></div>
             </div>
+            <div class="hero-actions">
+                <button id="prepareButton" class="action primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10M8 9l4 4 4-4M5 17v3h14v-3"/></svg><span data-i18n="offlinePage.prepare">Prepare for offline use</span></button>
+                <button id="installButton" class="action" type="button"><span data-i18n="offlinePage.install">Install Teacher Tools</span></button>
+                <button id="updateButton" class="action" type="button"><span data-i18n="offlinePage.update">Check for updates</span></button>
+            </div>
+            <div id="cacheProgressPanel" class="cache-progress" hidden>
+                <div class="cache-progress-row"><span data-i18n="offlinePage.progressLabel">Preparing offline files</span><span id="cacheProgressValue">0%</span></div>
+                <progress id="cacheProgressBar" max="100" value="0" aria-label="Offline preparation progress" data-i18n-aria-label="offlinePage.progressAria"></progress>
+            </div>
+            <p id="offlineMessage" class="live-status" role="status" aria-live="polite"></p>
+        </section>
 
-            <div class="tool-list">
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <path d="M5.5 7.5h17v15h-17z" />
-                            <path d="M9 4.5v6M19 4.5v6M5.5 12h17" />
-                            <path d="m10 17 2.2 2.2L18 14.7" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name" data-i18n="home.schedulerName">ALT Class Scheduler</h3>
-                            <span class="tool-status" data-i18n="home.available">Available</span>
-                        </div>
-                        <p class="tool-description" data-i18n="home.schedulerDescription">Create templated Google Calendar events using the real class schedules and bell times for multiple schools.</p>
-                        <a class="tool-link" href="/scheduler/"><span data-i18n="home.schedulerLink">Open scheduler</span> →</a>
-                    </div>
-                </article>
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <path d="M5.5 7.5h17v15h-17zM9 4.5v6M19 4.5v6M5.5 12h17M11.2 12v10.5M16.8 12v10.5M5.5 17.25h17" />
-                            <path class="icon-fill" d="M11.2 12h5.6v5.25h-5.6z" />
-                        </svg>
-                    </div>
-                    <div><div class="tool-name-row"><h3 class="tool-name" data-i18n="home.calendarName">Class Calendar</h3><span class="tool-status" data-i18n="home.available">Available</span></div>
-                        <p class="tool-description" data-i18n="home.calendarDescription">Plan classes with school bell times, colored working hours, and calendar exports.</p>
-                        <a class="tool-link" href="/calendar/"><span data-i18n="home.calendarLink">Open Class Calendar</span> →</a>
-                    </div>
-                </article>
+        <section class="section" aria-labelledby="recommendationTitle">
+            <h2 id="recommendationTitle" class="section-heading" data-i18n="offlinePage.recommendationTitle">Recommended for this device</h2>
+            <div class="recommendation"><strong id="recommendationName"></strong><p id="recommendationCopy"></p></div>
+        </section>
 
-
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <path class="icon-fill" d="M14 14V5a9 9 0 0 1 6.36 2.64ZM14 14h9a9 9 0 0 1-2.64 6.36ZM14 14v9a9 9 0 0 1-6.36-2.64ZM14 14H5a9 9 0 0 1 2.64-6.36Z" />
-                            <circle cx="14" cy="14" r="9" />
-                            <path d="M14 5v18M5 14h18M7.64 7.64l12.72 12.72M20.36 7.64 7.64 20.36" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name" data-i18n="home.spinnerName">Spinner Wheel</h3>
-                            <span class="tool-status" data-i18n="home.available">Available</span>
-                        </div>
-                        <p class="tool-description" data-i18n="home.spinnerDescription">Choose a random number, student name, or custom classroom choice with a visual wheel.</p>
-                        <a class="tool-link" href="/spinner/"><span data-i18n="home.spinnerLink">Open Spinner Wheel</span> →</a>
-                    </div>
-                </article>
-
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <circle cx="14" cy="16" r="7.5" />
-                            <path d="M11.5 5h5v2h-5zM14 7v1.5" />
-                            <path d="m19.5 9 2-2M20.5 6l1.5 1.5" />
-                            <path d="M14 12v4l3 1.8" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name" data-i18n="home.timerName">Classroom Timer</h3>
-                            <span class="tool-status" data-i18n="home.available">Available</span>
-                        </div>
-                        <p class="tool-description" data-i18n="home.timerDescription">Run accurate classroom countdowns and a stopwatch, with quick durations, saved presets, finish alerts, and a presentation view.</p>
-                        <a class="tool-link" href="/timer/"><span data-i18n="home.timerLink">Open Classroom Timer</span> →</a>
-                    </div>
-                </article>
-
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <rect x="5.5" y="5.5" width="17" height="17" rx="3" />
-                            <path d="m9.5 14 3 3 6-7" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name" data-i18n="home.trackerName">Class Tracker</h3>
-                            <span class="tool-status" data-i18n="home.available">Available</span>
-                        </div>
-                        <p class="tool-description" data-i18n="home.trackerDescription">Track each class through reusable lesson and textbook checklists, with shared Scheduler schools and classes.</p>
-                        <a class="tool-link" href="/tracker/"><span data-i18n="home.trackerLink">Open Class Tracker</span> →</a>
-                    </div>
-                </article>
-
-                <article class="tool-entry available">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <path d="M8 9.5h12l2 13H6Z" />
-                            <path d="M10.5 9.5V7a3.5 3.5 0 0 1 7 0v2.5" />
-                            <path class="icon-fill" d="m14 13 .8 1.8 2 .2-1.5 1.4.4 2-1.7-1-1.7 1 .4-2-1.5-1.4 2-.2Z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name" data-i18n="home.tricksName">Bag of Tricks</h3>
-                            <span class="tool-status" data-i18n="home.available">Available</span>
-                        </div>
-                        <p class="tool-description" data-i18n="home.tricksDescription">Flip a coin, roll one or two dice, or draw from a shuffled 52-card deck for classroom games and activities.</p>
-                        <a class="tool-link" href="/tricks/"><span data-i18n="home.tricksLink">Open Bag of Tricks</span> →</a>
-                    </div>
-                </article>
-
-                <article class="tool-entry">
-                    <div class="tool-icon" aria-hidden="true">
-                        <svg viewBox="0 0 28 28">
-                            <rect class="icon-fill" x="7" y="5" width="16" height="15" rx="2" opacity=".24" />
-                            <rect x="4.5" y="7.5" width="16" height="15" rx="2" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="tool-name-row">
-                            <h3 class="tool-name" data-i18n="home.slidesName">Google Slides Automator</h3>
-                            <span class="tool-status" data-i18n="home.planned">Planned</span>
-                        </div>
-                        <p class="tool-description" data-i18n="home.slidesDescription">Enter common lesson fields such as Today’s Goals and Target Language Structure, then generate a starter Google Slides presentation from a reusable template.</p>
-                    </div>
-                </article>
+        <section class="section" aria-labelledby="optionsTitle">
+            <h2 id="optionsTitle" class="section-heading" data-i18n="offlinePage.optionsTitle">Installation options</h2>
+            <p class="section-copy" data-i18n="offlinePage.optionsCopy">Choose the browser you plan to keep using. Installing from the same browser is usually the easiest way to retain its Teacher Tools data.</p>
+            <div class="option-grid">
+                <article class="option-card" data-option="chromium"><span class="best-badge" data-i18n="offlinePage.best">Best match</span><h3 data-i18n="offlinePage.chromeTitle">Chrome or Edge</h3><p data-i18n="offlinePage.chromeCopy">Recommended on Windows and for Mac users who already keep Teacher Tools data in Chrome or Edge.</p><ol><li data-i18n="offlinePage.chromeStep1">Open this page in Chrome or Edge.</li><li data-i18n="offlinePage.chromeStep2">Choose Install Teacher Tools above or use the browser’s Install app command.</li><li data-i18n="offlinePage.chromeStep3">Open Teacher Tools from the new app icon.</li></ol></article>
+                <article class="option-card" data-option="mac-safari"><span class="best-badge" data-i18n="offlinePage.best">Best match</span><h3 data-i18n="offlinePage.macTitle">Safari on Mac</h3><p data-i18n="offlinePage.macCopy">Available on macOS Sonoma 14 or later. Safari web-app storage can be separate, so make a backup first.</p><ol><li data-i18n="offlinePage.macStep1">In Safari, choose File → Add to Dock.</li><li data-i18n="offlinePage.macStep2">Open the new Teacher Tools web app.</li><li data-i18n="offlinePage.macStep3">Restore your backup there if your existing data does not appear.</li></ol></article>
+                <article class="option-card" data-option="ios"><span class="best-badge" data-i18n="offlinePage.best">Best match</span><h3 data-i18n="offlinePage.iosTitle">iPhone or iPad</h3><p data-i18n="offlinePage.iosCopy">Use Safari’s Add to Home Screen option and turn on Open as Web App.</p><ol><li data-i18n="offlinePage.iosStep1">Open this page in Safari and tap Share.</li><li data-i18n="offlinePage.iosStep2">Choose Add to Home Screen.</li><li data-i18n="offlinePage.iosStep3">Turn on Open as Web App, then tap Add.</li></ol></article>
+                <article class="option-card" data-option="android"><span class="best-badge" data-i18n="offlinePage.best">Best match</span><h3 data-i18n="offlinePage.androidTitle">Android phone or tablet</h3><p data-i18n="offlinePage.androidCopy">Chrome provides the most direct installation and offline experience.</p><ol><li data-i18n="offlinePage.androidStep1">Open this page in Chrome.</li><li data-i18n="offlinePage.androidStep2">Choose Install app or Add to Home screen.</li><li data-i18n="offlinePage.androidStep3">Launch Teacher Tools from its app icon.</li></ol></article>
             </div>
         </section>
 
-        <section class="home-section" aria-labelledby="updatesTitle">
-            <div class="section-heading-row">
-                <div>
-                    <h2 id="updatesTitle" class="section-title" data-i18n="home.updatesTitle">Latest updates</h2>
-                    <p class="section-description" data-i18n="home.updatesDescription">Release notes and noteworthy changes, newest first.</p>
-                </div>
-            </div>
-
-            <div class="updates-panel">
-                <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-16" data-i18n="home.dateSep16">September 16, 2026</time><span class="update-version" data-i18n="home.siteVersion">Site</span></div>
-                    <div><h3 class="update-title" data-i18n="home.updateOfflineTitle">Take Teacher Tools offline</h3><p class="update-copy" data-i18n="home.updateOfflineCopy">Install Teacher Tools for quicker access and prepare Home plus every current tool for classrooms without reliable internet. The new offline page includes device-specific guidance, update checks, and safe data-migration reminders.</p><a class="update-link" href="/offline/"><span data-i18n="home.offlineLink">Open Install & offline use</span> →</a></div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-15" data-i18n="home.dateSep15">September 15, 2026</time><span class="update-version" data-i18n="home.siteVersion">Site</span></div>
-                    <div><h3 class="update-title" data-i18n="home.updateAppearanceTitle">Make Teacher Tools your own</h3><p class="update-copy" data-i18n="home.updateAppearanceCopy">Create a custom color theme with your own primary, secondary, and background colors. Appearance, language, backup, Hootie, and shared school settings now stay consistent across every current tool.</p></div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-15" data-i18n="home.dateSep15">September 15, 2026</time><span class="update-version">v0.6</span></div>
-                    <div><h3 class="update-title" data-i18n="home.updateCalendarLatestTitle">Plan more of your school calendar</h3><p class="update-copy" data-i18n="home.updateCalendarLatestCopy">Class Calendar now includes statistics with class counts, school totals, and category-hour charts, plus date-specific working locations for split days. Holidays, multi-day events, and named alternate schedules help you plan the rest.</p><a class="update-link" href="/calendar/"><span data-i18n="home.calendarLink">Open Class Calendar</span> →</a></div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-15" data-i18n="home.dateSep15">September 15, 2026</time><span class="update-version">v1.0</span></div>
-                    <div><h3 class="update-title" data-i18n="home.updateTricksLatestTitle">Present classroom games on the big screen</h3><p class="update-copy" data-i18n="home.updateTricksLatestCopy">Bag of Tricks adds a classroom presentation view for Coin, Dice, and Cards, plus Standard, Cat, and Shiba-inspired coin styles for quick decisions and games.</p><a class="update-link" href="/tricks/"><span data-i18n="home.tricksLink">Open Bag of Tricks</span> →</a></div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-15" data-i18n="home.dateSep15">September 15, 2026</time><span class="update-version">v1.0</span></div>
-                    <div><h3 class="update-title" data-i18n="home.updateTrackerLatestTitle">Keep lesson notes connected</h3><p class="update-copy" data-i18n="home.updateTrackerLatestCopy">Class Tracker can show notes from matching Calendar events alongside your local class notes. New archive and restore controls keep older notes available without cluttering the current view.</p><a class="update-link" href="/tracker/"><span data-i18n="home.trackerLink">Open Class Tracker</span> →</a></div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date"><time datetime="2026-09-15" data-i18n="home.dateSep15">September 15, 2026</time><span class="update-version">v3.6</span></div>
-                    <div><h3 class="update-title" data-i18n="home.updateSchedulerLatestTitle">Build schedules for real school weeks</h3><p class="update-copy" data-i18n="home.updateSchedulerLatestCopy">Class Scheduler now supports multiple named alternate schedules with their own period and lunch times, alongside the shared school, class, and working-hour settings used by Calendar and Tracker.</p><a class="update-link" href="/scheduler/"><span data-i18n="home.openScheduler">Open Class Scheduler</span> →</a></div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date">
-                        <time datetime="2026-09-10" data-i18n="home.dateSep10">September 10, 2026</time>
-                        <span class="update-version">v1.2</span>
-                    </div>
-                    <div>
-                        <h3 class="update-title" data-i18n="home.updateSpinner12Title">Spinner Wheel v1.2</h3>
-                        <p class="update-copy" data-i18n="home.updateSpinner12Copy">Added saved number sets for each Scheduler school and class, automatic class-size ranges, and a reusable bank of named custom lists.</p>
-                        <a class="update-link" href="/spinner/"><span data-i18n="home.spinnerLink">Open Spinner Wheel</span> →</a>
-                    </div>
-                </article>
-
-                <article class="update-entry">
-                    <div class="update-date">
-                        <time datetime="2026-09" data-i18n="home.dateSep">September 2026</time>
-                        <span class="update-version">v1.0</span>
-                    </div>
-                    <div>
-                        <h3 class="update-title" data-i18n="home.updateTimer10Title">Classroom Timer v1.0</h3>
-                        <p class="update-copy" data-i18n="home.updateTimer10Copy">Added accurate countdown and stopwatch modes, quick and saved durations, optional finish sound, keyboard controls, and a responsive presentation view for classroom displays.</p>
-                        <a class="update-link" href="/timer/"><span data-i18n="home.timerLink">Open Classroom Timer</span> →</a>
-                    </div>
-                </article>
-
-            </div>
+        <section class="section" aria-labelledby="dataTitle">
+            <h2 id="dataTitle" class="section-heading" data-i18n="offlinePage.dataTitle">Protect and move your saved data</h2>
+            <p class="section-copy" data-i18n="offlinePage.dataCopy">Application files and teacher data are stored separately. Updating the app should not remove your data, but switching browsers or profiles can create a separate storage area.</p>
+            <div class="data-panel"><span class="data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3.5h12l2 2v15H5Z"/><path d="M8 3.5v6h8v-6M8 20.5v-7h8v7"/></svg></span><div><h3 id="dataStateTitle">Checking this browser…</h3><p id="dataStateCopy"></p><button id="backupButton" class="action" type="button" data-i18n="offlinePage.backup">Open Backup & restore</button></div></div>
+            <ol class="migration-list"><li data-i18n="offlinePage.move1">Download a complete backup in the browser where your current data lives.</li><li data-i18n="offlinePage.move2">Install or open Teacher Tools using the new browser or app.</li><li data-i18n="offlinePage.move3">Restore the backup inside that installation.</li><li data-i18n="offlinePage.move4">Confirm your schools and applet data before clearing the original browser.</li></ol>
         </section>
+        <p class="privacy-note" data-i18n="offlinePage.note">The first offline setup requires an internet connection. Google Calendar and external links still require internet. Browsers may remove local site data under storage pressure, so keep periodic backups.</p>
+        <footer class="page-footer" data-i18n="offlinePage.footer">Teacher Tools offline access</footer>
     </main>
-
-    <footer class="site-footer">
-        <span>Teacher Tools · tools.jacobosinjapan.com</span><br>
-        <span data-i18n="home.footer">Free practical tools for ALTs and teachers.</span>
-    </footer>
 
     <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:START -->
     <script>
@@ -3213,141 +2769,124 @@ Copyright © 2026. All rights reserved.
     </script>
 <!-- TEACHER-TOOLS:SHARED-BEHAVIOR:END -->
     <script>
-        (() => {
-            const catalogs = {
-                en: {
-                    "home.metaTitle": "Teacher Tools",
-                    "home.metaDescription": "Free browser-based classroom and planning tools for ALTs and teachers.",
-                    "home.welcome": "Welcome to Teacher Tools",
-                    "home.title": "Practical tools for ALTs and teachers.",
-                    "home.intro": "Simple browser-based utilities designed to make everyday planning and classroom work a little easier.",
-                    "home.openScheduler": "Open Class Scheduler",
-                    "home.hootieAria": "Hootie the owl smiling excitedly",
-                    "home.hootieTitle": "Meet Hootie",
-                    "home.hootieCopy": "Your cheerful Teacher Tools helper is here with quick guidance, easy navigation, and a little encouragement while you work.",
-                    "home.toolsTitle": "Available tools",
-                    "home.toolsDescription": "Open a tool or see what is currently being planned.",
-                    "home.available": "Available",
-                    "home.planned": "Planned",
-                    "home.schedulerName": "ALT Class Scheduler",
-                    "home.schedulerDescription": "Create templated Google Calendar events using the real class schedules and bell times for multiple schools.",
-                    "home.schedulerLink": "Open scheduler",
-                    "home.calendarName": "Class Calendar",
-                    "home.calendarDescription": "Plan classes with school bell times, colored working hours, and calendar exports.",
-                    "home.calendarLink": "Open Class Calendar",
-                    "home.spinnerName": "Spinner Wheel",
-                    "home.spinnerDescription": "Choose a random number, student name, or custom classroom choice with a visual wheel.",
-                    "home.spinnerLink": "Open Spinner Wheel",
-                    "home.timerName": "Classroom Timer",
-                    "home.timerDescription": "Run accurate classroom countdowns and a stopwatch, with quick durations, saved presets, finish alerts, and a presentation view.",
-                    "home.timerLink": "Open Classroom Timer",
-                    "home.trackerName": "Class Tracker",
-                    "home.trackerDescription": "Track each class through reusable lesson and textbook checklists, with shared Scheduler schools and classes.",
-                    "home.trackerLink": "Open Class Tracker",
-                    "home.tricksName": "Bag of Tricks",
-                    "home.tricksDescription": "Flip a coin, roll one or two dice, or draw from a shuffled 52-card deck for classroom games and activities.",
-                    "home.tricksLink": "Open Bag of Tricks",
-                    "home.slidesName": "Google Slides Automator",
-                    "home.slidesDescription": "Enter common lesson fields such as Today’s Goals and Target Language Structure, then generate a starter Google Slides presentation from a reusable template.",
-                    "home.updatesTitle": "Latest updates",
-                    "home.updatesDescription": "Release notes and noteworthy changes, newest first.",
-                    "home.dateSep16": "September 16, 2026",
-                    "home.dateSep15": "September 15, 2026",
-                    "home.dateSep10": "September 10, 2026",
-                    "home.dateSep": "September 2026",
-                    "home.siteVersion": "Site",
-                    "home.updateOfflineTitle": "Take Teacher Tools offline",
-                    "home.updateOfflineCopy": "Install Teacher Tools for quicker access and prepare Home plus every current tool for classrooms without reliable internet. The new offline page includes device-specific guidance, update checks, and safe data-migration reminders.",
-                    "home.offlineLink": "Open Install & offline use",
-                    "home.updateAppearanceTitle": "Make Teacher Tools your own",
-                    "home.updateAppearanceCopy": "Create a custom color theme with your own primary, secondary, and background colors. Appearance, language, backup, Hootie, and shared school settings now stay consistent across every current tool.",
-                    "home.updateCalendarLatestTitle": "Plan more of your school calendar",
-                    "home.updateCalendarLatestCopy": "Class Calendar now includes statistics with class counts, school totals, and category-hour charts, plus date-specific working locations for split days. Holidays, multi-day events, and named alternate schedules help you plan the rest.",
-                    "home.updateTricksLatestTitle": "Present classroom games on the big screen",
-                    "home.updateTricksLatestCopy": "Bag of Tricks adds a classroom presentation view for Coin, Dice, and Cards, plus Standard, Cat, and Shiba-inspired coin styles for quick decisions and games.",
-                    "home.updateTrackerLatestTitle": "Keep lesson notes connected",
-                    "home.updateTrackerLatestCopy": "Class Tracker can show notes from matching Calendar events alongside your local class notes. New archive and restore controls keep older notes available without cluttering the current view.",
-                    "home.updateSchedulerLatestTitle": "Build schedules for real school weeks",
-                    "home.updateSchedulerLatestCopy": "Class Scheduler now supports multiple named alternate schedules with their own period and lunch times, alongside the shared school, class, and working-hour settings used by Calendar and Tracker.",
-                    "home.updateSpinner12Title": "Spinner Wheel v1.2",
-                    "home.updateSpinner12Copy": "Added saved number sets for each Scheduler school and class, automatic class-size ranges, and a reusable bank of named custom lists.",
-                    "home.updateTimer10Title": "Classroom Timer v1.0",
-                    "home.updateTimer10Copy": "Added accurate countdown and stopwatch modes, quick and saved durations, optional finish sound, keyboard controls, and a responsive presentation view for classroom displays.",
-                    "home.footer": "Free practical tools for ALTs and teachers."
-                },
-                ja: {
-                    "home.metaTitle": "Teacher Tools",
-                    "home.metaDescription": "ALTや先生のための、無料で使えるブラウザ版の授業・計画支援ツールです。",
-                    "home.welcome": "Teacher Toolsへようこそ",
-                    "home.title": "ALTと先生のための実用的なツール。",
-                    "home.intro": "日々の授業準備や教室での作業を少し楽にする、シンプルなブラウザツールです。",
-                    "home.openScheduler": "クラススケジューラーを開く",
-                    "home.hootieAria": "楽しそうに笑うフクロウのHootie",
-                    "home.hootieTitle": "Hootieのご紹介",
-                    "home.hootieCopy": "Teacher Toolsの元気なヘルパーです。使い方や移動をさっと手伝い、作業中にちょっとした応援を届けます。",
-                    "home.toolsTitle": "利用できるツール",
-                    "home.toolsDescription": "ツールを開くか、現在の開発予定を確認できます。",
-                    "home.available": "利用可能",
-                    "home.planned": "開発予定",
-                    "home.schedulerName": "ALTクラススケジューラー",
-                    "home.schedulerDescription": "複数の学校の実際の授業日程と時間割を使って、Googleカレンダーの予定をテンプレートから作成します。",
-                    "home.schedulerLink": "スケジューラーを開く",
-                    "home.calendarName": "クラスカレンダー",
-                    "home.calendarDescription": "学校の時間割、色分けした勤務時間、カレンダー書き出しを使って授業を計画します。",
-                    "home.calendarLink": "クラスカレンダーを開く",
-                    "home.spinnerName": "スピナーホイール",
-                    "home.spinnerDescription": "見やすいホイールで、数字・生徒名・自由な選択肢からランダムに選びます。",
-                    "home.spinnerLink": "スピナーホイールを開く",
-                    "home.timerName": "教室タイマー",
-                    "home.timerDescription": "よく使う時間、保存済みプリセット、終了通知、プレゼン表示に対応した正確なカウントダウンとストップウォッチです。",
-                    "home.timerLink": "教室タイマーを開く",
-                    "home.trackerName": "クラストラッカー",
-                    "home.trackerDescription": "スケジューラーと共有する学校・クラスを使い、再利用できる授業や教科書のチェックリストで進捗を記録します。",
-                    "home.trackerLink": "クラストラッカーを開く",
-                    "home.tricksName": "お楽しみツール",
-                    "home.tricksDescription": "授業や活動で、コインを投げたり、1個または2個のサイコロを振ったり、シャッフルした52枚のトランプからカードを引いたりできます。",
-                    "home.tricksLink": "お楽しみツールを開く",
-                    "home.slidesName": "Googleスライド自動作成",
-                    "home.slidesDescription": "「今日の目標」や「ターゲット表現」などの項目を入力し、再利用できるテンプレートからGoogleスライドのたたき台を作成します。",
-                    "home.updatesTitle": "最新情報",
-                    "home.updatesDescription": "リリース情報と主な変更点を新しい順に掲載しています。",
-                    "home.dateSep16": "2026年9月16日",
-                    "home.dateSep15": "2026年9月15日",
-                    "home.dateSep10": "2026年9月10日",
-                    "home.dateSep": "2026年9月",
-                    "home.siteVersion": "サイト",
-                    "home.updateOfflineTitle": "Teacher Toolsをオフラインでも利用",
-                    "home.updateOfflineCopy": "Teacher Toolsをインストールしてすばやく開き、インターネットが不安定な教室でもホームと現在のすべてのツールを使えるよう準備できます。新しいオフラインページには、端末別の手順、更新確認、安全なデータ移行の案内があります。",
-                    "home.offlineLink": "インストールとオフライン利用を開く",
-                    "home.updateAppearanceTitle": "Teacher Toolsを自分好みに",
-                    "home.updateAppearanceCopy": "メインカラー、サブカラー、背景色を選んで、オリジナルの配色を作れるようになりました。外観、言語、バックアップ、Hootie、学校の共有設定も、現在のすべてのツールで統一されています。",
-                    "home.updateCalendarLatestTitle": "学校カレンダーをもっと幅広く計画",
-                    "home.updateCalendarLatestCopy": "クラスカレンダーに、クラス別の授業回数、学校別の合計、カテゴリ別時間のグラフを確認できる統計機能を追加しました。日付ごとの勤務場所も設定でき、午前・午後で異なる場所に勤務する日にも対応します。祝日、複数日の予定、名前付きの代替時間割も利用できます。",
-                    "home.updateTricksLatestTitle": "教室ゲームを大画面で表示",
-                    "home.updateTricksLatestCopy": "お楽しみツールに、コイン、サイコロ、カードを大きく見せるプレゼン表示を追加しました。コインは標準、ネコ、柴犬風のデザインから選べます。",
-                    "home.updateTrackerLatestTitle": "授業メモをつなげて管理",
-                    "home.updateTrackerLatestCopy": "クラストラッカーで、クラスのメモと一緒に、対応するカレンダー予定のメモを確認できるようになりました。アーカイブと復元で、古いメモを残したまま現在の表示を整理できます。",
-                    "home.updateSchedulerLatestTitle": "実際の学校週に合わせて時間割を作成",
-                    "home.updateSchedulerLatestCopy": "クラススケジューラーで、時限と昼休み時間を個別に設定できる名前付きの代替時間割を複数作れるようになりました。学校、クラス、勤務時間の設定はカレンダーやトラッカーと共有されます。",
-                    "home.updateSpinner12Title": "スピナーホイール v1.2",
-                    "home.updateSpinner12Copy": "スケジューラーの学校・クラスごとの数字セット、生徒数に基づく自動範囲、名前付きのカスタムリスト集を追加しました。",
-                    "home.updateTimer10Title": "教室タイマー v1.0",
-                    "home.updateTimer10Copy": "正確なカウントダウンとストップウォッチ、よく使う時間と保存済み時間、任意の終了音、キーボード操作、教室画面向けのレスポンシブなプレゼン表示を追加しました。",
-                    "home.footer": "ALTと先生のための無料で実用的なツール。"
-                }
-            };
-            window.TeacherToolsUI?.registerTranslations(catalogs);
-            const updateMetadata = () => {
-                document.title = window.TeacherToolsUI?.translate("home.metaTitle", "Teacher Tools") || "Teacher Tools";
-                const description = document.querySelector('meta[name="description"]');
-                if (description) description.content = window.TeacherToolsUI?.translate(
-                    "home.metaDescription",
-                    "Free browser-based classroom and planning tools for ALTs and teachers."
-                );
-            };
-            window.addEventListener("teacher-tools:languagechange", updateMetadata);
-            updateMetadata();
-        })();
+    (() => {
+        "use strict";
+        const ui = window.TeacherToolsUI;
+        const catalogs = {
+            en: {
+                "offlinePage.eyebrow":"Teacher Tools on this device","offlinePage.title":"Install & offline use","offlinePage.intro":"Prepare the complete Teacher Tools collection for classrooms without reliable internet. Every option uses the same app; your browser determines how it is installed and where local data is stored.","offlinePage.statusAria":"Offline readiness","offlinePage.environment":"This device","offlinePage.installStatus":"App status","offlinePage.offlineStatus":"Offline files","offlinePage.prepare":"Prepare for offline use","offlinePage.install":"Install Teacher Tools","offlinePage.update":"Check for updates","offlinePage.recommendationTitle":"Recommended for this device","offlinePage.optionsTitle":"Installation options","offlinePage.optionsCopy":"Choose the browser you plan to keep using. Installing from the same browser is usually the easiest way to retain its Teacher Tools data.","offlinePage.best":"Best match","offlinePage.chromeTitle":"Chrome or Edge","offlinePage.chromeCopy":"Recommended on Windows and for Mac users who already keep Teacher Tools data in Chrome or Edge.","offlinePage.chromeStep1":"Open this page in Chrome or Edge.","offlinePage.chromeStep2":"Choose Install Teacher Tools above or use the browser’s Install app command.","offlinePage.chromeStep3":"Open Teacher Tools from the new app icon.","offlinePage.macTitle":"Safari on Mac","offlinePage.macCopy":"Available on macOS Sonoma 14 or later. Safari web-app storage can be separate, so make a backup first.","offlinePage.macStep1":"In Safari, choose File → Add to Dock.","offlinePage.macStep2":"Open the new Teacher Tools web app.","offlinePage.macStep3":"Restore your backup there if your existing data does not appear.","offlinePage.iosTitle":"iPhone or iPad","offlinePage.iosCopy":"Use Safari’s Add to Home Screen option and turn on Open as Web App.","offlinePage.iosStep1":"Open this page in Safari and tap Share.","offlinePage.iosStep2":"Choose Add to Home Screen.","offlinePage.iosStep3":"Turn on Open as Web App, then tap Add.","offlinePage.androidTitle":"Android phone or tablet","offlinePage.androidCopy":"Chrome provides the most direct installation and offline experience.","offlinePage.androidStep1":"Open this page in Chrome.","offlinePage.androidStep2":"Choose Install app or Add to Home screen.","offlinePage.androidStep3":"Launch Teacher Tools from its app icon.","offlinePage.dataTitle":"Protect and move your saved data","offlinePage.dataCopy":"Application files and teacher data are stored separately. Updating the app should not remove your data, but switching browsers or profiles can create a separate storage area.","offlinePage.backup":"Open Backup & restore","offlinePage.move1":"Download a complete backup in the browser where your current data lives.","offlinePage.move2":"Install or open Teacher Tools using the new browser or app.","offlinePage.move3":"Restore the backup inside that installation.","offlinePage.move4":"Confirm your schools and applet data before clearing the original browser.","offlinePage.note":"The first offline setup requires an internet connection. Google Calendar and external links still require internet. Browsers may remove local site data under storage pressure, so keep periodic backups.","offlinePage.footer":"Teacher Tools offline access"
+            },
+            ja: {
+                "offlinePage.eyebrow":"この端末のTeacher Tools","offlinePage.title":"インストールとオフライン利用","offlinePage.intro":"インターネットが不安定な教室でもTeacher Tools一式を利用できるよう準備します。どの方法でも同じアプリを使いますが、インストール方法とローカルデータの保存場所はブラウザによって異なります。","offlinePage.statusAria":"オフライン準備状況","offlinePage.environment":"この端末","offlinePage.installStatus":"アプリの状態","offlinePage.offlineStatus":"オフライン用ファイル","offlinePage.prepare":"オフライン利用を準備","offlinePage.install":"Teacher Toolsをインストール","offlinePage.update":"更新を確認","offlinePage.recommendationTitle":"この端末へのおすすめ","offlinePage.optionsTitle":"インストール方法","offlinePage.optionsCopy":"今後使い続けるブラウザを選んでください。同じブラウザからインストールする方法が、保存済みデータを引き継ぐ最も簡単な方法です。","offlinePage.best":"おすすめ","offlinePage.chromeTitle":"Chrome または Edge","offlinePage.chromeCopy":"Windows、または既にChromeやEdgeにTeacher Toolsデータを保存しているMacユーザーにおすすめです。","offlinePage.chromeStep1":"ChromeまたはEdgeでこのページを開きます。","offlinePage.chromeStep2":"上の「Teacher Toolsをインストール」またはブラウザのアプリインストール機能を選びます。","offlinePage.chromeStep3":"新しいアプリアイコンからTeacher Toolsを開きます。","offlinePage.macTitle":"MacのSafari","offlinePage.macCopy":"macOS Sonoma 14以降で利用できます。SafariのWebアプリは保存領域が別になる場合があるため、先にバックアップしてください。","offlinePage.macStep1":"Safariで「ファイル」→「Dockに追加」を選びます。","offlinePage.macStep2":"新しいTeacher Tools Webアプリを開きます。","offlinePage.macStep3":"既存データが表示されない場合は、アプリ内でバックアップを復元します。","offlinePage.iosTitle":"iPhone または iPad","offlinePage.iosCopy":"Safariの「ホーム画面に追加」を使い、「Webアプリとして開く」をオンにします。","offlinePage.iosStep1":"Safariでこのページを開き、共有をタップします。","offlinePage.iosStep2":"「ホーム画面に追加」を選びます。","offlinePage.iosStep3":"「Webアプリとして開く」をオンにして追加します。","offlinePage.androidTitle":"Androidスマートフォンまたはタブレット","offlinePage.androidCopy":"Chromeが最も直接的なインストールとオフライン利用に対応しています。","offlinePage.androidStep1":"Chromeでこのページを開きます。","offlinePage.androidStep2":"「アプリをインストール」または「ホーム画面に追加」を選びます。","offlinePage.androidStep3":"アプリアイコンからTeacher Toolsを開きます。","offlinePage.dataTitle":"保存データを保護・移行","offlinePage.dataCopy":"アプリのファイルと先生のデータは別々に保存されます。更新でデータが消えることは想定していませんが、ブラウザやプロフィールを変更すると保存領域が別になります。","offlinePage.backup":"バックアップと復元を開く","offlinePage.move1":"現在のデータがあるブラウザで完全なバックアップをダウンロードします。","offlinePage.move2":"新しいブラウザまたはアプリでTeacher Toolsをインストールして開きます。","offlinePage.move3":"その環境でバックアップを復元します。","offlinePage.move4":"学校や各ツールのデータを確認してから元のブラウザデータを消去します。","offlinePage.note":"初回のオフライン準備にはインターネット接続が必要です。Googleカレンダーや外部リンクにも接続が必要です。ブラウザが容量不足時にローカルデータを削除する場合があるため、定期的にバックアップしてください。","offlinePage.footer":"Teacher Tools オフライン利用"
+            }
+        };
+        ui.registerTranslations(catalogs);
+        const $ = id => document.getElementById(id);
+        const installContext = location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+        let deferredInstall = window.teacherToolsInstallPrompt || null;
+        let updateRegistration = null;
+        const ua = navigator.userAgent;
+        const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        const isAndroid = /Android/.test(ua);
+        const isMac = /Macintosh|Mac OS X/.test(ua) && !isIOS;
+        const isWindows = /Windows/.test(ua);
+        const isEdge = /Edg\//.test(ua);
+        const isChrome = /Chrome|CriOS/.test(ua) && !isEdge;
+        const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|Edg|OPR/.test(ua);
+        const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+        const option = isIOS ? "ios" : isAndroid ? "android" : isMac && isSafari ? "mac-safari" : "chromium";
+        const environment = isIOS ? "iPhone / iPad · Safari" : isAndroid ? "Android · " + (isChrome ? "Chrome" : "Browser") : isMac ? "Mac · " + (isSafari ? "Safari" : isChrome ? "Chrome" : isEdge ? "Edge" : "Browser") : isWindows ? "Windows · " + (isEdge ? "Edge" : isChrome ? "Chrome" : "Browser") : "Desktop browser";
+        const storedKeys = ["classAutomatorData_v3","teacherTools.classCalendar.state.v1","teacherTools.spinnerWheel.state.v1","teacherTools.classroomTimer.state.v1","teacherTools.classTracker.state.v1","teacherTools.sitePreferences.v1","teacherTools.siteLanguage.v1"];
+        const hasSavedData = storedKeys.some(key => { try { return localStorage.getItem(key) !== null; } catch { return false; } });
+
+        function text(key, fallback) { return ui.translate(key, fallback); }
+        function setMessage(message, error=false) { $("offlineMessage").textContent = message; $("offlineMessage").classList.toggle("error", error); }
+        function updateLanguageOwnedText() {
+            $("environmentValue").textContent = environment;
+            $("installValue").textContent = standalone ? (document.documentElement.lang === "ja" ? "インストール済み" : "Installed app") : (document.documentElement.lang === "ja" ? "ブラウザで表示中" : "Open in browser");
+            $("recommendationName").textContent = isIOS ? (document.documentElement.lang === "ja" ? "Safariでホーム画面に追加" : "Add to Home Screen with Safari") : isAndroid ? (document.documentElement.lang === "ja" ? "Chromeでインストール" : "Install with Chrome") : isMac && isSafari ? (document.documentElement.lang === "ja" ? "SafariでDockに追加" : "Add to Dock with Safari") : isMac ? (document.documentElement.lang === "ja" ? "現在のChromeまたはEdgeからインストール" : "Install from your current Chrome or Edge browser") : (document.documentElement.lang === "ja" ? "EdgeまたはChromeでインストール" : "Install with Edge or Chrome");
+            $("recommendationCopy").textContent = hasSavedData ? (document.documentElement.lang === "ja" ? "このブラウザにTeacher Toolsの保存データがあります。同じブラウザからインストールし、先にバックアップも作成する方法がおすすめです。" : "Teacher Tools data was found in this browser. Install from this same browser and make a backup first.") : (document.documentElement.lang === "ja" ? "このブラウザには保存済みデータが見つかりません。通常どおりインストールするか、後でバックアップを復元できます。" : "No saved Teacher Tools data was found here. Install normally or restore a backup afterward.");
+            $("dataStateTitle").textContent = hasSavedData ? (document.documentElement.lang === "ja" ? "このブラウザに保存データがあります" : "Saved data found in this browser") : (document.documentElement.lang === "ja" ? "このブラウザに保存データはありません" : "No saved data found in this browser");
+            $("dataStateCopy").textContent = hasSavedData ? (document.documentElement.lang === "ja" ? "インストールやブラウザ変更の前に、完全なバックアップをダウンロードしてください。" : "Download a complete backup before installing or changing browsers.") : (document.documentElement.lang === "ja" ? "別のブラウザや端末から移行する場合は、インストール後にバックアップを復元してください。" : "If moving from another browser or device, restore its backup after installation.");
+        }
+        document.querySelector(`[data-option="${option}"]`)?.classList.add("recommended");
+        updateLanguageOwnedText();
+        if (!installContext) {
+            $("protocolWarning").hidden = false;
+            $("prepareButton").disabled = true;
+            $("installButton").disabled = true;
+            $("updateButton").disabled = true;
+            $("offlineValue").textContent = document.documentElement.lang === "ja" ? "サーバーから開いてください" : "Open from a server";
+        }
+
+        async function askWorker(type, onProgress) {
+            const registration = await navigator.serviceWorker.ready;
+            const worker = type === "CACHE_NOW"
+                ? (registration.waiting || registration.active || registration.installing)
+                : (registration.active || registration.waiting || registration.installing);
+            if (!worker) throw new Error("No active offline worker");
+            return new Promise((resolve,reject) => { const channel = new MessageChannel(); const timer=setTimeout(()=>reject(new Error("Offline worker did not respond")),30000); channel.port1.onmessage=e=>{ if(e.data?.type === "PROGRESS"){onProgress?.(e.data);return;} clearTimeout(timer);resolve(e.data)}; worker.postMessage({type},[channel.port2]); });
+        }
+        async function refreshReadiness() {
+            if (!("serviceWorker" in navigator)) { $("offlineValue").textContent = document.documentElement.lang === "ja" ? "このブラウザは未対応" : "Not supported here"; return; }
+            try {
+                const result = await askWorker("STATUS");
+                const build = String(result.release || "").replace("teacher-tools-", "");
+                $("offlineValue").textContent = result.ready
+                    ? `${document.documentElement.lang === "ja" ? "準備完了" : "Ready"}${build ? ` · ${build}` : ""}`
+                    : (document.documentElement.lang === "ja" ? "準備が必要" : "Not prepared");
+                $("offlineValue").classList.toggle("good",!!result.ready);
+            } catch { $("offlineValue").textContent = document.documentElement.lang === "ja" ? "準備が必要" : "Not prepared"; }
+        }
+        if (installContext && "serviceWorker" in navigator) navigator.serviceWorker.register("/service-worker.js", {scope:"/"}).then(refreshReadiness).catch(()=>refreshReadiness()); else if (installContext) refreshReadiness();
+        window.addEventListener("beforeinstallprompt", event => { event.preventDefault(); deferredInstall = event; window.teacherToolsInstallPrompt = event; $("installButton").disabled = false; });
+        $("prepareButton").addEventListener("click", async () => {
+            $("prepareButton").disabled=true;
+            $("cacheProgressPanel").hidden=false;
+            $("cacheProgressBar").value=0;
+            $("cacheProgressValue").textContent="0%";
+            setMessage(document.documentElement.lang === "ja" ? "オフライン用ファイルを準備しています…" : "Preparing all Teacher Tools files for offline use…");
+            try {
+                const result=await askWorker("CACHE_NOW", progress => {
+                    const percent=Math.round((progress.completed/progress.total)*100);
+                    $("cacheProgressBar").value=percent;
+                    $("cacheProgressValue").textContent=`${percent}% · ${progress.completed}/${progress.total}`;
+                });
+                if(!result.ready) throw new Error(result.error||"Cache incomplete");
+                $("cacheProgressBar").value=100;
+                setMessage(document.documentElement.lang === "ja" ? "準備完了です。インターネットなしでTeacher Toolsを開けます。" : "Ready. Teacher Tools can now open without internet.");
+                await refreshReadiness();
+            } catch(error) { setMessage(document.documentElement.lang === "ja" ? "準備できませんでした。接続を確認してもう一度お試しください。" : "Offline preparation failed. Check the connection and try again.",true); }
+            finally { $("prepareButton").disabled=false; }
+        });
+        $("installButton").addEventListener("click", async () => { if (standalone) { setMessage(document.documentElement.lang === "ja" ? "Teacher Toolsは既にアプリとして開かれています。" : "Teacher Tools is already open as an installed app."); return; } if (deferredInstall) { deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall=null; return; } document.querySelector(`[data-option="${option}"]`)?.scrollIntoView({behavior:"smooth",block:"center"}); setMessage(document.documentElement.lang === "ja" ? "下のおすすめ手順に従ってインストールしてください。" : "Follow the recommended instructions below to install on this device."); });
+        $("updateButton").addEventListener("click", async () => {
+            if (updateRegistration?.waiting) {
+                setMessage(document.documentElement.lang === "ja" ? "更新を適用しています…" : "Applying the update…");
+                updateRegistration.waiting.postMessage({type:"SKIP_WAITING"});
+                return;
+            }
+            if(!navigator.onLine){setMessage(document.documentElement.lang === "ja" ? "オフラインのため更新を確認できません。現在のバージョンは引き続き利用できます。" : "You are offline. The current version remains available.",true);return;}
+            setMessage(document.documentElement.lang === "ja" ? "更新を確認しています…" : "Checking for updates…");
+            try {
+                const reg=await navigator.serviceWorker.getRegistration("/");
+                updateRegistration = reg || null;
+                await reg?.update();
+                if (reg?.waiting) {
+                    $("updateButton").textContent = document.documentElement.lang === "ja" ? "更新を適用" : "Apply update";
+                    setMessage(document.documentElement.lang === "ja" ? "更新をダウンロードしました。作業を保存してから「更新を適用」を選んでください。" : "An update is ready. Save your work, then choose Apply update.");
+                } else setMessage(document.documentElement.lang === "ja" ? "最新バージョンです。" : "Teacher Tools is up to date.");
+            } catch { setMessage(document.documentElement.lang === "ja" ? "更新を確認できませんでした。現在のバージョンは変更されていません。" : "Could not check for updates. Your current version is unchanged.",true); }
+        });
+        if ("serviceWorker" in navigator) navigator.serviceWorker.addEventListener("controllerchange", () => location.reload());
+        $("backupButton").addEventListener("click", event => {
+            event.stopPropagation();
+            $("siteDataButton")?.click();
+        });
+        window.addEventListener("online",()=>setMessage(document.documentElement.lang === "ja" ? "オンラインに戻りました。" : "You are back online."));
+        window.addEventListener("offline",()=>setMessage(document.documentElement.lang === "ja" ? "オフラインです。準備済みのバージョンを使用しています。" : "You are offline. The prepared version remains available."));
+        window.addEventListener("teacher-tools:languagechange", updateLanguageOwnedText);
+    })();
     </script>
 <!-- TEACHER-TOOLS:HOOTIE:START -->
     <script defer src="/assets/hootie/hootie.v1.js"></script>
