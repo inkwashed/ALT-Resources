@@ -16,7 +16,7 @@
     {"src":"/assets/pwa/teacher-tools-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
   ],
   "shortcuts": [
-    {"name":"Class Scheduler","url":"/scheduler/"},
+    {"name":"Google Class Scheduler","url":"/scheduler/"},
     {"name":"Class Calendar","url":"/calendar/"},
     {"name":"Classroom Timer","url":"/timer/"}
   ]
