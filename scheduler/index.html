@@ -377,7 +377,7 @@ The software is provided "as is" without warranty of any kind.
             box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
         }
          .site-tools-menu { width: min(300px, calc(100vw - 32px)); padding: 7px; }
-        .site-data-panel { z-index: 121; width: min(380px, calc(100vw - 32px)); padding: 13px; }
+        .site-data-panel { z-index: 121; box-sizing: border-box; width: min(420px, calc(100vw - 32px)); max-width: calc(100vw - 32px); max-height: min(720px, calc(100vh - 92px)); overflow-x: hidden; overflow-y: auto; padding: 13px; }
         .site-language-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
         .site-theme-panel { z-index: 121; width: min(340px, calc(100vw - 32px)); padding: 13px; }
         .site-tools-menu[hidden], .site-language-panel[hidden], .site-data-panel[hidden], .site-theme-panel[hidden] { display: none; }
@@ -608,6 +608,61 @@ The software is provided "as is" without warranty of any kind.
             line-height: 1.4;
         }
          .site-data-status.error { color: var(--danger); }
+        .site-linked-data {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+        }
+        .site-linked-data-heading {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .site-linked-data-heading h3 { margin: 0; font-size: 11.5px; }
+        .site-beta-badge {
+            padding: 2px 5px;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            border-radius: 999px;
+            font-size: 7.5px;
+            font-weight: 800;
+            letter-spacing: .08em;
+        }
+        .site-linked-data-file {
+            margin: 8px 0;
+            padding: 7px 8px;
+            overflow-wrap: anywhere;
+            color: var(--text);
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 7px;
+            font-size: 9.5px;
+            font-weight: 700;
+        }
+        .site-linked-data-last-saved {
+            margin: -2px 1px 8px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 650;
+        }
+        .site-linked-data-permission {
+            margin: -1px 0 8px;
+            padding: 7px 8px;
+            color: var(--text);
+            background: var(--accent-soft);
+            border-left: 3px solid var(--accent);
+            border-radius: 5px;
+            font-size: 9.5px;
+            line-height: 1.45;
+        }
+        .site-linked-data-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 7px;
+        }
+        .site-linked-data-actions > * { min-width: 0; }
+        .site-linked-data-disconnect { grid-column: 1 / -1; }
          .site-theme-options {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2256,6 +2311,24 @@ The software is provided "as is" without warranty of any kind.
                 </div>
                 <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
                 <p class="site-data-note" data-i18n="backup.note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
+                <section class="site-linked-data" aria-labelledby="siteLinkedDataTitle">
+                    <div class="site-linked-data-heading">
+                        <h3 id="siteLinkedDataTitle" data-i18n="linked.title">Linked data file</h3>
+                        <span class="site-beta-badge" data-i18n="linked.beta">CHROME/EDGE BETA</span>
+                    </div>
+                    <p class="site-data-note" data-i18n="linked.help">Keep the browser's saved data connected to one JSON file. Available in desktop Chrome and Edge.</p>
+                    <p id="siteLinkedDataFile" class="site-linked-data-file" data-i18n="linked.none">No file linked</p>
+                    <p id="siteLinkedDataLastSaved" class="site-linked-data-last-saved" hidden></p>
+                    <p id="siteLinkedDataPermissionHelp" class="site-linked-data-permission" data-i18n="linked.permissionHelp" hidden>Chrome may require one additional confirmation before automatic saving can begin.</p>
+                    <div class="site-linked-data-actions">
+                        <button type="button" id="siteLinkedDataCreate" class="site-data-action" data-i18n="linked.create">Create file</button>
+                        <button type="button" id="siteLinkedDataLink" class="site-data-action" data-i18n="linked.link">Link existing</button>
+                        <button type="button" id="siteLinkedDataLoad" class="site-data-action" data-i18n="linked.load" disabled>Pull synced data</button>
+                        <button type="button" id="siteLinkedDataSave" class="site-data-action" data-i18n="linked.save" disabled>Save changes</button>
+                        <button type="button" id="siteLinkedDataDisconnect" class="site-data-action site-linked-data-disconnect" data-i18n="linked.disconnect" disabled>Disconnect</button>
+                    </div>
+                    <p id="siteLinkedDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+                </section>
                 <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
             </section>
              <section id="siteLanguagePanel" class="site-language-panel" role="dialog" aria-labelledby="siteLanguageTitle" hidden>
@@ -2809,6 +2882,35 @@ The software is provided "as is" without warranty of any kind.
                     "backup.success": "Backup imported successfully. Reloading this page…",
                     "backup.successAlert": "Teacher Tools backup imported successfully. This page will now reload.",
                     "backup.importError": "The backup could not be imported.",
+                    "linked.title": "Linked data file",
+                    "linked.beta": "CHROME/EDGE BETA",
+                    "linked.help": "Keep the browser's saved data connected to one JSON file. Available in desktop Chrome and Edge.",
+                    "linked.none": "No file linked",
+                    "linked.create": "Create file",
+                    "linked.link": "Link existing",
+                    "linked.load": "Pull synced data",
+                    "linked.save": "Save changes",
+                    "linked.enable": "Enable autosave",
+                    "linked.disconnect": "Disconnect",
+                    "linked.unsupported": "Linked files require desktop Chrome or Edge. In Safari and Firefox, use backup export and import instead.",
+                    "linked.lastSaved": "Last saved: {time}",
+                    "linked.linkCancelled": "Linking cancelled. Your previous connection was not changed.",
+                    "linked.ready": "Linked to {name}. Changes save automatically while permission remains available.",
+                    "linked.permission": "Permission required. Choose Enable autosave and approve access to {name}.",
+                    "linked.permissionHelp": "Chrome may require one additional confirmation before automatic saving can begin.",
+                    "linked.created": "Created and linked {name}.",
+                    "linked.loaded": "Loaded {name}. Reloading this page…",
+                    "linked.saved": "Saved current Teacher Tools data to {name}.",
+                    "linked.automatic": "Automatically saved to {name}.",
+                    "linked.disconnected": "Linked file disconnected. The file itself was not deleted.",
+                    "linked.invalid": "The selected file is not a valid current Teacher Tools data file.",
+                    "linked.fileChanged": "Synced changes are waiting. Choose Pull synced data to use them, or Save changes to replace them.",
+                    "linked.pending": "Browser changes are waiting to be saved to {name}.",
+                    "linked.conflict": "Both this browser and the linked file changed. Choose Pull synced data or Save changes; nothing was overwritten.",
+                    "linked.loadConfirm": "Pull synced data from {name}? This replaces the browser's supported Teacher Tools records with the file's records, then reloads the page.",
+                    "linked.autoPullConfirm": "New synced data was detected in {name}, possibly from another browser. Load it now? This browser's Teacher Tools data will be overwritten. Choose Cancel to review and use Pull synced data or Save changes manually.",
+                    "linked.saveConfirm": "The linked file changed elsewhere. Replace it with this browser's current data?",
+                    "linked.error": "The linked file could not be accessed.",
                     "record.calendar": "Class Calendar",
                     "record.appearance": "Site appearance",
                     "record.language": "Site language",
@@ -2906,6 +3008,35 @@ The software is provided "as is" without warranty of any kind.
                     "backup.success": "バックアップを読み込みました。ページを再読み込みしています…",
                     "backup.successAlert": "Teacher Toolsのバックアップを読み込みました。このページを再読み込みします。",
                     "backup.importError": "バックアップを読み込めませんでした。",
+                    "linked.title": "リンク済みデータファイル",
+                    "linked.beta": "CHROME/EDGE ベータ",
+                    "linked.help": "ブラウザの保存データを1つのJSONファイルに接続します。デスクトップ版ChromeとEdgeで利用できます。",
+                    "linked.none": "ファイル未接続",
+                    "linked.create": "ファイルを作成",
+                    "linked.link": "既存ファイルを接続",
+                    "linked.load": "同期データを取り込む",
+                    "linked.save": "変更を保存",
+                    "linked.enable": "自動保存を有効にする",
+                    "linked.disconnect": "接続を解除",
+                    "linked.unsupported": "リンク済みファイルにはデスクトップ版ChromeまたはEdgeが必要です。SafariとFirefoxではバックアップの書き出し・読み込みを利用してください。",
+                    "linked.lastSaved": "最終保存：{time}",
+                    "linked.linkCancelled": "接続をキャンセルしました。以前の接続は変更されていません。",
+                    "linked.ready": "{name}に接続しました。権限が有効な間は変更を自動保存します。",
+                    "linked.permission": "権限が必要です。「自動保存を有効にする」を選び、{name}へのアクセスを許可してください。",
+                    "linked.permissionHelp": "自動保存を開始する前に、Chromeで追加の確認が必要になる場合があります。",
+                    "linked.created": "{name}を作成して接続しました。",
+                    "linked.loaded": "{name}を読み込みました。ページを再読み込みしています…",
+                    "linked.saved": "現在のTeacher Toolsデータを{name}に保存しました。",
+                    "linked.automatic": "{name}に自動保存しました。",
+                    "linked.disconnected": "ファイルとの接続を解除しました。ファイル自体は削除されていません。",
+                    "linked.invalid": "選択したファイルは、現在のTeacher Toolsデータファイルとして有効ではありません。",
+                    "linked.fileChanged": "同期された変更があります。「同期データを取り込む」で反映するか、「変更を保存」で置き換えてください。",
+                    "linked.pending": "ブラウザの変更は{name}への保存待ちです。",
+                    "linked.conflict": "このブラウザとリンク済みファイルの両方が変更されています。「同期データを取り込む」または「変更を保存」を選んでください。データは上書きされていません。",
+                    "linked.loadConfirm": "{name}から同期データを取り込みますか？ ファイル内の対応データでブラウザの保存データを置き換え、ページを再読み込みします。",
+                    "linked.autoPullConfirm": "{name}に新しい同期データが見つかりました。別のブラウザからの変更かもしれません。今すぐ取り込みますか？ このブラウザのTeacher Toolsデータは上書きされます。キャンセルすると、「同期データを取り込む」または「変更を保存」で手動確認できます。",
+                    "linked.saveConfirm": "リンク済みファイルが別の場所で変更されています。このブラウザの現在のデータで置き換えますか？",
+                    "linked.error": "リンク済みファイルにアクセスできませんでした。",
                     "record.calendar": "クラスカレンダー",
                     "record.appearance": "サイトの外観",
                     "record.language": "サイトの言語",
@@ -2933,6 +3064,9 @@ The software is provided "as is" without warranty of any kind.
             const SITE_BACKUP_APP_ID = "teacher-tools-site-backup";
             const SITE_BACKUP_SCHEMA_VERSION = 1;
             const SITE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
+            const LINKED_DATA_DB = "teacher-tools-linked-data-v1";
+            const LINKED_DATA_STORE = "connections";
+            const LINKED_DATA_KEY = "primary";
             const SITE_DATA_RECORDS = Object.freeze([
                 {
                     id: "language",
@@ -3101,6 +3235,7 @@ The software is provided "as is" without warranty of any kind.
                 if (choice) choice.value = activeLanguage;
                 applyDocumentTranslations();
                 if (document.getElementById("siteDataSummary")) updateSiteDataSummary();
+                if (document.getElementById("siteLinkedDataCreate")) updateLinkedDataControls();
                 setSiteDataStatus("");
                 if (persist) {
                     storageSet(SITE_LANGUAGE_KEY, JSON.stringify({ version: 1, language: activeLanguage }));
@@ -3255,6 +3390,401 @@ The software is provided "as is" without warranty of any kind.
                 ));
             }
 
+            const linkedDataState = {
+                supported: "showOpenFilePicker" in window && "showSaveFilePicker" in window && "indexedDB" in window,
+                handle: null,
+                fileFingerprint: null,
+                localFingerprint: null,
+                busy: false,
+                conflict: false,
+                externalChange: false,
+                dismissedFileFingerprint: null,
+                permissionRequired: false,
+                lastSavedAt: null,
+                lastExternalCheck: 0,
+                timer: 0
+            };
+
+            function linkedDataPayload() {
+                const records = Object.fromEntries(
+                    siteDataSnapshot()
+                        .filter(record => record.state === "saved")
+                        .map(record => [record.definition.id, record.value])
+                );
+                return {
+                    app: SITE_BACKUP_APP_ID,
+                    schemaVersion: SITE_BACKUP_SCHEMA_VERSION,
+                    exportedAt: new Date().toISOString(),
+                    linkedFile: { beta: true, updatedAt: new Date().toISOString() },
+                    records
+                };
+            }
+
+            function linkedDataFingerprint(payload = linkedDataPayload()) {
+                return JSON.stringify(payload.records || {});
+            }
+
+            function linkedDataDatabase() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(LINKED_DATA_DB, 1);
+                    request.addEventListener("upgradeneeded", () => {
+                        if (!request.result.objectStoreNames.contains(LINKED_DATA_STORE)) {
+                            request.result.createObjectStore(LINKED_DATA_STORE);
+                        }
+                    });
+                    request.addEventListener("success", () => resolve(request.result));
+                    request.addEventListener("error", () => reject(request.error));
+                });
+            }
+
+            async function linkedDataRecord(value) {
+                const database = await linkedDataDatabase();
+                return new Promise((resolve, reject) => {
+                    const transaction = database.transaction(LINKED_DATA_STORE, value === undefined ? "readonly" : "readwrite");
+                    const store = transaction.objectStore(LINKED_DATA_STORE);
+                    const request = value === null
+                        ? store.delete(LINKED_DATA_KEY)
+                        : value === undefined
+                            ? store.get(LINKED_DATA_KEY)
+                            : store.put(value, LINKED_DATA_KEY);
+                    request.addEventListener("success", () => resolve(request.result));
+                    request.addEventListener("error", () => reject(request.error));
+                    transaction.addEventListener("complete", () => database.close());
+                });
+            }
+
+            function setLinkedDataStatus(message, error = false) {
+                const status = document.getElementById("siteLinkedDataStatus");
+                if (!status) return;
+                status.textContent = message;
+                status.classList.toggle("error", error);
+            }
+
+            function updateLinkedDataControls() {
+                const name = document.getElementById("siteLinkedDataFile");
+                const linked = Boolean(linkedDataState.handle);
+                if (name) name.textContent = linked
+                    ? linkedDataState.handle.name
+                    : translate("linked.none", "No file linked");
+                for (const id of ["siteLinkedDataLoad", "siteLinkedDataSave", "siteLinkedDataDisconnect"]) {
+                    const button = document.getElementById(id);
+                    if (button) button.disabled = !linked || linkedDataState.busy;
+                }
+                const saveButton = document.getElementById("siteLinkedDataSave");
+                if (saveButton) saveButton.textContent = linkedDataState.permissionRequired
+                    ? translate("linked.enable", "Enable autosave")
+                    : translate("linked.save", "Save changes");
+                const permissionHelp = document.getElementById("siteLinkedDataPermissionHelp");
+                if (permissionHelp) permissionHelp.hidden = !linked || !linkedDataState.permissionRequired;
+                const lastSaved = document.getElementById("siteLinkedDataLastSaved");
+                if (lastSaved) {
+                    const savedDate = linkedDataState.lastSavedAt ? new Date(linkedDataState.lastSavedAt) : null;
+                    const valid = savedDate && Number.isFinite(savedDate.getTime());
+                    lastSaved.hidden = !linked || !valid;
+                    lastSaved.textContent = valid
+                        ? translate("linked.lastSaved", `Last saved: ${savedDate.toLocaleString()}`, {
+                            time: new Intl.DateTimeFormat(activeLanguage === "ja" ? "ja-JP" : "en", {
+                                dateStyle: "medium",
+                                timeStyle: "short"
+                            }).format(savedDate)
+                        })
+                        : "";
+                }
+                for (const id of ["siteLinkedDataCreate", "siteLinkedDataLink"]) {
+                    const button = document.getElementById(id);
+                    if (button) button.disabled = !linkedDataState.supported || linkedDataState.busy;
+                }
+            }
+
+            async function linkedDataPermission(write = false, request = false) {
+                if (!linkedDataState.handle) return false;
+                const options = { mode: write ? "readwrite" : "read" };
+                let permission = await linkedDataState.handle.queryPermission(options);
+                if (permission !== "granted" && request) {
+                    permission = await linkedDataState.handle.requestPermission(options);
+                }
+                return permission === "granted";
+            }
+
+            async function readLinkedDataFile() {
+                const file = await linkedDataState.handle.getFile();
+                if (file.size > SITE_BACKUP_MAX_BYTES) throw new Error(translate("backup.tooLarge", "That file is too large to be a Teacher Tools backup."));
+                const payload = JSON.parse(await file.text());
+                globalBackupPlan(payload);
+                return payload;
+            }
+
+            async function rememberLinkedData() {
+                await linkedDataRecord({
+                    handle: linkedDataState.handle,
+                    fileFingerprint: linkedDataState.fileFingerprint,
+                    localFingerprint: linkedDataState.localFingerprint,
+                    lastSavedAt: linkedDataState.lastSavedAt
+                });
+            }
+
+            async function writeLinkedDataFile(automatic = false, force = false) {
+                if (!linkedDataState.handle || linkedDataState.busy) return false;
+                linkedDataState.busy = true;
+                updateLinkedDataControls();
+                try {
+                    if (!await linkedDataPermission(true, !automatic)) {
+                        linkedDataState.permissionRequired = true;
+                        setLinkedDataStatus(translate("linked.permission", `Permission required. Choose Enable autosave and approve access to ${linkedDataState.handle.name}.`, { name: linkedDataState.handle.name }));
+                        return false;
+                    }
+                    linkedDataState.permissionRequired = false;
+                    updateLinkedDataControls();
+                    if (!force && linkedDataState.fileFingerprint !== null) {
+                        const currentFile = await readLinkedDataFile();
+                        if (linkedDataFingerprint(currentFile) !== linkedDataState.fileFingerprint) {
+                            linkedDataState.conflict = true;
+                            linkedDataState.externalChange = true;
+                            setLinkedDataStatus(translate("linked.conflict", "Both this browser and the linked file changed. Choose Pull synced data or Save changes; nothing was overwritten."), true);
+                            return false;
+                        }
+                    }
+                    const payload = linkedDataPayload();
+                    const writable = await linkedDataState.handle.createWritable();
+                    await writable.write(JSON.stringify(payload, null, 2));
+                    await writable.close();
+                    linkedDataState.fileFingerprint = linkedDataFingerprint(payload);
+                    linkedDataState.localFingerprint = linkedDataState.fileFingerprint;
+                    linkedDataState.conflict = false;
+                    linkedDataState.externalChange = false;
+                    linkedDataState.dismissedFileFingerprint = null;
+                    linkedDataState.permissionRequired = false;
+                    linkedDataState.lastSavedAt = payload.exportedAt;
+                    await rememberLinkedData();
+                    setLinkedDataStatus(translate(
+                        automatic ? "linked.automatic" : "linked.saved",
+                        automatic ? `Automatically saved to ${linkedDataState.handle.name}.` : `Saved current Teacher Tools data to ${linkedDataState.handle.name}.`,
+                        { name: linkedDataState.handle.name }
+                    ));
+                    return true;
+                } catch (error) {
+                    setLinkedDataStatus(error instanceof Error ? error.message : translate("linked.error", "The linked file could not be accessed."), true);
+                    return false;
+                } finally {
+                    linkedDataState.busy = false;
+                    updateLinkedDataControls();
+                }
+            }
+
+            async function loadLinkedDataFile(confirmLoad = true) {
+                if (!linkedDataState.handle || linkedDataState.busy) return;
+                linkedDataState.busy = true;
+                updateLinkedDataControls();
+                try {
+                    if (!await linkedDataPermission(false, true)) throw new Error(translate("linked.error", "The linked file could not be accessed."));
+                    const payload = await readLinkedDataFile();
+                    if (confirmLoad && !window.confirm(translate("linked.loadConfirm", `Pull synced data from ${linkedDataState.handle.name}? This replaces the browser's supported Teacher Tools records with the file's records, then reloads the page.`, { name: linkedDataState.handle.name }))) return false;
+                    const plan = linkedDataImportPlan(payload);
+                    applyStorageChanges(plan.changes);
+                    linkedDataState.fileFingerprint = linkedDataFingerprint(payload);
+                    linkedDataState.localFingerprint = linkedDataState.fileFingerprint;
+                    linkedDataState.conflict = false;
+                    linkedDataState.externalChange = false;
+                    linkedDataState.dismissedFileFingerprint = null;
+                    linkedDataState.lastSavedAt = payload.exportedAt || new Date().toISOString();
+                    await rememberLinkedData();
+                    setLinkedDataStatus(translate("linked.loaded", `Loaded ${linkedDataState.handle.name}. Reloading this page…`, { name: linkedDataState.handle.name }));
+                    window.location.reload();
+                    return true;
+                } catch (error) {
+                    setLinkedDataStatus(error instanceof Error ? error.message : translate("linked.invalid", "The selected file is not a valid current Teacher Tools data file."), true);
+                    return null;
+                } finally {
+                    linkedDataState.busy = false;
+                    updateLinkedDataControls();
+                }
+            }
+
+            async function createLinkedDataFile() {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        id: "teacher-tools-linked-data",
+                        suggestedName: "Teacher Tools Data.json",
+                        types: [{ description: "Teacher Tools data", accept: { "application/json": [".json"] } }]
+                    });
+                    linkedDataState.handle = handle;
+                    linkedDataState.fileFingerprint = null;
+                    linkedDataState.localFingerprint = linkedDataFingerprint();
+                    linkedDataState.permissionRequired = false;
+                    linkedDataState.lastSavedAt = null;
+                    updateLinkedDataControls();
+                    if (await writeLinkedDataFile(false, true)) {
+                        setLinkedDataStatus(translate("linked.created", `Created and linked ${handle.name}.`, { name: handle.name }));
+                    }
+                } catch (error) {
+                    if (error?.name !== "AbortError") setLinkedDataStatus(translate("linked.error", "The linked file could not be accessed."), true);
+                }
+            }
+
+            async function linkExistingDataFile() {
+                const previous = {
+                    handle: linkedDataState.handle,
+                    fileFingerprint: linkedDataState.fileFingerprint,
+                    localFingerprint: linkedDataState.localFingerprint,
+                    conflict: linkedDataState.conflict,
+                    externalChange: linkedDataState.externalChange,
+                    dismissedFileFingerprint: linkedDataState.dismissedFileFingerprint,
+                    permissionRequired: linkedDataState.permissionRequired,
+                    lastSavedAt: linkedDataState.lastSavedAt
+                };
+                const restorePrevious = () => Object.assign(linkedDataState, previous);
+                try {
+                    const [handle] = await window.showOpenFilePicker({
+                        id: "teacher-tools-linked-data",
+                        multiple: false,
+                        types: [{ description: "Teacher Tools data", accept: { "application/json": [".json"] } }]
+                    });
+                    linkedDataState.handle = handle;
+                    linkedDataState.permissionRequired = false;
+                    const payload = await readLinkedDataFile();
+                    linkedDataState.fileFingerprint = linkedDataFingerprint(payload);
+                    linkedDataState.localFingerprint = linkedDataFingerprint();
+                    linkedDataState.lastSavedAt = payload.exportedAt || null;
+                    updateLinkedDataControls();
+                    const loaded = await loadLinkedDataFile(true);
+                    if (loaded === false) {
+                        restorePrevious();
+                        updateLinkedDataControls();
+                        setLinkedDataStatus(translate("linked.linkCancelled", "Linking cancelled. Your previous connection was not changed."));
+                    } else if (loaded === null) {
+                        restorePrevious();
+                        updateLinkedDataControls();
+                    }
+                } catch (error) {
+                    if (error?.name !== "AbortError") {
+                        restorePrevious();
+                        updateLinkedDataControls();
+                        setLinkedDataStatus(error instanceof Error ? error.message : translate("linked.invalid", "The selected file is not a valid current Teacher Tools data file."), true);
+                    }
+                }
+            }
+
+            async function disconnectLinkedDataFile() {
+                linkedDataState.handle = null;
+                linkedDataState.fileFingerprint = null;
+                linkedDataState.localFingerprint = null;
+                linkedDataState.conflict = false;
+                linkedDataState.externalChange = false;
+                linkedDataState.dismissedFileFingerprint = null;
+                linkedDataState.permissionRequired = false;
+                linkedDataState.lastSavedAt = null;
+                await linkedDataRecord(null);
+                updateLinkedDataControls();
+                setLinkedDataStatus(translate("linked.disconnected", "Linked file disconnected. The file itself was not deleted."));
+            }
+
+            async function offerExternalLinkedData(fileFingerprint) {
+                linkedDataState.externalChange = true;
+                setLinkedDataStatus(translate("linked.fileChanged", "Synced changes are waiting. Choose Pull synced data to use them, or Save changes to replace them."));
+                if (linkedDataState.dismissedFileFingerprint === fileFingerprint) return;
+                linkedDataState.dismissedFileFingerprint = fileFingerprint;
+                const accepted = window.confirm(translate(
+                    "linked.autoPullConfirm",
+                    `New synced data was detected in ${linkedDataState.handle.name}, possibly from another browser. Load it now? This browser's Teacher Tools data will be overwritten. Choose Cancel to review and use Pull synced data or Save changes manually.`,
+                    { name: linkedDataState.handle.name }
+                ));
+                if (accepted) await loadLinkedDataFile(false);
+            }
+
+            async function checkLinkedDataFile() {
+                const now = Date.now();
+                if (now - linkedDataState.lastExternalCheck < 4000) return;
+                linkedDataState.lastExternalCheck = now;
+                if (!await linkedDataPermission(false, false)) {
+                    linkedDataState.permissionRequired = true;
+                    updateLinkedDataControls();
+                    setLinkedDataStatus(translate("linked.permission", `Permission required. Choose Enable autosave and approve access to ${linkedDataState.handle.name}.`, { name: linkedDataState.handle.name }));
+                    return;
+                }
+                const payload = await readLinkedDataFile();
+                const fileNow = linkedDataFingerprint(payload);
+                if (linkedDataState.fileFingerprint === null || fileNow === linkedDataState.fileFingerprint) return;
+                const localChanged = linkedDataFingerprint() !== linkedDataState.localFingerprint;
+                if (localChanged) {
+                    linkedDataState.conflict = true;
+                    linkedDataState.externalChange = true;
+                    setLinkedDataStatus(translate("linked.conflict", "Both this browser and the linked file changed. Choose Pull synced data or Save changes; nothing was overwritten."), true);
+                    return;
+                }
+                await offerExternalLinkedData(fileNow);
+            }
+
+            async function linkedDataAutosaveCheck() {
+                if (!linkedDataState.handle || linkedDataState.busy || document.visibilityState === "hidden") return;
+                try {
+                    await checkLinkedDataFile();
+                } catch (error) {
+                    setLinkedDataStatus(error instanceof Error ? error.message : translate("linked.error", "The linked file could not be accessed."), true);
+                    return;
+                }
+                if (linkedDataState.conflict || linkedDataState.externalChange) return;
+                const local = linkedDataFingerprint();
+                if (local === linkedDataState.localFingerprint) return;
+                await writeLinkedDataFile(true);
+            }
+
+            async function initLinkedDataFile() {
+                if (!document.getElementById("siteLinkedDataCreate")) return;
+                if (!linkedDataState.supported) {
+                    updateLinkedDataControls();
+                    setLinkedDataStatus(translate("linked.unsupported", "Linked files are not supported in this browser. Backup export and import still work normally."), true);
+                    return;
+                }
+                document.getElementById("siteLinkedDataCreate").addEventListener("click", createLinkedDataFile);
+                document.getElementById("siteLinkedDataLink").addEventListener("click", linkExistingDataFile);
+                document.getElementById("siteLinkedDataLoad").addEventListener("click", () => loadLinkedDataFile(true));
+                document.getElementById("siteLinkedDataSave").addEventListener("click", async () => {
+                    let force = linkedDataState.conflict || linkedDataState.externalChange;
+                    if (force && !window.confirm(translate("linked.saveConfirm", "The linked file changed elsewhere. Replace it with this browser's current data?"))) return;
+                    await writeLinkedDataFile(false, force);
+                });
+                document.getElementById("siteLinkedDataDisconnect").addEventListener("click", disconnectLinkedDataFile);
+                try {
+                    const saved = await linkedDataRecord();
+                    if (saved?.handle) {
+                        linkedDataState.handle = saved.handle;
+                        linkedDataState.fileFingerprint = saved.fileFingerprint ?? null;
+                        linkedDataState.localFingerprint = saved.localFingerprint ?? linkedDataFingerprint();
+                        linkedDataState.lastSavedAt = saved.lastSavedAt ?? null;
+                        updateLinkedDataControls();
+                        if (await linkedDataPermission(false, false)) {
+                            const payload = await readLinkedDataFile();
+                            const fileNow = linkedDataFingerprint(payload);
+                            const localNow = linkedDataFingerprint();
+                            const fileChanged = linkedDataState.fileFingerprint !== null && fileNow !== linkedDataState.fileFingerprint;
+                            const localChanged = localNow !== linkedDataState.localFingerprint;
+                            if (fileChanged && localChanged) {
+                                linkedDataState.conflict = true;
+                                linkedDataState.externalChange = true;
+                                setLinkedDataStatus(translate("linked.conflict", "Both this browser and the linked file changed. Choose Pull synced data or Save changes; nothing was overwritten."), true);
+                            } else if (fileChanged) {
+                                await offerExternalLinkedData(fileNow);
+                            } else if (localChanged) {
+                                setLinkedDataStatus(translate("linked.pending", `Browser changes are waiting to be saved to ${saved.handle.name}.`, { name: saved.handle.name }));
+                            } else {
+                                setLinkedDataStatus(translate("linked.ready", `Linked to ${saved.handle.name}. Changes save automatically while permission remains available.`, { name: saved.handle.name }));
+                            }
+                        } else {
+                            linkedDataState.permissionRequired = true;
+                            setLinkedDataStatus(translate("linked.permission", `Permission required. Choose Enable autosave and approve access to ${saved.handle.name}.`, { name: saved.handle.name }));
+                        }
+                    }
+                } catch (error) {
+                    setLinkedDataStatus(translate("linked.error", "The linked file could not be accessed."), true);
+                }
+                updateLinkedDataControls();
+                linkedDataState.timer = window.setInterval(linkedDataAutosaveCheck, 1800);
+                document.addEventListener("visibilitychange", () => {
+                    if (document.visibilityState === "visible") linkedDataAutosaveCheck();
+                });
+                window.addEventListener("focus", linkedDataAutosaveCheck);
+            }
+
             function readFileText(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
@@ -3288,6 +3818,17 @@ The software is provided "as is" without warranty of any kind.
                     throw new Error(translate("backup.noSupportedData", "This backup does not contain any supported Teacher Tools data."));
                 }
                 return { changes, labels, legacy: false };
+            }
+
+            function linkedDataImportPlan(payload) {
+                const plan = globalBackupPlan(payload);
+                const included = new Set(Object.keys(payload.records));
+                SITE_DATA_RECORDS.forEach(definition => {
+                    if (!included.has(definition.id)) {
+                        plan.changes.push({ key: definition.storageKey, value: null });
+                    }
+                });
+                return plan;
             }
 
             function spinnerBackupPlan(payload) {
@@ -3448,6 +3989,7 @@ The software is provided "as is" without warranty of any kind.
                     }
                 });
                 updateSiteDataSummary();
+                initLinkedDataFile();
             }
 
             function normalizeTheme(value) {
