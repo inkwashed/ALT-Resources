@@ -490,6 +490,41 @@
             font-size: 9.5px;
             line-height: 1.45;
         }
+        .site-data-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 4px;
+            margin: 8px 0 13px;
+            padding: 4px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+        }
+        .site-data-tab {
+            min-width: 0;
+            min-height: 34px;
+            padding: 6px 5px;
+            color: var(--muted);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            font-size: 9.5px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+        .site-data-tab:hover { color: var(--text); }
+        .site-data-tab[aria-selected="true"] {
+            color: var(--accent);
+            background: var(--surface);
+            border-color: var(--accent-border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+        }
+        .site-data-tab:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
+        }
+        .site-data-tab-panel[hidden] { display: none; }
+        .site-data-tab-panel > .site-data-help:first-child { margin-top: 0; }
          .site-data-summary {
             display: grid;
             gap: 5px;
@@ -591,11 +626,6 @@
             line-height: 1.4;
         }
          .site-data-status.error { color: var(--danger); }
-        .site-linked-data {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--line);
-        }
         .site-linked-data-heading {
             display: flex;
             align-items: center;
@@ -646,6 +676,20 @@
         }
         .site-linked-data-actions > * { min-width: 0; }
         .site-linked-data-disconnect { grid-column: 1 / -1; }
+        .site-google-sync-state {
+            display: grid;
+            gap: 3px;
+            margin: 10px 0;
+            padding: 10px;
+            color: var(--muted);
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 9.5px;
+            line-height: 1.4;
+        }
+        .site-google-sync-state strong { color: var(--text); font-size: 10.5px; }
+        .site-google-sync-connect { width: 100%; }
          .site-theme-options {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1581,15 +1625,23 @@
                     <h2 id="siteDataTitle" class="site-data-title" data-i18n="backup.title">Backup & restore</h2>
                     <button type="button" id="siteDataCloseButton" class="site-data-close" aria-label="Close backup and restore" data-i18n-aria-label="backup.close">×</button>
                 </div>
-                <p class="site-data-help" data-i18n="backup.help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
-                <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data" data-i18n-aria-label="backup.summaryAria"></ul>
-                <div class="site-data-actions">
-                    <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary" data-i18n="backup.exportAll">Export all data</button>
-                    <button type="button" id="siteDataImportButton" class="site-data-action" data-i18n="backup.import">Import backup</button>
+                <div class="site-data-tabs" role="tablist" aria-label="Backup and synchronization options" data-i18n-aria-label="backup.tabsAria">
+                    <button type="button" id="siteDataExportTab" class="site-data-tab" role="tab" aria-selected="true" aria-controls="siteDataExportPanel" tabindex="0" data-site-data-tab="export" data-i18n="backup.tabExport">Export</button>
+                    <button type="button" id="siteDataFileTab" class="site-data-tab" role="tab" aria-selected="false" aria-controls="siteDataFilePanel" tabindex="-1" data-site-data-tab="file" data-i18n="backup.tabFile">File sync</button>
+                    <button type="button" id="siteDataGoogleTab" class="site-data-tab" role="tab" aria-selected="false" aria-controls="siteDataGooglePanel" tabindex="-1" data-site-data-tab="google" data-i18n="backup.tabGoogle">Google sync</button>
                 </div>
-                <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
-                <p class="site-data-note" data-i18n="backup.note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
-                <section class="site-linked-data" aria-labelledby="siteLinkedDataTitle">
+                <section id="siteDataExportPanel" class="site-data-tab-panel" role="tabpanel" aria-labelledby="siteDataExportTab" data-site-data-panel="export">
+                    <p class="site-data-help" data-i18n="backup.help">Choose which saved data to include in one local backup file. Nothing is uploaded.</p>
+                    <ul id="siteDataSummary" class="site-data-summary" aria-label="Saved Teacher Tools data" data-i18n-aria-label="backup.summaryAria"></ul>
+                    <div class="site-data-actions">
+                        <button type="button" id="siteDataExportButton" class="site-data-action site-data-action-primary" data-i18n="backup.exportAll">Export all data</button>
+                        <button type="button" id="siteDataImportButton" class="site-data-action" data-i18n="backup.import">Import backup</button>
+                    </div>
+                    <input type="file" id="siteDataImportFile" class="site-data-file" accept=".json,application/json">
+                    <p class="site-data-note" data-i18n="backup.note">Importing replaces saved data for tools included in the file. Data for other tools remains unchanged. Older Scheduler and Spinner Wheel backup files are supported.</p>
+                    <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+                </section>
+                <section id="siteDataFilePanel" class="site-data-tab-panel" role="tabpanel" aria-labelledby="siteDataFileTab" data-site-data-panel="file" hidden>
                     <div class="site-linked-data-heading">
                         <h3 id="siteLinkedDataTitle" data-i18n="linked.title">Linked data file</h3>
                         <span class="site-beta-badge" data-i18n="linked.beta">CHROME/EDGE BETA</span>
@@ -1607,7 +1659,19 @@
                     </div>
                     <p id="siteLinkedDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
                 </section>
-                <p id="siteDataStatus" class="site-data-status" role="status" aria-live="polite"></p>
+                <section id="siteDataGooglePanel" class="site-data-tab-panel" role="tabpanel" aria-labelledby="siteDataGoogleTab" data-site-data-panel="google" hidden>
+                    <div class="site-linked-data-heading">
+                        <h3 data-i18n="googleSync.title">Google Drive sync</h3>
+                        <span class="site-beta-badge" data-i18n="googleSync.planned">PLANNED</span>
+                    </div>
+                    <p class="site-data-note" data-i18n="googleSync.help">Keep the same Teacher Tools data available across desktop and mobile devices through an optional Google Drive connection.</p>
+                    <div class="site-google-sync-state">
+                        <strong data-i18n="googleSync.notConnected">Not connected</strong>
+                        <span data-i18n="googleSync.localFirst">Teacher Tools will continue saving locally unless you choose to connect.</span>
+                    </div>
+                    <button type="button" class="site-data-action site-google-sync-connect" disabled data-i18n="googleSync.connect">Connect Google Drive</button>
+                    <p class="site-data-note" data-i18n="googleSync.comingSoon">Google sync is not active yet. This space is ready for the upcoming beta.</p>
+                </section>
             </section>
              <section id="siteLanguagePanel" class="site-language-panel" role="dialog" aria-labelledby="siteLanguageTitle" hidden>
                 <div class="site-language-header">
@@ -1957,6 +2021,10 @@
                     "backup.title": "Backup & restore",
                     "backup.close": "Close backup and restore",
                     "backup.help": "Choose which saved data to include in one local backup file. Nothing is uploaded.",
+                    "backup.tabsAria": "Backup and synchronization options",
+                    "backup.tabExport": "Export",
+                    "backup.tabFile": "File sync",
+                    "backup.tabGoogle": "Google sync",
                     "backup.summaryAria": "Saved Teacher Tools data",
                     "backup.exportAll": "Export all data",
                     "backup.import": "Import backup",
@@ -1989,6 +2057,13 @@
                     "backup.success": "Backup imported successfully. Reloading this page…",
                     "backup.successAlert": "Teacher Tools backup imported successfully. This page will now reload.",
                     "backup.importError": "The backup could not be imported.",
+                    "googleSync.title": "Google Drive sync",
+                    "googleSync.planned": "PLANNED",
+                    "googleSync.help": "Keep the same Teacher Tools data available across desktop and mobile devices through an optional Google Drive connection.",
+                    "googleSync.notConnected": "Not connected",
+                    "googleSync.localFirst": "Teacher Tools will continue saving locally unless you choose to connect.",
+                    "googleSync.connect": "Connect Google Drive",
+                    "googleSync.comingSoon": "Google sync is not active yet. This space is ready for the upcoming beta.",
                     "linked.title": "Linked data file",
                     "linked.beta": "CHROME/EDGE BETA",
                     "linked.help": "Keep the browser's saved data connected to one JSON file. Available in desktop Chrome and Edge.",
@@ -2083,6 +2158,10 @@
                     "backup.title": "バックアップと復元",
                     "backup.close": "バックアップと復元を閉じる",
                     "backup.help": "保存済みデータを選び、1つのローカルバックアップファイルにまとめます。データはアップロードされません。",
+                    "backup.tabsAria": "バックアップと同期のオプション",
+                    "backup.tabExport": "書き出し",
+                    "backup.tabFile": "ファイル同期",
+                    "backup.tabGoogle": "Google同期",
                     "backup.summaryAria": "保存済みのTeacher Toolsデータ",
                     "backup.exportAll": "すべてのデータを書き出す",
                     "backup.import": "バックアップを読み込む",
@@ -2115,6 +2194,13 @@
                     "backup.success": "バックアップを読み込みました。ページを再読み込みしています…",
                     "backup.successAlert": "Teacher Toolsのバックアップを読み込みました。このページを再読み込みします。",
                     "backup.importError": "バックアップを読み込めませんでした。",
+                    "googleSync.title": "Googleドライブ同期",
+                    "googleSync.planned": "予定",
+                    "googleSync.help": "任意のGoogleドライブ接続を使い、デスクトップとモバイル端末で同じTeacher Toolsデータを利用できるようにします。",
+                    "googleSync.notConnected": "未接続",
+                    "googleSync.localFirst": "接続を選択しない限り、Teacher Toolsはこれまでどおり端末内に保存します。",
+                    "googleSync.connect": "Googleドライブに接続",
+                    "googleSync.comingSoon": "Google同期はまだ有効ではありません。この場所で今後ベータ版を提供する予定です。",
                     "linked.title": "リンク済みデータファイル",
                     "linked.beta": "CHROME/EDGE ベータ",
                     "linked.help": "ブラウザの保存データを1つのJSONファイルに接続します。デスクトップ版ChromeとEdgeで利用できます。",
@@ -3082,6 +3168,34 @@
                 const importButton = document.getElementById("siteDataImportButton");
                 const importFile = document.getElementById("siteDataImportFile");
                 if (!exportButton || !importButton || !importFile) return;
+
+                const dataTabs = [...document.querySelectorAll("[data-site-data-tab]")];
+                const dataPanels = [...document.querySelectorAll("[data-site-data-panel]")];
+                const activateDataTab = (name, focus = false) => {
+                    dataTabs.forEach(tab => {
+                        const active = tab.dataset.siteDataTab === name;
+                        tab.setAttribute("aria-selected", String(active));
+                        tab.tabIndex = active ? 0 : -1;
+                        if (active && focus) tab.focus();
+                    });
+                    dataPanels.forEach(panel => {
+                        panel.hidden = panel.dataset.siteDataPanel !== name;
+                    });
+                };
+                dataTabs.forEach((tab, index) => {
+                    tab.addEventListener("click", () => activateDataTab(tab.dataset.siteDataTab));
+                    tab.addEventListener("keydown", event => {
+                        let nextIndex = null;
+                        if (event.key === "ArrowRight") nextIndex = (index + 1) % dataTabs.length;
+                        if (event.key === "ArrowLeft") nextIndex = (index - 1 + dataTabs.length) % dataTabs.length;
+                        if (event.key === "Home") nextIndex = 0;
+                        if (event.key === "End") nextIndex = dataTabs.length - 1;
+                        if (nextIndex === null) return;
+                        event.preventDefault();
+                        activateDataTab(dataTabs[nextIndex].dataset.siteDataTab, true);
+                    });
+                });
+                activateDataTab("export");
 
                 exportButton.addEventListener("click", exportSiteDataBackup);
                 importButton.addEventListener("click", () => importFile.click());

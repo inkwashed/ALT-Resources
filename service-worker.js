@@ -1,4 +1,4 @@
-const RELEASE = "teacher-tools-2026-09-28-linked-data-beta-1";
+const RELEASE = "teacher-tools-2026-09-28-data-tabs-1";
 const CACHE = `teacher-tools-${RELEASE}`;
 const APP_SHELL = [
   "/",
